@@ -7,6 +7,7 @@ import Icon from 'material-ui/Icon';
 import Tooltip from 'material-ui/Tooltip';
 import FilterButton from 'components/FilterButton';
 import MoreButton from 'components/MoreButton';
+import RefreshButton from 'components/RefreshButton';
 
 // Every header is different? This is only for the Library header
 const Header = () => (
@@ -28,11 +29,7 @@ const Header = () => (
         </IconButton>
       </Tooltip>
 
-      <Tooltip title="Refresh">
-        <IconButton>
-          <Icon>refresh</Icon>
-        </IconButton>
-      </Tooltip>
+      <RefreshButton />
 
       <MoreButton />
     </Toolbar>
