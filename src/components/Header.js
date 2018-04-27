@@ -5,46 +5,38 @@ import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import Icon from 'material-ui/Icon';
 import Tooltip from 'material-ui/Tooltip';
+import FilterButton from 'components/FilterButton';
+import MoreButton from 'components/MoreButton';
 
 // Every header is different? This is only for the Library header
-class Header extends Component {
-  render() {
-    return (
-      <AppBar color="default">
-        <Toolbar>
-          <IconButton>
-            <Icon>menu</Icon>
-          </IconButton>
+const Header = () => (
+  <AppBar color="default">
+    <Toolbar>
+      <IconButton>
+        <Icon>menu</Icon>
+      </IconButton>
 
-          <Typography variant="title" style={{ flex: 1 }}>
-            Library
-          </Typography>
+      <Typography variant="title" style={{ flex: 1 }}>
+        Library
+      </Typography>
 
-          <Tooltip title="Filter">
-            <IconButton>
-              <Icon>filter_list</Icon>
-            </IconButton>
-          </Tooltip>
+      <FilterButton />
 
-          <Tooltip title="Search">
-            <IconButton>
-              <Icon>search</Icon>
-            </IconButton>
-          </Tooltip>
+      <Tooltip title="Search">
+        <IconButton>
+          <Icon>search</Icon>
+        </IconButton>
+      </Tooltip>
 
-          <Tooltip title="Refresh">
-            <IconButton>
-              <Icon>refresh</Icon>
-            </IconButton>
-          </Tooltip>
+      <Tooltip title="Refresh">
+        <IconButton>
+          <Icon>refresh</Icon>
+        </IconButton>
+      </Tooltip>
 
-          <IconButton>
-            <Icon>more_vert</Icon>
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-    );
-  }
-}
+      <MoreButton />
+    </Toolbar>
+  </AppBar>
+);
 
 export default Header;
