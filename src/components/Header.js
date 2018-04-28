@@ -4,10 +4,10 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import Icon from 'material-ui/Icon';
-import Tooltip from 'material-ui/Tooltip';
 import FilterButton from 'components/FilterButton';
 import MoreButton from 'components/MoreButton';
 import RefreshButton from 'components/RefreshButton';
+import SearchButton from 'components/SearchButton';
 
 // Every header is different? This is only for the Library header
 const Header = () => (
@@ -23,11 +23,7 @@ const Header = () => (
 
       <FilterButton />
 
-      <Tooltip title="Search">
-        <IconButton>
-          <Icon>search</Icon>
-        </IconButton>
-      </Tooltip>
+      <SearchButton />
 
       <RefreshButton />
 
