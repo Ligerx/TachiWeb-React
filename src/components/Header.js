@@ -10,7 +10,7 @@ import MenuDrawer from 'components/MenuDrawer';
 
 // Every header is different? This is only for the Library header
 const Header = () => (
-  <AppBar color="default">
+  <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
       <MenuDrawer />
 
