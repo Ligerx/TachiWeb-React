@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import Header from 'components/Header';
-import './App.css';
+import MangaGrid from 'components/MangaGrid';
 
 class Library extends Component {
   render() {
-    return <Header />;
+    return (
+      <div>
+        <Header />
+
+        <MangaGrid />
+      </div>
+    );
   }
 }
 
