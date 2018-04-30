@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Grid from 'material-ui/Grid';
-import MangaCard from 'components/MangaCard';
+import LibraryMangaCard from 'components/LibraryMangaCard';
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 
@@ -38,7 +38,7 @@ const MangaGrid = ({ classes, mangaLibrary }) => (
   <Grid container justify="center">
     {/* Top level Grid centers the child Grid */}
     <Grid container className={classes.responsive} spacing={16}>
-      {mangaLibrary.map(manga => <MangaCard key={manga.id} manga={manga} />)}
+      {mangaLibrary.map(manga => <LibraryMangaCard key={manga.id} manga={manga} />)}
     </Grid>
   </Grid>
 );
