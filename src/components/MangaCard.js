@@ -4,9 +4,9 @@ import Card, { CardMedia } from 'material-ui/Card';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import Badge from 'material-ui/Badge';
+import ButtonBase from 'material-ui/ButtonBase';
 
 // TODO: disable badge when it's value is 0
-// TODO: Ripple effect on this component?
 
 // //// Sample Cover Images
 // Average size cover
@@ -18,50 +18,57 @@ import Badge from 'material-ui/Badge';
 // Really short cover
 // https://www.readmng.com/uploads/posters/4f28b6a2a8453e807dd3a11a16a7108b_8.png
 
-// * media
+// * fullWidth
+// While the grid item is full width, it's children aren't.
+// Need to apply width 100% multiple levels down to make things stretch correctly.
+// * image
 // This component makes the image fill the entire container by default
 // Image aspect ratio hack
 // height: 0, paddingTop: X%   [(Image Height / Image Width) * 100%]
-// * badge, card
-// For some reason, putting a badge around the card makes it a fixed width instead of responsive.
-// Force width 100% on both to fix this.
+// * gradient
+// Simple gradient to make the text readable over the image.
+// * title
+// White text for readability over back gradient.
+// Also the ButtonBase's text is centered, so reset that to left align.
 const styles = {
+  fullWidth: {
+    width: '100%',
+  },
   image: {
     height: 0,
     paddingTop: '130%',
-  },
-  badge: {
-    width: '100%',
-  },
-  card: {
-    width: '100%',
-  },
-  title: {
-    color: 'white',
   },
   gradient: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    padding: '28px 16px 18px',
+    padding: '24px 16px 16px',
     background:
       'linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 40%, rgba(0, 0, 0, 0) 100%)',
+  },
+  title: {
+    color: 'white',
+    textAlign: 'left',
   },
 };
 
 const MangaCard = ({ classes, manga }) => (
   <Grid item xs={6} sm={3}>
-    <Badge badgeContent={manga.unread} color="primary" className={classes.badge}>
-      <Card className={classes.card}>
-        <CardMedia className={classes.image} image={manga.thumbnail_url} title={manga.title} />
-        <div className={classes.gradient}>
-          <Typography variant="title" className={classes.title}>
-            {manga.title}
-          </Typography>
-        </div>
-      </Card>
-    </Badge>
+    <ButtonBase className={classes.fullWidth}>
+      <Badge badgeContent={manga.unread} color="primary" className={classes.fullWidth}>
+        <Card className={classes.fullWidth}>
+          <CardMedia className={classes.image} image={manga.thumbnail_url} title={manga.title} />
+          <div className={classes.gradient}>
+            <Typography variant="title" className={classes.title}>
+              {manga.title}
+            </Typography>
+          </div>
+        </Card>
+      </Badge>
+    </ButtonBase>
   </Grid>
 );
+
+// TODO: props validation?
 
 export default withStyles(styles)(MangaCard);
