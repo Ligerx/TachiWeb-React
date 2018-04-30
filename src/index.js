@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Library from 'containers/Library';
 import CssBaseline from 'material-ui/CssBaseline';
+import Router from './routes';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
   <div>
     <CssBaseline />
-    <Library />
+    <Router />
   </div>,
   document.getElementById('root'),
 );
