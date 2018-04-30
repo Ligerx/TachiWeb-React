@@ -1,4 +1,6 @@
-let TWApi = {
+// TODO: make eslint stop complaining about this file
+
+const TWApi = {
     //Setup the API
     init: function () {
         this.Commands = this.Commands();
@@ -202,4 +204,6 @@ let TWApi = {
         });
         return built;
     }
-}.init();
+};
+
+export default TWApi;
