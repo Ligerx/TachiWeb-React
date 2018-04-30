@@ -49,18 +49,14 @@ const styles = {
   },
 };
 
-const MangaCard = props => (
+const MangaCard = ({ classes, manga }) => (
   <Grid item xs={6} sm={3}>
-    <Badge badgeContent={3} color="primary" className={props.classes.badge}>
-      <Card className={props.classes.card}>
-        <CardMedia
-          className={props.classes.image}
-          image="https://www.readmng.com/uploads/posters/0001_269.jpg"
-          title="Random Manga"
-        />
-        <div className={props.classes.gradient}>
-          <Typography variant="title" className={props.classes.title}>
-            Manga Title
+    <Badge badgeContent={manga.unread} color="primary" className={classes.badge}>
+      <Card className={classes.card}>
+        <CardMedia className={classes.image} image={manga.thumbnail_url} title={manga.title} />
+        <div className={classes.gradient}>
+          <Typography variant="title" className={classes.title}>
+            {manga.title}
           </Typography>
         </div>
       </Card>

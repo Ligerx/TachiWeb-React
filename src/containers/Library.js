@@ -8,7 +8,7 @@ class Library extends Component {
     super(props);
 
     this.state = {
-      content: [],
+      mangaLibrary: [],
     };
   }
 
@@ -19,18 +19,20 @@ class Library extends Component {
       (res) => {
         console.log('Success');
         console.log(res.content);
-        this.setState({ content: res.content });
+        this.setState({ mangaLibrary: res.content });
       },
       () => console.log('Failure'),
     );
   }
 
   render() {
+    const { mangaLibrary } = this.state;
+
     return (
       <div>
         <Header />
 
-        <MangaGrid />
+        <MangaGrid mangaLibrary={mangaLibrary} />
       </div>
     );
   }
