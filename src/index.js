@@ -13,3 +13,5 @@ ReactDOM.render(
   document.getElementById('root'),
 );
 registerServiceWorker();
+
+// TODO: turn hot reloading on again, even if it doesn't preserve state
