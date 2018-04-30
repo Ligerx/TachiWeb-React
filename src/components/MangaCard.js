@@ -54,8 +54,8 @@ const styles = {
 
 const MangaCard = ({ classes, manga }) => (
   <Grid item xs={6} sm={3}>
-    <ButtonBase className={classes.fullWidth}>
-      <Badge badgeContent={manga.unread} color="primary" className={classes.fullWidth}>
+    <Badge badgeContent={manga.unread} color="primary" className={classes.fullWidth}>
+      <ButtonBase className={classes.fullWidth}>
         <Card className={classes.fullWidth}>
           <CardMedia className={classes.image} image={manga.thumbnail_url} title={manga.title} />
           <div className={classes.gradient}>
@@ -64,8 +64,8 @@ const MangaCard = ({ classes, manga }) => (
             </Typography>
           </div>
         </Card>
-      </Badge>
-    </ButtonBase>
+      </ButtonBase>
+    </Badge>
   </Grid>
 );
 
