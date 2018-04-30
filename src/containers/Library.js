@@ -15,14 +15,9 @@ class Library extends Component {
   componentDidMount() {
     const api = TWApi.init();
 
-    api.Commands.Library.execute(
-      (res) => {
-        console.log('Success');
-        console.log(res.content);
-        this.setState({ mangaLibrary: res.content });
-      },
-      () => console.log('Failure'),
-    );
+    api.Commands.Library.execute((res) => {
+      this.setState({ mangaLibrary: res.content });
+    });
   }
 
   render() {
