@@ -2,6 +2,7 @@ import React from 'react';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 // Responsive Grid, when the window is larger than a threshhold, constrain a max width on content
 // based on this example
@@ -32,10 +33,10 @@ const styles = (theme) => {
   };
 };
 
-const ResponsiveGrid = ({ classes, children }) => (
+const ResponsiveGrid = ({ classes, className, children }) => (
   <Grid container justify="center">
     {/* Top level Grid centers the child Grid */}
-    <Grid container className={classes.responsive} spacing={16}>
+    <Grid container className={classNames(classes.responsive, className)} spacing={16}>
       {children}
     </Grid>
   </Grid>
@@ -43,6 +44,7 @@ const ResponsiveGrid = ({ classes, children }) => (
 
 ResponsiveGrid.propTypes = {
   classes: PropTypes.object.isRequired,
+  className: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 
