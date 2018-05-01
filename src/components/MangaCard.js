@@ -2,6 +2,7 @@ import React from 'react';
 import Card, { CardMedia } from 'material-ui/Card';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
+import PropTypes from 'prop-types';
 
 // * fullWidth
 // Stretch card width to parent container.
@@ -54,6 +55,14 @@ const MangaCard = ({ classes, title, thumbnailUrl }) => (
   </Card>
 );
 
-// TODO: props validation?
+MangaCard.propTypes = {
+  classes: PropTypes.object.isRequired,
+  thumbnailUrl: PropTypes.string.isRequired,
+  title: PropTypes.string,
+};
+
+MangaCard.defaultProps = {
+  title: '',
+};
 
 export default withStyles(styles)(MangaCard);
