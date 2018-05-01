@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
@@ -9,7 +9,7 @@ import SearchButton from 'components/SearchButton';
 import MenuDrawer from 'components/MenuDrawer';
 
 // Every header is different? This is only for the Library header
-const Header = () => (
+const LibraryHeader = () => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
       <MenuDrawer />
@@ -29,4 +29,4 @@ const Header = () => (
   </AppBar>
 );
 
-export default Header;
+export default LibraryHeader;

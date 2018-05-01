@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Header from 'components/Header';
+import LibraryHeader from 'components/LibraryHeader';
 import MangaGrid from 'components/MangaGrid';
 import TWApi from 'api';
 
@@ -25,7 +25,7 @@ class Library extends Component {
 
     return (
       <div>
-        <Header />
+        <LibraryHeader />
 
         <MangaGrid mangaLibrary={mangaLibrary} />
       </div>
