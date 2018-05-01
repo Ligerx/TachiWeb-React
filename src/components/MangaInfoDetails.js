@@ -4,13 +4,26 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 import MangaCard from 'components/MangaCard';
 import Grid from 'material-ui/Grid';
 import BackgroundImage from 'components/BackgroundImage';
+import { withStyles } from 'material-ui/styles';
+import FavoriteFAB from 'components/FavoriteFAB';
 
 // TODO: make the html a bit more DRY
+// TODO: responsive grid doesn't spread props down to the core material-ui components. Fix this.
+//      actually, I'm not sure if that's the cause of problems right now...
 
-const MangaInfoDetails = ({ mangaInfo }) => (
+const styles = () => ({
+  gridPadding: {
+    padding: '32px 24px',
+  },
+  fabParent: {
+    position: 'relative',
+  },
+});
+
+const MangaInfoDetails = ({ classes, mangaInfo }) => (
   <div>
-    <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url}>
-      <ResponsiveGrid>
+    <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url} className={classes.fabParent}>
+      <ResponsiveGrid className={classes.gridPadding}>
         <Grid item xs={4}>
           <MangaCard thumbnailUrl={mangaInfo.thumbnail_url} />
         </Grid>
@@ -37,9 +50,11 @@ const MangaInfoDetails = ({ mangaInfo }) => (
           </Typography>
         </Grid>
       </ResponsiveGrid>
+
+      <FavoriteFAB />
     </BackgroundImage>
 
-    <ResponsiveGrid>
+    <ResponsiveGrid className={classes.gridPadding}>
       <Typography>
         <strong>Description: </strong>
         {mangaInfo.description}
@@ -48,4 +63,4 @@ const MangaInfoDetails = ({ mangaInfo }) => (
   </div>
 );
 
-export default MangaInfoDetails;
+export default withStyles(styles)(MangaInfoDetails);
