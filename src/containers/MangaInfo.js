@@ -33,11 +33,10 @@ class MangaInfo extends Component {
   }
 
   componentDidMount() {
-    const api = TWApi.init();
     const { mangaId } = this.props.match.params;
 
     // API call 1, get manga info
-    api.Commands.MangaInfo.execute(
+    TWApi.Commands.MangaInfo.execute(
       (res) => {
         this.setState({ mangaInfo: res.content });
       },
@@ -46,7 +45,7 @@ class MangaInfo extends Component {
     );
 
     // API call 2, get chapter list
-    api.Commands.Chapters.execute(
+    TWApi.Commands.Chapters.execute(
       (res) => {
         this.setState({ chapters: res.content });
       },

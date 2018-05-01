@@ -204,6 +204,6 @@ const TWApi = {
         });
         return built;
     }
-};
+}.init();
 
 export default TWApi;
