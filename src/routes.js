@@ -8,7 +8,7 @@ const Router = () => (
     <Switch>
       <Route exact path="/" component={Library} />
       <Route path="/library" component={Library} />
-      <Route path="/manga_info" component={MangaInfo} />
+      <Route path="/manga_info/:mangaId" component={MangaInfo} />
     </Switch>
   </BrowserRouter>
 );
