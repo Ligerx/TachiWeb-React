@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TWApi from 'api';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
+import MangaInfoChapters from 'components/MangaInfoChapters';
 
 // NOTES: From the previous code: When you update the server's manga info or chapter list,
 //    you should also update the client when it's complete
@@ -59,12 +60,12 @@ class MangaInfo extends Component {
   }
 
   content() {
-    const { tabValue, mangaInfo } = this.state;
+    const { tabValue, mangaInfo, chapters } = this.state;
 
     if (tabValue === 0) {
       return <MangaInfoDetails mangaInfo={mangaInfo} />;
     } else if (tabValue === 1) {
-      return <div>{JSON.stringify(this.state.chapters)}</div>;
+      return <MangaInfoChapters chapters={chapters} />;
     }
 
     console.log('MangaInfo content() error');
