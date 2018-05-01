@@ -39,14 +39,18 @@ const styles = {
 // NOTE: this is a basic implementation, and is meant to be wrapped by other components
 // At minumum, you should probably wrap it with a <Grid item>
 
+// Gradient will not render if there is no title passed
+
 const MangaCard = ({ classes, title, thumbnailUrl }) => (
   <Card className={classes.fullWidth}>
     <CardMedia className={classes.image} image={thumbnailUrl} title={title} />
-    <div className={classes.gradient}>
-      <Typography variant="title" className={classes.title}>
-        {title}
-      </Typography>
-    </div>
+    {!!title && (
+      <div className={classes.gradient}>
+        <Typography variant="title" className={classes.title}>
+          {title}
+        </Typography>
+      </div>
+    )}
   </Card>
 );
 
