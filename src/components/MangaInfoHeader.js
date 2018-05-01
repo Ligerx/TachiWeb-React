@@ -6,11 +6,12 @@ import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import RefreshButton from 'components/RefreshButton';
 import MangaInfoTabs from 'components/MangaInfoTabs';
+import { Link } from 'react-router-dom';
 
 const MangaInfoHeader = ({ mangaInfo, tabValue, handleChangeTab }) => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
-      <IconButton>
+      <IconButton component={Link} to="/library">
         <Icon>arrow_back</Icon>
       </IconButton>
       <Typography variant="title" style={{ flex: 1 }}>

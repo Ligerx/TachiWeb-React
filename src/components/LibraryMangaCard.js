@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import Badge from 'material-ui/Badge';
 import ButtonBase from 'material-ui/ButtonBase';
 import MangaCard from 'components/MangaCard';
+import { Link } from 'react-router-dom';
 
 // TODO: don't pass the whole 'manga' object, only pass down what's necessary
 
@@ -32,7 +33,7 @@ const LibraryMangaCard = ({ classes, manga }) => (
         badge: manga.unread > 0 ? null : classes.invisibleBadge,
       }}
     >
-      <ButtonBase className={classes.fullWidth}>
+      <ButtonBase className={classes.fullWidth} component={Link} to={`/manga_info/${manga.id}`}>
         <MangaCard title={manga.title} thumbnailUrl={manga.thumbnail_url} />
       </ButtonBase>
     </Badge>
