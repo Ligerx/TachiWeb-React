@@ -5,6 +5,7 @@ import Grid from 'material-ui/Grid';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import Paper from 'material-ui/Paper';
 import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
 
 // TODO: center align the middle text?
 // TODO: right align the right text?
@@ -27,24 +28,32 @@ const chapterText = (read, last_page_read) => {
   return text;
 };
 
+// TODO: extract this into its own component?
+const ChapterListItem = ({ chapter }) => (
+  <ListItem button divider key={chapter.id}>
+    <Grid container>
+      <Grid item xs={12}>
+        <Typography variant="subheading">
+          {/* <strong>{chapter.name}</strong> */}
+          {chapter.name}
+        </Typography>
+      </Grid>
+      <Grid item style={{ flex: 1 }}>
+        <Typography variant="caption">{Moment(chapter.date).format('L')}</Typography>
+      </Grid>
+      <Grid item>
+        <Typography>{chapterText(chapter.read, chapter.last_page_read)}</Typography>
+      </Grid>
+    </Grid>
+  </ListItem>
+);
+
 const MangaInfoChapters = ({ classes, chapters }) => (
   <ResponsiveGrid>
     <Grid item xs={12}>
       <Paper>
         <List className={classes.list}>
-          {chapters.map(chapter => (
-            <ListItem button divider key={chapter.id}>
-              <Grid container>
-                <Grid item xs={12}>
-                  {chapter.name}
-                </Grid>
-                <Grid item style={{ flex: 1 }}>
-                  {Moment(chapter.date).format('L')}
-                </Grid>
-                <Grid item>{chapterText(chapter.read, chapter.last_page_read)}</Grid>
-              </Grid>
-            </ListItem>
-          ))}
+          {chapters.map(chapter => <ChapterListItem chapter={chapter} />)}
         </List>
       </Paper>
     </Grid>
