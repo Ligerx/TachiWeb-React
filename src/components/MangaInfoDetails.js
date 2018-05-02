@@ -10,6 +10,7 @@ import FavoriteFAB from 'components/FavoriteFAB';
 // TODO: make the html a bit more DRY
 // TODO: responsive grid doesn't spread props down to the core material-ui components. Fix this.
 //      actually, I'm not sure if that's the cause of problems right now...
+// TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
 const styles = () => ({
   gridPadding: {
@@ -20,7 +21,7 @@ const styles = () => ({
   },
 });
 
-const MangaInfoDetails = ({ classes, mangaInfo }) => (
+const MangaInfoDetails = ({ classes, mangaInfo, onFavoriteClick }) => (
   <div>
     <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url} className={classes.fabParent}>
       <ResponsiveGrid className={classes.gridPadding}>
@@ -51,7 +52,7 @@ const MangaInfoDetails = ({ classes, mangaInfo }) => (
         </Grid>
       </ResponsiveGrid>
 
-      <FavoriteFAB />
+      <FavoriteFAB favorite={mangaInfo.favorite} onClick={onFavoriteClick} />
     </BackgroundImage>
 
     <ResponsiveGrid className={classes.gridPadding}>

@@ -1,38 +1,13 @@
 import React from 'react';
-import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
 import Icon from 'material-ui/Icon';
-import { withStyles } from 'material-ui/styles';
+import FAB from 'components/FAB';
 
-// TODO: split this into two components, FAB and FavoriteFAB
+// NOTE: refer to FAB for specific CSS instructions
 
-// FAB button position based on this link
-// https://stackoverflow.com/questions/37760448/how-to-make-floating-action-button-content-overlap-two-divs-in-materializecss
+// TODO: would be nice to have a loading spinner while the server processes a favorite/unfavorite action
 
-// NOTE: parent must be [position: relative] for this to position correctly.
-// for example:
-// const styles = () => ({
-//   fabParent: {
-//     position: 'relative',
-//   },
-// });
-
-const styles = () => ({
-  fab: {
-    position: 'absolute',
-    bottom: 0,
-    right: '5%',
-    marginBottom: -28,
-  },
-});
-
-const FavoriteFAB = ({ classes }) => (
-  <Button variant="fab" color="primary" className={classes.fab}>
-    <IconButton>
-      <Icon>bookmark_border</Icon>
-      {/* also <Icon>bookmark</Icon> */}
-    </IconButton>
-  </Button>
+const FavoriteFAB = ({ favorite, onClick }) => (
+  <FAB onClick={onClick}>{favorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}</FAB>
 );
 
-export default withStyles(styles)(FavoriteFAB);
+export default FavoriteFAB;

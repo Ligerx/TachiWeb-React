@@ -26,9 +26,11 @@ class MangaInfo extends Component {
       tabValue: 0,
       mangaInfo: {},
       chapters: [],
+      test: 0,
     };
 
     this.handleChangeTab = this.handleChangeTab.bind(this);
+    this.handleFavoriteClick = this.handleFavoriteClick.bind(this);
     this.content = this.content.bind(this);
   }
 
@@ -54,6 +56,30 @@ class MangaInfo extends Component {
     );
   }
 
+  handleFavoriteClick() {
+    const { mangaId } = this.props.match.params;
+    const { mangaInfo } = this.state;
+
+    // Testing if object is empty
+    if (Object.keys(mangaInfo).length === 0 && mangaInfo.constructor === Object) {
+      console.error('MangaInfo handleFavoriteClick error, missing mangaInfo object');
+      return;
+    }
+
+    TWApi.Commands.Favorite.execute(
+      () => {
+        this.setState(prevState => ({
+          mangaInfo: {
+            ...prevState.mangaInfo,
+            favorite: !prevState.mangaInfo.favorite,
+          },
+        }));
+      },
+      null,
+      { mangaId, favorite: !mangaInfo.favorite },
+    );
+  }
+
   handleChangeTab(event, newValue) {
     this.setState({ tabValue: newValue });
   }
@@ -62,7 +88,7 @@ class MangaInfo extends Component {
     const { tabValue, mangaInfo, chapters } = this.state;
 
     if (tabValue === 0) {
-      return <MangaInfoDetails mangaInfo={mangaInfo} />;
+      return <MangaInfoDetails mangaInfo={mangaInfo} onFavoriteClick={this.handleFavoriteClick} />;
     } else if (tabValue === 1) {
       return <MangaInfoChapters chapters={chapters} />;
     }
