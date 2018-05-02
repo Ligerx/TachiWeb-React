@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TWApi from 'api';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
-import MangaInfoChapters from 'components/MangaInfoChapters';
+import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
 
 // NOTES: From the previous code: When you update the server's manga info or chapter list,
 //    you should also update the client when it's complete
@@ -26,7 +26,6 @@ class MangaInfo extends Component {
       tabValue: 0,
       mangaInfo: {},
       chapters: [],
-      test: 0,
     };
 
     this.handleChangeTab = this.handleChangeTab.bind(this);
@@ -90,7 +89,7 @@ class MangaInfo extends Component {
     if (tabValue === 0) {
       return <MangaInfoDetails mangaInfo={mangaInfo} onFavoriteClick={this.handleFavoriteClick} />;
     } else if (tabValue === 1) {
-      return <MangaInfoChapters chapters={chapters} />;
+      return <SortFilterMangaInfoChapters chapters={chapters} />;
     }
 
     console.log('MangaInfo content() error');
