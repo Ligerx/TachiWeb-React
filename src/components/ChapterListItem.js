@@ -27,7 +27,7 @@ const ChapterListItem = ({ classes, chapter }) => {
   const dimIfRead = read => classNames({ [classes.read]: read });
 
   return (
-    <ListItem button divider key={chapter.id}>
+    <ListItem button divider>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="subheading" className={dimIfRead(chapter.read)}>

@@ -21,7 +21,7 @@ const MangaInfoChapters = ({ classes, chapters }) => (
     <Grid item xs={12}>
       <Paper>
         <List className={classes.list}>
-          {chapters.map(chapter => <ChapterListItem chapter={chapter} />)}
+          {chapters.map(chapter => <ChapterListItem chapter={chapter} key={chapter.id} />)}
         </List>
       </Paper>
     </Grid>
