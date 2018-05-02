@@ -27,14 +27,6 @@ const chapterText = (read, last_page_read) => {
   return text;
 };
 
-const downloadText = (download_status) => {
-  let text = '';
-  if (download_status === 'DOWNLOADED') {
-    text = 'Downloaded';
-  }
-  return text;
-};
-
 const MangaInfoChapters = ({ classes, chapters }) => (
   <ResponsiveGrid>
     <Grid item xs={12}>
@@ -46,15 +38,10 @@ const MangaInfoChapters = ({ classes, chapters }) => (
                 <Grid item xs={12}>
                   {chapter.name}
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item style={{ flex: 1 }}>
                   {Moment(chapter.date).format('L')}
                 </Grid>
-                <Grid item xs={4}>
-                  {chapterText(chapter.read, chapter.last_page_read)}
-                </Grid>
-                <Grid item xs={4}>
-                  {downloadText(chapter.download_status)}
-                </Grid>
+                <Grid item>{chapterText(chapter.read, chapter.last_page_read)}</Grid>
               </Grid>
             </ListItem>
           ))}
