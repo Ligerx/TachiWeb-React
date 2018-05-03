@@ -14,4 +14,8 @@ ReactDOM.render(
 );
 registerServiceWorker();
 
-// TODO: turn hot reloading on again, even if it doesn't preserve state
+// NOTE: this type of hot reload does not preserve state. Hopefully fix in the future?
+// https://daveceddia.com/hot-reloading-create-react-app/
+if (module.hot) {
+  module.hot.accept();
+}
