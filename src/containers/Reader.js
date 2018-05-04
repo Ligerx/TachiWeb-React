@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import TWApi from 'api';
-import IconButton from 'material-ui/IconButton';
-import Icon from 'material-ui/Icon';
-import { Link } from 'react-router-dom';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
+import ReaderOverlay from 'components/ReaderOverlay';
 
 // TODO: eventually create a preloading component?
 //       similar to this - https://github.com/mcarlucci/react-precache-img
@@ -22,11 +17,6 @@ import Typography from 'material-ui/Typography';
 // server images
 function imageUrl(mangaId, chapter, page) {
   return `/api/img/${mangaId}/${chapter}/${page}`;
-}
-
-// pages in the browser
-function pageUrl(mangaId, chapter, page) {
-  return `/reader/${mangaId}/${chapter}/${page}`;
 }
 
 class Reader extends Component {
@@ -75,6 +65,7 @@ class Reader extends Component {
 
   render() {
     const { mangaId, chapter, page } = this.props.match.params;
+    const { pageCount } = this.state.pageCount;
 
     const image = {
       height: '100%',
@@ -84,50 +75,9 @@ class Reader extends Component {
       backgroundSize: 'contain',
     };
 
-    const button = {
-      position: 'absolute',
-      top: '50%',
-      transform: 'translateY(-50%)',
-    };
-
-    const test = {
-      height: '100%',
-      width: '100%',
-      position: 'absolute',
-      zIndex: 5,
-    };
-
     return (
       <React.Fragment>
-        <div style={test}>
-          <IconButton
-            component={Link}
-            to={pageUrl(mangaId, chapter, parseInt(page, 10) - 1)}
-            style={button}
-          >
-            <Icon>navigate_before</Icon>
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={pageUrl(mangaId, chapter, parseInt(page, 10) + 1)}
-            style={{ ...button, right: 0 }}
-          >
-            <Icon>navigate_next</Icon>
-          </IconButton>
-
-          <AppBar position="static" color="default">
-            <Toolbar>
-              <Typography variant="title" color="inherit">
-                Title
-              </Typography>
-            </Toolbar>
-          </AppBar>
-
-          <h2>{this.state.pageCount}</h2>
-          <h3>{`MangaId: ${mangaId}, Chapter: ${chapter}, Page ${page}`}</h3>
-          {/* <img src={imageUrl(mangaId, chapter, page)} style={style} /> */}
-        </div>
-
+        <ReaderOverlay mangaId={mangaId} chapter={chapter} page={page} pageCount={pageCount} />
         <div style={image} />
       </React.Fragment>
     );
