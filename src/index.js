@@ -6,10 +6,10 @@ import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
-  <div>
+  <React.Fragment>
     <CssBaseline />
     <Router />
-  </div>,
+  </React.Fragment>,
   document.getElementById('root'),
 );
 registerServiceWorker();

@@ -63,7 +63,7 @@ class SearchButton extends Component {
     const { searchVisible, searchText } = this.state;
 
     return (
-      <div>
+      <React.Fragment>
         <Tooltip title="Search">
           <IconButton onClick={this.handleClick}>
             <Icon>search</Icon>
@@ -89,7 +89,7 @@ class SearchButton extends Component {
             />
           </FormControl>
         ) : null}
-      </div>
+      </React.Fragment>
     );
   }
 }

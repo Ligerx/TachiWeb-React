@@ -100,14 +100,14 @@ class MangaInfo extends Component {
     const { mangaInfo, tabValue } = this.state;
 
     return (
-      <div>
+      <React.Fragment>
         <MangaInfoHeader
           mangaInfo={mangaInfo}
           tabValue={tabValue}
           handleChangeTab={this.handleChangeTab}
         />
         {this.content()}
-      </div>
+      </React.Fragment>
     );
   }
 }

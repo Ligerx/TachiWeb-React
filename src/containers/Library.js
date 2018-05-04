@@ -22,11 +22,11 @@ class Library extends Component {
     const { mangaLibrary } = this.state;
 
     return (
-      <div>
+      <React.Fragment>
         <LibraryHeader />
 
         <MangaGrid mangaLibrary={mangaLibrary} />
-      </div>
+      </React.Fragment>
     );
   }
 }

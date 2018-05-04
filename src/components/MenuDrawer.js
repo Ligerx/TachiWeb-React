@@ -22,7 +22,7 @@ class MenuDrawer extends Component {
     const { drawerOpen } = this.state;
 
     return (
-      <div>
+      <React.Fragment>
         <IconButton onClick={this.toggleDrawer(true)}>
           <Icon>menu</Icon>
         </IconButton>
@@ -37,7 +37,7 @@ class MenuDrawer extends Component {
             <MenuList />
           </div>
         </Drawer>
-      </div>
+      </React.Fragment>
     );
   }
 }

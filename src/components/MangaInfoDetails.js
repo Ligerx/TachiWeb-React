@@ -22,7 +22,7 @@ const styles = () => ({
 });
 
 const MangaInfoDetails = ({ classes, mangaInfo, onFavoriteClick }) => (
-  <div>
+  <React.Fragment>
     <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url} className={classes.fabParent}>
       <ResponsiveGrid className={classes.gridPadding}>
         <Grid item xs={4} sm={3}>
@@ -61,7 +61,7 @@ const MangaInfoDetails = ({ classes, mangaInfo, onFavoriteClick }) => (
         {mangaInfo.description}
       </Typography>
     </ResponsiveGrid>
-  </div>
+  </React.Fragment>
 );
 
 export default withStyles(styles)(MangaInfoDetails);

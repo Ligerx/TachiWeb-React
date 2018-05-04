@@ -37,7 +37,7 @@ class MoreButton extends Component {
     const { anchorEl, editing } = this.state;
 
     return (
-      <div>
+      <React.Fragment>
         <Tooltip title="More">
           <IconButton onClick={this.handleClick}>
             <Icon>more_vert</Icon>
@@ -57,7 +57,7 @@ class MoreButton extends Component {
             {!editing ? 'Edit Categories' : 'Exit Category Editor'}
           </MenuItem>
         </Menu>
-      </div>
+      </React.Fragment>
     );
   }
 }

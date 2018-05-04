@@ -46,7 +46,7 @@ class FilterButton extends Component {
     const { anchorEl } = this.state;
 
     return (
-      <div>
+      <React.Fragment>
         <Tooltip title="Filter">
           <IconButton onClick={this.handleClick}>
             <Icon>filter_list</Icon>
@@ -86,7 +86,7 @@ class FilterButton extends Component {
           </MenuItem>
           <MenuItem onClick={this.handleRemoveFilters}>Remove Filters</MenuItem>
         </Menu>
-      </div>
+      </React.Fragment>
     );
   }
 }
