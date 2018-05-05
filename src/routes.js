@@ -15,7 +15,7 @@ const Router = () => (
       <Route exact path="/" component={Library} />
       <Route path="/library" component={Library} />
       <Route path="/manga_info/:mangaId" component={MangaInfo} />
-      <Route path="/reader/:mangaId/:chapter/:page" component={Reader} />
+      <Route path="/reader/:mangaId/:chapterId/:page" component={Reader} />
     </Switch>
   </BrowserRouter>
 );
