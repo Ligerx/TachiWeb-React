@@ -3,6 +3,10 @@ import TWApi from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
 
+// TODO: Need to request a change of API. Too many different calls required to do this one thing.
+//    also, I briefly attempted to use all these API calls, but gave up part way through.
+//    Should wait for API to change before trying completing this.
+
 // TODO: eventually create a preloading component?
 //       similar to this - https://github.com/mcarlucci/react-precache-img
 
@@ -20,13 +24,13 @@ import ReaderNavButtons from 'components/ReaderNavButtons';
 // https://tylermcginnis.com/react-router-programmatically-navigate/
 
 // server images
-function imageUrl(mangaId, chapter, page) {
-  return `/api/img/${mangaId}/${chapter}/${page}`;
+function imageUrl(mangaId, chapterId, page) {
+  return `/api/img/${mangaId}/${chapterId}/${page}`;
 }
 
 // pages in the browser
-function pageUrl(mangaId, chapter, page) {
-  return `/reader/${mangaId}/${chapter}/${page}`;
+function pageUrl(mangaId, chapterId, page) {
+  return `/reader/${mangaId}/${chapterId}/${page}`;
 }
 
 class Reader extends Component {
@@ -52,25 +56,25 @@ class Reader extends Component {
   }
 
   fetchPageCount(callback) {
-    const { mangaId, chapter } = this.props.match.params;
+    const { mangaId, chapterId } = this.props.match.params;
 
     TWApi.Commands.PageCount.execute(
       (res) => {
-        if(callback) {
+        if (callback) {
           this.setState({ pageCount: res.page_count }, callback);
         } else {
           this.setState({ pageCount: res.page_count });
         }
       },
       null,
-      { mangaId, chapterId: chapter },
+      { mangaId, chapterId },
     );
   }
 
   preloadImages() {
     // https://www.photo-mark.com/notes/image-preloading/
     // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-    const { mangaId, chapter, page } = this.props.match.params;
+    const { mangaId, chapterId, page } = this.props.match.params;
     const { pageCount } = this.state;
     const pageInt = parseInt(page, 10); // params are always strings, string -> int
     const numPreload = 3; // Currently preloading 3 images ahead
@@ -79,7 +83,7 @@ class Reader extends Component {
       if (parseInt(pageInt, 10) + i < pageCount) {
         // Chrome would only preload if a new image object was used every time
         const image = new Image();
-        image.src = imageUrl(mangaId, chapter, pageInt + i);
+        image.src = imageUrl(mangaId, chapterId, pageInt + i);
       }
     }
   }
@@ -90,12 +94,12 @@ class Reader extends Component {
   }
 
   handleNextPageClick() {
-    const { mangaId, chapter, page } = this.props.match.params;
+    const { mangaId, chapterId, page } = this.props.match.params;
     const { pageCount } = this.state;
     const pageInt = parseInt(page, 10);
 
     if (pageInt < pageCount - 1) {
-      this.props.history.push(pageUrl(mangaId, chapter, pageInt + 1));
+      this.props.history.push(pageUrl(mangaId, chapterId, pageInt + 1));
     } else if (pageInt === pageCount - 1) {
       // TODO: Navigate to next chapter page 0
     }
@@ -103,12 +107,12 @@ class Reader extends Component {
   }
 
   render() {
-    const { mangaId, chapter, page } = this.props.match.params;
+    const { mangaId, chapterId, page } = this.props.match.params;
     const { pageCount } = this.state.pageCount;
 
     const image = {
       height: '100%',
-      backgroundImage: `url(${imageUrl(mangaId, chapter, page)})`,
+      backgroundImage: `url(${imageUrl(mangaId, chapterId, page)})`,
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center top',
       backgroundSize: 'contain',
@@ -116,7 +120,7 @@ class Reader extends Component {
 
     return (
       <React.Fragment>
-        <ReaderOverlay mangaId={mangaId} chapter={chapter} page={page} pageCount={pageCount} />
+        <ReaderOverlay mangaId={mangaId} chapterId={chapterId} page={page} pageCount={pageCount} />
         <ReaderNavButtons
           onPrevPageClick={this.handlePrevPageClick}
           onNextPageClick={this.handleNextPageClick}
