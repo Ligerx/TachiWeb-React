@@ -11,10 +11,12 @@ import rootReducer from './reduxDucks';
 const store = createStore(rootReducer);
 
 ReactDOM.render(
-  <Provider store={store}>
+  <React.Fragment>
     <CssBaseline />
-    <Router />
-  </Provider>,
+    <Provider store={store}>
+      <Router />
+    </Provider>
+  </React.Fragment>,
   document.getElementById('root'),
 );
 registerServiceWorker();
