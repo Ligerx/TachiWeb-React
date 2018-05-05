@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TWApi from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
+import ReaderNavButtons from 'components/ReaderNavButtons';
 
 // TODO: eventually create a preloading component?
 //       similar to this - https://github.com/mcarlucci/react-precache-img
@@ -14,9 +15,18 @@ import ReaderOverlay from 'components/ReaderOverlay';
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
+// TODO: preload pages from the next chapter
+
+// https://tylermcginnis.com/react-router-programmatically-navigate/
+
 // server images
 function imageUrl(mangaId, chapter, page) {
   return `/api/img/${mangaId}/${chapter}/${page}`;
+}
+
+// pages in the browser
+function pageUrl(mangaId, chapter, page) {
+  return `/reader/${mangaId}/${chapter}/${page}`;
 }
 
 class Reader extends Component {
@@ -27,23 +37,34 @@ class Reader extends Component {
       pageCount: 0,
     };
 
+    this.fetchPageCount = this.fetchPageCount.bind(this);
     this.preloadImages = this.preloadImages.bind(this);
+    this.handlePrevPageClick = this.handlePrevPageClick.bind(this);
+    this.handleNextPageClick = this.handleNextPageClick.bind(this);
   }
 
   componentDidMount() {
-    const { mangaId, chapter, page } = this.props.match.params;
-
-    TWApi.Commands.PageCount.execute(
-      (res) => {
-        this.setState({ pageCount: res.page_count }, this.preloadImages);
-      },
-      null,
-      { mangaId, chapterId: chapter },
-    );
+    this.fetchPageCount(this.preloadImages);
   }
 
   componentDidUpdate() {
     this.preloadImages();
+  }
+
+  fetchPageCount(callback) {
+    const { mangaId, chapter } = this.props.match.params;
+
+    TWApi.Commands.PageCount.execute(
+      (res) => {
+        if(callback) {
+          this.setState({ pageCount: res.page_count }, callback);
+        } else {
+          this.setState({ pageCount: res.page_count });
+        }
+      },
+      null,
+      { mangaId, chapterId: chapter },
+    );
   }
 
   preloadImages() {
@@ -63,6 +84,24 @@ class Reader extends Component {
     }
   }
 
+  handlePrevPageClick() {
+    // TODO: do all this lol
+    return null;
+  }
+
+  handleNextPageClick() {
+    const { mangaId, chapter, page } = this.props.match.params;
+    const { pageCount } = this.state;
+    const pageInt = parseInt(page, 10);
+
+    if (pageInt < pageCount - 1) {
+      this.props.history.push(pageUrl(mangaId, chapter, pageInt + 1));
+    } else if (pageInt === pageCount - 1) {
+      // TODO: Navigate to next chapter page 0
+    }
+    // TODO: handle edge case
+  }
+
   render() {
     const { mangaId, chapter, page } = this.props.match.params;
     const { pageCount } = this.state.pageCount;
@@ -78,6 +117,10 @@ class Reader extends Component {
     return (
       <React.Fragment>
         <ReaderOverlay mangaId={mangaId} chapter={chapter} page={page} pageCount={pageCount} />
+        <ReaderNavButtons
+          onPrevPageClick={this.handlePrevPageClick}
+          onNextPageClick={this.handleNextPageClick}
+        />
         <div style={image} />
       </React.Fragment>
     );
