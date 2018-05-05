@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import Router from './routes';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
-import rootReducer from './reduxDucks';
+import rootReducer from './redux-ducks';
 
 const store = createStore(rootReducer);
 
