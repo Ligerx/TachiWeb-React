@@ -1,15 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import CssBaseline from 'material-ui/CssBaseline';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import Router from './routes';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
+import rootReducer from './reduxDucks';
+
+const store = createStore(rootReducer);
 
 ReactDOM.render(
-  <React.Fragment>
+  <Provider store={store}>
     <CssBaseline />
     <Router />
-  </React.Fragment>,
+  </Provider>,
   document.getElementById('root'),
 );
 registerServiceWorker();
