@@ -8,8 +8,6 @@ import Typography from 'material-ui/Typography';
 // chapter.chapter_number plus some basic processing
 // pageCount
 // page (from url params)
-// onClick handler for next and previous chapters
-// onClick handler for scrubbing between pages on the timeline(?)
 const ReaderOverlay = () => {
   const overlay = {
     height: '100%',
