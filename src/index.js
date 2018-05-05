@@ -5,12 +5,13 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import logger from 'redux-logger';
 import Router from './routes';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 import rootReducer from './redux-ducks';
 
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk, logger)));
 
 ReactDOM.render(
   <React.Fragment>
