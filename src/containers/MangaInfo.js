@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import TWApi from 'api';
+import { TWApi } from 'api';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
 import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';

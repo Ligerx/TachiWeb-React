@@ -1,4 +1,11 @@
 // CREATING MY OWN NEW API
+const API = {
+  library() {
+    return '/api/library';
+  },
+};
+
+export default API;
 
 // ///////// OLD API BELOW
 /* eslint-disable */
@@ -233,5 +240,5 @@ const TWApi = {
   },
 }.init();
 
-export default TWApi;
+export { TWApi };
 /* eslint-enable */

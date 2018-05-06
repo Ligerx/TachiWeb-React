@@ -1,3 +1,5 @@
+import API from 'api';
+
 // Actions
 const REQUEST = 'library/LOAD_REQUEST';
 const SUCCESS = 'library/LOAD_SUCCESS';
@@ -30,7 +32,7 @@ export function fetchLibrary() {
   return (dispatch) => {
     dispatch({ type: REQUEST });
 
-    return fetch('/api/library')
+    return fetch(API.library())
       .then(res => res.json(), error => dispatch({ type: FAILURE, payload: error }))
       .then(json => dispatch({ type: SUCCESS, payload: json.content }));
   };

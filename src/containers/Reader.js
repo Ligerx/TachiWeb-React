@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import TWApi from 'api';
+import { TWApi } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
 
