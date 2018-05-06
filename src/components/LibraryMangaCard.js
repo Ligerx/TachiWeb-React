@@ -33,7 +33,7 @@ const LibraryMangaCard = ({ classes, manga }) => (
         badge: manga.unread > 0 ? null : classes.invisibleBadge,
       }}
     >
-      <ButtonBase className={classes.fullWidth} component={Link} to={`/manga_info/${manga.id}`}>
+      <ButtonBase className={classes.fullWidth} component={Link} to={`/${manga.id}`}>
         <MangaCard title={manga.title} thumbnailUrl={manga.thumbnail_url} />
       </ButtonBase>
     </Badge>
