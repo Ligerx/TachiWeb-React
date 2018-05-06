@@ -10,6 +10,9 @@ export default {
     // URL to the manga chapter page's image on the server
     return `/api/img/${mangaId}/${chapterId}/${page}`;
   },
+  toggleFavorite(mangaId, isFavorite) {
+    return `/api/fave/${mangaId}?fave=${!isFavorite}`;
+  },
 };
 
 // ///////// OLD API BELOW
