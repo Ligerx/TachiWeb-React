@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { TWApi } from 'api';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
 import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
+import { CircularProgress } from 'material-ui/Progress';
 
 // NOTES: From the previous code: When you update the server's manga info or chapter list,
 //    you should also update the client when it's complete
@@ -24,59 +24,15 @@ class MangaInfo extends Component {
 
     this.state = {
       tabValue: 0,
-      mangaInfo: {},
-      chapters: [],
     };
 
     this.handleChangeTab = this.handleChangeTab.bind(this);
-    this.handleFavoriteClick = this.handleFavoriteClick.bind(this);
     this.content = this.content.bind(this);
   }
 
   componentDidMount() {
-    const { mangaId } = this.props.match.params;
-
-    // API call 1, get manga info
-    TWApi.Commands.MangaInfo.execute(
-      (res) => {
-        this.setState({ mangaInfo: res.content });
-      },
-      null,
-      { mangaId },
-    );
-
-    // API call 2, get chapter list
-    TWApi.Commands.Chapters.execute(
-      (res) => {
-        this.setState({ chapters: res.content });
-      },
-      null,
-      { mangaId },
-    );
-  }
-
-  handleFavoriteClick() {
-    const { mangaId } = this.props.match.params;
-    const { mangaInfo } = this.state;
-
-    // Testing if object is empty
-    if (Object.keys(mangaInfo).length === 0 && mangaInfo.constructor === Object) {
-      console.error('MangaInfo handleFavoriteClick error, missing mangaInfo object');
-      return;
-    }
-
-    TWApi.Commands.Favorite.execute(
-      () => {
-        this.setState(prevState => ({
-          mangaInfo: {
-            ...prevState.mangaInfo,
-            favorite: !prevState.mangaInfo.favorite,
-          },
-        }));
-      },
-      null,
-      { mangaId, favorite: !mangaInfo.favorite },
-    );
+    this.props.fetchLibrary();
+    this.props.fetchChapters();
   }
 
   handleChangeTab(event, newValue) {
@@ -84,10 +40,11 @@ class MangaInfo extends Component {
   }
 
   content() {
-    const { tabValue, mangaInfo, chapters } = this.state;
+    const { tabValue } = this.state;
+    const { mangaInfo, chapters } = this.props;
 
     if (tabValue === 0) {
-      return <MangaInfoDetails mangaInfo={mangaInfo} onFavoriteClick={this.handleFavoriteClick} />;
+      return <MangaInfoDetails mangaInfo={mangaInfo} />;
     } else if (tabValue === 1) {
       return <SortFilterMangaInfoChapters chapters={chapters} />;
     }
@@ -97,7 +54,16 @@ class MangaInfo extends Component {
   }
 
   render() {
-    const { mangaInfo, tabValue } = this.state;
+    const { tabValue } = this.state;
+    const { mangaInfoIsFetching, mangaInfo } = this.props;
+    const noMangaData = Object.getOwnPropertyNames(mangaInfo).length === 0;
+
+    if (noMangaData) {
+      if (mangaInfoIsFetching) {
+        return <CircularProgress />;
+      }
+      return null;
+    }
 
     return (
       <React.Fragment>

@@ -5,7 +5,7 @@ import MangaCard from 'components/MangaCard';
 import Grid from 'material-ui/Grid';
 import BackgroundImage from 'components/BackgroundImage';
 import { withStyles } from 'material-ui/styles';
-import FavoriteFAB from 'components/FavoriteFAB';
+import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 
 // TODO: make the html a bit more DRY
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
@@ -52,7 +52,7 @@ const MangaInfoDetails = ({ classes, mangaInfo, onFavoriteClick }) => (
         </Grid>
       </ResponsiveGrid>
 
-      <FavoriteFAB favorite={mangaInfo.favorite} onClick={onFavoriteClick} />
+      <FavoriteFABContainer />
     </BackgroundImage>
 
     <ResponsiveGrid className={classes.gridPadding}>
