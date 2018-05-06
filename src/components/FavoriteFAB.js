@@ -7,13 +7,13 @@ import { CircularProgress } from 'material-ui/Progress';
 
 // NOTE: refer to FAB for specific CSS instructions
 
-// TODO: would be nice to have a loading spinner while the server processes a favorite/unfavorite action
+// TODO: Loading spinner flickers because of short delay.
+//       Would be interesting to create a spinner with a small delay before appearing.
+
 const styles = {
   fabProgress: {
     position: 'absolute',
-    top: -6,
-    left: -6,
-    zIndex: 1,
+    animation: 'fadeInFromNone 2.5s ease-out',
   },
 };
 
@@ -23,8 +23,10 @@ const FavoriteFAB = ({
   <React.Fragment>
     <FAB onClick={toggleFavorite}>
       {isFavorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
+      {isTogglingFavorite && (
+        <CircularProgress size={70} color="secondary" className={classes.fabProgress} />
+      )}
     </FAB>
-    {isTogglingFavorite && <CircularProgress size={68} className={classes.fabProgress} />}
   </React.Fragment>
 );
 
