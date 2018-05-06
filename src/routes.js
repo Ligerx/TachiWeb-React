@@ -4,6 +4,8 @@ import LibraryContainer from 'containers/LibraryContainer';
 import MangaInfoContainer from 'containers/MangaInfoContainer';
 import Reader from 'containers/Reader';
 
+// NOTE: All url params are strings. You have to parse them if you want a different type.
+
 const Router = () => (
   <BrowserRouter>
     <Switch>
