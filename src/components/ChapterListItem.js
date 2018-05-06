@@ -5,6 +5,10 @@ import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import classNames from 'classnames';
+import { Client } from 'api';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { chapterType } from 'types';
 
 // TODO: add additional actions such as mark as read/unread.
 // TODO: align the bottom row text? It's a little off horizontally right now.
@@ -27,7 +31,7 @@ const ChapterListItem = ({ classes, chapter }) => {
   const dimIfRead = read => classNames({ [classes.read]: read });
 
   return (
-    <ListItem button divider>
+    <ListItem button divider component={Link} to={Client.page()}>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="subheading" className={dimIfRead(chapter.read)}>
@@ -45,6 +49,11 @@ const ChapterListItem = ({ classes, chapter }) => {
       </Grid>
     </ListItem>
   );
+};
+
+ChapterListItem.propTypes = {
+  classes: PropTypes.object.isRequired,
+  chapter: chapterType.isRequired,
 };
 
 export default withStyles(styles)(ChapterListItem);
