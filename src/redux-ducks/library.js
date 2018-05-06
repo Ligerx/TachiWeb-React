@@ -4,6 +4,7 @@ import { Server } from 'api';
 const REQUEST = 'library/LOAD_REQUEST';
 const SUCCESS = 'library/LOAD_SUCCESS';
 const FAILURE = 'library/LOAD_FAILURE';
+const CACHE = 'library/LOAD_CACHE';
 const TOGGLE_FAVORITE_REQUEST = 'library/TOGGLE_FAVORITE_REQUEST';
 const TOGGLE_FAVORITE_SUCCESS = 'library/TOGGLE_FAVORITE_SUCCESS';
 const TOGGLE_FAVORITE_FAILURE = 'library/TOGGLE_FAVORITE_FAILURE';
@@ -41,6 +42,8 @@ export default function libraryReducer(
       // FIXME: error payload? error boolean? what do.
       console.error(action.payload);
       return { ...state, isFetching: false, error: true };
+    case CACHE:
+      return state;
     case TOGGLE_FAVORITE_REQUEST:
       return { ...state, isTogglingFavorite: true };
     case TOGGLE_FAVORITE_SUCCESS:
@@ -60,14 +63,12 @@ export default function libraryReducer(
 // Action Creators
 export function fetchLibrary() {
   return (dispatch, getState) => {
-    // Return cached data if it's in the store
-    // TODO: make sure this is working
-    // TODO: maybe create an action to show that info was pulled from the cache???
-    if (getState().library.mangaLibrary.length > 0) {
-      return null;
-    }
-
     dispatch({ type: REQUEST });
+
+    // Return cached mangaLibrary if it's in the store
+    if (getState().library.mangaLibrary.length > 0) {
+      return dispatch({ type: CACHE });
+    }
 
     return fetch(Server.library())
       .then(res => res.json(), error => dispatch({ type: FAILURE, payload: error }))
@@ -80,7 +81,9 @@ export function toggleFavorite(mangaId) {
     dispatch({ type: TOGGLE_FAVORITE_REQUEST });
 
     const mangaInfo = getState().library.mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
-    // TODO: error handling, what if manga not found
+    if (!mangaInfo) {
+      return dispatch({ type: TOGGLE_FAVORITE_FAILURE, payload: "Couldn't find manga..." });
+    }
 
     return fetch(Server.toggleFavorite(mangaInfo.id, mangaInfo.favorite)).then(
       () => dispatch({ type: TOGGLE_FAVORITE_SUCCESS, mangaId: mangaInfo.id }),

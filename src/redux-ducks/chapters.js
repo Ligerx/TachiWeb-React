@@ -4,6 +4,7 @@ import { Server } from 'api';
 const REQUEST = 'chapters/LOAD_REQUEST';
 const SUCCESS = 'chapters/LOAD_SUCCESS';
 const FAILURE = 'chapters/LOAD_FAILURE';
+const CACHE = 'chapters/LOAD_CACHE';
 
 // Reducers
 export default function chaptersReducer(
@@ -24,6 +25,8 @@ export default function chaptersReducer(
       };
     case FAILURE:
       return { ...state, isFetching: false, error: true };
+    case CACHE:
+      return state;
     default:
       return state;
   }
@@ -31,20 +34,21 @@ export default function chaptersReducer(
 
 // Action Creators
 export function fetchChapters(mangaId) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch({ type: REQUEST });
+
+    // Return manga's cached chapters if they're already in the store
+    // NOTE: Not checking if the manga's chapters list is empty. (Doing so may possibly cause a bug)
+    if (getState().chapters.chapters[mangaId]) {
+      return dispatch({ type: CACHE });
+    }
 
     return fetch(Server.chapters(mangaId))
       .then(res => res.json(), error => dispatch({ type: FAILURE, payload: error }))
-      .then((json) => {
+      .then(json =>
         // Transform the data for easier use
         // [{ chapter }] becomes -> { mangaId: [{ chapter }] }
-        const chapters = {};
-        json.content.forEach((chapter) => {
-          chapters[chapter.id] = chapter;
-        });
-        return chapters;
-      })
+        ({ [mangaId]: json.content }))
       .then(chapters => dispatch({ type: SUCCESS, payload: chapters }));
   };
 }
