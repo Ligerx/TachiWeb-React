@@ -3,16 +3,14 @@ import { Server, Client, TWApi } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
 
-// TODO: Need to request a change of API. Too many different calls required to do this one thing.
-//    also, I briefly attempted to use all these API calls, but gave up part way through.
-//    Should wait for API to change before trying completing this.
+// TODO: actually be able to transition to the next chapter
+
+// TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
 
 // TODO: eventually create a preloading component?
 //       similar to this - https://github.com/mcarlucci/react-precache-img
 
 // TODO: research if it's possible to cache too many images? If so, how do you clear old images?
-
-// TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
 
 // TODO: FIXME: Browser doesn't seem to be pulling images from cache.
 // Not sure if that's a backend header problem, browser problem, or a local development problem
