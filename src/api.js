@@ -3,6 +3,9 @@ export default {
   library() {
     return '/api/library';
   },
+  chapters(mangaId) {
+    return `/api/chapters/${mangaId}`;
+  },
   image(mangaId, chapterId, page) {
     // URL to the manga chapter page's image on the server
     return `/api/img/${mangaId}/${chapterId}/${page}`;
