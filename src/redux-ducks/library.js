@@ -1,4 +1,4 @@
-import API from 'api';
+import { Server } from 'api';
 
 // Actions
 const REQUEST = 'library/LOAD_REQUEST';
@@ -69,7 +69,7 @@ export function fetchLibrary() {
 
     dispatch({ type: REQUEST });
 
-    return fetch(API.library())
+    return fetch(Server.library())
       .then(res => res.json(), error => dispatch({ type: FAILURE, payload: error }))
       .then(json => dispatch({ type: SUCCESS, payload: json.content }));
   };
@@ -82,7 +82,7 @@ export function toggleFavorite(mangaId) {
     const mangaInfo = getState().library.mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
     // TODO: error handling, what if manga not found
 
-    return fetch(API.toggleFavorite(mangaInfo.id, mangaInfo.favorite)).then(
+    return fetch(Server.toggleFavorite(mangaInfo.id, mangaInfo.favorite)).then(
       () => dispatch({ type: TOGGLE_FAVORITE_SUCCESS, mangaId: mangaInfo.id }),
       () => dispatch({ type: TOGGLE_FAVORITE_FAILURE, payload: 'Failed to toggle favorite' }),
     );

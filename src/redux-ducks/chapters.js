@@ -1,4 +1,4 @@
-import API from 'api';
+import { Server } from 'api';
 
 // Actions
 const REQUEST = 'chapters/LOAD_REQUEST';
@@ -34,7 +34,7 @@ export function fetchChapters(mangaId) {
   return (dispatch) => {
     dispatch({ type: REQUEST });
 
-    return fetch(API.chapters(mangaId))
+    return fetch(Server.chapters(mangaId))
       .then(res => res.json(), error => dispatch({ type: FAILURE, payload: error }))
       .then((json) => {
         // Transform the data for easier use

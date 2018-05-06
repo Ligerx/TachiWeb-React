@@ -1,5 +1,5 @@
 // CREATING MY OWN NEW API
-export default {
+const Server = {
   library() {
     return '/api/library';
   },
@@ -14,6 +14,15 @@ export default {
     return `/api/fave/${mangaId}?fave=${!isFavorite}`;
   },
 };
+export { Server };
+
+const Client = {
+  page(mangaId, chapterId, page) {
+    // URL of the manga page on the client
+    return `/${mangaId}/${chapterId}/${page}`;
+  },
+};
+export { Client };
 
 // ///////// OLD API BELOW
 /* eslint-disable */
