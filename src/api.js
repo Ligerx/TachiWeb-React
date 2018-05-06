@@ -1,11 +1,9 @@
 // CREATING MY OWN NEW API
-const API = {
+export default {
   library() {
     return '/api/library';
   },
 };
-
-export default API;
 
 // ///////// OLD API BELOW
 /* eslint-disable */
