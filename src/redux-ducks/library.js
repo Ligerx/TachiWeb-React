@@ -9,14 +9,14 @@ const FAILURE = 'library/LOAD_FAILURE';
 
 // TODO: remove 'error' flag when error is fixed? Is there a more efficient way to do this?
 export default function libraryReducer(
-  state = { manga: [], isFetching: false, error: false },
+  state = { mangaLibrary: [], isFetching: false, error: false },
   action = {},
 ) {
   switch (action.type) {
     case REQUEST:
       return { ...state, isFetching: true, error: false };
     case SUCCESS:
-      return { ...state, manga: action.payload, isFetching: false };
+      return { ...state, mangaLibrary: action.payload, isFetching: false };
     case FAILURE:
       // Don't over write existing manga in store if an error happens
       // FIXME: error payload? error boolean? what do.
@@ -29,7 +29,12 @@ export default function libraryReducer(
 
 // Action Creators
 export function fetchLibrary() {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    // Return cached data if it's in the store
+    if (getState().library.mangaLibrary.length > 0) {
+      return null;
+    }
+
     dispatch({ type: REQUEST });
 
     return fetch(API.library())

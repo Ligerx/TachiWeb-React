@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
-import Library from 'containers/Library';
 import { fetchLibrary } from 'redux-ducks/library';
+import Library from 'containers/Library';
 
 const mapStateToProps = state => ({
-  mangaLibrary: state.library.manga,
+  mangaLibrary: state.library.mangaLibrary,
 });
 
 const mapDispatchToProps = dispatch => ({
