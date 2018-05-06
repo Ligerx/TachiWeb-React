@@ -7,6 +7,9 @@ const FAILURE = 'chapters/LOAD_FAILURE';
 const CACHE = 'chapters/LOAD_CACHE';
 
 // Reducers
+
+// TODO: right now state is chapters.chapters{ mangaId: [chapter] }, which is confusing.
+//       I'd love to rename chapters.chapters to something that makes more sense.
 export default function chaptersReducer(
   state = { chapters: {}, isFetching: false, error: false },
   action = {},
