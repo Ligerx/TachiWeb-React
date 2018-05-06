@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TWApi } from 'api';
+import API, { TWApi } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
 
@@ -23,14 +23,10 @@ import ReaderNavButtons from 'components/ReaderNavButtons';
 
 // https://tylermcginnis.com/react-router-programmatically-navigate/
 
-// server images
-function imageUrl(mangaId, chapterId, page) {
-  return `/api/img/${mangaId}/${chapterId}/${page}`;
-}
-
+// TODO: move pageUrl() into some kind of API? Maybe part of API designated frontend only???
 // pages in the browser
 function pageUrl(mangaId, chapterId, page) {
-  return `/reader/${mangaId}/${chapterId}/${page}`;
+  return `/${mangaId}/${chapterId}/${page}`;
 }
 
 class Reader extends Component {
@@ -83,7 +79,7 @@ class Reader extends Component {
       if (parseInt(pageInt, 10) + i < pageCount) {
         // Chrome would only preload if a new image object was used every time
         const image = new Image();
-        image.src = imageUrl(mangaId, chapterId, pageInt + i);
+        image.src = API.image(mangaId, chapterId, pageInt + i);
       }
     }
   }
@@ -112,7 +108,7 @@ class Reader extends Component {
 
     const image = {
       height: '100%',
-      backgroundImage: `url(${imageUrl(mangaId, chapterId, page)})`,
+      backgroundImage: `url(${API.image(mangaId, chapterId, page)})`,
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center top',
       backgroundSize: 'contain',
