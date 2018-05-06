@@ -1,5 +1,3 @@
-import TWApi from 'api';
-
 // Actions
 const REQUEST = 'library/LOAD_REQUEST';
 const SUCCESS = 'library/LOAD_SUCCESS';
@@ -32,16 +30,8 @@ export function fetchLibrary() {
   return (dispatch) => {
     dispatch({ type: REQUEST });
 
-    TWApi.Commands.Library.execute(
-      (res) => {
-        // On Success
-        dispatch({ type: SUCCESS, payload: res.content });
-      },
-      (res) => {
-        // On Failure
-        // TODO: not sure what actually gets returned here
-        dispatch({ type: FAILURE, payload: res });
-      },
-    );
+    return fetch('/api/library')
+      .then(res => res.json(), error => dispatch({ type: FAILURE, payload: error }))
+      .then(json => dispatch({ type: SUCCESS, payload: json.content }));
   };
 }

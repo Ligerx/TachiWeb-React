@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import Library from 'containers/Library';
+import LibraryContainer from 'containers/LibraryContainer';
 import MangaInfo from 'containers/MangaInfo';
 import Reader from 'containers/Reader';
 
@@ -12,8 +12,8 @@ import Reader from 'containers/Reader';
 const Router = () => (
   <BrowserRouter>
     <Switch>
-      <Route exact path="/" component={Library} />
-      <Route path="/library" component={Library} />
+      <Route exact path="/" component={LibraryContainer} />
+      <Route path="/library" component={LibraryContainer} />
       <Route path="/manga_info/:mangaId" component={MangaInfo} />
       <Route path="/reader/:mangaId/:chapterId/:page" component={Reader} />
     </Switch>

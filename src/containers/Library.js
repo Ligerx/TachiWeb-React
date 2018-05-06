@@ -1,25 +1,14 @@
 import React, { Component } from 'react';
 import LibraryHeader from 'components/LibraryHeader';
 import MangaGrid from 'components/MangaGrid';
-import TWApi from 'api';
 
 class Library extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      mangaLibrary: [],
-    };
-  }
-
   componentDidMount() {
-    TWApi.Commands.Library.execute((res) => {
-      this.setState({ mangaLibrary: res.content });
-    });
+    this.props.fetchLibrary();
   }
 
   render() {
-    const { mangaLibrary } = this.state;
+    const { mangaLibrary } = this.props;
 
     return (
       <React.Fragment>
