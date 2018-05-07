@@ -25,7 +25,7 @@ class MangaInfo extends Component {
     super(props);
 
     this.state = {
-      tabValue: 0,
+      tabValue: 1,
     };
 
     this.handleChangeTab = this.handleChangeTab.bind(this);
