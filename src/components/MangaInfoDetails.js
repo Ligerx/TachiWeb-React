@@ -6,11 +6,11 @@ import Grid from 'material-ui/Grid';
 import BackgroundImage from 'components/BackgroundImage';
 import { withStyles } from 'material-ui/styles';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';
+import { mangaType } from 'types';
+import PropTypes from 'prop-types';
 
 // TODO: make the html a bit more DRY
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
-// TODO: I think the FAB is positioning based on the full screen width, not the inside of the responsive grid.
-//     however, because of the responsive grid's padding, it makes positioning weird
 
 const styles = () => ({
   gridPadding: {
@@ -21,7 +21,7 @@ const styles = () => ({
   },
 });
 
-const MangaInfoDetails = ({ classes, mangaInfo, onFavoriteClick }) => (
+const MangaInfoDetails = ({ classes, mangaInfo }) => (
   <React.Fragment>
     <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url} className={classes.fabParent}>
       <ResponsiveGrid className={classes.gridPadding}>
@@ -63,5 +63,10 @@ const MangaInfoDetails = ({ classes, mangaInfo, onFavoriteClick }) => (
     </ResponsiveGrid>
   </React.Fragment>
 );
+
+MangaInfoDetails.propTypes = {
+  classes: PropTypes.object.isRequired,
+  mangaInfo: mangaType.isRequired,
+};
 
 export default withStyles(styles)(MangaInfoDetails);
