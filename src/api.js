@@ -17,6 +17,9 @@ const Server = {
 export { Server };
 
 const Client = {
+  manga(mangaId) {
+    return `/${mangaId}`;
+  },
   page(mangaId, chapterId, page) {
     // URL of the manga page on the client
     return `/${mangaId}/${chapterId}/${page}`;

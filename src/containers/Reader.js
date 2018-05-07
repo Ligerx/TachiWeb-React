@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Server, Client, TWApi } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
+import { mangaType, chapterType } from 'types';
+import PropTypes from 'prop-types';
 
 // TODO: actually be able to transition to the next chapter
 
@@ -39,6 +41,8 @@ class Reader extends Component {
   }
 
   componentDidMount() {
+    this.props.fetchLibrary();
+    this.props.fetchChapters();
     this.fetchPageCount(this.preloadImages);
   }
 
@@ -98,12 +102,21 @@ class Reader extends Component {
   }
 
   render() {
-    const { mangaId, chapterId, page } = this.props.match.params;
-    const { pageCount } = this.state.pageCount;
+    const { page } = this.props.match.params;
+    const { pageCount } = this.state;
+    const {
+      mangaInfo, chapters, chapter, mangaInfoIsFetching
+    } = this.props;
 
+    if (!mangaInfo || !chapters.length || !chapter) {
+      // TODO: use loading spinner in the cases where that's relevant
+      return null;
+    }
+
+    // Move backgroundImage into element styles, move everything else out into withStyles
     const image = {
       height: '100%',
-      backgroundImage: `url(${Server.image(mangaId, chapterId, page)})`,
+      backgroundImage: `url(${Server.image(mangaInfo.id, chapter.id, page)})`,
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center top',
       backgroundSize: 'contain',
@@ -111,7 +124,12 @@ class Reader extends Component {
 
     return (
       <React.Fragment>
-        <ReaderOverlay mangaId={mangaId} chapterId={chapterId} page={page} pageCount={pageCount} />
+        <ReaderOverlay
+          title={mangaInfo.title}
+          chapterNum={chapter.chapter_number}
+          pageCount={pageCount}
+          mangaId={mangaInfo.id}
+        />
         <ReaderNavButtons
           onPrevPageClick={this.handlePrevPageClick}
           onNextPageClick={this.handleNextPageClick}
@@ -121,5 +139,20 @@ class Reader extends Component {
     );
   }
 }
+
+Reader.propTypes = {
+  mangaInfo: mangaType,
+  chapters: PropTypes.arrayOf(chapterType),
+  chapter: chapterType,
+  mangaInfoIsFetching: PropTypes.bool.isRequired,
+  fetchLibrary: PropTypes.func.isRequired,
+  fetchChapters: PropTypes.func.isRequired,
+};
+
+Reader.defaultProps = {
+  mangaInfo: null,
+  chapters: [],
+  chapter: null,
+};
 
 export default Reader;
