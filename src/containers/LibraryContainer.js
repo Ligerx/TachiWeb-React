@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { fetchLibrary } from 'redux-ducks/library';
-import Library from 'containers/Library';
+import Library from 'pages/Library';
 
 // mangaLibrary - it's possible to have manga stored but not favorited. So filter that out.
 //                e.g. unfavoriting something

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { fetchLibrary } from 'redux-ducks/library';
 import { fetchChapters } from 'redux-ducks/chapters';
-import MangaInfo from 'containers/MangaInfo';
+import MangaInfo from 'pages/MangaInfo';
 
 const getThisManga = (mangaLibrary, mangaId) =>
   mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
