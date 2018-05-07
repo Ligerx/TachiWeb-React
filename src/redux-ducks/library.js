@@ -9,17 +9,6 @@ const TOGGLE_FAVORITE_REQUEST = 'library/TOGGLE_FAVORITE_REQUEST';
 const TOGGLE_FAVORITE_SUCCESS = 'library/TOGGLE_FAVORITE_SUCCESS';
 const TOGGLE_FAVORITE_FAILURE = 'library/TOGGLE_FAVORITE_FAILURE';
 
-// Helper functions
-// Clone the mangaLibrary and toggle the one manga's favorite status
-function toggleFavoriteInLibrary(mangaLibrary, mangaId) {
-  return mangaLibrary.map((manga) => {
-    if (manga.id === mangaId) {
-      return { ...manga, favorite: !manga.favorite };
-    }
-    return { ...manga };
-  });
-}
-
 // Reducers
 
 // TODO: remove 'error' flag when error is fixed? Is there a more efficient way to do this?
@@ -90,4 +79,15 @@ export function toggleFavorite(mangaId) {
       () => dispatch({ type: TOGGLE_FAVORITE_FAILURE, payload: 'Failed to toggle favorite' }),
     );
   };
+}
+
+// Helper functions
+// Clone the mangaLibrary and toggle the one manga's favorite status
+function toggleFavoriteInLibrary(mangaLibrary, mangaId) {
+  return mangaLibrary.map((manga) => {
+    if (manga.id === mangaId) {
+      return { ...manga, favorite: !manga.favorite };
+    }
+    return { ...manga };
+  });
 }
