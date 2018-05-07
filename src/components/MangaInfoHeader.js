@@ -7,7 +7,7 @@ import IconButton from 'material-ui/IconButton';
 import RefreshButton from 'components/RefreshButton';
 import MangaInfoTabs from 'components/MangaInfoTabs';
 import { Link } from 'react-router-dom';
-import { mangaType, chapterType } from 'types';
+import { mangaType } from 'types';
 import PropTypes from 'prop-types';
 
 const MangaInfoHeader = ({ mangaInfo, tabValue, handleChangeTab }) => (
