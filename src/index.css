@@ -9,3 +9,14 @@ body,
 #root {
   height: 100%;
 }
+
+/* FIXME: Refer to PageSlider.
+          ReaderOverlay has a z-index, which is interfering with the tooltip.
+          Ideally, this CSS wouldn't be necessary
+*/
+.rc-tooltip {
+  z-index: 1500;
+}
+.rc-slider-tooltip {
+  z-index: 1500;
+}
