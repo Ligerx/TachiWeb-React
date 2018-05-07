@@ -6,19 +6,24 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Client } from 'api';
 import { withStyles } from 'material-ui/styles';
+import IconButton from 'material-ui/IconButton';
+import Icon from 'material-ui/Icon';
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
 
 // need whiteSpace: 'pre' so it doesn't wrap. rc-slider's width was forcing them to be too small
-const margin = 24;
+const marginSlider = 24;
+const marginButton = 8;
 const styles = {
   leftText: {
     whiteSpace: 'pre',
-    marginRight: margin,
+    marginLeft: marginButton,
+    marginRight: marginSlider,
   },
   rightText: {
     whiteSpace: 'pre',
-    marginLeft: margin,
+    marginLeft: marginSlider,
+    marginRight: marginButton,
   },
 };
 
@@ -28,6 +33,8 @@ const styles = {
 // FIXME: I added some CSS to index.css
 //        ReaderOverlay has a z-index, which is interfering with the tooltip.
 //        Ideally, this CSS wouldn't be necessary
+
+// TODO: implement next/previous chapter button functionality
 
 class PageSlider extends Component {
   static getDerivedStateFromProps(nextProps) {
@@ -65,6 +72,9 @@ class PageSlider extends Component {
 
     return (
       <React.Fragment>
+        <IconButton>
+          <Icon>skip_previous</Icon>
+        </IconButton>
         <Typography className={this.props.classes.leftText}>{`Page ${currentPage}`}</Typography>
         <SliderWithTooltip
           min={1}
@@ -74,6 +84,9 @@ class PageSlider extends Component {
           onAfterChange={this.changePage}
         />
         <Typography className={this.props.classes.rightText}>{pageCount}</Typography>
+        <IconButton>
+          <Icon>skip_next</Icon>
+        </IconButton>
       </React.Fragment>
     );
   }
