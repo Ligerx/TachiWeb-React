@@ -5,6 +5,9 @@ import ReaderNavButtons from 'components/ReaderNavButtons';
 
 // TODO: actually be able to transition to the next chapter
 
+// TODO: in the Url, page # is 0 index. Change it to 1 index for readability.
+//       you'll also have to change the linking in API and possibly other places.
+
 // TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
 
 // TODO: eventually create a preloading component?
@@ -87,7 +90,7 @@ class Reader extends Component {
     const pageInt = parseInt(page, 10);
 
     if (pageInt < pageCount - 1) {
-      this.props.history.push(Client.pageUrl(mangaId, chapterId, pageInt + 1));
+      this.props.history.push(Client.page(mangaId, chapterId, pageInt + 1));
     } else if (pageInt === pageCount - 1) {
       // TODO: Navigate to next chapter page 0
     }

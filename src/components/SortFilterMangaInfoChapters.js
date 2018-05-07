@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { chapterType, mangaType } from 'types';
 import MangaInfoChapters from './MangaInfoChapters';
 
 // TODO: create buttons in the header to let you select sorts and filters
@@ -25,13 +27,15 @@ const FILTERS = {
     }),
 };
 
-class SortFilterMangaInfoChapters extends Component {
-  render() {
-    const { chapters } = this.props;
-    const sortedChapters = SORTS.DEFAULT(chapters);
+const SortFilterMangaInfoChapters = ({ mangaInfo, chapters }) => {
+  const sortedChapters = SORTS.DEFAULT(chapters);
 
-    return <MangaInfoChapters chapters={sortedChapters} />;
-  }
-}
+  return <MangaInfoChapters mangaInfo={mangaInfo} chapters={sortedChapters} />;
+};
+
+SortFilterMangaInfoChapters.propTypes = {
+  mangaInfo: mangaType.isRequired,
+  chapters: PropTypes.arrayOf(chapterType).isRequired,
+};
 
 export default SortFilterMangaInfoChapters;

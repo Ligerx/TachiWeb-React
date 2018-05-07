@@ -3,6 +3,8 @@ import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
 import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
 import { CircularProgress } from 'material-ui/Progress';
+import { mangaType, chapterType } from 'types';
+import PropTypes from 'prop-types';
 
 // NOTES: From the previous code: When you update the server's manga info or chapter list,
 //    you should also update the client when it's complete
@@ -46,7 +48,7 @@ class MangaInfo extends Component {
     if (tabValue === 0) {
       return <MangaInfoDetails mangaInfo={mangaInfo} />;
     } else if (tabValue === 1) {
-      return <SortFilterMangaInfoChapters chapters={chapters} />;
+      return <SortFilterMangaInfoChapters mangaInfo={mangaInfo} chapters={chapters} />;
     }
 
     console.log('MangaInfo content() error');
@@ -56,7 +58,7 @@ class MangaInfo extends Component {
   render() {
     const { tabValue } = this.state;
     const { mangaInfoIsFetching, mangaInfo } = this.props;
-    const noMangaData = Object.getOwnPropertyNames(mangaInfo).length === 0;
+    const noMangaData = !mangaInfo || Object.getOwnPropertyNames(mangaInfo).length === 0;
 
     if (noMangaData) {
       if (mangaInfoIsFetching) {
@@ -77,5 +79,20 @@ class MangaInfo extends Component {
     );
   }
 }
+
+// When data hasn't loaded yet, mangaInfo and chapters can be non-existant.
+// That causes react to complain about propTypes, so set default values here.
+MangaInfo.propTypes = {
+  mangaInfo: mangaType,
+  chapters: PropTypes.arrayOf(chapterType),
+  mangaInfoIsFetching: PropTypes.bool.isRequired,
+  fetchLibrary: PropTypes.func.isRequired,
+  fetchChapters: PropTypes.func.isRequired,
+};
+
+MangaInfo.defaultProps = {
+  mangaInfo: null,
+  chapters: [],
+};
 
 export default MangaInfo;

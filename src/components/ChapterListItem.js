@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { Client } from 'api';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { chapterType } from 'types';
+import { chapterType, mangaType } from 'types';
 
 // TODO: add additional actions such as mark as read/unread.
 // TODO: align the bottom row text? It's a little off horizontally right now.
@@ -27,11 +27,12 @@ const chapterText = (read, last_page_read) => {
   return text;
 };
 
-const ChapterListItem = ({ classes, chapter }) => {
+const ChapterListItem = ({ classes, mangaInfo, chapter }) => {
   const dimIfRead = read => classNames({ [classes.read]: read });
+  const goToPage = chapter.read ? 0 : chapter.last_page_read;
 
   return (
-    <ListItem button divider component={Link} to={Client.page()}>
+    <ListItem button divider component={Link} to={Client.page(mangaInfo.id, chapter.id, goToPage)}>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="subheading" className={dimIfRead(chapter.read)}>
@@ -53,6 +54,7 @@ const ChapterListItem = ({ classes, chapter }) => {
 
 ChapterListItem.propTypes = {
   classes: PropTypes.object.isRequired,
+  mangaInfo: mangaType.isRequired,
   chapter: chapterType.isRequired,
 };
 

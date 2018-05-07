@@ -4,7 +4,7 @@ import { fetchChapters } from 'redux-ducks/chapters';
 import MangaInfo from 'containers/MangaInfo';
 
 const getThisManga = (mangaLibrary, mangaId) =>
-  mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10)) || {};
+  mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
 
 const mapStateToProps = (state, ownProps) => {
   const { library } = state;
