@@ -26,6 +26,10 @@ function chapterNumFormatter(chapterNum) {
 }
 
 // TODO: move these styles out to a withStyles wrapper
+// TODO: using two toolbars currently, but it might be too big. Consider changing/customizing later.
+// NOTE: Material-UI v1 hasn't ported a slider component yet, so use an external library.
+//       When it is added to Material-UI, use that instead.
+//       https://github.com/mui-org/material-ui/issues/4793
 const ReaderOverlay = ({
   title, chapterNum, pageCount, mangaId, match,
 }) => {
@@ -47,12 +51,15 @@ const ReaderOverlay = ({
           </Typography>
           <Typography variant="subheading"> Chapter {chapterNumFormatter(chapterNum)}</Typography>
         </Toolbar>
+        <Toolbar>
+          <Typography>
+            Page {parseInt(match.params.page, 10) + 1} / {pageCount}
+          </Typography>
+        </Toolbar>
       </AppBar>
     </div>
   );
 };
-
-// Page {parseInt(match.params.page, 10) + 1} / {pageCount}
 
 ReaderOverlay.propTypes = {
   title: PropTypes.string.isRequired,
