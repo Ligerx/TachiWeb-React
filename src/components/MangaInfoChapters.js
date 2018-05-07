@@ -11,6 +11,9 @@ import { chapterType, mangaType } from 'types';
 // TODO: update <ResponsiveGrid> so the list can be a lot tighter width
 // TODO: parent component, sort (and filter?) chapters. Currently they're in reverse order.
 
+// TODO: maybe paginate the list?
+//       e.g. only show 10 chapters, then have a button underneath to show all
+
 const styles = () => ({
   list: {
     paddingTop: 0,
