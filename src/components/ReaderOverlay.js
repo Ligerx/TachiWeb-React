@@ -25,11 +25,11 @@ function chapterNumFormatter(chapterNum) {
   return chapterNum.toFixed(1);
 }
 
+// TODO: move these styles out to a withStyles wrapper
 const ReaderOverlay = ({
   title, chapterNum, pageCount, mangaId, match,
 }) => {
   const overlay = {
-    height: '100%',
     width: '100%',
     position: 'absolute',
     zIndex: 1,
@@ -42,14 +42,17 @@ const ReaderOverlay = ({
           <IconButton component={Link} to={Client.manga(mangaId)}>
             <Icon>arrow_back</Icon>
           </IconButton>
-          <Typography variant="title">{title}</Typography>
+          <Typography variant="title" style={{ flex: 1 }}>
+            {title}
+          </Typography>
           <Typography variant="subheading"> Chapter {chapterNumFormatter(chapterNum)}</Typography>
-          Page {parseInt(match.params.page, 10) + 1} / {pageCount}
         </Toolbar>
       </AppBar>
     </div>
   );
 };
+
+// Page {parseInt(match.params.page, 10) + 1} / {pageCount}
 
 ReaderOverlay.propTypes = {
   title: PropTypes.string.isRequired,
