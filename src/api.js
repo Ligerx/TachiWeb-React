@@ -3,13 +3,20 @@ const Server = {
   library() {
     return '/api/library';
   },
+
   chapters(mangaId) {
     return `/api/chapters/${mangaId}`;
   },
+
+  pageCount(mangaId, chapterId) {
+    return `/api/page_count/${mangaId}/${chapterId}`;
+  },
+
   image(mangaId, chapterId, page) {
     // URL to the manga chapter page's image on the server
     return `/api/img/${mangaId}/${chapterId}/${page}`;
   },
+
   toggleFavorite(mangaId, isFavorite) {
     return `/api/fave/${mangaId}?fave=${!isFavorite}`;
   },
@@ -20,6 +27,7 @@ const Client = {
   manga(mangaId) {
     return `/${mangaId}`;
   },
+
   page(mangaId, chapterId, page) {
     // URL of the manga page on the client
     return `/${mangaId}/${chapterId}/${page}`;
