@@ -61,8 +61,7 @@ class Reader extends Component {
   preloadImages() {
     // https://www.photo-mark.com/notes/image-preloading/
     // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-    const { mangaId, chapterId, page } = this.props.match.params;
-    const { pageCount } = this.props;
+    const { mangaInfo, chapter, pageCount, page } = this.props;
     const pageInt = parseInt(page, 10); // params are always strings, string -> int
     const numPreload = 3; // Currently preloading 3 images ahead
 
@@ -70,7 +69,7 @@ class Reader extends Component {
       if (parseInt(pageInt, 10) + i < pageCount) {
         // Chrome would only preload if a new image object was used every time
         const image = new Image();
-        image.src = Server.image(mangaId, chapterId, pageInt + i);
+        image.src = Server.image(mangaInfo.id, chapter.id, pageInt + i);
       }
     }
   }
@@ -81,12 +80,11 @@ class Reader extends Component {
   }
 
   handleNextPageClick() {
-    const { mangaId, chapterId, page } = this.props.match.params;
-    const { pageCount } = this.props;
+    const { mangaInfo, chapter, pageCount, page } = this.props;
     const pageInt = parseInt(page, 10);
 
     if (pageInt < pageCount - 1) {
-      this.props.history.push(Client.page(mangaId, chapterId, pageInt + 1));
+      this.props.history.push(Client.page(mangaInfo.id, chapter.id, pageInt + 1));
     } else if (pageInt === pageCount - 1) {
       // TODO: Navigate to next chapter page 0
     }
@@ -95,9 +93,8 @@ class Reader extends Component {
 
   render() {
     const {
-      mangaInfo, chapters, chapter, mangaInfoIsFetching, pageCount, classes,
+      mangaInfo, chapters, chapter, mangaInfoIsFetching, pageCount, page, classes,
     } = this.props;
-    const { page } = this.props.match.params;
 
     if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
       // TODO: use loading spinner in the cases where that's relevant
@@ -108,7 +105,6 @@ class Reader extends Component {
       backgroundImage: `url(${Server.image(mangaInfo.id, chapter.id, page)})`,
     };
 
-    
     return (
       <React.Fragment>
         <ReaderOverlay
@@ -136,11 +132,16 @@ Reader.propTypes = {
   chapter: chapterType,
   mangaInfoIsFetching: PropTypes.bool.isRequired,
   pageCount: PropTypes.number,
+  page: PropTypes.number.isRequired,
   fetchLibrary: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   fetchPageCount: PropTypes.func.isRequired,
   // Classes is the injected styles
   classes: PropTypes.object.isRequired,
+  // Below are react-router props
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 Reader.defaultProps = {

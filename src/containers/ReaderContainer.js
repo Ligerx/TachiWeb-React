@@ -6,12 +6,6 @@ import Reader from 'pages/Reader';
 
 // Currently this is mostly a copy paste from MangaInfoContainer
 
-const getThisManga = (mangaLibrary, mangaId) =>
-  mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
-
-const findChapter = (chapters, chapterId) =>
-  chapters.find(chapter => chapter.id === parseInt(chapterId, 10));
-
 const mapStateToProps = (state, ownProps) => {
   const { library } = state;
   const { chapters } = state.chapters;
@@ -24,6 +18,7 @@ const mapStateToProps = (state, ownProps) => {
     chapter: chapters[mangaId] ? findChapter(chapters[mangaId], chapterId) : null,
     mangaInfoIsFetching: library.isFetching,
     pageCount: pageCountsByMangaId[mangaId] ? pageCountsByMangaId[mangaId][chapterId] : null,
+    page: parseInt(ownProps.match.params.page, 10),
   };
 };
 
@@ -36,5 +31,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     fetchPageCount: () => dispatch(fetchPageCount(mangaId, chapterId)),
   };
 };
+
+// Helper functions
+function getThisManga(mangaLibrary, mangaId) {
+  return mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
+}
+
+function findChapter(chapters, chapterId) {
+  return chapters.find(chapter => chapter.id === parseInt(chapterId, 10));
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Reader);
