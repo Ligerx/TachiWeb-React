@@ -13,10 +13,13 @@ body,
 /* FIXME: Refer to PageSlider.
           ReaderOverlay has a z-index, which is interfering with the tooltip.
           Ideally, this CSS wouldn't be necessary
+
+          https://github.com/react-component/slider/issues/143
+          https://github.com/react-component/slider/issues/276
 */
 .rc-tooltip {
-  z-index: 1500;
+  z-index: 2;
 }
 .rc-slider-tooltip {
-  z-index: 1500;
+  z-index: 2;
 }
