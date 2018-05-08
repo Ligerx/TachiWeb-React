@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Server, Client, TWApi } from 'api';
+import { Server, Client } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
 import { mangaType, chapterType } from 'types';
@@ -43,11 +43,6 @@ class Reader extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      pageCount: 0,
-    };
-
-    this.fetchPageCount = this.fetchPageCount.bind(this);
     this.preloadImages = this.preloadImages.bind(this);
     this.handlePrevPageClick = this.handlePrevPageClick.bind(this);
     this.handleNextPageClick = this.handleNextPageClick.bind(this);
@@ -56,34 +51,18 @@ class Reader extends Component {
   componentDidMount() {
     this.props.fetchLibrary();
     this.props.fetchChapters();
-    this.fetchPageCount(this.preloadImages);
+    this.props.fetchPageCount();
   }
 
   componentDidUpdate() {
     this.preloadImages();
   }
 
-  fetchPageCount(callback) {
-    const { mangaId, chapterId } = this.props.match.params;
-
-    TWApi.Commands.PageCount.execute(
-      (res) => {
-        if (callback) {
-          this.setState({ pageCount: res.page_count }, callback);
-        } else {
-          this.setState({ pageCount: res.page_count });
-        }
-      },
-      null,
-      { mangaId, chapterId },
-    );
-  }
-
   preloadImages() {
     // https://www.photo-mark.com/notes/image-preloading/
     // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
     const { mangaId, chapterId, page } = this.props.match.params;
-    const { pageCount } = this.state;
+    const { pageCount } = this.props;
     const pageInt = parseInt(page, 10); // params are always strings, string -> int
     const numPreload = 3; // Currently preloading 3 images ahead
 
@@ -103,7 +82,7 @@ class Reader extends Component {
 
   handleNextPageClick() {
     const { mangaId, chapterId, page } = this.props.match.params;
-    const { pageCount } = this.state;
+    const { pageCount } = this.props;
     const pageInt = parseInt(page, 10);
 
     if (pageInt < pageCount - 1) {
@@ -115,9 +94,8 @@ class Reader extends Component {
   }
 
   render() {
-    const { pageCount } = this.state;
     const {
-      mangaInfo, chapters, chapter, mangaInfoIsFetching, classes,
+      mangaInfo, chapters, chapter, mangaInfoIsFetching, pageCount, classes,
     } = this.props;
     const { page } = this.props.match.params;
 
@@ -130,6 +108,7 @@ class Reader extends Component {
       backgroundImage: `url(${Server.image(mangaInfo.id, chapter.id, page)})`,
     };
 
+    
     return (
       <React.Fragment>
         <ReaderOverlay
@@ -156,8 +135,10 @@ Reader.propTypes = {
   chapters: PropTypes.arrayOf(chapterType),
   chapter: chapterType,
   mangaInfoIsFetching: PropTypes.bool.isRequired,
+  pageCount: PropTypes.number,
   fetchLibrary: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
+  fetchPageCount: PropTypes.func.isRequired,
   // Classes is the injected styles
   classes: PropTypes.object.isRequired,
 };
@@ -166,6 +147,7 @@ Reader.defaultProps = {
   mangaInfo: null,
   chapters: [],
   chapter: null,
+  pageCount: 0,
 };
 
 export default withStyles(styles)(Reader);

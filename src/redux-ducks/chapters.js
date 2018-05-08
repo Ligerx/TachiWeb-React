@@ -10,6 +10,9 @@ const CACHE = 'chapters/LOAD_CACHE';
 
 // TODO: right now state is chapters.chapters{ mangaId: [chapter] }, which is confusing.
 //       I'd love to rename chapters.chapters to something that makes more sense.
+//
+//       Update: call it chapters.chaptersByManga
+//       chaptersByMangaId: { mangaId: [ chapter ] }
 export default function chaptersReducer(
   state = { chapters: {}, isFetching: false, error: false },
   action = {},
@@ -49,8 +52,7 @@ export function fetchChapters(mangaId) {
     return fetch(Server.chapters(mangaId))
       .then(res => res.json(), error => dispatch({ type: FAILURE, payload: error }))
       .then(json =>
-        // Transform the data for easier use
-        // [{ chapter }] becomes -> { mangaId: [{ chapter }] }
+        // Transform the data for easier use + does not rely on other data in the store
         ({ [mangaId]: json.content }))
       .then(chapters => dispatch({ type: SUCCESS, payload: chapters }));
   };
