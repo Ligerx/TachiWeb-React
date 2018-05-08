@@ -4,6 +4,7 @@ import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 
 // TODO: actually be able to transition to the next chapter
 
@@ -25,6 +26,16 @@ import PropTypes from 'prop-types';
 // TODO: preload pages from the next chapter
 
 // https://tylermcginnis.com/react-router-programmatically-navigate/
+
+const styles = {
+  // Need to set the backgroundImage url as well
+  mangaImage: {
+    height: '100%',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center top',
+    backgroundSize: 'contain',
+  },
+};
 
 class Reader extends Component {
   constructor(props) {
@@ -102,24 +113,19 @@ class Reader extends Component {
   }
 
   render() {
-    const { page } = this.props.match.params;
     const { pageCount } = this.state;
     const {
-      mangaInfo, chapters, chapter, mangaInfoIsFetching
+      mangaInfo, chapters, chapter, mangaInfoIsFetching, classes,
     } = this.props;
+    const { page } = this.props.match.params;
 
-    if (!mangaInfo || !chapters.length || !chapter) {
+    if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
       // TODO: use loading spinner in the cases where that's relevant
       return null;
     }
 
-    // Move backgroundImage into element styles, move everything else out into withStyles
-    const image = {
-      height: '100%',
+    const backgroundImageStyle = {
       backgroundImage: `url(${Server.image(mangaInfo.id, chapter.id, page)})`,
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center top',
-      backgroundSize: 'contain',
     };
 
     return (
@@ -134,7 +140,10 @@ class Reader extends Component {
           onPrevPageClick={this.handlePrevPageClick}
           onNextPageClick={this.handleNextPageClick}
         />
-        <div style={image} />
+        <div
+          className={classes.mangaImage}
+          style={backgroundImageStyle}
+        />
       </React.Fragment>
     );
   }
@@ -147,6 +156,8 @@ Reader.propTypes = {
   mangaInfoIsFetching: PropTypes.bool.isRequired,
   fetchLibrary: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
+  // Classes is the injected styles
+  classes: PropTypes.object.isRequired,
 };
 
 Reader.defaultProps = {
@@ -155,4 +166,4 @@ Reader.defaultProps = {
   chapter: null,
 };
 
-export default Reader;
+export default withStyles(styles)(Reader);
