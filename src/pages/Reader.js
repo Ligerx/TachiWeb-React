@@ -25,6 +25,8 @@ import { withStyles } from 'material-ui/styles';
 
 // TODO: preload pages from the next chapter
 
+// TODO: allow keyboard commands for reading
+
 // https://tylermcginnis.com/react-router-programmatically-navigate/
 
 const styles = {

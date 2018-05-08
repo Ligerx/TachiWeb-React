@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { fetchLibrary } from 'redux-ducks/library';
 import { fetchChapters } from 'redux-ducks/chapters';
-import Reader from 'containers/Reader';
+import Reader from 'pages/Reader';
 
 // Currently this is mostly a copy paste from MangaInfoContainer
 
