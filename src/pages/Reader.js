@@ -27,6 +27,9 @@ import PageSlider from 'components/PageSlider';
 // TODO: just realized that when you finish chapters (or mark as unread),
 //       I need to keep the chapters data up to date or the Library's unread chapters will be stale
 
+// FIXME: For some reason, loading a Reader page send out a bazillion requests. Refer to
+//        the redux actions. It's not breaking anything, but I want to fix this.
+
 // https://tylermcginnis.com/react-router-programmatically-navigate/
 
 const styles = {
