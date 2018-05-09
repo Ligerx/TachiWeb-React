@@ -8,6 +8,9 @@ const CACHE = 'library/LOAD_CACHE';
 const TOGGLE_FAVORITE_REQUEST = 'library/TOGGLE_FAVORITE_REQUEST';
 const TOGGLE_FAVORITE_SUCCESS = 'library/TOGGLE_FAVORITE_SUCCESS';
 const TOGGLE_FAVORITE_FAILURE = 'library/TOGGLE_FAVORITE_FAILURE';
+const ADD_MANGA = 'library/ADD_MANGA';
+
+export { ADD_MANGA }; // Allow other reducers to use this action
 
 // Reducers
 
@@ -44,6 +47,14 @@ export default function libraryReducer(
     case TOGGLE_FAVORITE_FAILURE:
       console.error(action.payload);
       return { ...state, isTogglingFavorite: false, error: true };
+    case ADD_MANGA:
+      return {
+        ...state,
+        mangaLibrary: {
+          ...state.mangaLibrary,
+          ...action.newManga,
+        },
+      };
     default:
       return state;
   }

@@ -20,6 +20,17 @@ const Server = {
   toggleFavorite(mangaId, isFavorite) {
     return `/api/fave/${mangaId}?fave=${!isFavorite}`;
   },
+
+  catalogue() {
+    // NOTE: This should be a POST request with the following body params
+    // {
+    //   "sourceId": number,
+    //   "page": number,
+    //   "query": string or null,
+    //   "filters": big-complicated-array or null
+    // }
+    return '/api/catalogue';
+  },
 };
 export { Server };
 
