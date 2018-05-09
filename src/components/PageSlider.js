@@ -3,7 +3,7 @@ import Typography from 'material-ui/Typography';
 import 'rc-slider/assets/index.css';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { Client } from 'api';
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
@@ -66,12 +66,18 @@ class PageSlider extends Component {
   }
 
   render() {
-    const { pageCount, page } = this.props;
+    const {
+      mangaId, pageCount, page, prevChapterId, nextChapterId,
+    } = this.props;
     const { sliderValue } = this.state;
 
     return (
       <React.Fragment>
-        <IconButton>
+        <IconButton
+          component={Link}
+          to={Client.page(mangaId, prevChapterId, 0)}
+          disabled={!prevChapterId}
+        >
           <Icon>skip_previous</Icon>
         </IconButton>
         <Typography className={this.props.classes.leftText}>{`Page ${page + 1}`}</Typography>
@@ -84,7 +90,11 @@ class PageSlider extends Component {
           tipFormatter={value => `Page ${value}`}
         />
         <Typography className={this.props.classes.rightText}>{pageCount}</Typography>
-        <IconButton>
+        <IconButton
+          component={Link}
+          to={Client.page(mangaId, nextChapterId, 0)}
+          disabled={!nextChapterId}
+        >
           <Icon>skip_next</Icon>
         </IconButton>
       </React.Fragment>
@@ -97,12 +107,19 @@ PageSlider.propTypes = {
   chapterId: PropTypes.number.isRequired,
   pageCount: PropTypes.number.isRequired,
   page: PropTypes.number.isRequired,
+  prevChapterId: PropTypes.number,
+  nextChapterId: PropTypes.number,
   // Classes is the injected styles
   classes: PropTypes.object.isRequired,
   // Below are react-router props injected with withRouter
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+};
+
+PageSlider.defaultProps = {
+  prevChapterId: null,
+  nextChapterId: null,
 };
 
 export default withStyles(styles)(withRouter(PageSlider));

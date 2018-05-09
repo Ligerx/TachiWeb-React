@@ -47,6 +47,8 @@ class Reader extends Component {
     this.preloadImages = this.preloadImages.bind(this);
     this.handlePrevPageClick = this.handlePrevPageClick.bind(this);
     this.handleNextPageClick = this.handleNextPageClick.bind(this);
+    // this.handlePrevChapterClick = this.handlePrevChapterClick.bind(this);
+    // this.handleNextChapterClick = this.handleNextChapterClick.bind(this);
   }
 
   componentDidMount() {
@@ -92,9 +94,20 @@ class Reader extends Component {
     // TODO: handle edge case
   }
 
+  // handlePrevChapterClick() {
+  //   // TODO: Ideally this would put you on the LAST page of the previous chapter.
+  //   //       Would need to first have the previous chapter's pageCount to do so.
+  //   const { mangaInfo, chapters, chapter, prevChapterId } = this.props;
+  //   this.props.history.push(Client.page(mangaInfo.id, prevChapterId, 0));
+  // }
+  // handleNextChapterClick() {
+  //   const { mangaInfo, chapters, chapter, nextChapterId } = this.props;
+  //   this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
+  // }
+
   render() {
     const {
-      mangaInfo, chapters, chapter, mangaInfoIsFetching, pageCount, page, classes,
+      mangaInfo, chapters, chapter, pageCount, page, classes, prevChapterId, nextChapterId,
     } = this.props;
 
     if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
@@ -119,6 +132,8 @@ class Reader extends Component {
             chapterId={chapter.id}
             pageCount={pageCount}
             page={page}
+            prevChapterId={prevChapterId}
+            nextChapterId={nextChapterId}
           />
         </ReaderOverlay>
         <ReaderNavButtons
@@ -138,9 +153,11 @@ Reader.propTypes = {
   mangaInfo: mangaType,
   chapters: PropTypes.arrayOf(chapterType),
   chapter: chapterType,
-  mangaInfoIsFetching: PropTypes.bool.isRequired,
   pageCount: PropTypes.number,
   page: PropTypes.number.isRequired,
+  prevChapterId: PropTypes.number,
+  nextChapterId: PropTypes.number,
+  // Redux actions
   fetchLibrary: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   fetchPageCount: PropTypes.func.isRequired,
@@ -157,6 +174,8 @@ Reader.defaultProps = {
   chapters: [],
   chapter: null,
   pageCount: 0,
+  prevChapterId: null,
+  nextChapterId: null,
 };
 
 export default withStyles(styles)(Reader);
