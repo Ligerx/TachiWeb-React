@@ -88,8 +88,8 @@ class Reader extends Component {
     } = this.props;
     const pageInt = parseInt(page, 10);
 
-    if (pageInt < 0) {
-      this.props.history.push(Client.page(mangaInfo.id, chapter.id, pageInt + 1));
+    if (pageInt > 0) {
+      this.props.history.push(Client.page(mangaInfo.id, chapter.id, pageInt - 1));
     } else if (pageInt === 0 && prevChapterId) {
       this.props.history.push(Client.page(mangaInfo.id, prevChapterId, 0));
     }
