@@ -87,3 +87,7 @@ export function fetchCatalogue(sourceId, page, query = null, filters = null) {
       });
   };
 }
+
+// Probably need another action specifically for getting the next page of results
+// and adding them to library and catalogue
+// Or I could make fetchCatalogue deal with these different cases?
