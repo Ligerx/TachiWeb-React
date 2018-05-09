@@ -87,20 +87,25 @@ class Reader extends Component {
   }
 
   handlePrevPageClick() {
-    // TODO: do all this lol
-    return null;
+    const { mangaInfo, chapter, pageCount, page, prevChapterId } = this.props;
+    const pageInt = parseInt(page, 10);
+
+    if (pageInt < 0) {
+      this.props.history.push(Client.page(mangaInfo.id, chapter.id, pageInt + 1));
+    } else if (pageInt === 0 && prevChapterId) {
+      this.props.history.push(Client.page(mangaInfo.id, prevChapterId, 0));
+    }
   }
 
   handleNextPageClick() {
-    const { mangaInfo, chapter, pageCount, page } = this.props;
+    const { mangaInfo, chapter, pageCount, page, nextChapterId } = this.props;
     const pageInt = parseInt(page, 10);
 
     if (pageInt < pageCount - 1) {
       this.props.history.push(Client.page(mangaInfo.id, chapter.id, pageInt + 1));
-    } else if (pageInt === pageCount - 1) {
-      // TODO: Navigate to next chapter page 0
+    } else if (pageInt === pageCount - 1 && nextChapterId) {
+      this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
     }
-    // TODO: handle edge case
   }
 
   // handlePrevChapterClick() {
