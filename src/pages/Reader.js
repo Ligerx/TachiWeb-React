@@ -28,6 +28,11 @@ import PageSlider from 'components/PageSlider';
 
 // TODO: allow keyboard commands for reading
 
+// TODO: update server about last read page and finished reading
+
+// TODO: just realized that when you finish chapters (or mark as unread),
+//       I need to keep the chapters data up to date or the Library's unread chapters will be stale
+
 // https://tylermcginnis.com/react-router-programmatically-navigate/
 
 const styles = {
@@ -59,7 +64,7 @@ class Reader extends Component {
 
   componentDidUpdate() {
     this.preloadImages();
-    
+
     this.props.fetchLibrary();
     this.props.fetchChapters();
     this.props.fetchPageCount();
