@@ -7,11 +7,10 @@ import PropTypes from 'prop-types';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import { Client } from 'api';
-import PageSlider from 'components/PageSlider';
 import { withStyles } from 'material-ui/styles';
 
 // TODO: using two toolbars currently, but it might be too big. Consider changing/customizing later.
-// NOTE: Material-UI v1 hasn't ported a slider component yet, so use an external library.
+// NOTE: Material-UI v1 hasn't ported a slider component yet, so using an external library.
 //       When it is added to Material-UI, use that instead.
 //       https://github.com/mui-org/material-ui/issues/4793
 
@@ -31,26 +30,21 @@ const styles = {
   },
 };
 
-// NOTE: removed match from the destructured props, may need to add it back?
 const ReaderOverlay = ({
-  title, chapterNum, pageCount, mangaId, classes,
+  title, chapterNum, mangaId, classes, children,
 }) => (
-  <div className={classes.overlay}>
-    <AppBar position="static" color="default">
-      <Toolbar>
-        <IconButton component={Link} to={Client.manga(mangaId)}>
-          <Icon>arrow_back</Icon>
-        </IconButton>
-        <Typography variant="title" style={{ flex: 1 }}>
-          {title}
-        </Typography>
-        <Typography variant="subheading"> Chapter {chapterNumFormatter(chapterNum)}</Typography>
-      </Toolbar>
-      <Toolbar>
-        <PageSlider pageCount={pageCount} />
-      </Toolbar>
-    </AppBar>
-  </div>
+  <AppBar position="static" color="default" className={classes.overlay}>
+    <Toolbar>
+      <IconButton component={Link} to={Client.manga(mangaId)}>
+        <Icon>arrow_back</Icon>
+      </IconButton>
+      <Typography variant="title" style={{ flex: 1 }}>
+        {title}
+      </Typography>
+      <Typography variant="subheading"> Chapter {chapterNumFormatter(chapterNum)}</Typography>
+    </Toolbar>
+    {children && <Toolbar>{children}</Toolbar>}
+  </AppBar>
 );
 
 // Helper Function
@@ -67,15 +61,15 @@ function chapterNumFormatter(chapterNum) {
 ReaderOverlay.propTypes = {
   title: PropTypes.string.isRequired,
   chapterNum: PropTypes.number.isRequired,
-  pageCount: PropTypes.number.isRequired,
   mangaId: PropTypes.number.isRequired,
   // classes is the injected styles
   classes: PropTypes.object.isRequired,
-  // match: PropTypes.shape({
-  //   params: PropTypes.shape({
-  //     page: PropTypes.string.isRequired,
-  //   }).isRequired,
-  // }).isRequired,
+  // children is what this component wraps around
+  children: PropTypes.node,
+};
+
+ReaderOverlay.defaultProps = {
+  children: null,
 };
 
 export default withStyles(styles)(ReaderOverlay);

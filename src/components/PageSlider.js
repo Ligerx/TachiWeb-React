@@ -39,9 +39,8 @@ const styles = {
 class PageSlider extends Component {
   static getDerivedStateFromProps(nextProps) {
     // Set the initial sliderValue to always reflect the page # in the URL
-    // 1 indexed for human readability (int)
-    const currentPage = getCurrentPage(nextProps.match.params.page);
-    return { sliderValue: currentPage };
+    // 1 indexed for human readability
+    return { sliderValue: nextProps.page + 1 };
   }
 
   constructor(props) {
@@ -60,14 +59,14 @@ class PageSlider extends Component {
   }
 
   changePage(newPage) {
+    // TODO: move this functionality up to Reader. Is that a good idea?
     // Using the current URL's params. Not sure if this is an anti-pattern or not.
-    const { mangaId, chapterId } = this.props.match.params;
+    const { mangaId, chapterId } = this.props;
     this.props.history.push(Client.page(mangaId, chapterId, newPage - 1));
   }
 
   render() {
-    const currentPage = getCurrentPage(this.props.match.params.page);
-    const { pageCount } = this.props;
+    const { pageCount, page } = this.props;
     const { sliderValue } = this.state;
 
     return (
@@ -75,13 +74,14 @@ class PageSlider extends Component {
         <IconButton>
           <Icon>skip_previous</Icon>
         </IconButton>
-        <Typography className={this.props.classes.leftText}>{`Page ${currentPage}`}</Typography>
+        <Typography className={this.props.classes.leftText}>{`Page ${page + 1}`}</Typography>
         <SliderWithTooltip
           min={1}
           max={pageCount}
           value={sliderValue}
           onChange={this.updateSliderValue}
           onAfterChange={this.changePage}
+          tipFormatter={value => `Page ${value}`}
         />
         <Typography className={this.props.classes.rightText}>{pageCount}</Typography>
         <IconButton>
@@ -92,23 +92,14 @@ class PageSlider extends Component {
   }
 }
 
-// Helper function
-function getCurrentPage(pageParam) {
-  return parseInt(pageParam, 10) + 1;
-}
-
 PageSlider.propTypes = {
+  mangaId: PropTypes.number.isRequired,
+  chapterId: PropTypes.number.isRequired,
   pageCount: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired,
   // Classes is the injected styles
   classes: PropTypes.object.isRequired,
   // Below are react-router props injected with withRouter
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      mangaId: PropTypes.string.isRequired,
-      chapterId: PropTypes.string.isRequired,
-      page: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,

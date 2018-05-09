@@ -5,6 +5,7 @@ import ReaderNavButtons from 'components/ReaderNavButtons';
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import PageSlider from 'components/PageSlider';
 
 // TODO: actually be able to transition to the next chapter
 
@@ -34,7 +35,7 @@ const styles = {
   mangaImage: {
     height: '100%',
     backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center top',
+    backgroundPosition: 'center center',
     backgroundSize: 'contain',
   },
 };
@@ -112,7 +113,14 @@ class Reader extends Component {
           chapterNum={chapter.chapter_number}
           pageCount={pageCount}
           mangaId={mangaInfo.id}
-        />
+        >
+          <PageSlider
+            mangaId={mangaInfo.id}
+            chapterId={chapter.id}
+            pageCount={pageCount}
+            page={page}
+          />
+        </ReaderOverlay>
         <ReaderNavButtons
           onPrevPageClick={this.handlePrevPageClick}
           onNextPageClick={this.handleNextPageClick}
