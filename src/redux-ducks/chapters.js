@@ -32,7 +32,7 @@ export default function chaptersReducer(
     case FAILURE:
       return { ...state, isFetching: false, error: true };
     case CACHE:
-      return state;
+      return { ...state, isFetching: false };
     default:
       return state;
   }

@@ -32,7 +32,7 @@ export default function libraryReducer(
       console.error(action.payload);
       return { ...state, isFetching: false, error: true };
     case CACHE:
-      return state;
+      return { ...state, isFetching: false };
     case TOGGLE_FAVORITE_REQUEST:
       return { ...state, isTogglingFavorite: true };
     case TOGGLE_FAVORITE_SUCCESS:
@@ -70,6 +70,7 @@ export function toggleFavorite(mangaId) {
     dispatch({ type: TOGGLE_FAVORITE_REQUEST });
 
     const mangaInfo = getState().library.mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
+
     if (!mangaInfo) {
       return dispatch({ type: TOGGLE_FAVORITE_FAILURE, payload: "Couldn't find manga..." });
     }
