@@ -59,6 +59,10 @@ class Reader extends Component {
 
   componentDidUpdate() {
     this.preloadImages();
+    
+    this.props.fetchLibrary();
+    this.props.fetchChapters();
+    this.props.fetchPageCount();
   }
 
   preloadImages() {
