@@ -9,7 +9,6 @@ import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 import { mangaType } from 'types';
 import PropTypes from 'prop-types';
 
-// TODO: make the html a bit more DRY
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
 const styles = () => ({

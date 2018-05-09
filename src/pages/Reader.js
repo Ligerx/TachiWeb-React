@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import PageSlider from 'components/PageSlider';
 
-// TODO: actually be able to transition to the next chapter
-
 // TODO: in the Url, page # is 0 index. Change it to 1 index for readability.
 //       you'll also have to change the linking in API and possibly other places.
 
@@ -16,14 +14,10 @@ import PageSlider from 'components/PageSlider';
 
 // TODO: eventually create a preloading component?
 //       similar to this - https://github.com/mcarlucci/react-precache-img
-
 // TODO: research if it's possible to cache too many images? If so, how do you clear old images?
-
 // TODO: FIXME: Browser doesn't seem to be pulling images from cache.
 // Not sure if that's a backend header problem, browser problem, or a local development problem
-
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
-
 // TODO: preload pages from the next chapter
 
 // TODO: allow keyboard commands for reading
@@ -73,7 +67,9 @@ class Reader extends Component {
   preloadImages() {
     // https://www.photo-mark.com/notes/image-preloading/
     // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-    const { mangaInfo, chapter, pageCount, page } = this.props;
+    const {
+      mangaInfo, chapter, pageCount, page,
+    } = this.props;
     const pageInt = parseInt(page, 10); // params are always strings, string -> int
     const numPreload = 3; // Currently preloading 3 images ahead
 
@@ -87,7 +83,9 @@ class Reader extends Component {
   }
 
   handlePrevPageClick() {
-    const { mangaInfo, chapter, pageCount, page, prevChapterId } = this.props;
+    const {
+      mangaInfo, chapter, page, prevChapterId,
+    } = this.props;
     const pageInt = parseInt(page, 10);
 
     if (pageInt < 0) {
@@ -98,7 +96,9 @@ class Reader extends Component {
   }
 
   handleNextPageClick() {
-    const { mangaInfo, chapter, pageCount, page, nextChapterId } = this.props;
+    const {
+      mangaInfo, chapter, pageCount, page, nextChapterId,
+    } = this.props;
     const pageInt = parseInt(page, 10);
 
     if (pageInt < pageCount - 1) {

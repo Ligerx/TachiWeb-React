@@ -34,7 +34,7 @@ const styles = {
 //        ReaderOverlay has a z-index, which is interfering with the tooltip.
 //        Ideally, this CSS wouldn't be necessary
 
-// TODO: implement next/previous chapter button functionality
+// TODO: Refactor the shit out of this, use new components
 
 class PageSlider extends Component {
   static getDerivedStateFromProps(nextProps) {
@@ -59,8 +59,6 @@ class PageSlider extends Component {
   }
 
   changePage(newPage) {
-    // TODO: move this functionality up to Reader. Is that a good idea?
-    // Using the current URL's params. Not sure if this is an anti-pattern or not.
     const { mangaId, chapterId } = this.props;
     this.props.history.push(Client.page(mangaId, chapterId, newPage - 1));
   }

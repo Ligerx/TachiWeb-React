@@ -1,8 +1,5 @@
 import React from 'react';
 
-// TODO: I'd love to make the background image blurred, but I can't figure out how to right now.
-//       blurring the root div directly blurs EVERYTHING on top. Might not be feasible =(
-
 // * backgroundImage
 // linear-gradient hack, put a white filter over the background image
 const BackgroundImage = ({ thumbnailUrl, className = '', children }) => (
