@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import LibraryHeader from 'components/LibraryHeader';
 import MangaGrid from 'components/MangaGrid';
+import LibraryMangaCard from 'components/LibraryMangaCard';
 
 class Library extends Component {
   componentDidMount() {
@@ -14,7 +15,7 @@ class Library extends Component {
       <React.Fragment>
         <LibraryHeader />
 
-        <MangaGrid mangaLibrary={mangaLibrary} />
+        <MangaGrid mangaLibrary={mangaLibrary} cardComponent={<LibraryMangaCard />} />
       </React.Fragment>
     );
   }

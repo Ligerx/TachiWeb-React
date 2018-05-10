@@ -1,19 +1,24 @@
 import React from 'react';
 import ResponsiveGrid from 'components/ResponsiveGrid';
-import LibraryMangaCard from 'components/LibraryMangaCard';
 import PropTypes from 'prop-types';
+import { mangaType } from 'types';
 
-// TODO: filtering. does that happen here or the parent?
+// NOTE: You must pass a cardComponent, which is what will be rendered.
+//       As of writing this, there is LibraryMangaCard and CatalogueMangaCard
+// e.g. <MangaGrid mangaLibrary={mangaLibrary} cardComponent={<LibraryMangaCard />} />
 
-const MangaGrid = ({ mangaLibrary }) => (
+// https://reactjs.org/docs/composition-vs-inheritance.html
+// https://stackoverflow.com/questions/32370994/how-to-pass-props-to-this-props-children
+
+const MangaGrid = ({ mangaLibrary, cardComponent }) => (
   <ResponsiveGrid container justify="center">
-    {mangaLibrary.map(manga => <LibraryMangaCard key={manga.id} manga={manga} />)}
+    {mangaLibrary.map(manga => React.cloneElement(cardComponent, { key: manga.id, manga }))}
   </ResponsiveGrid>
 );
 
-// TODO: make proptypes more explicit?
 MangaGrid.propTypes = {
-  mangaLibrary: PropTypes.array.isRequired,
+  mangaLibrary: PropTypes.arrayOf(mangaType).isRequired,
+  cardComponent: PropTypes.element.isRequired,
 };
 
 export default MangaGrid;
