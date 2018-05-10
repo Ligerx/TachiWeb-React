@@ -33,7 +33,7 @@ const Server = {
   },
 
   sources(enabled = true) {
-    let url = '/api/catalogue';
+    let url = '/api/sources';
     if (enabled) {
       url += '?enabled=true';
     }
