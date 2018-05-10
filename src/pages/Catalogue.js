@@ -18,6 +18,8 @@ class Catalogue extends Component {
       // this makes it less reliant on having to sync state with the data
       value: 0,
     };
+
+    this.handleSourceChange = this.handleSourceChange.bind(this);
   }
 
   componentDidMount() {
@@ -30,16 +32,28 @@ class Catalogue extends Component {
     });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { value } = this.state;
+    const { sources, fetchCatalogue } = this.props;
+
+    if (value !== prevState.value) {
+      fetchCatalogue(sources[value].id, 1);
+    }
+  }
+
+  handleSourceChange(event) {
+    this.setState({ value: event.target.value });
+  }
+
   render() {
     const { sources } = this.props;
 
     return (
       <React.Fragment>
-        TESTING CATALOGUE
         <form autoComplete="off">
           <FormControl>
             <InputLabel htmlFor="age-simple">Age</InputLabel>
-            <Select value={this.state.value} onChange={this.handleChange}>
+            <Select value={this.state.value} onChange={this.handleSourceChange}>
               {sources.map((source, index) => (
                 <MenuItem value={index} key={source.id}>
                   {source.name}
