@@ -16,7 +16,7 @@ export default function sourcesReducer(
     case SUCCESS:
       return {
         ...state,
-        sourcesArray: [...state.sourcesArray, ...action.payload],
+        sourcesArray: action.payload,
         isFetching: false,
       };
     case FAILURE:
