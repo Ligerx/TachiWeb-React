@@ -50,10 +50,7 @@ export default function libraryReducer(
     case ADD_MANGA:
       return {
         ...state,
-        mangaLibrary: {
-          ...state.mangaLibrary,
-          ...action.newManga,
-        },
+        mangaLibrary: [...state.mangaLibrary, ...action.newManga],
       };
     default:
       return state;
