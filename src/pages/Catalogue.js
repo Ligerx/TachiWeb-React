@@ -5,6 +5,8 @@ import { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
+import MangaGrid from 'components/MangaGrid';
+import CatalogueMangaCard from 'components/CatalogueMangaCard';
 
 // TODO: sources type
 // TODO: filter type?
@@ -46,13 +48,12 @@ class Catalogue extends Component {
   }
 
   render() {
-    const { sources } = this.props;
+    const { mangaLibrary, sources } = this.props;
 
     return (
       <React.Fragment>
         <form autoComplete="off">
           <FormControl>
-            <InputLabel htmlFor="age-simple">Age</InputLabel>
             <Select value={this.state.value} onChange={this.handleSourceChange}>
               {sources.map((source, index) => (
                 <MenuItem value={index} key={source.id}>
@@ -62,6 +63,8 @@ class Catalogue extends Component {
             </Select>
           </FormControl>
         </form>
+
+        <MangaGrid mangaLibrary={mangaLibrary} cardComponent={<CatalogueMangaCard />} />
       </React.Fragment>
     );
   }
