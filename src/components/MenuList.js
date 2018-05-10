@@ -3,6 +3,8 @@ import List, { ListItem, ListItemText } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { Client } from 'api';
 
 // Set the width of the menu
 const classes = {
@@ -19,10 +21,10 @@ const MenuList = props => (
           TachiWeb
         </Typography>
       </ListItem>
-      <ListItem button>
+      <ListItem button component={Link} to={Client.library()}>
         <ListItemText primary="Library" />
       </ListItem>
-      <ListItem button>
+      <ListItem button component={Link} to={Client.catalogue()}>
         <ListItemText primary="Catalogue" />
       </ListItem>
       <ListItem button>
@@ -38,11 +40,8 @@ const MenuList = props => (
   </div>
 );
 
-// prop validation for Material-UI styles is slightly odd, but this is correct
 MenuList.propTypes = {
-  classes: PropTypes.shape({
-    list: PropTypes.string.isRequired,
-  }).isRequired,
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(classes)(MenuList);

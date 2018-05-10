@@ -43,6 +43,14 @@ const Server = {
 export { Server };
 
 const Client = {
+  library() {
+    return '/library';
+  },
+
+  catalogue() {
+    return '/catalogue';
+  },
+
   manga(mangaId) {
     return `/${mangaId}`;
   },
