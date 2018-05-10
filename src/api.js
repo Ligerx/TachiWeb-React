@@ -31,6 +31,14 @@ const Server = {
     // }
     return '/api/catalogue';
   },
+
+  sources(enabled = true) {
+    let url = '/api/catalogue';
+    if (enabled) {
+      url += '?enabled=true';
+    }
+    return url;
+  },
 };
 export { Server };
 
