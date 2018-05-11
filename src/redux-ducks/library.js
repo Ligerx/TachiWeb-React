@@ -87,18 +87,20 @@ export function fetchLibrary() {
   };
 }
 
-export function toggleFavorite(mangaId) {
-  return (dispatch, getState) => {
-    dispatch({ type: TOGGLE_FAVORITE_REQUEST });
+export function toggleFavorite(mangaId, isCurrentlyFavorite) {
+  return (dispatch) => {
+    dispatch({ type: TOGGLE_FAVORITE_REQUEST, meta: { mangaId, isCurrentlyFavorite } });
 
-    const mangaInfo = getState().library.mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
+    // Not checking if the manga exists in the library because if you're favoriting
+    // from the catalogue, the manga won't exist in the library yet.
 
-    if (!mangaInfo) {
-      return dispatch({ type: TOGGLE_FAVORITE_FAILURE, payload: "Couldn't find manga..." });
-    }
-
-    return fetch(Server.toggleFavorite(mangaInfo.id, mangaInfo.favorite)).then(
-      () => dispatch({ type: TOGGLE_FAVORITE_SUCCESS, mangaId: mangaInfo.id }),
+    return fetch(Server.toggleFavorite(mangaId, isCurrentlyFavorite)).then(
+      () =>
+        dispatch({
+          type: TOGGLE_FAVORITE_SUCCESS,
+          mangaId,
+          meta: { newIsFavorite: !isCurrentlyFavorite },
+        }),
       () => dispatch({ type: TOGGLE_FAVORITE_FAILURE, payload: 'Failed to toggle favorite' }),
     );
   };

@@ -22,7 +22,9 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchLibrary: () => dispatch(fetchLibrary()),
   fetchChapters: () => dispatch(fetchChapters(ownProps.match.params.mangaId)),
-  toggleFavorite: () => dispatch(toggleFavorite(ownProps.match.params.mangaId)),
+  // Need a nested function to pass in mangaId in the JSX
+  toggleFavoriteForManga: (mangaId, isFavorite) => () =>
+    dispatch(toggleFavorite(mangaId, isFavorite)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MangaInfoPage);

@@ -70,7 +70,12 @@ class Catalogue extends Component {
 
   render() {
     const {
-      mangaLibrary, sources, chaptersByMangaId, chaptersAreFetching,
+      mangaLibrary,
+      sources,
+      chaptersByMangaId,
+      chaptersAreFetching,
+      isTogglingFavorite,
+      toggleFavoriteForManga,
     } = this.props;
     const { mangaBeingViewed } = this.state;
 
@@ -81,6 +86,8 @@ class Catalogue extends Component {
           chapters={chaptersByMangaId[mangaBeingViewed.id]}
           initialTabValue={0}
           onBackClick={this.handleMangaInfoBackClick}
+          isTogglingFavorite={isTogglingFavorite}
+          toggleFavorite={toggleFavoriteForManga(mangaBeingViewed.id, mangaBeingViewed.favorite)}
         />
       );
     }
@@ -118,9 +125,11 @@ Catalogue.propTypes = {
   // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
   chaptersByMangaId: PropTypes.object.isRequired,
   chaptersAreFetching: PropTypes.bool.isRequired,
+  isTogglingFavorite: PropTypes.bool.isRequired,
   fetchSources: PropTypes.func.isRequired,
   fetchCatalogue: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
+  toggleFavoriteForManga: PropTypes.func.isRequired,
 };
 
 Catalogue.defaultProps = {

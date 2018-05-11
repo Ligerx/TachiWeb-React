@@ -12,3 +12,5 @@ export default combineReducers({
   sources,
   catalogue,
 });
+
+// TODO: add meta data to actions that don't have enough context. Makes things easier to read.

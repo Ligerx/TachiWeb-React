@@ -20,7 +20,7 @@ class MangaInfoPage extends Component {
       mangaInfo,
       chapters,
       isTogglingFavorite,
-      toggleFavorite,
+      toggleFavoriteForManga,
     } = this.props;
     const noMangaData = !mangaInfo || Object.getOwnPropertyNames(mangaInfo).length === 0;
 
@@ -38,7 +38,7 @@ class MangaInfoPage extends Component {
         initialTabValue={1}
         onBackClick={Client.library()}
         isTogglingFavorite={isTogglingFavorite}
-        toggleFavorite={toggleFavorite}
+        toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
       />
     );
   }
@@ -51,7 +51,7 @@ MangaInfoPage.propTypes = {
   isTogglingFavorite: PropTypes.bool.isRequired,
   fetchLibrary: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
-  toggleFavorite: PropTypes.func.isRequired,
+  toggleFavoriteForManga: PropTypes.func.isRequired,
 };
 
 // When data hasn't loaded yet, mangaInfo and chapters can be non-existant.
