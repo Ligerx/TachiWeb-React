@@ -1,12 +1,16 @@
 import { Server } from 'api';
 
+// ================================================================================
 // Actions
+// ================================================================================
 const REQUEST = 'chapters/LOAD_REQUEST';
 const SUCCESS = 'chapters/LOAD_SUCCESS';
 const FAILURE = 'chapters/LOAD_FAILURE';
 const CACHE = 'chapters/LOAD_CACHE';
 
+// ================================================================================
 // Reducers
+// ================================================================================
 
 // TODO: right now state is chapters.chapters{ mangaId: [chapter] }, which is confusing.
 //       I'd love to rename chapters.chapters to something that makes more sense.
@@ -38,10 +42,12 @@ export default function chaptersReducer(
   }
 }
 
+// ================================================================================
 // Action Creators
+// ================================================================================
 export function fetchChapters(mangaId) {
   return (dispatch, getState) => {
-    dispatch({ type: REQUEST });
+    dispatch({ type: REQUEST, meta: { mangaId } });
 
     // Return manga's cached chapters if they're already in the store
     // NOTE: Not checking if the manga's chapters list is empty. (Doing so may possibly cause a bug)

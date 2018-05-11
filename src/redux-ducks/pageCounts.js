@@ -1,12 +1,16 @@
 import { Server } from 'api';
 
+// ================================================================================
 // Actions
+// ================================================================================
 const REQUEST = 'pageCounts/LOAD_REQUEST';
 const SUCCESS = 'pageCounts/LOAD_SUCCESS';
 const FAILURE = 'pageCounts/LOAD_FAILURE';
 const CACHE = 'pageCounts/LOAD_CACHE';
 
+// ================================================================================
 // Reducers
+// ================================================================================
 export default function chaptersReducer(
   state = { pageCountsByMangaId: {}, isFetching: false, error: false },
   action = {},
@@ -43,8 +47,9 @@ export default function chaptersReducer(
   }
 }
 
+// ================================================================================
 // Action Creators
-
+// ================================================================================
 export function fetchPageCount(mangaId, chapterId) {
   return (dispatch, getState) => {
     dispatch({ type: REQUEST });
@@ -68,7 +73,9 @@ export function fetchPageCount(mangaId, chapterId) {
   };
 }
 
-// Helper unctions
+// ================================================================================
+// Helper functions
+// ================================================================================
 function addMangaIdIfMissing(object, mangaId) {
   // Create the mangaId parent object if it isn't already there
   if (!object.pageCountsByMangaId[mangaId]) {

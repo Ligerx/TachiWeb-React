@@ -3,7 +3,9 @@ import { ADD_MANGA as ADD_MANGA_TO_LIBRARY } from './library';
 
 // FIXME: reusing isFetching for ADD_PAGE_..., which isn't ideal.
 
+// ================================================================================
 // Actions
+// ================================================================================
 const REQUEST = 'catalogue/LOAD_REQUEST';
 const SUCCESS = 'catalogue/LOAD_SUCCESS';
 const FAILURE = 'catalogue/LOAD_FAILURE';
@@ -13,7 +15,9 @@ const ADD_PAGE_SUCCESS = 'catalogue/ADD_PAGE_SUCCESS';
 const ADD_PAGE_FAILURE = 'catalogue/ADD_PAGE_FAILURE';
 const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE'; // failsafe, don't use
 
+// ================================================================================
 // Reducers
+// ================================================================================
 const initialState = {
   mangaIds: [], // array of mangaIds that point that data loaded in library
   page: 1,
@@ -70,7 +74,9 @@ export default function chaptersReducer(state = initialState, action = {}) {
   }
 }
 
+// ================================================================================
 // Action Creators
+// ================================================================================
 export function fetchCatalogue(sourceId, query = '', filters = null) {
   return (dispatch, getState) => {
     dispatch({
@@ -111,12 +117,21 @@ export function fetchCatalogue(sourceId, query = '', filters = null) {
 
 export function fetchMoreCataloguePages(sourceId) {
   return (dispatch, getState) => {
-    dispatch({ type: ADD_PAGE_REQUEST });
-
     const {
       page, hasNextPage, query, filters,
     } = getState().catalogue;
     const nextPage = page + 1;
+
+    dispatch({
+      type: ADD_PAGE_REQUEST,
+      meta: {
+        sourceId,
+        nextPage,
+        hasNextPage,
+        query,
+        filters,
+      },
+    });
 
     if (!hasNextPage) {
       return dispatch({ type: ADD_PAGE_NO_NEXT_PAGE });
@@ -142,7 +157,9 @@ export function fetchMoreCataloguePages(sourceId) {
   };
 }
 
-// Helper functions
+// ================================================================================
+// Helper Functions
+// ================================================================================
 function cataloguePostParameters(page, sourceId, query, filters) {
   return {
     method: 'POST',

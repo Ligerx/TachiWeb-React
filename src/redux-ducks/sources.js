@@ -1,11 +1,15 @@
 import { Server } from 'api';
 
+// ================================================================================
 // Actions
+// ================================================================================
 const REQUEST = 'sources/LOAD_REQUEST';
 const SUCCESS = 'sources/LOAD_SUCCESS';
 const FAILURE = 'sources/LOAD_FAILURE';
 
+// ================================================================================
 // Reducers
+// ================================================================================
 export default function sourcesReducer(
   state = { sourcesArray: [], isFetching: false, error: false },
   action = {},
@@ -26,7 +30,9 @@ export default function sourcesReducer(
   }
 }
 
+// ================================================================================
 // Action Creators
+// ================================================================================
 export function fetchSources() {
   return (dispatch) => {
     dispatch({ type: REQUEST });

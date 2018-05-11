@@ -1,6 +1,8 @@
 import { Server } from 'api';
 
+// ================================================================================
 // Actions
+// ================================================================================
 const REQUEST = 'library/LOAD_REQUEST';
 const SUCCESS = 'library/LOAD_SUCCESS';
 const FAILURE = 'library/LOAD_FAILURE';
@@ -12,7 +14,9 @@ const ADD_MANGA = 'library/ADD_MANGA';
 
 export { ADD_MANGA };
 
+// ================================================================================
 // Reducers
+// ================================================================================
 
 // TODO: remove 'error' flag when error is fixed? Is there a more efficient way to do this?
 export default function libraryReducer(
@@ -67,7 +71,9 @@ export default function libraryReducer(
   }
 }
 
+// ================================================================================
 // Action Creators
+// ================================================================================
 export function fetchLibrary() {
   return (dispatch, getState) => {
     dispatch({ type: REQUEST });
@@ -99,7 +105,10 @@ export function toggleFavorite(mangaId, isCurrentlyFavorite) {
   };
 }
 
+// ================================================================================
 // Helper functions
+// ================================================================================
+
 // Clone the mangaLibrary and toggle the one manga's favorite status
 function toggleFavoriteInLibrary(mangaLibrary, mangaId) {
   return mangaLibrary.map((manga) => {
