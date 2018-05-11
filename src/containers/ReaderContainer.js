@@ -8,18 +8,22 @@ import Reader from 'pages/Reader';
 
 const mapStateToProps = (state, ownProps) => {
   const { library } = state;
-  const { chapters } = state.chapters;
+  const { chaptersByMangaId } = state.chapters;
   const { pageCountsByMangaId } = state.pageCounts;
   const { mangaId, chapterId } = ownProps.match.params;
 
   return {
     mangaInfo: getThisManga(library.mangaLibrary, mangaId),
-    chapters: chapters[mangaId],
-    chapter: chapters[mangaId] ? findChapter(chapters[mangaId], chapterId) : null,
+    chapters: chaptersByMangaId[mangaId],
+    chapter: chaptersByMangaId[mangaId] ? findChapter(chaptersByMangaId[mangaId], chapterId) : null,
     pageCount: pageCountsByMangaId[mangaId] ? pageCountsByMangaId[mangaId][chapterId] : null,
     page: parseInt(ownProps.match.params.page, 10),
-    prevChapterId: chapters[mangaId] ? getPrevChapterId(chapters[mangaId], chapterId) : null,
-    nextChapterId: chapters[mangaId] ? getNextChapterId(chapters[mangaId], chapterId) : null,
+    prevChapterId: chaptersByMangaId[mangaId]
+      ? getPrevChapterId(chaptersByMangaId[mangaId], chapterId)
+      : null,
+    nextChapterId: chaptersByMangaId[mangaId]
+      ? getNextChapterId(chaptersByMangaId[mangaId], chapterId)
+      : null,
   };
 };
 

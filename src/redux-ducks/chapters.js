@@ -15,10 +15,10 @@ const CACHE = 'chapters/LOAD_CACHE';
 // TODO: right now state is chapters.chapters{ mangaId: [chapter] }, which is confusing.
 //       I'd love to rename chapters.chapters to something that makes more sense.
 //
-//       Update: call it chapters.chaptersByManga
+//       Update: call it chapters.chaptersByMangaId
 //       chaptersByMangaId: { mangaId: [ chapter ] }
 export default function chaptersReducer(
-  state = { chapters: {}, isFetching: false, error: false },
+  state = { chaptersByMangaId: {}, isFetching: false, error: false },
   action = {},
 ) {
   switch (action.type) {
@@ -27,8 +27,8 @@ export default function chaptersReducer(
     case SUCCESS:
       return {
         ...state,
-        chapters: {
-          ...state.chapters,
+        chaptersByMangaId: {
+          ...state.chaptersByMangaId,
           ...action.payload,
         },
         isFetching: false,
@@ -51,7 +51,7 @@ export function fetchChapters(mangaId) {
 
     // Return manga's cached chapters if they're already in the store
     // NOTE: Not checking if the manga's chapters list is empty. (Doing so may possibly cause a bug)
-    if (getState().chapters.chapters[mangaId]) {
+    if (getState().chapters.chaptersByMangaId[mangaId]) {
       return dispatch({ type: CACHE });
     }
 

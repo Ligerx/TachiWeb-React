@@ -20,7 +20,7 @@ const mapStateToProps = (state) => {
     query,
     filters,
     // Chapter props
-    chaptersByMangaId: state.chapters.chapters,
+    chaptersByMangaId: state.chapters.chaptersByMangaId,
     chaptersAreFetching: state.chapters.isFetching,
     // Library props
     mangaLibrary,
