@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { mangaType } from 'types';
-import { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
@@ -30,7 +29,7 @@ class Catalogue extends Component {
     // when using an arrow function, but it's undefined. So I'm manually binding 'this'.
     const that = this;
     fetchSources().then(() => {
-      fetchCatalogue(that.props.sources[0].id, 1);
+      fetchCatalogue(that.props.sources[0].id);
     });
   }
 
@@ -39,7 +38,7 @@ class Catalogue extends Component {
     const { sources, fetchCatalogue } = this.props;
 
     if (value !== prevState.value) {
-      fetchCatalogue(sources[value].id, 1);
+      fetchCatalogue(sources[value].id);
     }
   }
 
@@ -72,20 +71,18 @@ class Catalogue extends Component {
 
 Catalogue.propTypes = {
   mangaLibrary: PropTypes.arrayOf(mangaType),
-  sources: PropTypes.array,
-  mangaIds: PropTypes.arrayOf(PropTypes.number.isRequired),
+  sources: PropTypes.array, // TODO: type
   page: PropTypes.number.isRequired,
   hasNextPage: PropTypes.bool.isRequired,
   query: PropTypes.string.isRequired,
-  filters: PropTypes.array,
+  filters: PropTypes.array, // TODO: type
   fetchSources: PropTypes.func.isRequired,
   fetchCatalogue: PropTypes.func.isRequired,
 };
 
 Catalogue.defaultProps = {
-  mangaLibrary: [],
-  sources: [],
-  mangaIds: [],
+  mangaLibrary: null,
+  sources: null,
   filters: null,
 };
 

@@ -5,14 +5,13 @@ import Catalogue from 'pages/Catalogue';
 
 const mapStateToProps = (state) => {
   const {
-    mangaIds, page, hasNextPage, query, filters,
+    mangaLibrary, page, hasNextPage, query, filters,
   } = state.catalogue;
   return {
-    mangaLibrary: state.library.mangaLibrary.filter(manga => mangaIds.includes(manga.id)),
     // Sources props
     sources: state.sources.sourcesArray,
     // Catalogue props
-    mangaIds,
+    mangaLibrary,
     page,
     hasNextPage,
     query,
@@ -23,8 +22,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => ({
   fetchSources: () => dispatch(fetchSources()),
   // Passing in the new catalogue search settings
-  fetchCatalogue: (sourceId, page, query, filters) =>
-    dispatch(fetchCatalogue(sourceId, page, query, filters)),
+  fetchCatalogue: (sourceId, query, filters) => dispatch(fetchCatalogue(sourceId, query, filters)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Catalogue);
