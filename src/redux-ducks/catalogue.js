@@ -51,9 +51,10 @@ export default function chaptersReducer(state = initialState, action = {}) {
     case ADD_PAGE_REQUEST:
       return { ...state, isFetching: true, error: false };
     case ADD_PAGE_SUCCESS: {
-      const { page, hasNextPage } = action;
+      const { mangaIds, page, hasNextPage } = action;
       return {
         ...state,
+        mangaIds: [...state.mangaIds, ...mangaIds],
         page,
         hasNextPage,
       };
@@ -88,9 +89,10 @@ export function fetchCatalogue(sourceId, query = '', filters = null) {
       .then(
         (json) => {
           const { content, has_next: hasNextPage } = json;
+          const { mangaIds } = transformToMangaIdsArray(content);
 
           dispatch({ type: ADD_MANGA_TO_LIBRARY, newManga: content });
-          dispatch({ type: SUCCESS, page: 1, hasNextPage });
+          dispatch({ type: SUCCESS, mangaIds, page: 1, hasNextPage });
         },
         error => dispatch({ type: FAILURE, payload: error }),
       );
@@ -115,10 +117,12 @@ export function fetchMoreCataloguePages(sourceId) {
       .then(
         (json) => {
           const { content, has_next: hasNextPageUpdated } = json;
+          const { mangaIds } = transformToMangaIdsArray(content);
 
           dispatch({ type: ADD_MANGA_TO_LIBRARY, newManga: content });
           dispatch({
             type: ADD_PAGE_SUCCESS,
+            mangaIds,
             page: nextPage,
             hasNextPage: hasNextPageUpdated,
           });
@@ -156,4 +160,8 @@ function handleServerError(res) {
     return Promise.reject(new Error('500 Server Error encountered when trying to fetch catalogue'));
   }
   return res.json();
+}
+
+function transformToMangaIdsArray(mangaArray) {
+  return mangaArray.map(manga => manga.id);
 }
