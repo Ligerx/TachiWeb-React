@@ -20,7 +20,7 @@ const styles = {
 
 const CatalogueMangaCard = ({ classes, manga, onClick }) => (
   <Grid item xs={6} sm={3} className={manga.favorite ? classes.isFavorited : null}>
-    <ButtonBase className={classes.fullWidth} onClick={onClick(manga)}>
+    <ButtonBase className={classes.fullWidth} onClick={onClick(manga.id)}>
       <MangaCard title={manga.title} thumbnailUrl={manga.thumbnail_url} />
     </ButtonBase>
   </Grid>

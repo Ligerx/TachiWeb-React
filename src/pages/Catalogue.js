@@ -26,7 +26,7 @@ class Catalogue extends Component {
       // Select based on index of the array instead of id
       // this makes it less reliant on having to sync state with the data
       value: 0,
-      mangaBeingViewed: null,
+      mangaIdBeingViewed: null,
     };
 
     this.handleSourceChange = this.handleSourceChange.bind(this);
@@ -57,15 +57,15 @@ class Catalogue extends Component {
     this.setState({ value: event.target.value });
   }
 
-  handleCardClick(manga) {
+  handleCardClick(mangaId) {
     return () => {
-      this.props.fetchChapters(manga.id);
-      this.setState({ mangaBeingViewed: manga });
+      this.props.fetchChapters(mangaId);
+      this.setState({ mangaIdBeingViewed: mangaId });
     };
   }
 
   handleMangaInfoBackClick() {
-    this.setState({ mangaBeingViewed: null });
+    this.setState({ mangaIdBeingViewed: null });
   }
 
   render() {
@@ -77,17 +77,20 @@ class Catalogue extends Component {
       isTogglingFavorite,
       toggleFavoriteForManga,
     } = this.props;
-    const { mangaBeingViewed } = this.state;
+    const { mangaIdBeingViewed } = this.state;
 
-    if (!chaptersAreFetching && mangaBeingViewed && chaptersByMangaId[mangaBeingViewed.id]) {
+    const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
+    const chapters = chaptersByMangaId[mangaIdBeingViewed];
+
+    if (!chaptersAreFetching && mangaInfo && chapters) {
       return (
         <MangaInfo
-          mangaInfo={mangaBeingViewed}
-          chapters={chaptersByMangaId[mangaBeingViewed.id]}
+          mangaInfo={mangaInfo}
+          chapters={chapters}
           initialTabValue={0}
           onBackClick={this.handleMangaInfoBackClick}
           isTogglingFavorite={isTogglingFavorite}
-          toggleFavorite={toggleFavoriteForManga(mangaBeingViewed.id, mangaBeingViewed.favorite)}
+          toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
         />
       );
     }
