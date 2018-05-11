@@ -3,6 +3,7 @@ import { CircularProgress } from 'material-ui/Progress';
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
 import MangaInfo from 'components/MangaInfo';
+import { Client } from 'api';
 
 // Honestly couldn't come up with a different name to differentiate it from MangaInfo component
 // I might rename the other files in the /pages folder to include _Page at the end. I dunno...
@@ -24,7 +25,14 @@ class MangaInfoPage extends Component {
       return null;
     }
 
-    return <MangaInfo mangaInfo={mangaInfo} chapters={chapters} initialTabValue={1} />;
+    return (
+      <MangaInfo
+        mangaInfo={mangaInfo}
+        chapters={chapters}
+        initialTabValue={1}
+        onBackClick={Client.library()}
+      />
+    );
   }
 }
 

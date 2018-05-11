@@ -6,12 +6,17 @@ import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import MangaGrid from 'components/MangaGrid';
 import CatalogueMangaCard from 'components/CatalogueMangaCard';
+import MangaInfo from 'components/MangaInfo';
 
 // TODO: hook up MangaInfo component + update the card links
 // TODO: render components such that going from MangaInfo -> Catalogue preserves state
 // TODO: infinite scrolling, load more manga when scrolling down
 // TODO: sources type
 // TODO: filter type?
+// TODO: FIXME: running into problem w/ favorite property of catalogue manga does not exist
+// TODO: back button should be dynamic.
+// TODO: if you're looking at a new manga, chapters won't have been scraped by the server yet.
+//       This is probably also an issue w/ library.
 
 class Catalogue extends Component {
   constructor(props) {
@@ -21,9 +26,12 @@ class Catalogue extends Component {
       // Select based on index of the array instead of id
       // this makes it less reliant on having to sync state with the data
       value: 0,
+      mangaBeingViewed: null,
     };
 
     this.handleSourceChange = this.handleSourceChange.bind(this);
+    this.handleCardClick = this.handleCardClick.bind(this);
+    this.handleMangaInfoBackClick = this.handleMangaInfoBackClick.bind(this);
   }
 
   componentDidMount() {
@@ -49,8 +57,33 @@ class Catalogue extends Component {
     this.setState({ value: event.target.value });
   }
 
+  handleCardClick(manga) {
+    return () => {
+      this.props.fetchChapters(manga.id);
+      this.setState({ mangaBeingViewed: manga });
+    };
+  }
+
+  handleMangaInfoBackClick() {
+    this.setState({ mangaBeingViewed: null });
+  }
+
   render() {
-    const { mangaLibrary, sources } = this.props;
+    const {
+      mangaLibrary, sources, chaptersByMangaId, chaptersAreFetching,
+    } = this.props;
+    const { mangaBeingViewed } = this.state;
+
+    if (!chaptersAreFetching && mangaBeingViewed && chaptersByMangaId[mangaBeingViewed.id]) {
+      return (
+        <MangaInfo
+          mangaInfo={mangaBeingViewed}
+          chapters={chaptersByMangaId[mangaBeingViewed.id]}
+          initialTabValue={0}
+          onBackClick={this.handleMangaInfoBackClick}
+        />
+      );
+    }
 
     return (
       <React.Fragment>
@@ -66,7 +99,10 @@ class Catalogue extends Component {
           </FormControl>
         </form>
 
-        <MangaGrid mangaLibrary={mangaLibrary} cardComponent={<CatalogueMangaCard />} />
+        <MangaGrid
+          mangaLibrary={mangaLibrary}
+          cardComponent={<CatalogueMangaCard onClick={this.handleCardClick} />}
+        />
       </React.Fragment>
     );
   }
@@ -79,8 +115,12 @@ Catalogue.propTypes = {
   hasNextPage: PropTypes.bool.isRequired,
   query: PropTypes.string.isRequired,
   filters: PropTypes.array, // TODO: type
+  // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
+  chaptersByMangaId: PropTypes.object.isRequired,
+  chaptersAreFetching: PropTypes.bool.isRequired,
   fetchSources: PropTypes.func.isRequired,
   fetchCatalogue: PropTypes.func.isRequired,
+  fetchChapters: PropTypes.func.isRequired,
 };
 
 Catalogue.defaultProps = {

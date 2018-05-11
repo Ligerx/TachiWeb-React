@@ -3,8 +3,6 @@ import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import ButtonBase from 'material-ui/ButtonBase';
 import MangaCard from 'components/MangaCard';
-import { Link } from 'react-router-dom';
-import { Client } from 'api';
 import PropTypes from 'prop-types';
 import { mangaType } from 'types';
 
@@ -20,9 +18,9 @@ const styles = {
   },
 };
 
-const CatalogueMangaCard = ({ classes, manga }) => (
+const CatalogueMangaCard = ({ classes, manga, onClick }) => (
   <Grid item xs={6} sm={3} className={manga.favorite ? classes.isFavorited : null}>
-    <ButtonBase className={classes.fullWidth} component={Link} to={Client.manga(manga.id)}>
+    <ButtonBase className={classes.fullWidth} onClick={onClick(manga)}>
       <MangaCard title={manga.title} thumbnailUrl={manga.thumbnail_url} />
     </ButtonBase>
   </Grid>
@@ -31,6 +29,7 @@ const CatalogueMangaCard = ({ classes, manga }) => (
 CatalogueMangaCard.propTypes = {
   classes: PropTypes.object.isRequired,
   manga: mangaType.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(CatalogueMangaCard);

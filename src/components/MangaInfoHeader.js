@@ -6,16 +6,16 @@ import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import RefreshButton from 'components/RefreshButton';
 import MangaInfoTabs from 'components/MangaInfoTabs';
-import { Link } from 'react-router-dom';
 import { mangaType } from 'types';
 import PropTypes from 'prop-types';
+import BackButton from 'components/BackButton';
 
-const MangaInfoHeader = ({ mangaInfo, tabValue, handleChangeTab }) => (
+const MangaInfoHeader = ({
+  mangaInfo, tabValue, handleChangeTab, onBackClick,
+}) => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
-      <IconButton component={Link} to="/library">
-        <Icon>arrow_back</Icon>
-      </IconButton>
+      <BackButton onBackClick={onBackClick} />
       <Typography variant="title" style={{ flex: 1 }}>
         {mangaInfo.title}
       </Typography>
@@ -33,6 +33,7 @@ MangaInfoHeader.propTypes = {
   mangaInfo: mangaType.isRequired,
   tabValue: PropTypes.number.isRequired,
   handleChangeTab: PropTypes.func.isRequired,
+  onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
 };
 
 export default MangaInfoHeader;
