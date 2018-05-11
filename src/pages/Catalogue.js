@@ -7,6 +7,9 @@ import Select from 'material-ui/Select';
 import MangaGrid from 'components/MangaGrid';
 import CatalogueMangaCard from 'components/CatalogueMangaCard';
 
+// TODO: hook up MangaInfo component + update the card links
+// TODO: render components such that going from MangaInfo -> Catalogue preserves state
+// TODO: infinite scrolling, load more manga when scrolling down
 // TODO: sources type
 // TODO: filter type?
 
