@@ -42,6 +42,8 @@ const styles = {
 
 // Gradient will not render if there is no title passed
 
+// FIXME: title can be too long. Limit the max length of the title.
+
 const MangaCard = ({ classes, title, thumbnailUrl }) => (
   <Card className={classes.fullWidth}>
     <CardMedia className={classes.image} image={thumbnailUrl} title={title} />
