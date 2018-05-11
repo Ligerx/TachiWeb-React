@@ -7,13 +7,14 @@ import Catalogue from 'pages/Catalogue';
 
 const mapStateToProps = (state) => {
   const {
-    mangaLibrary, page, hasNextPage, query, filters,
+    mangaIds, page, hasNextPage, query, filters,
   } = state.catalogue;
+  const mangaLibrary = mangaToShow(state.library.mangaLibrary, mangaIds);
+
   return {
     // Sources props
     sources: state.sources.sourcesArray,
     // Catalogue props
-    mangaLibrary,
     page,
     hasNextPage,
     query,
@@ -22,6 +23,7 @@ const mapStateToProps = (state) => {
     chaptersByMangaId: state.chapters.chapters,
     chaptersAreFetching: state.chapters.isFetching,
     // Library props
+    mangaLibrary,
     isTogglingFavorite: state.library.isTogglingFavorite,
   };
 };
@@ -35,5 +37,10 @@ const mapDispatchToProps = dispatch => ({
   toggleFavoriteForManga: (mangaId, isFavorite) => () =>
     dispatch(toggleFavorite(mangaId, isFavorite)),
 });
+
+// Helper functions
+function mangaToShow(mangaLibrary, mangaIds) {
+  return mangaLibrary.filter(manga => mangaIds.includes(manga.id));
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Catalogue);
