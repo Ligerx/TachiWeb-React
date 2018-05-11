@@ -7,6 +7,9 @@ import Select from 'material-ui/Select';
 import MangaGrid from 'components/MangaGrid';
 import CatalogueMangaCard from 'components/CatalogueMangaCard';
 import MangaInfo from 'components/MangaInfo';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import MenuDrawer from 'components/MenuDrawer';
 
 // TODO: hook up MangaInfo component + update the card links
 // TODO: render components such that going from MangaInfo -> Catalogue preserves state
@@ -97,17 +100,23 @@ class Catalogue extends Component {
 
     return (
       <React.Fragment>
-        <form autoComplete="off">
-          <FormControl>
-            <Select value={this.state.value} onChange={this.handleSourceChange}>
-              {sources.map((source, index) => (
-                <MenuItem value={index} key={source.id}>
-                  {source.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </form>
+        <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+          <Toolbar>
+            <MenuDrawer />
+
+            <form autoComplete="off">
+              <FormControl>
+                <Select value={this.state.value} onChange={this.handleSourceChange}>
+                  {sources.map((source, index) => (
+                    <MenuItem value={index} key={source.id}>
+                      {source.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </form>
+          </Toolbar>
+        </AppBar>
 
         <MangaGrid
           mangaLibrary={mangaLibrary}
