@@ -18,7 +18,7 @@ const styles = () => ({
     position: 'absolute',
     bottom: 0,
     right: '5%',
-    marginBottom: -28,
+    marginBottom: -18,
   },
 });
 

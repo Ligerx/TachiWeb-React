@@ -5,9 +5,9 @@ import MangaCard from 'components/MangaCard';
 import Grid from 'material-ui/Grid';
 import BackgroundImage from 'components/BackgroundImage';
 import { withStyles } from 'material-ui/styles';
-import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 import { mangaType } from 'types';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
@@ -20,10 +20,10 @@ const styles = () => ({
   },
 });
 
-const MangaInfoDetails = ({ classes, mangaInfo }) => (
+const MangaInfoDetails = ({ classes, mangaInfo, children }) => (
   <React.Fragment>
-    <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url} className={classes.fabParent}>
-      <ResponsiveGrid className={classes.gridPadding}>
+    <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url}>
+      <ResponsiveGrid className={classNames(classes.gridPadding, classes.fabParent)}>
         <Grid item xs={4} sm={3}>
           <MangaCard thumbnailUrl={mangaInfo.thumbnail_url} />
         </Grid>
@@ -49,9 +49,9 @@ const MangaInfoDetails = ({ classes, mangaInfo }) => (
             <br />
           </Typography>
         </Grid>
-      </ResponsiveGrid>
 
-      <FavoriteFABContainer />
+        {children}
+      </ResponsiveGrid>
     </BackgroundImage>
 
     <ResponsiveGrid className={classes.gridPadding}>
@@ -66,6 +66,11 @@ const MangaInfoDetails = ({ classes, mangaInfo }) => (
 MangaInfoDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   mangaInfo: mangaType.isRequired,
+  children: PropTypes.node,
+};
+
+MangaInfoDetails.defaultProps = {
+  children: null,
 };
 
 export default withStyles(styles)(MangaInfoDetails);

@@ -4,6 +4,7 @@ import MangaInfoDetails from 'components/MangaInfoDetails';
 import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
+import FavoriteFAB from 'components/FavoriteFAB';
 
 // NOTES: From the previous code: When you update the server's manga info + chapter list,
 //        you should also update the client when it's complete
@@ -34,10 +35,20 @@ class MangaInfo extends Component {
 
   tabContent() {
     const { tabValue } = this.state;
-    const { mangaInfo, chapters } = this.props;
+    const {
+      mangaInfo, chapters, isTogglingFavorite, toggleFavorite,
+    } = this.props;
 
     if (tabValue === 0) {
-      return <MangaInfoDetails mangaInfo={mangaInfo} />;
+      return (
+        <MangaInfoDetails mangaInfo={mangaInfo}>
+          <FavoriteFAB
+            isFavorite={mangaInfo.favorite}
+            isTogglingFavorite={isTogglingFavorite}
+            toggleFavorite={toggleFavorite}
+          />
+        </MangaInfoDetails>
+      );
     } else if (tabValue === 1) {
       return <SortFilterMangaInfoChapters mangaInfo={mangaInfo} chapters={chapters} />;
     }
@@ -69,6 +80,8 @@ MangaInfo.propTypes = {
   chapters: PropTypes.arrayOf(chapterType).isRequired,
   initialTabValue: PropTypes.number.isRequired,
   onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+  isTogglingFavorite: PropTypes.bool.isRequired,
+  toggleFavorite: PropTypes.func.isRequired,
 };
 
 export default MangaInfo;

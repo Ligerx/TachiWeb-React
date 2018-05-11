@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { fetchLibrary } from 'redux-ducks/library';
+import { fetchLibrary, toggleFavorite } from 'redux-ducks/library';
 import { fetchChapters } from 'redux-ducks/chapters';
 import MangaInfoPage from 'pages/MangaInfoPage';
 
@@ -15,12 +15,14 @@ const mapStateToProps = (state, ownProps) => {
     mangaInfo: getThisManga(library.mangaLibrary, mangaId),
     chapters: chapters[mangaId],
     mangaInfoIsFetching: library.isFetching,
+    isTogglingFavorite: library.isTogglingFavorite,
   };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchLibrary: () => dispatch(fetchLibrary()),
   fetchChapters: () => dispatch(fetchChapters(ownProps.match.params.mangaId)),
+  toggleFavorite: () => dispatch(toggleFavorite(ownProps.match.params.mangaId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MangaInfoPage);
