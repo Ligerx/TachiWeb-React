@@ -45,7 +45,7 @@ export default function libraryReducer(
     case TOGGLE_FAVORITE_REQUEST:
       return { ...state, isTogglingFavorite: true };
     case TOGGLE_FAVORITE_SUCCESS: {
-      const { newMangaLibrary } = toggleFavoriteInLibrary(state.mangaLibrary, action.mangaId);
+      const newMangaLibrary = toggleFavoriteInLibrary(state.mangaLibrary, action.mangaId);
 
       return {
         ...state,
@@ -106,7 +106,7 @@ function toggleFavoriteInLibrary(mangaLibrary, mangaId) {
     if (manga.id === mangaId) {
       return { ...manga, favorite: !manga.favorite };
     }
-    return { ...manga };
+    return manga;
   });
 }
 
