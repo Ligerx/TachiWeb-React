@@ -77,7 +77,7 @@ export function fetchCatalogue(sourceId, query = '', filters = null) {
       type: REQUEST,
       query,
       filters,
-      meta: { sourceId, query, filters },
+      meta: { sourceId },
     });
 
     // Return cached catalogue data assuming you just want to see old results
