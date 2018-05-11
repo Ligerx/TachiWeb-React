@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { fetchLibrary } from 'redux-ducks/library';
 import { fetchChapters } from 'redux-ducks/chapters';
-import MangaInfo from 'pages/MangaInfo';
+import MangaInfoPage from 'pages/MangaInfoPage';
 
 const getThisManga = (mangaLibrary, mangaId) =>
   mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
@@ -23,4 +23,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchChapters: () => dispatch(fetchChapters(ownProps.match.params.mangaId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(MangaInfo);
+export default connect(mapStateToProps, mapDispatchToProps)(MangaInfoPage);
