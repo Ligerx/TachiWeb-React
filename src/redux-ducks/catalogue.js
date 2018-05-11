@@ -15,6 +15,11 @@ const ADD_PAGE_FAILURE = 'catalogue/ADD_PAGE_FAILURE';
 // Keeping it as a failsafe
 const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE';
 
+// Allow toggle favorite (via library) to update the catalogue as well
+const TOGGLE_FAVORITE = 'catalogue/TOGGLE_FAVORITE_SUCCESS_CATALOGUE';
+export { TOGGLE_FAVORITE };
+
+
 // Reducers
 const initialState = {
   mangaLibrary: [], // keep an array of mangas just for catalogue
@@ -68,6 +73,10 @@ export default function chaptersReducer(state = initialState, action = {}) {
       return { ...state, isFetching: false, error: true };
     case ADD_PAGE_NO_NEXT_PAGE:
       return { ...state, isFetching: false };
+    case TOGGLE_FAVORITE: {
+      const newMangaLibrary = toggleFavoriteInCatalogue(state.mangaLibrary, action.mangaId);
+      return { ...state, mangaLibrary: newMangaLibrary };
+    }
     default:
       return state;
   }
@@ -175,4 +184,14 @@ function handleServerError(res) {
     return Promise.reject(new Error('500 Server Error encountered when trying to fetch catalogue'));
   }
   return res.json();
+}
+
+// Clone the mangaLibrary and toggle the one manga's favorite status
+function toggleFavoriteInCatalogue(mangaLibrary, mangaId) {
+  return mangaLibrary.map((manga) => {
+    if (manga.id === mangaId) {
+      return { ...manga, favorite: !manga.favorite };
+    }
+    return { ...manga };
+  });
 }

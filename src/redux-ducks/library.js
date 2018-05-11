@@ -1,4 +1,5 @@
 import { Server } from 'api';
+import { TOGGLE_FAVORITE as TOGGLE_FAVORITE_CATALOGUE } from './catalogue';
 
 // Actions
 const REQUEST = 'library/LOAD_REQUEST';
@@ -92,15 +93,19 @@ export function toggleFavorite(mangaId, isCurrentlyFavorite) {
     dispatch({ type: TOGGLE_FAVORITE_REQUEST, meta: { mangaId, isCurrentlyFavorite } });
 
     // Not checking if the manga exists in the library because if you're favoriting
-    // from the catalogue, the manga won't exist in the library yet.
+    // from the catalogue, the library data may not have been loaded yet.
 
     return fetch(Server.toggleFavorite(mangaId, isCurrentlyFavorite)).then(
-      () =>
-        dispatch({
+      () => {
+        // Additionally toggle favorite in catalogue if it exists.
+        dispatch({ type: TOGGLE_FAVORITE_CATALOGUE, mangaId });
+
+        return dispatch({
           type: TOGGLE_FAVORITE_SUCCESS,
           mangaId,
           meta: { newIsFavorite: !isCurrentlyFavorite },
-        }),
+        });
+      },
       () => dispatch({ type: TOGGLE_FAVORITE_FAILURE, payload: 'Failed to toggle favorite' }),
     );
   };
