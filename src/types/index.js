@@ -6,7 +6,7 @@ import { shape, number, string, bool, array } from 'prop-types';
 
 export const mangaType = shape({
   chapters: number.isRequired,
-  unread: number.isRequired,
+  unread: number, // not required because catalogue manga data does not include this
   author: string.isRequired,
   flags: shape({
     DISPLAY_MODE: string.isRequired,

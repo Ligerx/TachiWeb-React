@@ -40,7 +40,7 @@ export default function chaptersReducer(state = initialState, action = {}) {
       };
     }
     case SUCCESS: {
-      // Other state should be up to date from the previous REQUEST action above
+      // The rest of the state should be updated from the previous RESET_STATE action above
       const { mangaLibrary, hasNextPage } = action;
       return {
         ...state,
