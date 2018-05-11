@@ -73,7 +73,12 @@ export default function chaptersReducer(state = initialState, action = {}) {
 // Action Creators
 export function fetchCatalogue(sourceId, query = '', filters = null) {
   return (dispatch, getState) => {
-    dispatch({ type: REQUEST, meta: { sourceId, query, filters } });
+    dispatch({
+      type: REQUEST,
+      query,
+      filters,
+      meta: { sourceId, query, filters },
+    });
 
     // Return cached catalogue data assuming you just want to see old results
     if (
@@ -89,10 +94,15 @@ export function fetchCatalogue(sourceId, query = '', filters = null) {
       .then(
         (json) => {
           const { content, has_next: hasNextPage } = json;
-          const { mangaIds } = transformToMangaIdsArray(content);
+          const mangaIds = transformToMangaIdsArray(content);
 
           dispatch({ type: ADD_MANGA_TO_LIBRARY, newManga: content });
-          dispatch({ type: SUCCESS, mangaIds, page: 1, hasNextPage });
+          dispatch({
+            type: SUCCESS,
+            mangaIds,
+            page: 1,
+            hasNextPage,
+          });
         },
         error => dispatch({ type: FAILURE, payload: error }),
       );
