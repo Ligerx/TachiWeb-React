@@ -1,28 +1,21 @@
 import { Server } from 'api';
+import { ADD_MANGA as ADD_MANGA_TO_LIBRARY } from './library';
 
 // FIXME: reusing isFetching for ADD_PAGE_..., which isn't ideal.
 
 // Actions
 const REQUEST = 'catalogue/LOAD_REQUEST';
-const RESET_STATE = 'catalogue/LOAD_RESET_STATE';
 const SUCCESS = 'catalogue/LOAD_SUCCESS';
 const FAILURE = 'catalogue/LOAD_FAILURE';
 const CACHE = 'catalogue/LOAD_CACHE'; // e.g. Catalogue -> view a manga -> go back to catalogue
 const ADD_PAGE_REQUEST = 'catalogue/ADD_PAGE_REQUEST';
 const ADD_PAGE_SUCCESS = 'catalogue/ADD_PAGE_SUCCESS';
 const ADD_PAGE_FAILURE = 'catalogue/ADD_PAGE_FAILURE';
-// Don't use ADD_PAGE_NO_NEXT_PAGE, check before calling fetchMoreCataloguePages
-// Keeping it as a failsafe
-const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE';
-
-// Allow toggle favorite (via library) to update the catalogue as well
-const TOGGLE_FAVORITE = 'catalogue/TOGGLE_FAVORITE_SUCCESS_CATALOGUE';
-export { TOGGLE_FAVORITE };
-
+const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE'; // failsafe, don't use
 
 // Reducers
 const initialState = {
-  mangaLibrary: [], // keep an array of mangas just for catalogue
+  mangaIds: [], // array of mangaIds that point that data loaded in library
   page: 1,
   hasNextPage: false,
   query: '',
@@ -34,22 +27,19 @@ const initialState = {
 export default function chaptersReducer(state = initialState, action = {}) {
   switch (action.type) {
     case REQUEST:
-      return { ...state, isFetching: true, error: false };
-    case RESET_STATE: {
-      // Overriding all of catalogue state on request when fetching fresh catalogue data
-      const { query, filters } = action;
+      // Resetting state except for query and filters
       return {
         ...initialState,
-        query,
-        filters,
+        query: action.query,
+        filters: action.filters,
+        isFetching: true,
       };
-    }
     case SUCCESS: {
-      // The rest of the state should be updated from the previous RESET_STATE action above
-      const { mangaLibrary, hasNextPage } = action;
+      // The rest of the state should be reset from the previous REQUEST action above
+      const { mangaIds, hasNextPage } = action;
       return {
         ...state,
-        mangaLibrary,
+        mangaIds,
         hasNextPage,
         isFetching: false,
       };
@@ -61,21 +51,18 @@ export default function chaptersReducer(state = initialState, action = {}) {
     case ADD_PAGE_REQUEST:
       return { ...state, isFetching: true, error: false };
     case ADD_PAGE_SUCCESS: {
-      const { page, hasNextPage, additionalManga } = action;
+      const { page, hasNextPage } = action;
       return {
         ...state,
         page,
         hasNextPage,
-        mangaLibrary: [...state.mangaLibrary, ...additionalManga],
       };
     }
     case ADD_PAGE_FAILURE:
       return { ...state, isFetching: false, error: true };
-    case ADD_PAGE_NO_NEXT_PAGE:
-      return { ...state, isFetching: false };
-    case TOGGLE_FAVORITE: {
-      const newMangaLibrary = toggleFavoriteInCatalogue(state.mangaLibrary, action.mangaId);
-      return { ...state, mangaLibrary: newMangaLibrary };
+    case ADD_PAGE_NO_NEXT_PAGE: {
+      console.error('No next page to fetch. Should not be reaching here');
+      return { ...state, isFetching: false, error: true };
     }
     default:
       return state;
@@ -85,7 +72,7 @@ export default function chaptersReducer(state = initialState, action = {}) {
 // Action Creators
 export function fetchCatalogue(sourceId, query = '', filters = null) {
   return (dispatch, getState) => {
-    dispatch({ type: REQUEST });
+    dispatch({ type: REQUEST, meta: { sourceId, query, filters } });
 
     // Return cached catalogue data assuming you just want to see old results
     if (
@@ -96,25 +83,14 @@ export function fetchCatalogue(sourceId, query = '', filters = null) {
       return dispatch({ type: CACHE });
     }
 
-    // Clear previous data before initiating fetch
-    dispatch({
-      type: RESET_STATE,
-      query,
-      filters,
-    });
-
     return fetch(Server.catalogue(), cataloguePostParameters(1, sourceId, query, filters))
       .then(handleServerError)
       .then(
         (json) => {
           const { content, has_next: hasNextPage } = json;
 
-          dispatch({
-            type: SUCCESS,
-            page: 1,
-            mangaLibrary: content,
-            hasNextPage,
-          });
+          dispatch({ type: ADD_MANGA_TO_LIBRARY, newManga: content });
+          dispatch({ type: SUCCESS, page: 1, hasNextPage });
         },
         error => dispatch({ type: FAILURE, payload: error }),
       );
@@ -140,21 +116,17 @@ export function fetchMoreCataloguePages(sourceId) {
         (json) => {
           const { content, has_next: hasNextPageUpdated } = json;
 
+          dispatch({ type: ADD_MANGA_TO_LIBRARY, newManga: content });
           dispatch({
             type: ADD_PAGE_SUCCESS,
             page: nextPage,
             hasNextPage: hasNextPageUpdated,
-            additionalManga: content,
           });
         },
         error => dispatch({ type: ADD_PAGE_FAILURE, payload: error }),
       );
   };
 }
-
-// Probably need another action specifically for getting the next page of results
-// and adding them to library and catalogue
-// Or I could make fetchCatalogue deal with these different cases?
 
 // Helper functions
 function cataloguePostParameters(page, sourceId, query, filters) {
@@ -184,14 +156,4 @@ function handleServerError(res) {
     return Promise.reject(new Error('500 Server Error encountered when trying to fetch catalogue'));
   }
   return res.json();
-}
-
-// Clone the mangaLibrary and toggle the one manga's favorite status
-function toggleFavoriteInCatalogue(mangaLibrary, mangaId) {
-  return mangaLibrary.map((manga) => {
-    if (manga.id === mangaId) {
-      return { ...manga, favorite: !manga.favorite };
-    }
-    return { ...manga };
-  });
 }
