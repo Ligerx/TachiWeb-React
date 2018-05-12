@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "classnames": "^2.2.5",
+    "lodash": "^4.17.10",
     "material-ui": "^1.0.0-beta.43",
     "moment": "^2.22.1",
     "prop-types": "^15.6.1",
