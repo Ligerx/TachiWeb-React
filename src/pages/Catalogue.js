@@ -68,7 +68,7 @@ class Catalogue extends Component {
 
   componentWillUnmount() {
     // Clean up debouncing function
-    this.delayedUpdateSearch.cancel();
+    this.delayedSearch.cancel();
   }
 
   handleSourceChange(event) {
