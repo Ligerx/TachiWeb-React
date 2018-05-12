@@ -1,3 +1,11 @@
+List of bugs:
+- Going from Library -> Catalogue -> Library causes unread badge data to be missing.
+  - Currently manga information from Library and Catalogue are both stored in a shared array.
+  - When new duplicate manga is added, we replace the old manga with the new object
+  - However, mangaInfo from Catalogue and Library are not identical. Catalogue is missing the 'unread' field.
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
