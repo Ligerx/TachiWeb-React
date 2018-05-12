@@ -10,14 +10,13 @@ import MangaInfo from 'components/MangaInfo';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import MenuDrawer from 'components/MenuDrawer';
+import TextField from 'material-ui/TextField';
+import debounce from 'lodash/debounce';
 
-// TODO: hook up MangaInfo component + update the card links
 // TODO: render components such that going from MangaInfo -> Catalogue preserves state
 // TODO: infinite scrolling, load more manga when scrolling down
 // TODO: sources type
 // TODO: filter type?
-// TODO: FIXME: running into problem w/ favorite property of catalogue manga does not exist
-// TODO: back button should be dynamic.
 // TODO: if you're looking at a new manga, chapters won't have been scraped by the server yet.
 //       This is probably also an issue w/ library.
 
@@ -29,12 +28,20 @@ class Catalogue extends Component {
       // Select based on index of the array instead of id
       // this makes it less reliant on having to sync state with the data
       value: 0,
+      searchQuery: '',
       mangaIdBeingViewed: null,
     };
 
     this.handleSourceChange = this.handleSourceChange.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleCardClick = this.handleCardClick.bind(this);
     this.handleMangaInfoBackClick = this.handleMangaInfoBackClick.bind(this);
+
+    // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
+    // Debouncing the search text
+    this.delayedUpdateSearch = debounce((event) => {
+      this.setState({ searchQuery: event.target.value });
+    }, 500);
   }
 
   componentDidMount() {
@@ -48,16 +55,33 @@ class Catalogue extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { value } = this.state;
+    const { value, searchQuery } = this.state;
     const { sources, fetchCatalogue } = this.props;
+
+    // TODO: implement filter
+    const filter = null;
 
     if (value !== prevState.value) {
       fetchCatalogue(sources[value].id);
+    } else if (searchQuery !== prevState.searchQuery) {
+      fetchCatalogue(sources[value].id, searchQuery, filter);
     }
   }
 
+  componentWillUnmount() {
+    // Clean up debouncing function
+    this.delayedUpdateSearch.cancel();
+  }
+
   handleSourceChange(event) {
+    // TODO: reset search bar and filters as well
     this.setState({ value: event.target.value });
+  }
+
+  handleSearchChange(event) {
+    // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
+    event.persist();
+    this.delayedUpdateSearch(event);
   }
 
   handleCardClick(mangaId) {
@@ -114,6 +138,8 @@ class Catalogue extends Component {
                   ))}
                 </Select>
               </FormControl>
+
+              <TextField label="Search" onChange={this.handleSearchChange} />
             </form>
           </Toolbar>
         </AppBar>
