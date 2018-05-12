@@ -5,6 +5,7 @@ import ButtonBase from 'material-ui/ButtonBase';
 import MangaCard from 'components/MangaCard';
 import PropTypes from 'prop-types';
 import { mangaType } from 'types';
+import { Server } from 'api';
 
 // * fullWidth
 // While the grid item is full width, it's children aren't.
@@ -21,7 +22,7 @@ const styles = {
 const CatalogueMangaCard = ({ classes, manga, onClick }) => (
   <Grid item xs={6} sm={3} className={manga.favorite ? classes.isFavorited : null}>
     <ButtonBase className={classes.fullWidth} onClick={onClick(manga.id)}>
-      <MangaCard title={manga.title} thumbnailUrl={manga.thumbnail_url} />
+      <MangaCard title={manga.title} thumbnailUrl={Server.cover(manga.id)} />
     </ButtonBase>
   </Grid>
 );

@@ -5,7 +5,7 @@ import Badge from 'material-ui/Badge';
 import ButtonBase from 'material-ui/ButtonBase';
 import MangaCard from 'components/MangaCard';
 import { Link } from 'react-router-dom';
-import { Client } from 'api';
+import { Server, Client } from 'api';
 
 // TODO: don't pass the whole 'manga' object, only pass down what's necessary
 
@@ -35,7 +35,7 @@ const LibraryMangaCard = ({ classes, manga }) => (
       }}
     >
       <ButtonBase className={classes.fullWidth} component={Link} to={Client.manga(manga.id)}>
-        <MangaCard title={manga.title} thumbnailUrl={manga.thumbnail_url} />
+        <MangaCard title={manga.title} thumbnailUrl={Server.cover(manga.id)} />
       </ButtonBase>
     </Badge>
   </Grid>

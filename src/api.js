@@ -8,6 +8,10 @@ const Server = {
     return `/api/chapters/${mangaId}`;
   },
 
+  cover(mangaId) {
+    return `/api/cover/${mangaId}`;
+  },
+
   pageCount(mangaId, chapterId) {
     return `/api/page_count/${mangaId}/${chapterId}`;
   },
