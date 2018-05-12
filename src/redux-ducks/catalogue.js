@@ -138,7 +138,10 @@ export function fetchMoreCataloguePages(sourceId) {
       return dispatch({ type: ADD_PAGE_NO_NEXT_PAGE });
     }
 
-    return fetch(Server.catalogue(), cataloguePostParameters(nextPage, sourceId, query, filters))
+    return fetch(
+      Server.catalogue(),
+      cataloguePostParameters(nextPage, sourceId, query.trim(), filters),
+    )
       .then(handleServerError)
       .then(
         (json) => {
