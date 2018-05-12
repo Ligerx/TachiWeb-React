@@ -29,6 +29,7 @@ class Catalogue extends Component {
       // this makes it less reliant on having to sync state with the data
       value: 0,
       searchQuery: '',
+      filter: null, // TODO: implement this
       mangaIdBeingViewed: null,
     };
 
@@ -36,35 +37,32 @@ class Catalogue extends Component {
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleCardClick = this.handleCardClick.bind(this);
     this.handleMangaInfoBackClick = this.handleMangaInfoBackClick.bind(this);
-
-    // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
-    // Debouncing the search text
-    this.delayedUpdateSearch = debounce((event) => {
-      this.setState({ searchQuery: event.target.value });
-    }, 500);
   }
 
   componentDidMount() {
     const { fetchSources, fetchCatalogue } = this.props;
+
     // I think there's a bug in babel. I should be able to reference 'this' (in the outer scope)
     // when using an arrow function, but it's undefined. So I'm manually binding 'this'.
     const that = this;
     fetchSources().then(() => {
       fetchCatalogue(that.props.sources[0].id);
     });
+
+    // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
+    // Debouncing the search text
+    this.delayedSearch = debounce(() => {
+      const { value, searchQuery, filter } = this.state;
+      fetchCatalogue(this.props.sources[value].id, searchQuery, filter);
+    }, 500);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { value, searchQuery } = this.state;
+    const { value } = this.state;
     const { sources, fetchCatalogue } = this.props;
-
-    // TODO: implement filter
-    const filter = null;
 
     if (value !== prevState.value) {
       fetchCatalogue(sources[value].id);
-    } else if (searchQuery !== prevState.searchQuery) {
-      fetchCatalogue(sources[value].id, searchQuery, filter);
     }
   }
 
@@ -74,14 +72,14 @@ class Catalogue extends Component {
   }
 
   handleSourceChange(event) {
-    // TODO: reset search bar and filters as well
-    this.setState({ value: event.target.value });
+    // TODO: not sure if setting 'filter: null' is correct right now
+    this.setState({ value: event.target.value, searchQuery: '', filter: null });
   }
 
   handleSearchChange(event) {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
-    event.persist();
-    this.delayedUpdateSearch(event);
+    this.setState({ searchQuery: event.target.value });
+    this.delayedSearch();
   }
 
   handleCardClick(mangaId) {
@@ -139,7 +137,11 @@ class Catalogue extends Component {
                 </Select>
               </FormControl>
 
-              <TextField label="Search" onChange={this.handleSearchChange} />
+              <TextField
+                label="Search"
+                value={this.state.searchQuery}
+                onChange={this.handleSearchChange}
+              />
             </form>
           </Toolbar>
         </AppBar>
