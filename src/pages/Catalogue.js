@@ -4,14 +4,13 @@ import { mangaType } from 'types';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
-import MangaGrid from 'components/MangaGrid';
-import CatalogueMangaCard from 'components/CatalogueMangaCard';
 import MangaInfo from 'components/MangaInfo';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import MenuDrawer from 'components/MenuDrawer';
 import TextField from 'material-ui/TextField';
 import debounce from 'lodash/debounce';
+import CatalogueMangaGrid from 'components/CatalogueMangaGrid';
 
 // TODO: render components such that going from MangaInfo -> Catalogue preserves state
 // TODO: infinite scrolling, load more manga when scrolling down
@@ -146,10 +145,7 @@ class Catalogue extends Component {
           </Toolbar>
         </AppBar>
 
-        <MangaGrid
-          mangaLibrary={mangaLibrary}
-          cardComponent={<CatalogueMangaCard onClick={this.handleCardClick} />}
-        />
+        <CatalogueMangaGrid mangaLibrary={mangaLibrary} onCardClick={this.handleCardClick} />
       </React.Fragment>
     );
   }
