@@ -15,12 +15,14 @@ import CatalogueMangaCard from 'components/CatalogueMangaCard';
 import Waypoint from 'react-waypoint';
 import { CircularProgress } from 'material-ui/Progress';
 
-// TODO: render components such that going from MangaInfo -> Catalogue preserves state
-// TODO: infinite scrolling, load more manga when scrolling down
 // TODO: sources type
 // TODO: filter type?
+// TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 // TODO: if you're looking at a new manga, chapters won't have been scraped by the server yet.
+//       Need to force an update when it's empty?
 //       This is probably also an issue w/ library.
+// TODO: all of filtering.
+// TODO: actually split all of this up into components...
 
 class Catalogue extends Component {
   constructor(props) {
