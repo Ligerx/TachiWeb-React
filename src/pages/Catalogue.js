@@ -10,7 +10,10 @@ import Toolbar from 'material-ui/Toolbar';
 import MenuDrawer from 'components/MenuDrawer';
 import TextField from 'material-ui/TextField';
 import debounce from 'lodash/debounce';
-import CatalogueMangaGrid from 'components/CatalogueMangaGrid';
+import MangaGrid from 'components/MangaGrid';
+import CatalogueMangaCard from 'components/CatalogueMangaCard';
+import Waypoint from 'react-waypoint';
+import { CircularProgress } from 'material-ui/Progress';
 
 // TODO: render components such that going from MangaInfo -> Catalogue preserves state
 // TODO: infinite scrolling, load more manga when scrolling down
@@ -36,6 +39,7 @@ class Catalogue extends Component {
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleCardClick = this.handleCardClick.bind(this);
     this.handleMangaInfoBackClick = this.handleMangaInfoBackClick.bind(this);
+    this.handleLoadNextPage = this.handleLoadNextPage.bind(this);
   }
 
   componentDidMount() {
@@ -92,10 +96,19 @@ class Catalogue extends Component {
     this.setState({ mangaIdBeingViewed: null });
   }
 
+  handleLoadNextPage() {
+    // TODO: maybe add text saying that there are no more results?
+    if (this.props.hasNextPage) {
+      this.props.fetchNextCataloguePage(this.props.sources[this.state.value].id);
+    }
+  }
+
   render() {
     const {
       mangaLibrary,
       sources,
+      hasNextPage,
+      catalogueIsFetching,
       chaptersByMangaId,
       chaptersAreFetching,
       isTogglingFavorite,
@@ -125,7 +138,7 @@ class Catalogue extends Component {
           <Toolbar>
             <MenuDrawer />
 
-            <form autoComplete="off">
+            <form onSubmit={e => e.preventDefault()}>
               <FormControl>
                 <Select value={this.state.value} onChange={this.handleSourceChange}>
                   {sources.map((source, index) => (
@@ -145,7 +158,15 @@ class Catalogue extends Component {
           </Toolbar>
         </AppBar>
 
-        <CatalogueMangaGrid mangaLibrary={mangaLibrary} onCardClick={this.handleCardClick} />
+        <MangaGrid
+          mangaLibrary={mangaLibrary}
+          cardComponent={<CatalogueMangaCard onClick={this.handleCardClick} />}
+        />
+        {mangaLibrary.length > 0 && (
+          <Waypoint onEnter={this.handleLoadNextPage} bottomOffset={-300} />
+        )}
+
+        {catalogueIsFetching && <CircularProgress />}
       </React.Fragment>
     );
   }
@@ -158,12 +179,15 @@ Catalogue.propTypes = {
   hasNextPage: PropTypes.bool.isRequired,
   query: PropTypes.string.isRequired,
   filters: PropTypes.array, // TODO: type
+  catalogueIsFetching: PropTypes.bool.isRequired,
   // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
   chaptersByMangaId: PropTypes.object.isRequired,
   chaptersAreFetching: PropTypes.bool.isRequired,
   isTogglingFavorite: PropTypes.bool.isRequired,
+  // Below are redux dispatch functions
   fetchSources: PropTypes.func.isRequired,
   fetchCatalogue: PropTypes.func.isRequired,
+  fetchNextCataloguePage: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   toggleFavoriteForManga: PropTypes.func.isRequired,
 };

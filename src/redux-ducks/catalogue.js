@@ -61,6 +61,7 @@ export default function chaptersReducer(state = initialState, action = {}) {
         mangaIds: [...state.mangaIds, ...mangaIds],
         page,
         hasNextPage,
+        isFetching: false,
       };
     }
     case ADD_PAGE_FAILURE:
@@ -116,7 +117,7 @@ export function fetchCatalogue(sourceId, query = '', filters = null) {
   };
 }
 
-export function fetchMoreCataloguePages(sourceId) {
+export function fetchNextCataloguePage(sourceId) {
   return (dispatch, getState) => {
     const {
       page, hasNextPage, query, filters,
@@ -146,7 +147,7 @@ export function fetchMoreCataloguePages(sourceId) {
       .then(
         (json) => {
           const { content, has_next: hasNextPageUpdated } = json;
-          const { mangaIds } = transformToMangaIdsArray(content);
+          const mangaIds = transformToMangaIdsArray(content);
 
           dispatch({ type: ADD_MANGA_TO_LIBRARY, newManga: content });
           dispatch({

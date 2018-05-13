@@ -1,13 +1,18 @@
 import { connect } from 'react-redux';
 import { fetchSources } from 'redux-ducks/sources';
-import { fetchCatalogue } from 'redux-ducks/catalogue';
+import { fetchCatalogue, fetchNextCataloguePage } from 'redux-ducks/catalogue';
 import { fetchChapters } from 'redux-ducks/chapters';
 import { toggleFavorite } from 'redux-ducks/library';
 import Catalogue from 'pages/Catalogue';
 
 const mapStateToProps = (state) => {
   const {
-    mangaIds, page, hasNextPage, query, filters,
+    mangaIds,
+    page,
+    hasNextPage,
+    query,
+    filters,
+    isFetching: catalogueIsFetching,
   } = state.catalogue;
   const mangaLibrary = mangaToShow(state.library.mangaLibrary, mangaIds);
 
@@ -19,6 +24,7 @@ const mapStateToProps = (state) => {
     hasNextPage,
     query,
     filters,
+    catalogueIsFetching,
     // Chapter props
     chaptersByMangaId: state.chapters.chaptersByMangaId,
     chaptersAreFetching: state.chapters.isFetching,
@@ -36,6 +42,7 @@ const mapDispatchToProps = dispatch => ({
   // Need a nested function to pass in mangaId in the JSX
   toggleFavoriteForManga: (mangaId, isFavorite) => () =>
     dispatch(toggleFavorite(mangaId, isFavorite)),
+  fetchNextCataloguePage: sourceId => dispatch(fetchNextCataloguePage(sourceId)),
 });
 
 // Helper functions
