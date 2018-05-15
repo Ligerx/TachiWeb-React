@@ -7,7 +7,12 @@ import cloneDeep from 'lodash/cloneDeep';
 import TextField from 'material-ui/TextField';
 import { FormGroup } from 'material-ui/Form';
 import FilterSelect from './FilterSelect';
-import FilterCheckbox from './FilterCheckbox';
+import FilterTristate from './FilterTristate';
+import FilterGroup from './FilterGroup';
+
+// Choosing to use lodash cloneDeep instead of the standard setState method
+// It would be a huge pain to try updating an array of objects (and be less readable)
+// https://stackoverflow.com/questions/29537299/react-how-do-i-update-state-item1-on-setstate-with-jsfiddle
 
 // Kinda hacking the UI for this together right now.
 const styles = {
@@ -50,6 +55,7 @@ class DynamicSourceFilters extends Component {
     this.toggleDrawer = this.toggleDrawer.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleTristateChange = this.handleTristateChange.bind(this);
+    this.handleGroupChange = this.handleGroupChange.bind(this);
     this.filterElements = this.filterElements.bind(this);
   }
 
@@ -68,17 +74,24 @@ class DynamicSourceFilters extends Component {
 
   handleTristateChange(index) {
     return () => {
-      const { state } = this.state.filters[index];
-      let newState;
-      if (state < 2) {
-        newState = state + 1;
-      } else {
-        newState = 0;
-      }
-
       const newFilters = cloneDeep(this.state.filters);
-      newFilters[index].state = newState;
+      const { state } = this.state.filters[index];
+      newFilters[index].state = updateTristate(state);
       this.setState({ filters: newFilters });
+    };
+  }
+
+  handleGroupChange(index) {
+    // NOTE: Assuming that GROUP will only contain TRISTATE children
+    return (nestedIndex) => {
+      return () => {
+        const newFilters = cloneDeep(this.state.filters);
+
+        const { state } = this.state.filters[index]; // This is an array of objects
+        const nestedState = state[nestedIndex].state; // This is the tristate value
+        newFilters[index].state[nestedIndex].state = updateTristate(nestedState);
+        this.setState({ filters: newFilters });
+      };
     };
   }
 
@@ -97,9 +110,9 @@ class DynamicSourceFilters extends Component {
       } else if (type === 'SELECT') {
         return (
           <FilterSelect
-            name={name}
-            values={values}
             index={index}
+            values={values}
+            name={name}
             state={state}
             onChange={this.handleChange(index)}
             key={index}
@@ -108,14 +121,29 @@ class DynamicSourceFilters extends Component {
       } else if (type === 'TRISTATE') {
         // TODO: I think I need my own special handler
         return (
-          <FilterCheckbox
+          <FilterTristate
             name={name}
             state={state}
             onChange={this.handleTristateChange(index)}
             key={index}
           />
         );
+      } else if (type === 'GROUP') {
+        // NOTE: Assuming that GROUP will only contain TRISTATE children
+        return (
+          <FilterGroup
+            name={name}
+            state={state}
+            onChange={this.handleGroupChange(index)}
+            key={index}
+          />
+        );
       }
+
+      // TODO: header, separator, checkbox, sort
+      // header separator checkbox go at the beginning of the list
+      // sort is at the bottom
+
       return null;
     });
   }
@@ -142,6 +170,14 @@ class DynamicSourceFilters extends Component {
       </React.Fragment>
     );
   }
+}
+
+// Helper Functions
+function updateTristate(oldState) {
+  if (oldState < 2) {
+    return oldState + 1;
+  }
+  return 0;
 }
 
 DynamicSourceFilters.propTypes = {

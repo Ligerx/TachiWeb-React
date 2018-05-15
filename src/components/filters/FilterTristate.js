@@ -11,7 +11,7 @@ import Checkbox from 'material-ui/Checkbox';
 // | 2     | EXCLUDE |
 // +-------+---------+
 
-const FilterCheckbox = ({ name, state, onChange }) => {
+const FilterTristate = ({ name, state, onChange }) => {
   const checked = state === 1;
   const indeterminate = state === 0;
 
@@ -23,10 +23,10 @@ const FilterCheckbox = ({ name, state, onChange }) => {
   );
 };
 
-FilterCheckbox.propTypes = {
+FilterTristate.propTypes = {
   name: PropTypes.string.isRequired,
   state: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
 };
 
-export default FilterCheckbox;
+export default FilterTristate;
