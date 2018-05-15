@@ -9,6 +9,7 @@ import { FormGroup } from 'material-ui/Form';
 import FilterSelect from './FilterSelect';
 import FilterTristate from './FilterTristate';
 import FilterGroup from './FilterGroup';
+import FilterSort from './FilterSort';
 
 // Choosing to use lodash cloneDeep instead of the standard setState method
 // It would be a huge pain to try updating an array of objects (and be less readable)
@@ -83,15 +84,30 @@ class DynamicSourceFilters extends Component {
 
   handleGroupChange(index) {
     // NOTE: Assuming that GROUP will only contain TRISTATE children
-    return (nestedIndex) => {
-      return () => {
-        const newFilters = cloneDeep(this.state.filters);
+    return nestedIndex => () => {
+      const newFilters = cloneDeep(this.state.filters);
 
-        const { state } = this.state.filters[index]; // This is an array of objects
-        const nestedState = state[nestedIndex].state; // This is the tristate value
-        newFilters[index].state[nestedIndex].state = updateTristate(nestedState);
-        this.setState({ filters: newFilters });
-      };
+      const { state } = this.state.filters[index]; // This is an array of objects
+      const nestedState = state[nestedIndex].state; // This is the tristate value
+      newFilters[index].state[nestedIndex].state = updateTristate(nestedState);
+      this.setState({ filters: newFilters });
+    };
+  }
+
+  handleSortChange(index) {
+    return nestedIndex => () => {
+      const newFilters = cloneDeep(this.state.filters);
+      const currentlyAscending = newFilters[index].state.ascending;
+      const currentIndex = newFilters[index].state.index;
+
+      if (currentIndex === nestedIndex) {
+        newFilters[index].state.ascending = !currentlyAscending;
+      } else {
+        newFilters[index].state.index = nestedIndex;
+        newFilters[index].state.ascending = false;
+      }
+
+      this.setState({ filters: newFilters });
     };
   }
 
@@ -138,11 +154,20 @@ class DynamicSourceFilters extends Component {
             key={index}
           />
         );
+      } else if (type === 'SORT') {
+        return (
+          <FilterSort
+            values={values}
+            name={name}
+            state={state}
+            onChange={this.handleSortChange(index)}
+            key={index}
+          />
+        );
       }
 
-      // TODO: header, separator, checkbox, sort
+      // TODO: header, separator, checkbox
       // header separator checkbox go at the beginning of the list
-      // sort is at the bottom
 
       return null;
     });
