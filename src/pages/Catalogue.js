@@ -14,6 +14,8 @@ import MangaGrid from 'components/MangaGrid';
 import CatalogueMangaCard from 'components/CatalogueMangaCard';
 import Waypoint from 'react-waypoint';
 import { CircularProgress } from 'material-ui/Progress';
+import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
+import ResponsiveGrid from 'components/ResponsiveGrid';
 
 // TODO: sources type
 // TODO: filter type?
@@ -31,7 +33,7 @@ class Catalogue extends Component {
     this.state = {
       // Select based on index of the array instead of id
       // this makes it less reliant on having to sync state with the data
-      value: 0,
+      sourceId: 0,
       searchQuery: '',
       filter: null, // TODO: implement this
       mangaIdBeingViewed: null,
@@ -45,29 +47,31 @@ class Catalogue extends Component {
   }
 
   componentDidMount() {
-    const { fetchSources, fetchCatalogue } = this.props;
+    const { fetchSources, fetchCatalogue, fetchFilters } = this.props;
 
     // I think there's a bug in babel. I should be able to reference 'this' (in the outer scope)
     // when using an arrow function, but it's undefined. So I'm manually binding 'this'.
     const that = this;
     fetchSources().then(() => {
       fetchCatalogue(that.props.sources[0].id);
+      fetchFilters(that.props.sources[0].id);
     });
 
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
-      const { value, searchQuery, filter } = this.state;
-      fetchCatalogue(this.props.sources[value].id, searchQuery, filter);
+      const { sourceId, searchQuery, filter } = this.state;
+      fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filter);
     }, 500);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { value } = this.state;
-    const { sources, fetchCatalogue } = this.props;
+    const { sourceId } = this.state;
+    const { sources, fetchCatalogue, fetchFilters } = this.props;
 
-    if (value !== prevState.value) {
-      fetchCatalogue(sources[value].id);
+    if (sourceId !== prevState.sourceId) {
+      fetchCatalogue(sources[sourceId].id);
+      fetchFilters(sources[sourceId].id);
     }
   }
 
@@ -78,7 +82,7 @@ class Catalogue extends Component {
 
   handleSourceChange(event) {
     // TODO: not sure if setting 'filter: null' is correct right now
-    this.setState({ value: event.target.value, searchQuery: '', filter: null });
+    this.setState({ sourceId: event.target.value, searchQuery: '', filter: null });
   }
 
   handleSearchChange(event) {
@@ -101,7 +105,7 @@ class Catalogue extends Component {
   handleLoadNextPage() {
     // TODO: maybe add text saying that there are no more results?
     if (this.props.hasNextPage) {
-      this.props.fetchNextCataloguePage(this.props.sources[this.state.value].id);
+      this.props.fetchNextCataloguePage(this.props.sources[this.state.sourceId].id);
     }
   }
 
@@ -110,13 +114,14 @@ class Catalogue extends Component {
       mangaLibrary,
       sources,
       hasNextPage,
+      filters,
       catalogueIsFetching,
       chaptersByMangaId,
       chaptersAreFetching,
       isTogglingFavorite,
       toggleFavoriteForManga,
     } = this.props;
-    const { mangaIdBeingViewed } = this.state;
+    const { mangaIdBeingViewed, sourceId } = this.state;
 
     const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
     const chapters = chaptersByMangaId[mangaIdBeingViewed];
@@ -142,7 +147,7 @@ class Catalogue extends Component {
 
             <form onSubmit={e => e.preventDefault()}>
               <FormControl>
-                <Select value={this.state.value} onChange={this.handleSourceChange}>
+                <Select value={this.state.sourceId} onChange={this.handleSourceChange}>
                   {sources.map((source, index) => (
                     <MenuItem value={index} key={source.id}>
                       {source.name}
@@ -159,6 +164,10 @@ class Catalogue extends Component {
             </form>
           </Toolbar>
         </AppBar>
+
+        <ResponsiveGrid>
+          <DynamicSourceFilters filters={filters} sourceId={sourceId} />
+        </ResponsiveGrid>
 
         <MangaGrid
           mangaLibrary={mangaLibrary}
@@ -189,6 +198,7 @@ Catalogue.propTypes = {
   // Below are redux dispatch functions
   fetchSources: PropTypes.func.isRequired,
   fetchCatalogue: PropTypes.func.isRequired,
+  fetchFilters: PropTypes.func.isRequired,
   fetchNextCataloguePage: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   toggleFavoriteForManga: PropTypes.func.isRequired,

@@ -12,3 +12,6 @@ export default combineReducers({
   sources,
   catalogue,
 });
+
+// TODO: better isFetching handling
+// TODO: actually implement error handling

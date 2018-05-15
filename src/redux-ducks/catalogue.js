@@ -1,7 +1,7 @@
 import { Server } from 'api';
 import { ADD_MANGA as ADD_MANGA_TO_LIBRARY } from './library';
 
-// FIXME: reusing isFetching for ADD_PAGE_..., which isn't ideal.
+// FIXME: reusing isFetching for multiple types of REQUEST which isn't ideal.
 
 // ================================================================================
 // Actions
@@ -14,6 +14,9 @@ const ADD_PAGE_REQUEST = 'catalogue/ADD_PAGE_REQUEST';
 const ADD_PAGE_SUCCESS = 'catalogue/ADD_PAGE_SUCCESS';
 const ADD_PAGE_FAILURE = 'catalogue/ADD_PAGE_FAILURE';
 const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE'; // failsafe, don't use
+const FILTERS_REQUEST = 'catalogue/FILTERS_REQUEST';
+const FILTERS_SUCCESS = 'catalogue/FILTERS_SUCCESS';
+const FILTERS_FAILURE = 'catalogue/FILTERS_FAILURE';
 
 // ================================================================================
 // Reducers
@@ -70,6 +73,12 @@ export default function chaptersReducer(state = initialState, action = {}) {
       console.error('No next page to fetch. Should not be reaching here');
       return { ...state, isFetching: false, error: true };
     }
+    case FILTERS_REQUEST:
+      return { ...state, isFetching: true, error: false };
+    case FILTERS_SUCCESS:
+      return { ...state, filters: action.filters, isFetching: false, error: false };
+    case FILTERS_FAILURE:
+      return { ...state, isFetching: false, error: true };
     default:
       return state;
   }
@@ -159,6 +168,16 @@ export function fetchNextCataloguePage(sourceId) {
         },
         error => dispatch({ type: ADD_PAGE_FAILURE, payload: error }),
       );
+  };
+}
+
+export function fetchFilters(sourceId) {
+  return (dispatch) => {
+    dispatch({ type: FILTERS_REQUEST, meta: { sourceId } });
+
+    return fetch(Server.filters(sourceId))
+      .then(res => res.json(), error => dispatch({ type: FILTERS_FAILURE, error }))
+      .then(json => dispatch({ type: FILTERS_SUCCESS, filters: json.content }));
   };
 }
 

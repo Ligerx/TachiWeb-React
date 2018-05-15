@@ -43,6 +43,10 @@ const Server = {
     }
     return url;
   },
+
+  filters(sourceId) {
+    return `/api/get_filters/${sourceId}`;
+  },
 };
 export { Server };
 
