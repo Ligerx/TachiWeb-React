@@ -49,14 +49,16 @@ class DynamicSourceFilters extends Component {
     super(props);
     this.state = {
       drawerOpen: false,
-      filters: null, // TODO: safe to keep this as null?
-      sourceId: null, // This is only used for reference purposes.
+      filters: null,
+      // sourceId is only used for reference purposes in getDerivedStateFromProps
+      sourceId: null,
     };
 
     this.toggleDrawer = this.toggleDrawer.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleTristateChange = this.handleTristateChange.bind(this);
     this.handleGroupChange = this.handleGroupChange.bind(this);
+    this.handleSortChange = this.handleSortChange.bind(this);
     this.filterElements = this.filterElements.bind(this);
   }
 
@@ -119,7 +121,18 @@ class DynamicSourceFilters extends Component {
         _type: type, name, state, values,
       } = filter;
 
-      if (type === 'TEXT') {
+      // TODO: header, separator, checkbox
+      //       not doing right now because none of the sources use it
+      if (type === 'HEADER') {
+        console.error('DynamicSourcesFilters HEADER not implemented');
+        return null;
+      } else if (type === 'SEPARATOR') {
+        console.error('DynamicSourcesFilters SEPARATOR not implemented');
+        return null;
+      } else if (type === 'CHECKBOX') {
+        console.error('DynamicSourcesFilters CHECKBOX not implemented');
+        return null;
+      } else if (type === 'TEXT') {
         return (
           <TextField label={name} value={state} onChange={this.handleChange(index)} key={index} />
         );
@@ -135,7 +148,6 @@ class DynamicSourceFilters extends Component {
           />
         );
       } else if (type === 'TRISTATE') {
-        // TODO: I think I need my own special handler
         return (
           <FilterTristate
             name={name}
@@ -165,9 +177,6 @@ class DynamicSourceFilters extends Component {
           />
         );
       }
-
-      // TODO: header, separator, checkbox
-      // header separator checkbox go at the beginning of the list
 
       return null;
     });
@@ -210,9 +219,8 @@ DynamicSourceFilters.propTypes = {
   filters: PropTypes.array,
 };
 
-// TODO: not sure if filters should be required or not here...
 DynamicSourceFilters.defaultProps = {
-  filters: [],
+  filters: null,
 };
 
 export default withStyles(styles)(DynamicSourceFilters);
