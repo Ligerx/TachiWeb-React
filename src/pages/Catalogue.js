@@ -52,7 +52,7 @@ class Catalogue extends Component {
     this.state = {
       // Select based on index of the array instead of id
       // this makes it less reliant on having to sync state with the data
-      sourceId: 0,
+      sourceIndex: 0,
       searchQuery: '',
       filters: null,
       mangaIdBeingViewed: null,
@@ -82,21 +82,21 @@ class Catalogue extends Component {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
-      const { sourceId, searchQuery, filters } = this.state;
-      fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filters, {
+      const { sourceIndex, searchQuery, filters } = this.state;
+      fetchCatalogue(this.props.sources[sourceIndex].id, searchQuery, filters, {
         retainFilters: true,
       });
     }, 500);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { sourceId } = this.state;
+    const { sourceIndex } = this.state;
     const { sources, fetchCatalogue, fetchFilters } = this.props;
 
-    if (sourceId !== prevState.sourceId) {
+    if (sourceIndex !== prevState.sourceIndex) {
       this.setState({ filters: null });
-      fetchCatalogue(sources[sourceId].id);
-      fetchFilters(sources[sourceId].id);
+      fetchCatalogue(sources[sourceIndex].id);
+      fetchFilters(sources[sourceIndex].id);
     }
   }
 
@@ -107,7 +107,7 @@ class Catalogue extends Component {
 
   handleSourceChange(event) {
     // TODO: not sure if setting 'filter: null' is correct right now
-    this.setState({ sourceId: event.target.value, searchQuery: '' });
+    this.setState({ sourceIndex: event.target.value, searchQuery: '' });
   }
 
   handleSearchChange(event) {
@@ -130,10 +130,10 @@ class Catalogue extends Component {
   handleLoadNextPage() {
     // TODO: maybe add text saying that there are no more results?
     const { hasNextPage, sources, fetchNextCataloguePage } = this.props;
-    const { searchQuery, filters } = this.state;
+    const { searchQuery, filters, sourceIndex } = this.state;
 
     if (hasNextPage) {
-      fetchNextCataloguePage(sources[this.state.sourceId].id, searchQuery, filters);
+      fetchNextCataloguePage(sources[sourceIndex].id, searchQuery, filters);
     }
   }
 
@@ -146,10 +146,10 @@ class Catalogue extends Component {
   }
 
   handleSearchFilters() {
-    const { fetchCatalogue } = this.props;
-    const { sourceId, searchQuery, filters } = this.state;
+    const { fetchCatalogue, sources } = this.props;
+    const { sourceIndex, searchQuery, filters } = this.state;
 
-    fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filters, { retainFilters: true });
+    fetchCatalogue(sources[sourceIndex].id, searchQuery, filters, { retainFilters: true });
   }
 
   render() {
@@ -164,7 +164,9 @@ class Catalogue extends Component {
       isTogglingFavorite,
       toggleFavoriteForManga,
     } = this.props;
-    const { mangaIdBeingViewed, sourceId, filters } = this.state;
+    const {
+      mangaIdBeingViewed, sourceIndex, filters, searchQuery,
+    } = this.state;
 
     const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
     const chapters = chaptersByMangaId[mangaIdBeingViewed];
@@ -190,7 +192,7 @@ class Catalogue extends Component {
 
             <form onSubmit={e => e.preventDefault()}>
               <FormControl>
-                <Select value={this.state.sourceId} onChange={this.handleSourceChange}>
+                <Select value={sourceIndex} onChange={this.handleSourceChange}>
                   {sources.map((source, index) => (
                     <MenuItem value={index} key={source.id}>
                       {source.name}
@@ -201,7 +203,7 @@ class Catalogue extends Component {
 
               <TextField
                 label="Search"
-                value={this.state.searchQuery}
+                value={searchQuery}
                 onChange={this.handleSearchChange}
               />
             </form>
