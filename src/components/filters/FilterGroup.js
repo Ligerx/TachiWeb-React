@@ -12,7 +12,7 @@ import FilterTristate from './FilterTristate';
 // NOTE: Assuming that GROUP will only contain TRISTATE children
 
 const FilterGroup = ({ name, state, onChange }) => (
-  <ExpansionPanel defaultExpanded>
+  <ExpansionPanel>
     <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
       <Typography>{name}</Typography>
     </ExpansionPanelSummary>

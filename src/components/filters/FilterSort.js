@@ -12,7 +12,7 @@ import ButtonBase from 'material-ui/ButtonBase';
 const FilterSort = ({
   values, name, state, onChange,
 }) => (
-  <ExpansionPanel defaultExpanded>
+  <ExpansionPanel>
     <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
       <Typography>{name}</Typography>
     </ExpansionPanelSummary>
