@@ -7,11 +7,9 @@ import { FormGroup } from 'material-ui/Form';
 import FilterActions from './FilterActions';
 import { filterElements } from './filterUtils';
 
-// FIXME: Reset puts you back at your last search's filters.
-//        It should instead totally reset to the initial filters sent by the server.
-//        Refer to catalogue duck initialState to see multiple changes I want to make.
-
 // FIXME: Weird blue line when clicking the <FormGroup>
+
+// FIXME: I think using cloneDeep here is getting really laggy
 
 // Choosing to use lodash cloneDeep instead of the standard setState method
 // It would be a huge pain to try updating an array of objects (and be less readable)
@@ -41,23 +39,16 @@ class DynamicSourceFilters extends Component {
     this.state = {
       drawerOpen: false,
     };
-
     this.toggleDrawer = this.toggleDrawer.bind(this);
-    this.handleResetClick = this.handleResetClick.bind(this);
   }
 
   toggleDrawer = isOpen => () => {
     this.setState({ drawerOpen: isOpen });
   };
 
-  handleResetClick() {
-    this.setState({ filters: this.props.filters });
-  }
-
   render() {
-    const { drawerOpen } = this.state;
     const {
-      classes, filters, onSearchClick, onFilterChange,
+      classes, filters, onSearchClick, onFilterChange, onResetClick,
     } = this.props;
 
     return (
@@ -71,12 +62,9 @@ class DynamicSourceFilters extends Component {
           Filters
         </Button>
 
-        <Drawer anchor="right" open={drawerOpen} onClose={this.toggleDrawer(false)}>
+        <Drawer anchor="right" open={this.state.drawerOpen} onClose={this.toggleDrawer(false)}>
           <div tabIndex={0} role="button">
-            <FilterActions
-              onResetClick={this.handleResetClick}
-              onSearchClick={onSearchClick(filters)}
-            />
+            <FilterActions onResetClick={onResetClick} onSearchClick={onSearchClick} />
             {filters && (
               <FormGroup className={classes.filters}>
                 {filterElements(filters, onFilterChange)}
@@ -92,6 +80,7 @@ class DynamicSourceFilters extends Component {
 DynamicSourceFilters.propTypes = {
   classes: PropTypes.object.isRequired,
   filters: PropTypes.array,
+  onResetClick: PropTypes.func.isRequired,
   onSearchClick: PropTypes.func.isRequired,
   onFilterChange: PropTypes.func.isRequired,
 };

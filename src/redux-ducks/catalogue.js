@@ -32,12 +32,17 @@ const initialState = {
 
 export default function chaptersReducer(state = initialState, action = {}) {
   switch (action.type) {
-    case REQUEST:
+    case REQUEST: {
+      if (action.retainFilters) {
+        return {
+          ...initialState,
+          initialFilters: state.initialFilters,
+          isFetching: true,
+        };
+      }
       // Reset using initial state
-      return {
-        ...initialState,
-        isFetching: true,
-      };
+      return { ...initialState, isFetching: true };
+    }
     case SUCCESS: {
       const { mangaIds, hasNextPage } = action;
       return {
@@ -73,7 +78,10 @@ export default function chaptersReducer(state = initialState, action = {}) {
       return { ...state, isFetching: true, error: false };
     case FILTERS_SUCCESS:
       return {
-        ...state, initialFilters: action.initialFilters, isFetching: false, error: false,
+        ...state,
+        initialFilters: action.initialFilters,
+        isFetching: false,
+        error: false,
       };
     case FILTERS_FAILURE:
       return { ...state, isFetching: false, error: true };
@@ -85,10 +93,17 @@ export default function chaptersReducer(state = initialState, action = {}) {
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchCatalogue(sourceId, query = '', filters = null) {
+export function fetchCatalogue(
+  sourceId,
+  query = '',
+  filters = null,
+  // optionally keep previous initialFilters
+  { retainFilters = false } = {},
+) {
   return (dispatch) => {
     dispatch({
       type: REQUEST,
+      retainFilters,
       meta: { sourceId, query, filters },
     });
 

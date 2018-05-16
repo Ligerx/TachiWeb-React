@@ -35,7 +35,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => ({
   fetchSources: () => dispatch(fetchSources()),
   // Passing in the new catalogue search settings
-  fetchCatalogue: (sourceId, query, filters) => dispatch(fetchCatalogue(sourceId, query, filters)),
+  fetchCatalogue: (sourceId, query, filters, retainFilters) =>
+    dispatch(fetchCatalogue(sourceId, query, filters, retainFilters)),
   fetchFilters: sourceId => dispatch(fetchFilters(sourceId)),
   fetchChapters: mangaId => dispatch(fetchChapters(mangaId)),
   // Need a nested function to pass in mangaId in the JSX

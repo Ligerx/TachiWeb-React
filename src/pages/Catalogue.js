@@ -24,7 +24,6 @@ import cloneDeep from 'lodash/cloneDeep';
 // TODO: if you're looking at a new manga, chapters won't have been scraped by the server yet.
 //       Need to force an update when it's empty?
 //       This is probably also an issue w/ library.
-// TODO: all of filtering.
 // TODO: actually split all of this up into components...
 
 // FIXME: There are 3 types of filters
@@ -64,6 +63,7 @@ class Catalogue extends Component {
     this.handleCardClick = this.handleCardClick.bind(this);
     this.handleMangaInfoBackClick = this.handleMangaInfoBackClick.bind(this);
     this.handleLoadNextPage = this.handleLoadNextPage.bind(this);
+    this.handleResetFilters = this.handleResetFilters.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleSearchFilters = this.handleSearchFilters.bind(this);
   }
@@ -83,7 +83,9 @@ class Catalogue extends Component {
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
       const { sourceId, searchQuery, filters } = this.state;
-      fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filters);
+      fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filters, {
+        retainFilters: true,
+      });
     }, 500);
   }
 
@@ -135,17 +137,19 @@ class Catalogue extends Component {
     }
   }
 
+  handleResetFilters() {
+    this.setState({ filters: this.props.initialFilters });
+  }
+
   handleFilterChange(newFilters) {
     this.setState({ filters: newFilters });
   }
 
-  handleSearchFilters(newFilters) {
-    return () => {
-      const { fetchCatalogue } = this.props;
-      const { sourceId, searchQuery } = this.state;
+  handleSearchFilters() {
+    const { fetchCatalogue } = this.props;
+    const { sourceId, searchQuery, filters } = this.state;
 
-      fetchCatalogue(this.props.sources[sourceId].id, searchQuery, newFilters);
-    };
+    fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filters, { retainFilters: true });
   }
 
   render() {
@@ -207,6 +211,7 @@ class Catalogue extends Component {
         <ResponsiveGrid>
           <DynamicSourceFilters
             filters={filters}
+            onResetClick={this.handleResetFilters}
             onSearchClick={this.handleSearchFilters}
             onFilterChange={this.handleFilterChange}
           />
