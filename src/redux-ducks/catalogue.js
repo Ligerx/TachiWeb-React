@@ -88,17 +88,7 @@ export default function chaptersReducer(state = initialState, action = {}) {
 // Action Creators
 // ================================================================================
 export function fetchCatalogue(sourceId, query = '', filters = null) {
-  return (dispatch, getState) => {
-    // // Return cached catalogue data assuming you just want to see old results
-    // // remember that REQUEST resets the search state
-    // if (
-    //   getState().catalogue.sourceId === sourceId &&
-    //   getState().catalogue.query === query &&
-    //   getState().catalogue.filters === filters
-    // ) {
-    //   return dispatch({ type: CACHE });
-    // }
-
+  return (dispatch) => {
     dispatch({
       type: REQUEST,
       query,

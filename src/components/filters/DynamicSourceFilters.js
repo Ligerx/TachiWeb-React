@@ -6,11 +6,13 @@ import PropTypes from 'prop-types';
 import cloneDeep from 'lodash/cloneDeep';
 import TextField from 'material-ui/TextField';
 import { FormGroup } from 'material-ui/Form';
-import Divider from 'material-ui/Divider';
 import FilterSelect from './FilterSelect';
 import FilterTristate from './FilterTristate';
 import FilterGroup from './FilterGroup';
 import FilterSort from './FilterSort';
+import FilterActions from './FilterActions';
+
+// FIXME: Weird blue line when clicking the <FormGroup>
 
 // Choosing to use lodash cloneDeep instead of the standard setState method
 // It would be a huge pain to try updating an array of objects (and be less readable)
@@ -23,23 +25,6 @@ const styles = {
     // https://stackoverflow.com/questions/6507014/how-to-space-the-children-of-a-div-with-css
     marginLeft: 'auto',
     marginRight: 8,
-  },
-
-  // TODO: Position the controls div so that it's always at the top of the viewport
-  //       I tried with position sticky and absolute, but it didn't work as intended
-  //       Try again in the future
-  controls: {
-    paddingTop: 12,
-    marginBottom: 8,
-  },
-  actionButtons: {
-    marginBottom: 12,
-    // Center align and stretch to fit
-    display: 'flex',
-    justifyContent: 'space-around',
-    '& > *': {
-      flexBasis: '40%',
-    },
   },
   filters: {
     width: 250,
@@ -85,6 +70,7 @@ class DynamicSourceFilters extends Component {
     this.handleTristateChange = this.handleTristateChange.bind(this);
     this.handleGroupChange = this.handleGroupChange.bind(this);
     this.handleSortChange = this.handleSortChange.bind(this);
+    this.handleResetClick = this.handleResetClick.bind(this);
     this.filterElements = this.filterElements.bind(this);
   }
 
@@ -137,6 +123,10 @@ class DynamicSourceFilters extends Component {
 
       this.setState({ filters: newFilters });
     };
+  }
+
+  handleResetClick() {
+    this.setState({ filters: this.props.filters });
   }
 
   filterElements() {
@@ -210,7 +200,7 @@ class DynamicSourceFilters extends Component {
 
   render() {
     const { drawerOpen, filters } = this.state;
-    const { classes } = this.props;
+    const { classes, onSearchClick } = this.props;
 
     return (
       <React.Fragment>
@@ -225,18 +215,11 @@ class DynamicSourceFilters extends Component {
 
         <Drawer anchor="right" open={drawerOpen} onClose={this.toggleDrawer(false)}>
           <div tabIndex={0} role="button">
-            <div className={classes.controls}>
-              <div className={classes.actionButtons}>
-                <Button>Reset</Button>
-                <Button variant="raised" color="primary">
-                  Search
-                </Button>
-              </div>
-              <Divider />
-            </div>
-
+            <FilterActions
+              onResetClick={this.handleResetClick}
+              onSearchClick={onSearchClick(filters)}
+            />
             {filters && <FormGroup className={classes.filters}>{this.filterElements()}</FormGroup>}
-
           </div>
         </Drawer>
       </React.Fragment>
@@ -255,6 +238,7 @@ function updateTristate(oldState) {
 DynamicSourceFilters.propTypes = {
   classes: PropTypes.object.isRequired,
   filters: PropTypes.array,
+  onSearchClick: PropTypes.func.isRequired,
 };
 
 DynamicSourceFilters.defaultProps = {

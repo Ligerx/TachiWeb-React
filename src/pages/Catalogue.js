@@ -35,7 +35,6 @@ class Catalogue extends Component {
       // this makes it less reliant on having to sync state with the data
       sourceId: 0,
       searchQuery: '',
-      filter: null, // TODO: implement this
       mangaIdBeingViewed: null,
     };
 
@@ -44,6 +43,7 @@ class Catalogue extends Component {
     this.handleCardClick = this.handleCardClick.bind(this);
     this.handleMangaInfoBackClick = this.handleMangaInfoBackClick.bind(this);
     this.handleLoadNextPage = this.handleLoadNextPage.bind(this);
+    this.handleUpdateFilters = this.handleUpdateFilters.bind(this);
   }
 
   componentDidMount() {
@@ -60,8 +60,9 @@ class Catalogue extends Component {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
-      const { sourceId, searchQuery, filter } = this.state;
-      fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filter);
+      const { sourceId, searchQuery } = this.state;
+      const { filters } = this.props;
+      fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filters);
     }, 500);
   }
 
@@ -82,7 +83,7 @@ class Catalogue extends Component {
 
   handleSourceChange(event) {
     // TODO: not sure if setting 'filter: null' is correct right now
-    this.setState({ sourceId: event.target.value, searchQuery: '', filter: null });
+    this.setState({ sourceId: event.target.value, searchQuery: '' });
   }
 
   handleSearchChange(event) {
@@ -107,6 +108,14 @@ class Catalogue extends Component {
     if (this.props.hasNextPage) {
       this.props.fetchNextCataloguePage(this.props.sources[this.state.sourceId].id);
     }
+  }
+
+  handleUpdateFilters(newFilters) {
+    return () => {
+      const { fetchCatalogue } = this.props;
+      const { sourceId, searchQuery } = this.state;
+      fetchCatalogue(this.props.sources[sourceId].id, searchQuery, newFilters);
+    };
   }
 
   render() {
@@ -166,7 +175,7 @@ class Catalogue extends Component {
         </AppBar>
 
         <ResponsiveGrid>
-          <DynamicSourceFilters filters={filters} sourceId={sourceId} />
+          <DynamicSourceFilters filters={filters} sourceId={sourceId} onSearchClick={this.handleUpdateFilters} />
         </ResponsiveGrid>
 
         <MangaGrid
