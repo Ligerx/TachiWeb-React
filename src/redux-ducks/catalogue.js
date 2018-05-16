@@ -23,10 +23,10 @@ const FILTERS_FAILURE = 'catalogue/FILTERS_FAILURE';
 // ================================================================================
 const initialState = {
   mangaIds: [], // array of mangaIds that point that data loaded in library
-  page: 1,
+  page: 1, // NOT SURE? might be able to get rid of this
   hasNextPage: false,
-  query: '',
-  filters: null,
+  query: '', // NOT NECESSARY
+  filters: null, // current filters NOT NECESSARY, initial filters NECESSARY <- make changes
   isFetching: false,
   error: false,
 };

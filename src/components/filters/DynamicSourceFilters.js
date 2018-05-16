@@ -12,6 +12,14 @@ import FilterGroup from './FilterGroup';
 import FilterSort from './FilterSort';
 import FilterActions from './FilterActions';
 
+// FIXME: TODO: clicking on a manga and going back to catalogue resets any unsaved filter changes
+//        This is because this component is removed when viewing a manga
+//        Will need to lift state.filters up to parent container.
+
+// FIXME: Reset puts you back at your last search's filters.
+//        It should instead totally reset to the initial filters sent by the server.
+//        Refer to catalogue duck initialState to see multiple changes I want to make.
+
 // FIXME: Weird blue line when clicking the <FormGroup>
 
 // Choosing to use lodash cloneDeep instead of the standard setState method
@@ -43,13 +51,17 @@ class DynamicSourceFilters extends Component {
     // 2. Mixing sourceId into the state so I can check when it changes
     //    Not having access to prevProps is a limitation of this method =(
     //    https://github.com/facebook/react/issues/12188
-    const initialFilters = !prevState.filters && nextProps.filters && nextProps.filters.length > 0;
-    const sourceChanged = prevState.sourceId !== nextProps.sourceId;
-
-    if (initialFilters || sourceChanged) {
+    if (!prevState.filters || !prevState.sourceId) {
+      // On instantiation, filters and sourceId are null
       return {
         ...prevState,
-        filters: sourceChanged ? null : cloneDeep(nextProps.filters),
+        filters: nextProps.filters,
+        sourceId: nextProps.sourceId,
+      };
+    } else if (prevState.sourceId !== nextProps.sourceId) {
+      return {
+        ...prevState,
+        filters: null,
         sourceId: nextProps.sourceId,
       };
     }
