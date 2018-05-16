@@ -10,8 +10,7 @@ const mapStateToProps = (state) => {
     mangaIds,
     page,
     hasNextPage,
-    query,
-    filters,
+    initialFilters,
     isFetching: catalogueIsFetching,
   } = state.catalogue;
   const mangaLibrary = mangaToShow(state.library.mangaLibrary, mangaIds);
@@ -22,8 +21,7 @@ const mapStateToProps = (state) => {
     // Catalogue props
     page,
     hasNextPage,
-    query,
-    filters,
+    initialFilters,
     catalogueIsFetching,
     // Chapter props
     chaptersByMangaId: state.chapters.chaptersByMangaId,
@@ -43,7 +41,8 @@ const mapDispatchToProps = dispatch => ({
   // Need a nested function to pass in mangaId in the JSX
   toggleFavoriteForManga: (mangaId, isFavorite) => () =>
     dispatch(toggleFavorite(mangaId, isFavorite)),
-  fetchNextCataloguePage: sourceId => dispatch(fetchNextCataloguePage(sourceId)),
+  fetchNextCataloguePage: (sourceId, query, filters) =>
+    dispatch(fetchNextCataloguePage(sourceId, query, filters)),
 });
 
 // Helper functions

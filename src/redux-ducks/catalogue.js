@@ -23,10 +23,9 @@ const FILTERS_FAILURE = 'catalogue/FILTERS_FAILURE';
 // ================================================================================
 const initialState = {
   mangaIds: [], // array of mangaIds that point that data loaded in library
-  page: 1, // NOT SURE? might be able to get rid of this
+  page: 1, // TODO: can possibly move this out of redux and into the component state? Not sure.
   hasNextPage: false,
-  query: '', // NOT NECESSARY
-  filters: null, // current filters NOT NECESSARY, initial filters NECESSARY <- make changes
+  initialFilters: null,
   isFetching: false,
   error: false,
 };
@@ -34,15 +33,12 @@ const initialState = {
 export default function chaptersReducer(state = initialState, action = {}) {
   switch (action.type) {
     case REQUEST:
-      // Resetting state except for query and filters
+      // Reset using initial state
       return {
         ...initialState,
-        query: action.query,
-        filters: action.filters,
         isFetching: true,
       };
     case SUCCESS: {
-      // The rest of the state should be reset from the previous REQUEST action above
       const { mangaIds, hasNextPage } = action;
       return {
         ...state,
@@ -76,7 +72,9 @@ export default function chaptersReducer(state = initialState, action = {}) {
     case FILTERS_REQUEST:
       return { ...state, isFetching: true, error: false };
     case FILTERS_SUCCESS:
-      return { ...state, filters: action.filters, isFetching: false, error: false };
+      return {
+        ...state, initialFilters: action.initialFilters, isFetching: false, error: false,
+      };
     case FILTERS_FAILURE:
       return { ...state, isFetching: false, error: true };
     default:
@@ -91,9 +89,7 @@ export function fetchCatalogue(sourceId, query = '', filters = null) {
   return (dispatch) => {
     dispatch({
       type: REQUEST,
-      query,
-      filters,
-      meta: { sourceId },
+      meta: { sourceId, query, filters },
     });
 
     return fetch(Server.catalogue(), cataloguePostParameters(1, sourceId, query.trim(), filters))
@@ -116,11 +112,9 @@ export function fetchCatalogue(sourceId, query = '', filters = null) {
   };
 }
 
-export function fetchNextCataloguePage(sourceId) {
+export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
   return (dispatch, getState) => {
-    const {
-      page, hasNextPage, query, filters,
-    } = getState().catalogue;
+    const { page, hasNextPage } = getState().catalogue;
     const nextPage = page + 1;
 
     dispatch({
@@ -167,7 +161,7 @@ export function fetchFilters(sourceId) {
 
     return fetch(Server.filters(sourceId))
       .then(res => res.json(), error => dispatch({ type: FILTERS_FAILURE, error }))
-      .then(json => dispatch({ type: FILTERS_SUCCESS, filters: json.content }));
+      .then(json => dispatch({ type: FILTERS_SUCCESS, initialFilters: json.content }));
   };
 }
 

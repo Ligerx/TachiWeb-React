@@ -16,6 +16,7 @@ import Waypoint from 'react-waypoint';
 import { CircularProgress } from 'material-ui/Progress';
 import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
 import ResponsiveGrid from 'components/ResponsiveGrid';
+import cloneDeep from 'lodash/cloneDeep';
 
 // TODO: sources type
 // TODO: filter type?
@@ -26,7 +27,26 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 // TODO: all of filtering.
 // TODO: actually split all of this up into components...
 
+// FIXME: There are 3 types of filters
+//     1. initial filters from the server
+//     2. last searched filters
+//     3. currently editing filters
+// I need to account for #2
+// Otherwise if you change the searchQuery while having 'unsaved' filter changes,
+// the filters will use those unsaved changes anyway.
+
 class Catalogue extends Component {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // Use a clone of the initialFilters for easier updates
+    if (!prevState.filters && nextProps.initialFilters && nextProps.initialFilters.length > 0) {
+      return {
+        ...prevState,
+        filters: cloneDeep(nextProps.initialFilters),
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
 
@@ -35,6 +55,7 @@ class Catalogue extends Component {
       // this makes it less reliant on having to sync state with the data
       sourceId: 0,
       searchQuery: '',
+      filters: null,
       mangaIdBeingViewed: null,
     };
 
@@ -43,7 +64,8 @@ class Catalogue extends Component {
     this.handleCardClick = this.handleCardClick.bind(this);
     this.handleMangaInfoBackClick = this.handleMangaInfoBackClick.bind(this);
     this.handleLoadNextPage = this.handleLoadNextPage.bind(this);
-    this.handleUpdateFilters = this.handleUpdateFilters.bind(this);
+    this.handleFilterChange = this.handleFilterChange.bind(this);
+    this.handleSearchFilters = this.handleSearchFilters.bind(this);
   }
 
   componentDidMount() {
@@ -60,8 +82,7 @@ class Catalogue extends Component {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
-      const { sourceId, searchQuery } = this.state;
-      const { filters } = this.props;
+      const { sourceId, searchQuery, filters } = this.state;
       fetchCatalogue(this.props.sources[sourceId].id, searchQuery, filters);
     }, 500);
   }
@@ -71,6 +92,7 @@ class Catalogue extends Component {
     const { sources, fetchCatalogue, fetchFilters } = this.props;
 
     if (sourceId !== prevState.sourceId) {
+      this.setState({ filters: null });
       fetchCatalogue(sources[sourceId].id);
       fetchFilters(sources[sourceId].id);
     }
@@ -105,15 +127,23 @@ class Catalogue extends Component {
 
   handleLoadNextPage() {
     // TODO: maybe add text saying that there are no more results?
-    if (this.props.hasNextPage) {
-      this.props.fetchNextCataloguePage(this.props.sources[this.state.sourceId].id);
+    const { hasNextPage, sources, fetchNextCataloguePage } = this.props;
+    const { searchQuery, filters } = this.state;
+
+    if (hasNextPage) {
+      fetchNextCataloguePage(sources[this.state.sourceId].id, searchQuery, filters);
     }
   }
 
-  handleUpdateFilters(newFilters) {
+  handleFilterChange(newFilters) {
+    this.setState({ filters: newFilters });
+  }
+
+  handleSearchFilters(newFilters) {
     return () => {
       const { fetchCatalogue } = this.props;
       const { sourceId, searchQuery } = this.state;
+
       fetchCatalogue(this.props.sources[sourceId].id, searchQuery, newFilters);
     };
   }
@@ -123,14 +153,14 @@ class Catalogue extends Component {
       mangaLibrary,
       sources,
       hasNextPage,
-      filters,
+      initialFilters,
       catalogueIsFetching,
       chaptersByMangaId,
       chaptersAreFetching,
       isTogglingFavorite,
       toggleFavoriteForManga,
     } = this.props;
-    const { mangaIdBeingViewed, sourceId } = this.state;
+    const { mangaIdBeingViewed, sourceId, filters } = this.state;
 
     const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
     const chapters = chaptersByMangaId[mangaIdBeingViewed];
@@ -175,7 +205,11 @@ class Catalogue extends Component {
         </AppBar>
 
         <ResponsiveGrid>
-          <DynamicSourceFilters filters={filters} sourceId={sourceId} onSearchClick={this.handleUpdateFilters} />
+          <DynamicSourceFilters
+            filters={filters}
+            onSearchClick={this.handleSearchFilters}
+            onFilterChange={this.handleFilterChange}
+          />
         </ResponsiveGrid>
 
         <MangaGrid
@@ -197,8 +231,7 @@ Catalogue.propTypes = {
   sources: PropTypes.array, // TODO: type
   page: PropTypes.number.isRequired,
   hasNextPage: PropTypes.bool.isRequired,
-  query: PropTypes.string.isRequired,
-  filters: PropTypes.array, // TODO: type
+  initialFilters: PropTypes.array, // TODO: type
   catalogueIsFetching: PropTypes.bool.isRequired,
   // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
   chaptersByMangaId: PropTypes.object.isRequired,
@@ -216,7 +249,7 @@ Catalogue.propTypes = {
 Catalogue.defaultProps = {
   mangaLibrary: null,
   sources: null,
-  filters: null,
+  initialFilters: null,
 };
 
 export default Catalogue;
