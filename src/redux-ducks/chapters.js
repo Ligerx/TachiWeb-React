@@ -82,6 +82,10 @@ export function updateChapters(mangaId) {
     return fetch(Server.updateMangaChapters(mangaId))
       .then(res => res.json(), error => dispatch({ type: UPDATE_FAILURE, payload: error }))
       .then((json) => {
+        if (!json.success) {
+          return dispatch({ type: UPDATE_FAILURE, meta: { json } });
+        }
+
         dispatch({ type: UPDATE_SUCCESS, meta: { json } });
 
         if (json.added.length > 0 || json.removed.length > 0) {
