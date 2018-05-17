@@ -16,7 +16,6 @@ import Waypoint from 'react-waypoint';
 import { CircularProgress } from 'material-ui/Progress';
 import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
 import ResponsiveGrid from 'components/ResponsiveGrid';
-import cloneDeep from 'lodash/cloneDeep';
 
 // TODO: sources type
 // TODO: filter type?
@@ -26,21 +25,17 @@ import cloneDeep from 'lodash/cloneDeep';
 //       This is probably also an issue w/ library.
 // TODO: actually split all of this up into components...
 
-// FIXME: There are 3 types of filters
-//     1. initial filters from the server
-//     2. last searched filters
-//     3. currently editing filters
-// I need to account for #2
-// Otherwise if you change the searchQuery while having 'unsaved' filter changes,
-// the filters will use those unsaved changes anyway.
-
 class Catalogue extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     // Use a clone of the initialFilters for easier updates
-    if (!prevState.filters && nextProps.initialFilters && nextProps.initialFilters.length > 0) {
+    // cloneDeep should be done by the methods that setState
+    const filtersAreNull = !prevState.currentFilters || !prevState.lastUsedFilters;
+
+    if (filtersAreNull && nextProps.initialFilters && nextProps.initialFilters.length > 0) {
       return {
         ...prevState,
-        filters: cloneDeep(nextProps.initialFilters),
+        lastUsedFilters: nextProps.initialFilters,
+        currentFilters: nextProps.initialFilters,
       };
     }
     return null;
@@ -54,7 +49,8 @@ class Catalogue extends Component {
       // this makes it less reliant on having to sync state with the data
       sourceIndex: 0,
       searchQuery: '',
-      filters: null,
+      lastUsedFilters: null, // use this for any searches
+      currentFilters: null, // temporarily store user changes, use to overwrite lastUsedFilters
       mangaIdBeingViewed: null,
     };
 
@@ -82,8 +78,8 @@ class Catalogue extends Component {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
-      const { sourceIndex, searchQuery, filters } = this.state;
-      fetchCatalogue(this.props.sources[sourceIndex].id, searchQuery, filters, {
+      const { sourceIndex, searchQuery, lastUsedFilters } = this.state;
+      fetchCatalogue(this.props.sources[sourceIndex].id, searchQuery, lastUsedFilters, {
         retainFilters: true,
       });
     }, 500);
@@ -94,7 +90,7 @@ class Catalogue extends Component {
     const { sources, fetchCatalogue, fetchFilters } = this.props;
 
     if (sourceIndex !== prevState.sourceIndex) {
-      this.setState({ filters: null });
+      this.setState({ lastUsedFilters: null, currentFilters: null });
       fetchCatalogue(sources[sourceIndex].id);
       fetchFilters(sources[sourceIndex].id);
     }
@@ -130,26 +126,28 @@ class Catalogue extends Component {
   handleLoadNextPage() {
     // TODO: maybe add text saying that there are no more results?
     const { hasNextPage, sources, fetchNextCataloguePage } = this.props;
-    const { searchQuery, filters, sourceIndex } = this.state;
+    const { searchQuery, lastUsedFilters, sourceIndex } = this.state;
 
     if (hasNextPage) {
-      fetchNextCataloguePage(sources[sourceIndex].id, searchQuery, filters);
+      fetchNextCataloguePage(sources[sourceIndex].id, searchQuery, lastUsedFilters);
     }
   }
 
   handleResetFilters() {
-    this.setState({ filters: this.props.initialFilters });
+    const { initialFilters } = this.props;
+    this.setState({ lastUsedFilters: initialFilters, currentFilters: initialFilters });
   }
 
   handleFilterChange(newFilters) {
-    this.setState({ filters: newFilters });
+    this.setState({ currentFilters: newFilters });
   }
 
   handleSearchFilters() {
     const { fetchCatalogue, sources } = this.props;
-    const { sourceIndex, searchQuery, filters } = this.state;
+    const { sourceIndex, searchQuery, currentFilters } = this.state;
 
-    fetchCatalogue(sources[sourceIndex].id, searchQuery, filters, { retainFilters: true });
+    fetchCatalogue(sources[sourceIndex].id, searchQuery, currentFilters, { retainFilters: true });
+    this.setState({ lastUsedFilters: currentFilters });
   }
 
   render() {
@@ -165,7 +163,11 @@ class Catalogue extends Component {
       toggleFavoriteForManga,
     } = this.props;
     const {
-      mangaIdBeingViewed, sourceIndex, filters, searchQuery,
+      mangaIdBeingViewed,
+      sourceIndex,
+      lastUsedFilters,
+      currentFilters,
+      searchQuery,
     } = this.state;
 
     const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
@@ -201,18 +203,14 @@ class Catalogue extends Component {
                 </Select>
               </FormControl>
 
-              <TextField
-                label="Search"
-                value={searchQuery}
-                onChange={this.handleSearchChange}
-              />
+              <TextField label="Search" value={searchQuery} onChange={this.handleSearchChange} />
             </form>
           </Toolbar>
         </AppBar>
 
         <ResponsiveGrid>
           <DynamicSourceFilters
-            filters={filters}
+            filters={currentFilters}
             onResetClick={this.handleResetFilters}
             onSearchClick={this.handleSearchFilters}
             onFilterChange={this.handleFilterChange}
