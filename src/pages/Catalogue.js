@@ -57,6 +57,7 @@ class Catalogue extends Component {
     this.handleResetFilters = this.handleResetFilters.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleSearchFilters = this.handleSearchFilters.bind(this);
+    this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
   componentDidMount() {
@@ -143,13 +144,17 @@ class Catalogue extends Component {
     this.setState({ lastUsedFilters: currentFilters });
   }
 
+  handleRefreshClick() {
+    this.props.updateChapters(this.state.mangaIdBeingViewed);
+  }
+
   render() {
     const {
       mangaLibrary,
       sources,
       catalogueIsFetching,
       chaptersByMangaId,
-      chaptersAreFetching,
+      // chaptersAreFetching,
       isTogglingFavorite,
       toggleFavoriteForManga,
     } = this.props;
@@ -163,13 +168,14 @@ class Catalogue extends Component {
     const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
     const chapters = chaptersByMangaId[mangaIdBeingViewed];
 
-    if (!chaptersAreFetching && mangaInfo && chapters) {
+    if (mangaInfo && chapters) {
       return (
         <MangaInfo
           mangaInfo={mangaInfo}
           chapters={chapters}
           initialTabValue={0}
           onBackClick={this.handleMangaInfoBackClick}
+          onRefreshClick={this.handleRefreshClick}
           isTogglingFavorite={isTogglingFavorite}
           toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
         />
@@ -226,6 +232,7 @@ Catalogue.propTypes = {
   fetchNextCataloguePage: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   toggleFavoriteForManga: PropTypes.func.isRequired,
+  updateChapters: PropTypes.func.isRequired,
 };
 
 Catalogue.defaultProps = {
