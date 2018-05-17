@@ -1,6 +1,5 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
-import cloneDeep from 'lodash/cloneDeep';
 import FilterSelect from './FilterSelect';
 import FilterTristate from './FilterTristate';
 import FilterGroup from './FilterGroup';
@@ -122,4 +121,12 @@ function updateTristate(oldState) {
     return oldState + 1;
   }
   return 0;
+}
+
+function cloneDeep(oldObject) {
+  // Turns out this is much faster
+  // As long as the object is only text, there shouldn't be any problems
+
+  // FIXME: still too laggy. Might have to do a normal object update
+  return JSON.parse(JSON.stringify(oldObject));
 }

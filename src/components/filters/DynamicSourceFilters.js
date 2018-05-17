@@ -9,9 +9,11 @@ import { filterElements } from './filterUtils';
 
 // FIXME: Weird blue line when clicking the <FormGroup>
 
-// FIXME: I think using cloneDeep here is getting really laggy
+// FIXME: I think using cloneDeep here is getting really laggy.
+//        Even after switching to non-lodash, still laggy.
+//        May have to do actual object updates instead.
 
-// Choosing to use lodash cloneDeep instead of the standard setState method
+// Choosing to use a deep copy instead of the standard setState method
 // It would be a huge pain to try updating an array of objects (and be less readable)
 // https://stackoverflow.com/questions/29537299/react-how-do-i-update-state-item1-on-setstate-with-jsfiddle
 
