@@ -8,7 +8,6 @@ import Catalogue from 'pages/Catalogue';
 const mapStateToProps = (state) => {
   const {
     mangaIds,
-    page,
     hasNextPage,
     initialFilters,
     isFetching: catalogueIsFetching,
@@ -19,7 +18,6 @@ const mapStateToProps = (state) => {
     // Sources props
     sources: state.sources.sourcesArray,
     // Catalogue props
-    page,
     hasNextPage,
     initialFilters,
     catalogueIsFetching,

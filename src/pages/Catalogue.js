@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { mangaType } from 'types';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
 import MangaInfo from 'components/MangaInfo';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import MenuDrawer from 'components/MenuDrawer';
-import TextField from 'material-ui/TextField';
 import debounce from 'lodash/debounce';
 import MangaGrid from 'components/MangaGrid';
 import CatalogueMangaCard from 'components/CatalogueMangaCard';
@@ -16,6 +9,7 @@ import Waypoint from 'react-waypoint';
 import { CircularProgress } from 'material-ui/Progress';
 import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
 import ResponsiveGrid from 'components/ResponsiveGrid';
+import CatalogueHeader from 'components/CatalogueHeader';
 
 // TODO: sources type
 // TODO: filter type?
@@ -24,10 +18,11 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 //       Need to force an update when it's empty?
 //       This is probably also an issue w/ library.
 // TODO: actually split all of this up into components...
+// TODO: maybe add text saying that there are no more pages to load?
 
 class Catalogue extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
-    // Use a clone of the initialFilters for easier updates
+    // Keep two copies of 'filters' in state
     // cloneDeep should be done by the methods that setState
     const filtersAreNull = !prevState.currentFilters || !prevState.lastUsedFilters;
 
@@ -90,7 +85,7 @@ class Catalogue extends Component {
     const { sources, fetchCatalogue, fetchFilters } = this.props;
 
     if (sourceIndex !== prevState.sourceIndex) {
-      this.setState({ lastUsedFilters: null, currentFilters: null });
+      this.setState({ lastUsedFilters: null, currentFilters: null }); /* eslint-disable-line */
       fetchCatalogue(sources[sourceIndex].id);
       fetchFilters(sources[sourceIndex].id);
     }
@@ -102,7 +97,6 @@ class Catalogue extends Component {
   }
 
   handleSourceChange(event) {
-    // TODO: not sure if setting 'filter: null' is correct right now
     this.setState({ sourceIndex: event.target.value, searchQuery: '' });
   }
 
@@ -124,7 +118,6 @@ class Catalogue extends Component {
   }
 
   handleLoadNextPage() {
-    // TODO: maybe add text saying that there are no more results?
     const { hasNextPage, sources, fetchNextCataloguePage } = this.props;
     const { searchQuery, lastUsedFilters, sourceIndex } = this.state;
 
@@ -154,8 +147,6 @@ class Catalogue extends Component {
     const {
       mangaLibrary,
       sources,
-      hasNextPage,
-      initialFilters,
       catalogueIsFetching,
       chaptersByMangaId,
       chaptersAreFetching,
@@ -165,7 +156,6 @@ class Catalogue extends Component {
     const {
       mangaIdBeingViewed,
       sourceIndex,
-      lastUsedFilters,
       currentFilters,
       searchQuery,
     } = this.state;
@@ -188,25 +178,13 @@ class Catalogue extends Component {
 
     return (
       <React.Fragment>
-        <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
-          <Toolbar>
-            <MenuDrawer />
-
-            <form onSubmit={e => e.preventDefault()}>
-              <FormControl>
-                <Select value={sourceIndex} onChange={this.handleSourceChange}>
-                  {sources.map((source, index) => (
-                    <MenuItem value={index} key={source.id}>
-                      {source.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <TextField label="Search" value={searchQuery} onChange={this.handleSearchChange} />
-            </form>
-          </Toolbar>
-        </AppBar>
+        <CatalogueHeader
+          sourceIndex={sourceIndex}
+          sources={sources}
+          searchQuery={searchQuery}
+          onSourceChange={this.handleSourceChange}
+          onSearchChange={this.handleSearchChange}
+        />
 
         <ResponsiveGrid>
           <DynamicSourceFilters
@@ -234,7 +212,6 @@ class Catalogue extends Component {
 Catalogue.propTypes = {
   mangaLibrary: PropTypes.arrayOf(mangaType),
   sources: PropTypes.array, // TODO: type
-  page: PropTypes.number.isRequired,
   hasNextPage: PropTypes.bool.isRequired,
   initialFilters: PropTypes.array, // TODO: type
   catalogueIsFetching: PropTypes.bool.isRequired,
