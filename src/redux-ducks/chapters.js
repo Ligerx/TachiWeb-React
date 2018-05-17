@@ -7,6 +7,9 @@ const REQUEST = 'chapters/LOAD_REQUEST';
 const SUCCESS = 'chapters/LOAD_SUCCESS';
 const FAILURE = 'chapters/LOAD_FAILURE';
 const CACHE = 'chapters/LOAD_CACHE';
+const UPDATE_REQUEST = 'chapters/UPDATE_REQUEST';
+const UPDATE_SUCCESS = 'chapters/UPDATE_SUCCESS';
+const UPDATE_FAILURE = 'chapters/UPDATE_FAILURE';
 
 // ================================================================================
 // Reducers
@@ -17,6 +20,9 @@ const CACHE = 'chapters/LOAD_CACHE';
 //
 //       Update: call it chapters.chaptersByMangaId
 //       chaptersByMangaId: { mangaId: [ chapter ] }
+
+// FIXME: reusing isFetching for multiple types of actions, not great.
+
 export default function chaptersReducer(
   state = { chaptersByMangaId: {}, isFetching: false, error: false },
   action = {},
@@ -28,7 +34,7 @@ export default function chaptersReducer(
       return {
         ...state,
         chaptersByMangaId: {
-          ...state.chaptersByMangaId,
+          ...state.chaptersByMangaId, // FIXME: I think this will combine old and new chapters, incorrect.
           ...action.payload,
         },
         isFetching: false,
@@ -37,6 +43,11 @@ export default function chaptersReducer(
       return { ...state, isFetching: false, error: true };
     case CACHE:
       return { ...state, isFetching: false };
+    case UPDATE_REQUEST:
+      return { ...state, isFetching: true, error: false };
+    case UPDATE_SUCCESS:
+      return { ...state, isFetching: false, error: false };
+    case UPDATE_FAILURE:
     default:
       return state;
   }
@@ -45,13 +56,13 @@ export default function chaptersReducer(
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchChapters(mangaId) {
+export function fetchChapters(mangaId, { ignoreCache = false } = {}) {
   return (dispatch, getState) => {
     dispatch({ type: REQUEST, meta: { mangaId } });
 
     // Return manga's cached chapters if they're already in the store
     // NOTE: Not checking if the manga's chapters list is empty. (Doing so may possibly cause a bug)
-    if (getState().chapters.chaptersByMangaId[mangaId]) {
+    if (!ignoreCache && getState().chapters.chaptersByMangaId[mangaId]) {
       return dispatch({ type: CACHE });
     }
 
@@ -61,5 +72,21 @@ export function fetchChapters(mangaId) {
         // Transform the data for easier use + does not rely on other data in the store
         ({ [mangaId]: json.content }))
       .then(chapters => dispatch({ type: SUCCESS, payload: chapters }));
+  };
+}
+
+export function updateChapters(mangaId) {
+  return (dispatch) => {
+    dispatch({ type: UPDATE_REQUEST, meta: { mangaId } });
+
+    return fetch(Server.updateMangaChapters(mangaId))
+      .then(res => res.json(), error => dispatch({ type: UPDATE_FAILURE, payload: error }))
+      .then((json) => {
+        dispatch({ type: UPDATE_SUCCESS, meta: { json } });
+
+        if (json.added.length > 0 || json.removed.length > 0) {
+          dispatch(fetchChapters(mangaId, { ignoreCache: true }));
+        }
+      });
   };
 }
