@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import BackButton from 'components/BackButton';
 
 const MangaInfoHeader = ({
-  mangaInfo, tabValue, handleChangeTab, onBackClick,
+  mangaInfo, tabValue, handleChangeTab, onBackClick, onRefreshClick,
 }) => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
@@ -19,7 +19,7 @@ const MangaInfoHeader = ({
       <Typography variant="title" style={{ flex: 1 }}>
         {mangaInfo.title}
       </Typography>
-      <RefreshButton />
+      <RefreshButton onClick={onRefreshClick} />
       <IconButton>
         <Icon>open_in_new</Icon>
       </IconButton>
@@ -34,6 +34,7 @@ MangaInfoHeader.propTypes = {
   tabValue: PropTypes.number.isRequired,
   handleChangeTab: PropTypes.func.isRequired,
   onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+  onRefreshClick: PropTypes.func.isRequired,
 };
 
 export default MangaInfoHeader;

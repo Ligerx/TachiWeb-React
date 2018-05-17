@@ -59,7 +59,7 @@ class MangaInfo extends Component {
 
   render() {
     const { tabValue } = this.state;
-    const { mangaInfo, onBackClick } = this.props;
+    const { mangaInfo, onBackClick, onRefreshClick } = this.props;
 
     return (
       <React.Fragment>
@@ -68,6 +68,7 @@ class MangaInfo extends Component {
           tabValue={tabValue}
           handleChangeTab={this.handleChangeTab}
           onBackClick={onBackClick}
+          onRefreshClick={onRefreshClick}
         />
         {this.tabContent()}
       </React.Fragment>
@@ -80,6 +81,7 @@ MangaInfo.propTypes = {
   chapters: PropTypes.arrayOf(chapterType).isRequired,
   initialTabValue: PropTypes.number.isRequired,
   onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+  onRefreshClick: PropTypes.func.isRequired,
   isTogglingFavorite: PropTypes.bool.isRequired,
   toggleFavorite: PropTypes.func.isRequired,
 };

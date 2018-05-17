@@ -1,33 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import IconButton from 'material-ui/IconButton';
 import Icon from 'material-ui/Icon';
 import Tooltip from 'material-ui/Tooltip';
+import PropTypes from 'prop-types';
 
-class RefreshButton extends Component {
-  constructor(props) {
-    super(props);
-    // this.props = {
-    //   handleClick: null
-    // };
+const RefreshButton = ({ onClick }) => (
+  <Tooltip title="Refresh">
+    <IconButton onClick={onClick}>
+      <Icon>refresh</Icon>
+    </IconButton>
+  </Tooltip>
+);
 
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick = () =>
-    // TODO
-    null;
-
-  render() {
-    // const { handleClick } = this.props;
-
-    return (
-      <Tooltip title="Refresh">
-        <IconButton onClick={this.handleClick}>
-          <Icon>refresh</Icon>
-        </IconButton>
-      </Tooltip>
-    );
-  }
-}
+RefreshButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
 
 export default RefreshButton;
