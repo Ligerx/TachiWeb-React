@@ -9,9 +9,19 @@ import { Client } from 'api';
 // I might rename the other files in the /pages folder to include _Page at the end. I dunno...
 
 class MangaInfoPage extends Component {
+  constructor(props) {
+    super(props);
+
+    this.handleRefreshClick = this.handleRefreshClick.bind(this);
+  }
+
   componentDidMount() {
     this.props.fetchLibrary();
     this.props.fetchChapters();
+  }
+
+  handleRefreshClick() {
+    this.props.updateChapters(this.props.mangaInfo.id);
   }
 
   render() {
@@ -37,6 +47,7 @@ class MangaInfoPage extends Component {
         chapters={chapters}
         initialTabValue={1}
         onBackClick={Client.library()}
+        onRefreshClick={this.handleRefreshClick}
         isTogglingFavorite={isTogglingFavorite}
         toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
       />
@@ -52,6 +63,7 @@ MangaInfoPage.propTypes = {
   fetchLibrary: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   toggleFavoriteForManga: PropTypes.func.isRequired,
+  updateChapters: PropTypes.func.isRequired,
 };
 
 // When data hasn't loaded yet, mangaInfo and chapters can be non-existant.

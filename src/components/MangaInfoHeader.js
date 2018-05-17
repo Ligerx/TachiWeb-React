@@ -10,6 +10,11 @@ import { mangaType } from 'types';
 import PropTypes from 'prop-types';
 import BackButton from 'components/BackButton';
 
+// TODO: Currently, refresh button only updates chapters, but not mangaInfo
+//       Not sure if updating mangaInfo even matters.
+//       If you do implement this, just have refresh click update both at the same time.
+//       ^ easier this way
+
 const MangaInfoHeader = ({
   mangaInfo, tabValue, handleChangeTab, onBackClick, onRefreshClick,
 }) => (

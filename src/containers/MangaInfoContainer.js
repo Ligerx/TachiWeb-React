@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { fetchLibrary, toggleFavorite } from 'redux-ducks/library';
-import { fetchChapters } from 'redux-ducks/chapters';
+import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
 import MangaInfoPage from 'pages/MangaInfoPage';
 
 const getThisManga = (mangaLibrary, mangaId) =>
@@ -25,6 +25,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   // Need a nested function to pass in mangaId in the JSX
   toggleFavoriteForManga: (mangaId, isFavorite) => () =>
     dispatch(toggleFavorite(mangaId, isFavorite)),
+  updateChapters: mangaId => dispatch(updateChapters(mangaId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MangaInfoPage);
