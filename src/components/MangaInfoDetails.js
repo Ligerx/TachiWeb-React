@@ -20,7 +20,7 @@ const styles = () => ({
   },
 });
 
-const MangaInfoDetails = ({ classes, mangaInfo, children }) => (
+const MangaInfoDetails = ({ classes, mangaInfo, numChapters, children }) => (
   <React.Fragment>
     <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url}>
       <ResponsiveGrid className={classNames(classes.gridPadding, classes.fabParent)}>
@@ -36,7 +36,7 @@ const MangaInfoDetails = ({ classes, mangaInfo, children }) => (
             {mangaInfo.author}
             <br />
             <strong>Chapters: </strong>
-            {mangaInfo.chapters}
+            {numChapters}
             <br />
             <strong>Status: </strong>
             {mangaInfo.status}
@@ -66,6 +66,7 @@ const MangaInfoDetails = ({ classes, mangaInfo, children }) => (
 MangaInfoDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   mangaInfo: mangaType.isRequired,
+  numChapters: PropTypes.number.isRequired,
   children: PropTypes.node,
 };
 

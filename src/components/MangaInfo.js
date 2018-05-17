@@ -41,7 +41,7 @@ class MangaInfo extends Component {
 
     if (tabValue === 0) {
       return (
-        <MangaInfoDetails mangaInfo={mangaInfo}>
+        <MangaInfoDetails mangaInfo={mangaInfo} numChapters={chapters ? chapters.length : 0}>
           <FavoriteFAB
             isFavorite={mangaInfo.favorite}
             isTogglingFavorite={isTogglingFavorite}
