@@ -36,7 +36,7 @@ export default function libraryReducer(
     case SUCCESS:
       return {
         ...state,
-        mangaLibrary: addToMangaLibrary(state.mangaLibrary, action.payload),
+        mangaLibrary: action.payload,
         isFetching: false,
         libraryLoaded: true,
       };
@@ -74,12 +74,12 @@ export default function libraryReducer(
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchLibrary() {
+export function fetchLibrary({ ignoreCache = false } = {}) {
   return (dispatch, getState) => {
     dispatch({ type: REQUEST });
 
     // Return cached mangaLibrary if it's been loaded before
-    if (getState().library.libraryLoaded) {
+    if (!ignoreCache && getState().library.libraryLoaded) {
       return dispatch({ type: CACHE });
     }
 

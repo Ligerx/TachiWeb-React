@@ -2,12 +2,24 @@ import React, { Component } from 'react';
 import LibraryHeader from 'components/LibraryHeader';
 import MangaGrid from 'components/MangaGrid';
 import LibraryMangaCard from 'components/LibraryMangaCard';
+import PropTypes from 'prop-types';
+import { mangaType } from 'types';
 
 // TODO: sort/filter mangaLibrary
 
 class Library extends Component {
+  constructor(props) {
+    super(props);
+
+    this.handleRefreshClick = this.handleRefreshClick.bind(this);
+  }
+
   componentDidMount() {
     this.props.fetchLibrary();
+  }
+
+  handleRefreshClick() {
+    this.props.fetchLibrary({ ignoreCache: true });
   }
 
   render() {
@@ -15,12 +27,21 @@ class Library extends Component {
 
     return (
       <React.Fragment>
-        <LibraryHeader />
+        <LibraryHeader onRefreshClick={this.handleRefreshClick} />
 
         <MangaGrid mangaLibrary={mangaLibrary} cardComponent={<LibraryMangaCard />} />
       </React.Fragment>
     );
   }
 }
+
+Library.propTypes = {
+  mangaLibrary: PropTypes.arrayOf(mangaType),
+  fetchLibrary: PropTypes.func.isRequired,
+};
+
+Library.defaultProps = {
+  mangaLibrary: [],
+};
 
 export default Library;

@@ -9,7 +9,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchLibrary: () => dispatch(fetchLibrary()),
+  fetchLibrary: options => dispatch(fetchLibrary(options)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Library);

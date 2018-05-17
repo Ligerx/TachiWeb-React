@@ -7,9 +7,10 @@ import MoreButton from 'components/MoreButton';
 import RefreshButton from 'components/RefreshButton';
 import SearchButton from 'components/SearchButton';
 import MenuDrawer from 'components/MenuDrawer';
+import PropTypes from 'prop-types';
 
 // Every header is different? This is only for the Library header
-const LibraryHeader = () => (
+const LibraryHeader = ({ onRefreshClick }) => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
       <MenuDrawer />
@@ -22,11 +23,15 @@ const LibraryHeader = () => (
 
       <SearchButton />
 
-      <RefreshButton />
+      <RefreshButton onClick={onRefreshClick} />
 
       <MoreButton />
     </Toolbar>
   </AppBar>
 );
+
+LibraryHeader.propTypes = {
+  onRefreshClick: PropTypes.func.isRequired,
+};
 
 export default LibraryHeader;
