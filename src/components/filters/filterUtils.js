@@ -5,6 +5,13 @@ import FilterTristate from './FilterTristate';
 import FilterGroup from './FilterGroup';
 import FilterSort from './FilterSort';
 
+// FIXME: still too laggy. (may partially be caused in dev by React DevTools)
+//        Try a production build to see how bad it is.
+//        If it's still bad, try using immer - https://github.com/mweststrate/immer
+//        Other suggestions here - https://medium.freecodecamp.org/handling-state-in-react-four-immutable-approaches-to-consider-d1f5c00249d5
+//        last resort, I might have to do a normal object update
+
+
 /* eslint-disable import/prefer-default-export */
 
 export function filterElements(filters, onChange) {
@@ -124,9 +131,7 @@ function updateTristate(oldState) {
 }
 
 function cloneDeep(oldObject) {
-  // Turns out this is much faster
+  // This is supposed to be faster than lodash cloneDeep
   // As long as the object is only text, there shouldn't be any problems
-
-  // FIXME: still too laggy. Might have to do a normal object update
   return JSON.parse(JSON.stringify(oldObject));
 }
