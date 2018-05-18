@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { fetchLibrary, toggleFavorite } from 'redux-ducks/library';
+import { fetchLibrary, toggleFavorite, updateMangaInfo } from 'redux-ducks/library';
 import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
 import MangaInfoPage from 'pages/MangaInfoPage';
 
@@ -26,6 +26,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   toggleFavoriteForManga: (mangaId, isFavorite) => () =>
     dispatch(toggleFavorite(mangaId, isFavorite)),
   updateChapters: mangaId => dispatch(updateChapters(mangaId)),
+  updateMangaInfo: mangaId => dispatch(updateMangaInfo(mangaId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MangaInfoPage);

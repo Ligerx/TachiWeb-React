@@ -26,6 +26,7 @@ class MangaInfoPage extends Component {
   }
 
   handleRefreshClick() {
+    this.props.updateMangaInfo(this.props.mangaInfo.id);
     this.props.updateChapters(this.props.mangaInfo.id);
   }
 
@@ -69,6 +70,7 @@ MangaInfoPage.propTypes = {
   fetchChapters: PropTypes.func.isRequired,
   toggleFavoriteForManga: PropTypes.func.isRequired,
   updateChapters: PropTypes.func.isRequired,
+  updateMangaInfo: PropTypes.func.isRequired,
 };
 
 // When data hasn't loaded yet, mangaInfo and chapters can be non-existant.

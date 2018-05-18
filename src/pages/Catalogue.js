@@ -166,6 +166,7 @@ class Catalogue extends Component {
   }
 
   handleRefreshClick() {
+    this.props.updateMangaInfo(this.state.mangaIdBeingViewed);
     this.props.updateChapters(this.state.mangaIdBeingViewed);
   }
 
