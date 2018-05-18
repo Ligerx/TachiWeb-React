@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import { FormGroup } from '@material-ui/core/Form';
+import FormGroup from '@material-ui/core/FormGroup';
 import FilterActions from './FilterActions';
 import { filterElements } from './filterUtils';
 

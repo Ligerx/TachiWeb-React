@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListItem } from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import Moment from 'moment';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';

@@ -3,7 +3,7 @@ import Icon from '@material-ui/core/Icon';
 import FAB from 'components/FAB';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { CircularProgress } from '@material-ui/core/Progress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 // NOTE: refer to FAB for specific CSS instructions
 
