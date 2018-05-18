@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import ExpansionPanel, {
   ExpansionPanelDetails,
   ExpansionPanelSummary,
-} from 'material-ui/ExpansionPanel';
-import Typography from 'material-ui/Typography';
-import Icon from 'material-ui/Icon';
-import { FormGroup } from 'material-ui/Form';
+} from '@material-ui/core/ExpansionPanel';
+import Typography from '@material-ui/core/Typography';
+import Icon from '@material-ui/core/Icon';
+import { FormGroup } from '@material-ui/core/Form';
 import FilterTristate from './FilterTristate';
 
 // NOTE: Assuming that GROUP will only contain TRISTATE children

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { CircularProgress } from 'material-ui/Progress';
+import { CircularProgress } from '@material-ui/core/Progress';
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
 import MangaInfo from 'components/MangaInfo';

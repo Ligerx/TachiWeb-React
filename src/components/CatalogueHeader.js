@@ -1,11 +1,11 @@
 import React from 'react';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 import MenuDrawer from 'components/MenuDrawer';
-import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
-import TextField from 'material-ui/TextField';
-import { MenuItem } from 'material-ui/Menu';
+import { FormControl } from '@material-ui/core/Form';
+import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
+import { MenuItem } from '@material-ui/core/Menu';
 import PropTypes from 'prop-types';
 
 const CatalogueHeader = ({

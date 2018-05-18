@@ -1,7 +1,7 @@
 import React from 'react';
-import Card, { CardMedia } from 'material-ui/Card';
-import Typography from 'material-ui/Typography';
-import { withStyles } from 'material-ui/styles';
+import Card, { CardMedia } from '@material-ui/core/Card';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 // * fullWidth

@@ -1,7 +1,7 @@
 import React from 'react';
-import Grid from 'material-ui/Grid';
-import { withStyles } from 'material-ui/styles';
-import ButtonBase from 'material-ui/ButtonBase';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import ButtonBase from '@material-ui/core/ButtonBase';
 import MangaCard from 'components/MangaCard';
 import PropTypes from 'prop-types';
 import { mangaType } from 'types';

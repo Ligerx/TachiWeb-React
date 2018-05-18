@@ -1,9 +1,9 @@
 import React from 'react';
-import Icon from 'material-ui/Icon';
+import Icon from '@material-ui/core/Icon';
 import FAB from 'components/FAB';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import { CircularProgress } from 'material-ui/Progress';
+import { withStyles } from '@material-ui/core/styles';
+import { CircularProgress } from '@material-ui/core/Progress';
 
 // NOTE: refer to FAB for specific CSS instructions
 

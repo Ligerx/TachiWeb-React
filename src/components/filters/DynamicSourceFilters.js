@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Button from 'material-ui/Button';
-import Drawer from 'material-ui/Drawer';
-import { withStyles } from 'material-ui/styles';
+import Button from '@material-ui/core/Button';
+import Drawer from '@material-ui/core/Drawer';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import { FormGroup } from 'material-ui/Form';
+import { FormGroup } from '@material-ui/core/Form';
 import FilterActions from './FilterActions';
 import { filterElements } from './filterUtils';
 

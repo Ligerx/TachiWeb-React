@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import 'rc-slider/assets/index.css';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { Client } from 'api';
-import { withStyles } from 'material-ui/styles';
-import IconButton from 'material-ui/IconButton';
-import Icon from 'material-ui/Icon';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
 

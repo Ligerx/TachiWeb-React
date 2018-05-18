@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import IconButton from 'material-ui/IconButton';
-import Icon from 'material-ui/Icon';
-import Tooltip from 'material-ui/Tooltip';
-import { FormControl } from 'material-ui/Form';
-import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
+import Tooltip from '@material-ui/core/Tooltip';
+import { FormControl } from '@material-ui/core/Form';
+import Input, { InputLabel, InputAdornment } from '@material-ui/core/Input';
 
 class SearchButton extends Component {
   constructor(props) {

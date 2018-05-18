@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import IconButton from 'material-ui/IconButton';
-import Icon from 'material-ui/Icon';
-import Drawer from 'material-ui/Drawer';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
+import Drawer from '@material-ui/core/Drawer';
 import MenuList from 'components/MenuList';
 
 class MenuDrawer extends Component {

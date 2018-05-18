@@ -1,8 +1,8 @@
 import React from 'react';
-import { FormControl } from 'material-ui/Form';
-import { InputLabel } from 'material-ui/Input';
-import Select from 'material-ui/Select';
-import { MenuItem } from 'material-ui/Menu';
+import { FormControl } from '@material-ui/core/Form';
+import { InputLabel } from '@material-ui/core/Input';
+import Select from '@material-ui/core/Select';
+import { MenuItem } from '@material-ui/core/Menu';
 import PropTypes from 'prop-types';
 
 const FilterSelect = ({

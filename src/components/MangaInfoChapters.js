@@ -1,9 +1,9 @@
 import React from 'react';
-import List from 'material-ui/List';
-import Grid from 'material-ui/Grid';
+import List from '@material-ui/core/List';
+import Grid from '@material-ui/core/Grid';
 import ResponsiveGrid from 'components/ResponsiveGrid';
-import Paper from 'material-ui/Paper';
-import { withStyles } from 'material-ui/styles';
+import Paper from '@material-ui/core/Paper';
+import { withStyles } from '@material-ui/core/styles';
 import ChapterListItem from 'components/ChapterListItem';
 import PropTypes from 'prop-types';
 import { chapterType, mangaType } from 'types';

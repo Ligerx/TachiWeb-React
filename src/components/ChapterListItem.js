@@ -1,9 +1,9 @@
 import React from 'react';
-import { ListItem } from 'material-ui/List';
+import { ListItem } from '@material-ui/core/List';
 import Moment from 'moment';
-import Grid from 'material-ui/Grid';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import { Client } from 'api';
 import { Link } from 'react-router-dom';

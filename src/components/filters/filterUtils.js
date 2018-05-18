@@ -1,5 +1,5 @@
 import React from 'react';
-import TextField from 'material-ui/TextField';
+import TextField from '@material-ui/core/TextField';
 import FilterSelect from './FilterSelect';
 import FilterTristate from './FilterTristate';
 import FilterGroup from './FilterGroup';

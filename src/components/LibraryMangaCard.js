@@ -1,8 +1,8 @@
 import React from 'react';
-import Grid from 'material-ui/Grid';
-import { withStyles } from 'material-ui/styles';
-import Badge from 'material-ui/Badge';
-import ButtonBase from 'material-ui/ButtonBase';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import Badge from '@material-ui/core/Badge';
+import ButtonBase from '@material-ui/core/ButtonBase';
 import MangaCard from 'components/MangaCard';
 import { Link } from 'react-router-dom';
 import { Server, Client } from 'api';

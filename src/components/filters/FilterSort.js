@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import ExpansionPanel, {
   ExpansionPanelDetails,
   ExpansionPanelSummary,
-} from 'material-ui/ExpansionPanel';
-import Typography from 'material-ui/Typography';
-import Icon from 'material-ui/Icon';
-import { FormGroup } from 'material-ui/Form';
-import ButtonBase from 'material-ui/ButtonBase';
+} from '@material-ui/core/ExpansionPanel';
+import Typography from '@material-ui/core/Typography';
+import Icon from '@material-ui/core/Icon';
+import { FormGroup } from '@material-ui/core/Form';
+import ButtonBase from '@material-ui/core/ButtonBase';
 
 const FilterSort = ({
   values, name, state, onChange,

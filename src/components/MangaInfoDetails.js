@@ -1,10 +1,10 @@
 import React from 'react';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import MangaCard from 'components/MangaCard';
-import Grid from 'material-ui/Grid';
+import Grid from '@material-ui/core/Grid';
 import BackgroundImage from 'components/BackgroundImage';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { mangaType } from 'types';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';

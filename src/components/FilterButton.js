@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import IconButton from 'material-ui/IconButton';
-import Icon from 'material-ui/Icon';
-import Tooltip from 'material-ui/Tooltip';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import Checkbox from 'material-ui/Checkbox';
-import { FormControlLabel } from 'material-ui/Form';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
+import Tooltip from '@material-ui/core/Tooltip';
+import Menu, { MenuItem } from '@material-ui/core/Menu';
+import Checkbox from '@material-ui/core/Checkbox';
+import { FormControlLabel } from '@material-ui/core/Form';
 
 class FilterButton extends Component {
   constructor(props) {

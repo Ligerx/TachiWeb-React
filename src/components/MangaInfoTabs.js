@@ -1,6 +1,6 @@
 import React from 'react';
-import Tabs, { Tab } from 'material-ui/Tabs';
-import { withStyles } from 'material-ui/styles';
+import Tabs, { Tab } from '@material-ui/core/Tabs';
+import { withStyles } from '@material-ui/core/styles';
 
 // TODO: I added padding to the tabs. Is this the best/right method? Will it work on small screens?
 

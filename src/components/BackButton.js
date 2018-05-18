@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Icon from 'material-ui/Icon';
-import IconButton from 'material-ui/IconButton';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
 import { Link } from 'react-router-dom';
 
 const BackButton = ({ onBackClick }) => {

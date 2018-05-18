@@ -4,7 +4,7 @@ import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import PageSlider from 'components/PageSlider';
 
 // TODO: in the Url, page # is 0 index. Change it to 1 index for readability.
