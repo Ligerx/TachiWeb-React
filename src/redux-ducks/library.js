@@ -10,6 +10,9 @@ const CACHE = 'library/LOAD_CACHE';
 const TOGGLE_FAVORITE_REQUEST = 'library/TOGGLE_FAVORITE_REQUEST';
 const TOGGLE_FAVORITE_SUCCESS = 'library/TOGGLE_FAVORITE_SUCCESS';
 const TOGGLE_FAVORITE_FAILURE = 'library/TOGGLE_FAVORITE_FAILURE';
+const UPDATE_REQUEST = 'library/UPDATE_REQUEST';
+const UPDATE_SUCCESS = 'library/UPDATE_SUCCESS';
+const UPDATE_FAILURE = 'library/UPDATE_FAILURE';
 const ADD_MANGA = 'library/ADD_MANGA';
 
 export { ADD_MANGA };
@@ -60,6 +63,16 @@ export default function libraryReducer(
     case TOGGLE_FAVORITE_FAILURE:
       console.error(action.payload);
       return { ...state, isTogglingFavorite: false, error: true };
+    case UPDATE_REQUEST:
+      return { ...state, isFetching: true, error: false };
+    case UPDATE_SUCCESS:
+      return {
+        ...state,
+        mangaLibrary: replaceMangaInfo(state.mangaLibrary, action.mangaInfo),
+        isFetching: false,
+      };
+    case UPDATE_FAILURE:
+      return { ...state, isFetching: false, error: true };
     case ADD_MANGA: {
       return {
         ...state,
@@ -105,6 +118,16 @@ export function toggleFavorite(mangaId, isCurrentlyFavorite) {
   };
 }
 
+export function updateMangaInfo(mangaId) {
+  return (dispatch) => {
+    dispatch({ type: UPDATE_REQUEST, meta: { mangaId } });
+
+    return fetch(Server.mangaInfo(mangaId))
+      .then(res => res.json(), error => dispatch({ type: UPDATE_FAILURE, payload: error }))
+      .then(json => dispatch({ type: UPDATE_SUCCESS, mangaInfo: json.content }));
+  };
+}
+
 // ================================================================================
 // Helper functions
 // ================================================================================
@@ -129,4 +152,10 @@ function addToMangaLibrary(currentMangaLibrary, newMangaLibrary) {
   });
 
   return [...filteredManga, ...newMangaLibrary];
+}
+
+function replaceMangaInfo(mangaLibrary, newMangaInfo) {
+  const index = mangaLibrary.findIndex(manga => manga.id === newMangaInfo.id);
+
+  return [...mangaLibrary.slice(0, index), newMangaInfo, ...mangaLibrary.slice(index + 1)];
 }

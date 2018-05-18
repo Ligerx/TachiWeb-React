@@ -8,6 +8,11 @@ import { Client } from 'api';
 // Honestly couldn't come up with a different name to differentiate it from MangaInfo component
 // I might rename the other files in the /pages folder to include _Page at the end. I dunno...
 
+// NOTE: Not currently automatically requesting server to rescrape data
+//       for the chapter list and manga info.
+//       I'm assuming the server would have already scraped once when the
+//       user added a manga via the catalogue.
+
 class MangaInfoPage extends Component {
   constructor(props) {
     super(props);

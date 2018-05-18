@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { fetchSources } from 'redux-ducks/sources';
 import { fetchCatalogue, fetchNextCataloguePage, fetchFilters } from 'redux-ducks/catalogue';
 import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
-import { toggleFavorite } from 'redux-ducks/library';
+import { toggleFavorite, updateMangaInfo } from 'redux-ducks/library';
 import Catalogue from 'pages/Catalogue';
 
 const mapStateToProps = (state) => {
@@ -43,6 +43,7 @@ const mapDispatchToProps = dispatch => ({
   fetchNextCataloguePage: (sourceId, query, filters) =>
     dispatch(fetchNextCataloguePage(sourceId, query, filters)),
   updateChapters: mangaId => dispatch(updateChapters(mangaId)),
+  updateMangaInfo: mangaId => dispatch(updateMangaInfo(mangaId)),
 });
 
 // Helper functions

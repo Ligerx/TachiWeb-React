@@ -110,6 +110,9 @@ class Catalogue extends Component {
   handleCardClick(mangaId) {
     return () => {
       this.setState({ mangaIdBeingViewed: mangaId });
+
+      // Fetch chapters cached on server
+      // If there are none, tell server to scrape the site
       this.props.fetchChapters(mangaId)
         .then(() => {
           const chapters = this.props.chaptersByMangaId[mangaId];
@@ -117,6 +120,18 @@ class Catalogue extends Component {
             this.props.updateChapters(mangaId);
           }
         });
+
+      // If we think the server hasn't had enough time to scrape the source website
+      // for this mangaInfo, wait a little while and try fetching again.
+      //
+      // NOTE: This only updates the manga being viewed. Many of your other search results are
+      //       likely missing information as well. Viewing them will then fetch the data.
+      const thisManga = this.props.mangaLibrary.find(manga => manga.id === mangaId);
+      if (possiblyMissingInfo(thisManga)) {
+        setTimeout(() => {
+          this.props.updateMangaInfo(mangaId);
+        }, 500);
+      }
     };
   }
 
@@ -221,6 +236,25 @@ class Catalogue extends Component {
   }
 }
 
+// Helper methods
+function possiblyMissingInfo(manga) {
+  // mangaFields is an array of some values that mangaInfo should probably have
+  // Count the number of these fields that are missing
+  const mangaFields = ['author', 'description', 'genres', 'categories'];
+
+  const numMissing = mangaFields.reduce(((counter, field) => {
+    const value = manga[field];
+
+    if (!value || (Array.isArray(value) && !value.length)) {
+      return counter + 1;
+    }
+    return counter;
+  }), 0);
+
+  // setting the arbitrary amount of missing info at 3 to be considered missing info
+  return numMissing >= 3;
+}
+
 Catalogue.propTypes = {
   mangaLibrary: PropTypes.arrayOf(mangaType),
   sources: PropTypes.array, // TODO: type
@@ -239,6 +273,7 @@ Catalogue.propTypes = {
   fetchChapters: PropTypes.func.isRequired,
   toggleFavoriteForManga: PropTypes.func.isRequired,
   updateChapters: PropTypes.func.isRequired,
+  updateMangaInfo: PropTypes.func.isRequired,
 };
 
 Catalogue.defaultProps = {
