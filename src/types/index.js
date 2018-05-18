@@ -5,9 +5,18 @@
 import { shape, number, string, bool, array } from 'prop-types';
 
 export const mangaType = shape({
-  chapters: number.isRequired,
-  unread: number, // not required because catalogue manga data does not include this
-  author: string.isRequired,
+  // NOTE: Many non-required fields may be missing because the server needs time to
+  //       scrape the website, but returns a barebones object early anyway.
+
+  // Must be included
+  id: number.isRequired,
+  favorite: bool.isRequired,
+  title: string.isRequired,
+
+  // I believe these will always be incliuded
+  source: string.isRequired,
+  url: string.isRequired,
+  downloaded: bool.isRequired,
   flags: shape({
     DISPLAY_MODE: string.isRequired,
     READ_FILTER: string.isRequired,
@@ -15,17 +24,15 @@ export const mangaType = shape({
     SORT_TYPE: string.isRequired,
     DOWNLOADED_FILTER: string.isRequired,
   }),
-  description: string.isRequired,
-  source: string.isRequired,
-  title: string.isRequired,
-  thumbnail_url: string.isRequired,
-  downloaded: bool.isRequired,
-  url: string.isRequired,
-  genres: string.isRequired,
-  id: number.isRequired,
-  categories: array.isRequired,
-  favorite: bool.isRequired,
-  status: string.isRequired,
+
+  chapters: number,
+  unread: number,
+  author: string,
+  description: string,
+  thumbnail_url: string,
+  genres: string,
+  categories: array,
+  status: string,
 });
 
 export const chapterType = shape({
