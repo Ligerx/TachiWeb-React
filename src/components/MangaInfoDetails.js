@@ -8,6 +8,7 @@ import { withStyles } from 'material-ui/styles';
 import { mangaType } from 'types';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Server } from 'api';
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
@@ -22,10 +23,10 @@ const styles = () => ({
 
 const MangaInfoDetails = ({ classes, mangaInfo, numChapters, children }) => (
   <React.Fragment>
-    <BackgroundImage thumbnailUrl={mangaInfo.thumbnail_url}>
+    <BackgroundImage coverUrl={Server.cover(mangaInfo.id)}>
       <ResponsiveGrid className={classNames(classes.gridPadding, classes.fabParent)}>
         <Grid item xs={4} sm={3}>
-          <MangaCard thumbnailUrl={mangaInfo.thumbnail_url} />
+          <MangaCard coverUrl={Server.cover(mangaInfo.id)} />
         </Grid>
         <Grid item xs={8} sm={9}>
           <Typography variant="title" gutterBottom>

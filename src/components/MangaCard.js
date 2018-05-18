@@ -44,9 +44,9 @@ const styles = {
 
 // FIXME: title can be too long. Limit the max length of the title.
 
-const MangaCard = ({ classes, title, thumbnailUrl }) => (
+const MangaCard = ({ classes, title, coverUrl }) => (
   <Card className={classes.fullWidth}>
-    <CardMedia className={classes.image} image={thumbnailUrl} title={title} />
+    <CardMedia className={classes.image} image={coverUrl} title={title} />
     {!!title && (
       <div className={classes.gradient}>
         <Typography variant="title" className={classes.title}>
@@ -59,7 +59,7 @@ const MangaCard = ({ classes, title, thumbnailUrl }) => (
 
 MangaCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  thumbnailUrl: PropTypes.string.isRequired,
+  coverUrl: PropTypes.string.isRequired,
   title: PropTypes.string,
 };
 

@@ -22,7 +22,7 @@ const styles = {
 const CatalogueMangaCard = ({ classes, manga, onClick }) => (
   <Grid item xs={6} sm={3} className={manga.favorite ? classes.isFavorited : null}>
     <ButtonBase className={classes.fullWidth} onClick={onClick(manga.id)}>
-      <MangaCard title={manga.title} thumbnailUrl={Server.cover(manga.id)} />
+      <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
     </ButtonBase>
   </Grid>
 );
