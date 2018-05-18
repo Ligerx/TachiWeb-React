@@ -109,8 +109,14 @@ class Catalogue extends Component {
 
   handleCardClick(mangaId) {
     return () => {
-      this.props.fetchChapters(mangaId);
       this.setState({ mangaIdBeingViewed: mangaId });
+      this.props.fetchChapters(mangaId)
+        .then(() => {
+          const chapters = this.props.chaptersByMangaId[mangaId];
+          if (chapters && chapters.length <= 0) {
+            this.props.updateChapters(mangaId);
+          }
+        });
     };
   }
 

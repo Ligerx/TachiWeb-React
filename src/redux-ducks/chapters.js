@@ -63,7 +63,9 @@ export function fetchChapters(mangaId, { ignoreCache = false } = {}) {
     // Return manga's cached chapters if they're already in the store
     // NOTE: Not checking if the manga's chapters list is empty. (Doing so may possibly cause a bug)
     if (!ignoreCache && getState().chapters.chaptersByMangaId[mangaId]) {
-      return dispatch({ type: CACHE });
+      // A bit of a hack I guess. Return a promise so that any function calling fetchChapters
+      // can use .then() whether we dispatch cached data or fetch from the server.
+      return Promise.resolve().then(dispatch({ type: CACHE }));
     }
 
     return fetch(Server.chapters(mangaId))
@@ -86,11 +88,12 @@ export function updateChapters(mangaId) {
           return dispatch({ type: UPDATE_FAILURE, meta: { json } });
         }
 
-        dispatch({ type: UPDATE_SUCCESS, meta: { json } });
-
         if (json.added.length > 0 || json.removed.length > 0) {
-          dispatch(fetchChapters(mangaId, { ignoreCache: true }));
+          dispatch({ type: UPDATE_SUCCESS, meta: { json } });
+          return dispatch(fetchChapters(mangaId, { ignoreCache: true }));
         }
+
+        return dispatch({ type: UPDATE_SUCCESS, meta: { json } });
       });
   };
 }
