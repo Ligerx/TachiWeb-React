@@ -19,6 +19,7 @@ class Library extends Component {
 
   componentDidMount() {
     this.props.fetchLibrary();
+    this.props.fetchUnread();
   }
 
   handleRefreshClick() {
@@ -26,13 +27,16 @@ class Library extends Component {
   }
 
   render() {
-    const { mangaLibrary } = this.props;
+    const { mangaLibrary, unread } = this.props;
 
     return (
       <React.Fragment>
         <LibraryHeader onRefreshClick={this.handleRefreshClick} />
 
-        <MangaGrid mangaLibrary={mangaLibrary} cardComponent={<LibraryMangaCard />} />
+        <MangaGrid
+          mangaLibrary={mangaLibrary}
+          cardComponent={<LibraryMangaCard unread={unread} />}
+        />
       </React.Fragment>
     );
   }
@@ -40,7 +44,9 @@ class Library extends Component {
 
 Library.propTypes = {
   mangaLibrary: PropTypes.arrayOf(mangaType),
+  unread: PropTypes.object.isRequired,
   fetchLibrary: PropTypes.func.isRequired,
+  fetchUnread: PropTypes.func.isRequired,
 };
 
 Library.defaultProps = {

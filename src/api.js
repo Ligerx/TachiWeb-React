@@ -4,6 +4,10 @@ const Server = {
     return '/api/library';
   },
 
+  libraryUnread() {
+    return '/api/library?jw=$.success&jw=$.content.*.unread&jw=$.content.*.id';
+  },
+
   mangaInfo(mangaId) {
     return `/api/manga_info/${mangaId}`;
   },

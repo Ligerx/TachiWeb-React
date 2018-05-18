@@ -24,14 +24,17 @@ const styles = {
   },
 };
 
-const LibraryMangaCard = ({ classes, manga }) => (
+// Currently passing in the entire unread object, not just the corresponding number
+// ^ Would have to rework the component tree a big to make that happen.
+
+const LibraryMangaCard = ({ classes, manga, unread }) => (
   <Grid item xs={6} sm={3}>
     <Badge
-      badgeContent={manga.unread}
+      badgeContent={unread[manga.id] || 0}
       color="primary"
       className={classes.fullWidth}
       classes={{
-        badge: manga.unread > 0 ? null : classes.invisibleBadge,
+        badge: unread[manga.id] > 0 ? null : classes.invisibleBadge,
       }}
     >
       <ButtonBase className={classes.fullWidth} component={Link} to={Client.manga(manga.id)}>
