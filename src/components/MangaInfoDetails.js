@@ -9,6 +9,7 @@ import { mangaType } from 'types';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Server } from 'api';
+import upperFirst from 'lodash/upperFirst';
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
@@ -32,23 +33,8 @@ const MangaInfoDetails = ({ classes, mangaInfo, numChapters, children }) => (
           <Typography variant="title" gutterBottom>
             {mangaInfo.title}
           </Typography>
-          <Typography>
-            <strong>Author: </strong>
-            {mangaInfo.author}
-            <br />
-            <strong>Chapters: </strong>
-            {numChapters}
-            <br />
-            <strong>Status: </strong>
-            {mangaInfo.status}
-            <br />
-            <strong>Source: </strong>
-            {mangaInfo.source}
-            <br />
-            <strong>Genres: </strong>
-            {mangaInfo.genres}
-            <br />
-          </Typography>
+          <DetailComponent fieldName="Chapters" value={numChapters} />
+          {detailsElements(mangaInfo)}
         </Grid>
 
         {children}
@@ -56,12 +42,35 @@ const MangaInfoDetails = ({ classes, mangaInfo, numChapters, children }) => (
     </BackgroundImage>
 
     <ResponsiveGrid className={classes.gridPadding}>
-      <Typography>
-        <strong>Description: </strong>
-        {mangaInfo.description}
-      </Typography>
+      <DetailComponent fieldName="Description" value={mangaInfo.description} />
     </ResponsiveGrid>
   </React.Fragment>
+);
+
+// Helper functions
+function detailsElements(mangaInfo) {
+  const fieldNames = [
+    'status',
+    'source',
+    'author',
+    'genres',
+    'categories',
+  ];
+
+  return fieldNames.map((fieldName, index) => {
+    const value = mangaInfo[fieldName];
+    if ((!Array.isArray(value) && value) || (Array.isArray(value) && value.length > 0)) {
+      return <DetailComponent fieldName={fieldName} value={value} key={index} />;
+    }
+    return null;
+  });
+}
+
+const DetailComponent = ({fieldName, value}) => (
+  <Typography>
+    <b>{`${upperFirst(fieldName)}: `}</b>
+    {value}
+  </Typography>
 );
 
 MangaInfoDetails.propTypes = {
