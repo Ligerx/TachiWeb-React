@@ -33,6 +33,13 @@ import { Link } from 'react-router-dom';
 // FIXME: For some reason, loading a Reader page send out a bazillion requests. Refer to
 //        the redux actions. It's not breaking anything, but I want to fix this.
 
+// TODO: remove any instance of parseInt used to convert page from string -> int
+//       the container is already doing that conversation when passing props
+
+// NOTE: only updating read status when the user presses the next page button
+//       not sure if it's necessary to do it in more cases than this
+//       e.g. jumping pages using the slider, jumping chapters, going backwards in pages
+
 // https://tylermcginnis.com/react-router-programmatically-navigate/
 
 const styles = {
@@ -104,11 +111,12 @@ class Reader extends Component {
 
   handleNextPageClick() {
     const {
-      mangaInfo, chapter, pageCount, page, nextChapterId,
+      mangaInfo, chapter, pageCount, page, nextChapterId, updateReadingStatus,
     } = this.props;
     const pageInt = parseInt(page, 10);
 
     if (pageInt < pageCount - 1) {
+      updateReadingStatus(chapter, pageCount, page + 1);
       this.props.history.push(Client.page(mangaInfo.id, chapter.id, pageInt + 1));
     } else if (pageInt === pageCount - 1 && nextChapterId) {
       this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
@@ -197,6 +205,7 @@ Reader.propTypes = {
   fetchLibrary: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   fetchPageCount: PropTypes.func.isRequired,
+  updateReadingStatus: PropTypes.func.isRequired,
   // Classes is the injected styles
   classes: PropTypes.object.isRequired,
   // Below are react-router props

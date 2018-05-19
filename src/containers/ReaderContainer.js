@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { fetchLibrary } from 'redux-ducks/library';
-import { fetchChapters } from 'redux-ducks/chapters';
+import { fetchChapters, updateReadingStatus } from 'redux-ducks/chapters';
 import { fetchPageCount } from 'redux-ducks/pageCounts';
 import Reader from 'pages/Reader';
 
@@ -34,6 +34,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     fetchLibrary: () => dispatch(fetchLibrary()),
     fetchChapters: () => dispatch(fetchChapters(mangaId)),
     fetchPageCount: () => dispatch(fetchPageCount(mangaId, chapterId)),
+    updateReadingStatus: (chapter, pageCount, readPage) =>
+      dispatch(updateReadingStatus(mangaId, chapter, pageCount, readPage)),
   };
 };
 

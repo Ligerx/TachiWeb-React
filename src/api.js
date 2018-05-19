@@ -1,4 +1,3 @@
-// CREATING MY OWN NEW API
 const Server = {
   library() {
     return '/api/library';
@@ -62,6 +61,17 @@ const Server = {
 
   filters(sourceId) {
     return `/api/get_filters/${sourceId}`;
+  },
+
+  updateReadingStatus(mangaId, chapterId, readPage, readLastPage) {
+    // No edge case checking here. Handle that in the caller.
+    // e.g. not updating because you're reading a previously read page
+    let url = `/api/reading_status/${mangaId}/${chapterId}?lp=${readPage}`;
+
+    if (readLastPage) {
+      url += '&read=true';
+    }
+    return url;
   },
 };
 export { Server };

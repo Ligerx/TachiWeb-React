@@ -7,9 +7,14 @@ const REQUEST = 'chapters/LOAD_REQUEST';
 const SUCCESS = 'chapters/LOAD_SUCCESS';
 const FAILURE = 'chapters/LOAD_FAILURE';
 const CACHE = 'chapters/LOAD_CACHE';
+
 const UPDATE_REQUEST = 'chapters/UPDATE_REQUEST';
 const UPDATE_SUCCESS = 'chapters/UPDATE_SUCCESS';
 const UPDATE_FAILURE = 'chapters/UPDATE_FAILURE';
+
+const UPDATE_READING_STATUS_REQUEST = 'chapters/UPDATE_READING_STATUS_REQUEST';
+const UPDATE_READING_STATUS_SUCCESS = 'chapters/UPDATE_READING_STATUS_SUCCESS';
+const UPDATE_READING_STATUS_FAILURE = 'chapters/UPDATE_READING_STATUS_FAILURE';
 
 // ================================================================================
 // Reducers
@@ -48,6 +53,31 @@ export default function chaptersReducer(
     case UPDATE_SUCCESS:
       return { ...state, isFetching: false, error: false };
     case UPDATE_FAILURE:
+      return { ...state, isFetching: false, error: true };
+    case UPDATE_READING_STATUS_REQUEST:
+      return { ...state, isFetching: true, error: false };
+    case UPDATE_READING_STATUS_SUCCESS: {
+      const {
+        mangaId, chapterId, readPage, didReadLastPage,
+      } = action;
+
+      return {
+        ...state,
+        chaptersByMangaId: {
+          ...state.chaptersByMangaId,
+          [mangaId]: changeChapterObjReadState(
+            state.chaptersByMangaId[mangaId],
+            chapterId,
+            readPage,
+            didReadLastPage,
+          ),
+        },
+        isFetching: false,
+        error: false,
+      };
+    }
+    case UPDATE_READING_STATUS_FAILURE:
+      return { ...state, isFetching: false, error: true };
     default:
       return state;
   }
@@ -96,4 +126,50 @@ export function updateChapters(mangaId) {
         return dispatch({ type: UPDATE_SUCCESS, meta: { json } });
       });
   };
+}
+
+// NOTE: This is only to update one chapter object
+export function updateReadingStatus(mangaId, chapter, pageCount, readPage) {
+  return (dispatch) => {
+    // Handle checking if no update needs to happen. Escape early if so.
+    // NOTE: Returning null should work, but idk if redux-thunk
+    //       wants me to return a dispatch instead.
+    if (chapter.read || readPage <= chapter.last_read_page) {
+      return null;
+    }
+
+    dispatch({ type: UPDATE_READING_STATUS_REQUEST });
+    const didReadLastPage = readPage === pageCount - 1;
+
+    return fetch(Server.updateReadingStatus(mangaId, chapter.id, readPage, didReadLastPage)).then(
+      () =>
+        dispatch({
+          type: UPDATE_READING_STATUS_SUCCESS,
+          mangaId,
+          chapterId: chapter.id,
+          readPage,
+          didReadLastPage,
+        }),
+      (error) => {
+        console.warn('Failed to update reading status');
+        return dispatch({ type: UPDATE_READING_STATUS_FAILURE, payload: error });
+      },
+    );
+  };
+}
+
+// ================================================================================
+// Helper Functions
+// ================================================================================
+function changeChapterObjReadState(chapters, chapterId, readPage, didReadLastPage) {
+  const chapterIndex = chapters.findIndex(chapter => chapter.id === chapterId);
+  const chapter = chapters[chapterIndex];
+
+  const newChapter = {
+    ...chapter,
+    last_page_read: readPage,
+    read: didReadLastPage,
+  };
+
+  return [...chapters.slice(0, chapterIndex), newChapter, ...chapters.slice(chapterIndex + 1)];
 }
