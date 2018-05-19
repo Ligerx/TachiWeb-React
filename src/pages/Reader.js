@@ -51,6 +51,7 @@ class Reader extends Component {
     this.handleNextPageClick = this.handleNextPageClick.bind(this);
     // this.handlePrevChapterClick = this.handlePrevChapterClick.bind(this);
     // this.handleNextChapterClick = this.handleNextChapterClick.bind(this);
+    this.handleJumpToPage = this.handleJumpToPage.bind(this);
   }
 
   componentDidMount() {
@@ -117,10 +118,16 @@ class Reader extends Component {
   //   const { mangaInfo, chapters, chapter, prevChapterId } = this.props;
   //   this.props.history.push(Client.page(mangaInfo.id, prevChapterId, 0));
   // }
+  //
   // handleNextChapterClick() {
   //   const { mangaInfo, chapters, chapter, nextChapterId } = this.props;
   //   this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
   // }
+
+  handleJumpToPage(newPage) {
+    const { mangaInfo, chapter } = this.props;
+    this.props.history.push(Client.page(mangaInfo.id, chapter.id, newPage - 1));
+  }
 
   render() {
     const {
@@ -151,6 +158,7 @@ class Reader extends Component {
             page={page}
             prevChapterId={prevChapterId}
             nextChapterId={nextChapterId}
+            onJumpToPage={this.handleJumpToPage}
           />
         </ReaderOverlay>
         <ReaderNavButtons

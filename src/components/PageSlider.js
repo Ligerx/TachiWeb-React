@@ -51,21 +51,15 @@ class PageSlider extends Component {
     };
 
     this.updateSliderValue = this.updateSliderValue.bind(this);
-    this.changePage = this.changePage.bind(this);
   }
 
   updateSliderValue(value) {
     this.setState({ sliderValue: value });
   }
 
-  changePage(newPage) {
-    const { mangaId, chapterId } = this.props;
-    this.props.history.push(Client.page(mangaId, chapterId, newPage - 1));
-  }
-
   render() {
     const {
-      mangaId, pageCount, page, prevChapterId, nextChapterId,
+      mangaId, pageCount, page, prevChapterId, nextChapterId, onJumpToPage,
     } = this.props;
     const { sliderValue } = this.state;
 
@@ -84,7 +78,7 @@ class PageSlider extends Component {
           max={pageCount}
           value={sliderValue}
           onChange={this.updateSliderValue}
-          onAfterChange={this.changePage}
+          onAfterChange={onJumpToPage}
           tipFormatter={value => `Page ${value}`}
         />
         <Typography className={this.props.classes.rightText}>{pageCount}</Typography>
@@ -102,17 +96,13 @@ class PageSlider extends Component {
 
 PageSlider.propTypes = {
   mangaId: PropTypes.number.isRequired,
-  chapterId: PropTypes.number.isRequired,
   pageCount: PropTypes.number.isRequired,
   page: PropTypes.number.isRequired,
   prevChapterId: PropTypes.number,
   nextChapterId: PropTypes.number,
+  onJumpToPage: PropTypes.func.isRequired,
   // Classes is the injected styles
   classes: PropTypes.object.isRequired,
-  // Below are react-router props injected with withRouter
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
 };
 
 PageSlider.defaultProps = {
