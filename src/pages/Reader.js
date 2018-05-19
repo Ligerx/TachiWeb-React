@@ -6,6 +6,9 @@ import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import PageSlider from 'components/PageSlider';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
+import { Link } from 'react-router-dom';
 
 // TODO: in the Url, page # is 0 index. Change it to 1 index for readability.
 //       you'll also have to change the linking in API and possibly other places.
@@ -145,32 +148,38 @@ class Reader extends Component {
 
     return (
       <React.Fragment>
+
         <ReaderOverlay
           title={mangaInfo.title}
           chapterNum={chapter.chapter_number}
           pageCount={pageCount}
           mangaId={mangaInfo.id}
         >
+          <IconButton component={Link} to={this.prevChapterUrl()} disabled={!prevChapterId}>
+            <Icon>skip_previous</Icon>
+          </IconButton>
+
           <PageSlider
-            mangaId={mangaInfo.id}
-            chapterId={chapter.id}
             pageCount={pageCount}
             page={page}
-            prevChapterId={prevChapterId}
-            nextChapterId={nextChapterId}
-            prevChapterUrl={this.prevChapterUrl()}
-            nextChapterUrl={this.nextChapterUrl()}
             onJumpToPage={this.handleJumpToPage}
           />
+
+          <IconButton component={Link} to={this.nextChapterUrl()} disabled={!nextChapterId}>
+            <Icon>skip_next</Icon>
+          </IconButton>
         </ReaderOverlay>
+
         <ReaderNavButtons
           onPrevPageClick={this.handlePrevPageClick}
           onNextPageClick={this.handleNextPageClick}
         />
+
         <div
           className={classes.mangaImage}
           style={backgroundImageStyle}
         />
+
       </React.Fragment>
     );
   }
