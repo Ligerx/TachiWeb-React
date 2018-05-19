@@ -4,7 +4,6 @@ import 'rc-slider/assets/index.css';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
-import { Client } from 'api';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
@@ -59,17 +58,19 @@ class PageSlider extends Component {
 
   render() {
     const {
-      mangaId, pageCount, page, prevChapterId, nextChapterId, onJumpToPage,
+      pageCount,
+      page,
+      prevChapterId,
+      nextChapterId,
+      prevChapterUrl,
+      nextChapterUrl,
+      onJumpToPage,
     } = this.props;
     const { sliderValue } = this.state;
 
     return (
       <React.Fragment>
-        <IconButton
-          component={Link}
-          to={Client.page(mangaId, prevChapterId, 0)}
-          disabled={!prevChapterId}
-        >
+        <IconButton component={Link} to={prevChapterUrl} disabled={!prevChapterId}>
           <Icon>skip_previous</Icon>
         </IconButton>
         <Typography className={this.props.classes.leftText}>{`Page ${page + 1}`}</Typography>
@@ -82,11 +83,7 @@ class PageSlider extends Component {
           tipFormatter={value => `Page ${value}`}
         />
         <Typography className={this.props.classes.rightText}>{pageCount}</Typography>
-        <IconButton
-          component={Link}
-          to={Client.page(mangaId, nextChapterId, 0)}
-          disabled={!nextChapterId}
-        >
+        <IconButton component={Link} to={nextChapterUrl} disabled={!nextChapterId}>
           <Icon>skip_next</Icon>
         </IconButton>
       </React.Fragment>
@@ -95,11 +92,12 @@ class PageSlider extends Component {
 }
 
 PageSlider.propTypes = {
-  mangaId: PropTypes.number.isRequired,
   pageCount: PropTypes.number.isRequired,
   page: PropTypes.number.isRequired,
   prevChapterId: PropTypes.number,
   nextChapterId: PropTypes.number,
+  prevChapterUrl: PropTypes.string.isRequired, // is disabled when URL is invalid anyway
+  nextChapterUrl: PropTypes.string.isRequired, // is disabled when URL is invalid anyway
   onJumpToPage: PropTypes.func.isRequired,
   // Classes is the injected styles
   classes: PropTypes.object.isRequired,

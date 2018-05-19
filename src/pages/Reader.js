@@ -49,8 +49,8 @@ class Reader extends Component {
     this.preloadImages = this.preloadImages.bind(this);
     this.handlePrevPageClick = this.handlePrevPageClick.bind(this);
     this.handleNextPageClick = this.handleNextPageClick.bind(this);
-    // this.handlePrevChapterClick = this.handlePrevChapterClick.bind(this);
-    // this.handleNextChapterClick = this.handleNextChapterClick.bind(this);
+    this.prevChapterUrl = this.prevChapterUrl.bind(this);
+    this.nextChapterUrl = this.nextChapterUrl.bind(this);
     this.handleJumpToPage = this.handleJumpToPage.bind(this);
   }
 
@@ -112,17 +112,17 @@ class Reader extends Component {
     }
   }
 
-  // handlePrevChapterClick() {
-  //   // TODO: Ideally this would put you on the LAST page of the previous chapter.
-  //   //       Would need to first have the previous chapter's pageCount to do so.
-  //   const { mangaInfo, chapters, chapter, prevChapterId } = this.props;
-  //   this.props.history.push(Client.page(mangaInfo.id, prevChapterId, 0));
-  // }
-  //
-  // handleNextChapterClick() {
-  //   const { mangaInfo, chapters, chapter, nextChapterId } = this.props;
-  //   this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
-  // }
+  prevChapterUrl() {
+    // TODO: Ideally this would put you on the LAST page of the previous chapter.
+    //       Would need to first have the previous chapter's pageCount to do so.
+    const { mangaInfo, prevChapterId } = this.props;
+    return Client.page(mangaInfo.id, prevChapterId, 0);
+  }
+
+  nextChapterUrl() {
+    const { mangaInfo, nextChapterId } = this.props;
+    return Client.page(mangaInfo.id, nextChapterId, 0);
+  }
 
   handleJumpToPage(newPage) {
     const { mangaInfo, chapter } = this.props;
@@ -158,6 +158,8 @@ class Reader extends Component {
             page={page}
             prevChapterId={prevChapterId}
             nextChapterId={nextChapterId}
+            prevChapterUrl={this.prevChapterUrl()}
+            nextChapterUrl={this.nextChapterUrl()}
             onJumpToPage={this.handleJumpToPage}
           />
         </ReaderOverlay>
