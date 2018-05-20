@@ -4,19 +4,27 @@ import LibraryContainer from 'containers/LibraryContainer';
 import MangaInfoContainer from 'containers/MangaInfoContainer';
 import ReaderContainer from 'containers/ReaderContainer';
 import CatalogueContainer from 'containers/CatalogueContainer';
+import ErrorNotificationsContainer from 'containers/ErrorNotificationsContainer';
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
+// FIXME: Including GlobalErrorMessageContainer here because I have to
+//        Not idea, refactor out an App component or something.
+
 const Router = () => (
-  <BrowserRouter>
-    <Switch>
-      <Route exact path="/" component={LibraryContainer} />
-      <Route path="/library" component={LibraryContainer} />
-      <Route path="/catalogue" component={CatalogueContainer} />
-      <Route path="/:mangaId/:chapterId/:page" component={ReaderContainer} />
-      <Route path="/:mangaId" component={MangaInfoContainer} />
-    </Switch>
-  </BrowserRouter>
+  <React.Fragment>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/" component={LibraryContainer} />
+        <Route path="/library" component={LibraryContainer} />
+        <Route path="/catalogue" component={CatalogueContainer} />
+        <Route path="/:mangaId/:chapterId/:page" component={ReaderContainer} />
+        <Route path="/:mangaId" component={MangaInfoContainer} />
+      </Switch>
+    </BrowserRouter>
+
+    <ErrorNotificationsContainer />
+  </React.Fragment>
 );
 
 export default Router;

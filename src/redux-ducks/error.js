@@ -3,6 +3,8 @@
 // weird array explaination
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_values_from_a_regular_expression_match
 
+import compact from 'lodash/compact';
+
 export default function errorReducer(state = {}, action = {}) {
   const { type, errorMessage } = action;
   const matches = /(.*)_(REQUEST|FAILURE)/.exec(type);
@@ -20,9 +22,12 @@ export default function errorReducer(state = {}, action = {}) {
   };
 }
 
+export const allErrorsSelector = (state) => {
+  const allErrors = compact(Object.values(state.error));
+  return allErrors[0] || '';
+};
+
 // NOTE: not sure if I actually need to use this, so commenting it out for now
-//
-// import compact from 'lodash/compact';
 //
 // export const createErrorMessageSelector = actions => (state) => {
 //   // returns the first error messages for actions
