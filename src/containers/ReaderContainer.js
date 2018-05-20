@@ -4,19 +4,17 @@ import { fetchChapters, updateReadingStatus } from 'redux-ducks/chapters';
 import { fetchPageCount } from 'redux-ducks/pageCounts';
 import Reader from 'pages/Reader';
 
-// Currently this is mostly a copy paste from MangaInfoContainer
-
 const mapStateToProps = (state, ownProps) => {
   const { library } = state;
   const { chaptersByMangaId } = state.chapters;
-  const { pageCountsByMangaId } = state.pageCounts;
+  const { pageCountsByChapterId } = state.pageCounts;
   const { mangaId, chapterId } = ownProps.match.params;
 
   return {
     mangaInfo: getThisManga(library.mangaLibrary, mangaId),
     chapters: chaptersByMangaId[mangaId],
     chapter: chaptersByMangaId[mangaId] ? findChapter(chaptersByMangaId[mangaId], chapterId) : null,
-    pageCount: pageCountsByMangaId[mangaId] ? pageCountsByMangaId[mangaId][chapterId] : null,
+    pageCount: pageCountsByChapterId[chapterId],
     page: parseInt(ownProps.match.params.page, 10),
     prevChapterId: chaptersByMangaId[mangaId]
       ? getPrevChapterId(chaptersByMangaId[mangaId], chapterId)

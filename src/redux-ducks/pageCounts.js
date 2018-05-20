@@ -11,37 +11,18 @@ const CACHE = 'pageCounts/LOAD_CACHE';
 // ================================================================================
 // Reducers
 // ================================================================================
-export default function chaptersReducer(
-  state = { pageCountsByMangaId: {}, isFetching: false, error: false },
-  action = {},
-) {
+export default function chaptersReducer(state = { pageCountsByChapterId: {} }, action = {}) {
   switch (action.type) {
-    case REQUEST:
-      return { ...state, isFetching: true, error: false };
-    case SUCCESS: {
-      // TODO: Consider using a library like immutability-helper in the future?
-      //       pageCount is nested data, making it a pain in the ass to update state immutably
-      //       The logic here is hard to follow, and any changes would be time consuming to debug.
-      const { mangaId, chapterId, pageCount } = action;
-
-      let newState = state;
-      newState = addMangaIdIfMissing(newState, mangaId);
-
+    case SUCCESS:
       return {
-        ...newState,
-        pageCountsByMangaId: {
-          ...state.pageCountsByMangaId,
-          [mangaId]: {
-            ...newState.pageCountsByMangaId[mangaId],
-            [chapterId]: pageCount,
-          },
+        ...state,
+        pageCountsByChapterId: {
+          ...state.pageCountsByChapterId,
+          [action.chapterId]: action.pageCount,
         },
       };
-    }
-    case FAILURE:
-      return { ...state, isFetching: false, error: true };
     case CACHE:
-      return { ...state, isFetching: false };
+      return state;
     default:
       return state;
   }
@@ -52,40 +33,25 @@ export default function chaptersReducer(
 // ================================================================================
 export function fetchPageCount(mangaId, chapterId) {
   return (dispatch, getState) => {
-    dispatch({ type: REQUEST });
-
     // Return manga's chapters' cached pageCount data if they're already in the store
-    const pageCountsByChapterId = getState().pageCounts.pageCountsByMangaId[mangaId];
-    if (pageCountsByChapterId && pageCountsByChapterId[chapterId]) {
+    const { pageCountsByChapterId } = getState().pageCounts;
+    if (pageCountsByChapterId[chapterId]) {
       return dispatch({ type: CACHE });
     }
 
+    dispatch({ type: REQUEST });
+
     return fetch(Server.pageCount(mangaId, chapterId))
-      .then(res => res.json(), error => dispatch({ type: FAILURE, payload: error }))
-      .then(json => json.page_count)
-      .then(pageCount =>
+      .then(
+        res => res.json(),
+        error =>
+          dispatch({ type: FAILURE, errorMessage: 'Failed to get page count', meta: { error } }),
+      )
+      .then(json =>
         dispatch({
           type: SUCCESS,
-          mangaId,
           chapterId,
-          pageCount,
+          pageCount: json.page_count,
         }));
   };
-}
-
-// ================================================================================
-// Helper functions
-// ================================================================================
-function addMangaIdIfMissing(object, mangaId) {
-  // Create the mangaId parent object if it isn't already there
-  if (!object.pageCountsByMangaId[mangaId]) {
-    return {
-      ...object,
-      pageCountsByMangaId: {
-        ...object.pageCountsByMangaId,
-        [mangaId]: {},
-      },
-    };
-  }
-  return object;
 }
