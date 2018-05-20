@@ -1,52 +1,50 @@
 import { Server } from 'api';
-import { ADD_MANGA as ADD_MANGA_TO_LIBRARY } from './library';
 import { CLEAR_FILTERS } from './filters';
-
-// FIXME: reusing isFetching for multiple types of REQUEST which isn't ideal.
+import { ADD_MANGA } from './mangaInfo';
 
 // ================================================================================
 // Actions
 // ================================================================================
+const RESET_STATE = 'catalogue/RESET_STATE';
+
 const REQUEST = 'catalogue/LOAD_REQUEST';
 const SUCCESS = 'catalogue/LOAD_SUCCESS';
 const FAILURE = 'catalogue/LOAD_FAILURE';
 const CACHE = 'catalogue/LOAD_CACHE'; // e.g. Catalogue -> view a manga -> go back to catalogue
+export const CATALOGUE_LOAD_ACTION = 'catalogue/LOAD';
 
 const ADD_PAGE_REQUEST = 'catalogue/ADD_PAGE_REQUEST';
 const ADD_PAGE_SUCCESS = 'catalogue/ADD_PAGE_SUCCESS';
 const ADD_PAGE_FAILURE = 'catalogue/ADD_PAGE_FAILURE';
 const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE'; // failsafe, don't use
+export const CATALOGUE_ADD_PAGE_ACTION = 'catalogue/ADD_PAGE';
 
 // ================================================================================
 // Reducers
 // ================================================================================
 const initialState = {
-  mangaIds: [], // array of mangaIds that point that data loaded in library
+  mangaIds: [], // array of mangaIds that point that data loaded in mangaInfo reducer
   page: 1, // TODO: can possibly move this out of redux and into the component state? Not sure.
   hasNextPage: false,
-  isFetching: false,
-  error: false,
 };
 
 export default function chaptersReducer(state = initialState, action = {}) {
   switch (action.type) {
-    case REQUEST:
-      return { ...initialState, isFetching: true };
+    case RESET_STATE:
+      return initialState;
+
     case SUCCESS: {
       const { mangaIds, hasNextPage } = action;
       return {
         ...state,
         mangaIds,
         hasNextPage,
-        isFetching: false,
       };
     }
-    case FAILURE:
-      return { ...state, isFetching: false, error: true };
+
     case CACHE:
-      return { ...state, isFetching: false };
-    case ADD_PAGE_REQUEST:
-      return { ...state, isFetching: true, error: false };
+      return state;
+
     case ADD_PAGE_SUCCESS: {
       const { mangaIds, page, hasNextPage } = action;
       return {
@@ -54,14 +52,12 @@ export default function chaptersReducer(state = initialState, action = {}) {
         mangaIds: [...state.mangaIds, ...mangaIds],
         page,
         hasNextPage,
-        isFetching: false,
       };
     }
-    case ADD_PAGE_FAILURE:
-      return { ...state, isFetching: false, error: true };
+
     case ADD_PAGE_NO_NEXT_PAGE: {
       console.error('No next page to fetch. Should not be reaching here');
-      return { ...state, isFetching: false, error: true };
+      return state;
     }
     default:
       return state;
@@ -75,10 +71,10 @@ export function fetchCatalogue(
   sourceId,
   query = '',
   filters = null,
-  // optionally keep previous initialFilters
-  { retainFilters = false } = {},
+  { retainFilters = false } = {}, // optionally keep previous initialFilters
 ) {
   return (dispatch) => {
+    dispatch({ type: RESET_STATE });
     dispatch({
       type: REQUEST,
       meta: { sourceId, query, filters },
@@ -98,7 +94,7 @@ export function fetchCatalogue(
           const { content, has_next: hasNextPage } = json;
           const mangaIds = transformToMangaIdsArray(content);
 
-          dispatch({ type: ADD_MANGA_TO_LIBRARY, newManga: content });
+          dispatch({ type: ADD_MANGA, newManga: content });
           dispatch({
             type: SUCCESS,
             mangaIds,
@@ -106,7 +102,12 @@ export function fetchCatalogue(
             hasNextPage,
           });
         },
-        error => dispatch({ type: FAILURE, payload: error }),
+        error =>
+          dispatch({
+            type: FAILURE,
+            errorMessage: 'Failed to load this catalogue',
+            meta: { error },
+          }),
       );
   };
 }
@@ -115,6 +116,10 @@ export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
   return (dispatch, getState) => {
     const { page, hasNextPage } = getState().catalogue;
     const nextPage = page + 1;
+
+    if (!hasNextPage) {
+      return dispatch({ type: ADD_PAGE_NO_NEXT_PAGE });
+    }
 
     dispatch({
       type: ADD_PAGE_REQUEST,
@@ -127,10 +132,6 @@ export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
       },
     });
 
-    if (!hasNextPage) {
-      return dispatch({ type: ADD_PAGE_NO_NEXT_PAGE });
-    }
-
     return fetch(
       Server.catalogue(),
       cataloguePostParameters(nextPage, sourceId, query.trim(), filters),
@@ -141,7 +142,7 @@ export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
           const { content, has_next: hasNextPageUpdated } = json;
           const mangaIds = transformToMangaIdsArray(content);
 
-          dispatch({ type: ADD_MANGA_TO_LIBRARY, newManga: content });
+          dispatch({ type: ADD_MANGA, newManga: content });
           dispatch({
             type: ADD_PAGE_SUCCESS,
             mangaIds,
@@ -149,7 +150,12 @@ export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
             hasNextPage: hasNextPageUpdated,
           });
         },
-        error => dispatch({ type: ADD_PAGE_FAILURE, payload: error }),
+        error =>
+          dispatch({
+            type: ADD_PAGE_FAILURE,
+            errorMessage: 'There was a problem loading the next page of manga',
+            meta: { error },
+          }),
       );
   };
 }

@@ -97,12 +97,6 @@ export default function libraryReducer(
       return { ...state, isFetching: false };
     case UNREAD_NEEDS_RELOAD:
       return { ...state, reloadUnread: true };
-    case ADD_MANGA: {
-      return {
-        ...state,
-        mangaLibrary: addToMangaLibrary(state.mangaLibrary, action.newManga),
-      };
-    }
     default:
       return state;
   }
@@ -183,18 +177,6 @@ function toggleFavoriteInLibrary(mangaLibrary, mangaId) {
     }
     return manga;
   });
-}
-
-function addToMangaLibrary(currentMangaLibrary, newMangaLibrary) {
-  // Possibly really inefficient? Not sure if it'll cause performance issues.
-  const filteredManga = currentMangaLibrary.filter((manga) => {
-    if (newMangaLibrary.find(newManga => manga.id === newManga.id)) {
-      return false;
-    }
-    return true;
-  });
-
-  return [...filteredManga, ...newMangaLibrary];
 }
 
 function replaceMangaInfo(mangaLibrary, newMangaInfo) {

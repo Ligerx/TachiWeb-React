@@ -140,10 +140,12 @@ class Catalogue extends Component {
   }
 
   handleLoadNextPage() {
-    const { hasNextPage, sources, fetchNextCataloguePage } = this.props;
+    const {
+      hasNextPage, sources, fetchNextCataloguePage, addPageIsLoading,
+    } = this.props;
     const { searchQuery, lastUsedFilters, sourceIndex } = this.state;
 
-    if (hasNextPage) {
+    if (hasNextPage && !addPageIsLoading) {
       fetchNextCataloguePage(sources[sourceIndex].id, searchQuery, lastUsedFilters);
     }
   }
@@ -174,10 +176,11 @@ class Catalogue extends Component {
     const {
       mangaLibrary,
       sources,
-      catalogueIsFetching,
       chaptersByMangaId,
       isTogglingFavorite,
       toggleFavoriteForManga,
+      catalogueIsLoading,
+      addPageIsLoading,
     } = this.props;
     const {
       mangaIdBeingViewed,
@@ -230,7 +233,8 @@ class Catalogue extends Component {
           <Waypoint onEnter={this.handleLoadNextPage} bottomOffset={-300} />
         )}
 
-        {catalogueIsFetching && <CircularProgress />}
+        {catalogueIsLoading && <CircularProgress />}
+        {addPageIsLoading && <CircularProgress />}
       </React.Fragment>
     );
   }
@@ -260,10 +264,11 @@ Catalogue.propTypes = {
   sources: PropTypes.array, // TODO: type
   hasNextPage: PropTypes.bool.isRequired,
   initialFilters: PropTypes.array, // TODO: type
-  catalogueIsFetching: PropTypes.bool.isRequired,
   // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
   chaptersByMangaId: PropTypes.object.isRequired,
   isTogglingFavorite: PropTypes.bool.isRequired,
+  catalogueIsLoading: PropTypes.bool.isRequired,
+  addPageIsLoading: PropTypes.bool.isRequired,
   // Below are redux dispatch functions
   fetchSources: PropTypes.func.isRequired,
   fetchCatalogue: PropTypes.func.isRequired,
