@@ -1,5 +1,5 @@
 import { Server } from 'api';
-import { ADD_MANGA } from './mangaInfo';
+import { ADD_MANGA } from './mangaInfos';
 
 // ================================================================================
 // Actions
@@ -25,7 +25,7 @@ export const REMOVE_FROM_FAVORITES = 'library/REMOVE_FROM_FAVORITES';
 // TODO: remove 'error' flag when error is fixed? Is there a more efficient way to do this?
 export default function libraryReducer(
   state = {
-    mangaIds: [], // array of mangaIds that point that data loaded in mangaInfo reducer
+    mangaIds: [], // array of mangaIds that point that data loaded in mangaInfos reducer
     libraryLoaded: false, // Library should be loaded once on first visit
     unread: {}, // { mangaId: int }
     reloadUnread: true, // should refresh unread for library if something new is added

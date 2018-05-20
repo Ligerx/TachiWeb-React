@@ -1,6 +1,6 @@
 import { Server } from 'api';
 import { CLEAR_FILTERS } from './filters';
-import { ADD_MANGA } from './mangaInfo';
+import { ADD_MANGA } from './mangaInfos';
 
 // ================================================================================
 // Actions
@@ -23,7 +23,7 @@ export const CATALOGUE_ADD_PAGE_ACTION = 'catalogue/ADD_PAGE';
 // Reducers
 // ================================================================================
 const initialState = {
-  mangaIds: [], // array of mangaIds that point that data loaded in mangaInfo reducer
+  mangaIds: [], // array of mangaIds that point that data loaded in mangaInfos reducer
   page: 1, // TODO: can possibly move this out of redux and into the component state? Not sure.
   hasNextPage: false,
 };

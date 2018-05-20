@@ -7,7 +7,7 @@ import pageCounts from './pageCounts';
 import sources from './sources';
 import catalogue from './catalogue';
 import filters from './filters';
-import mangaInfo from './mangaInfo';
+import mangaInfos from './mangaInfos';
 
 export default combineReducers({
   loading,
@@ -18,5 +18,5 @@ export default combineReducers({
   sources,
   catalogue,
   filters,
-  mangaInfo,
+  mangaInfos,
 });

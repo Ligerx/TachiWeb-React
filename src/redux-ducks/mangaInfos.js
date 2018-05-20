@@ -1,24 +1,30 @@
 import { Server } from 'api';
 import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from './library';
 
+// NOTE: for clarity, this will be called mangaInfos (with an s)
+//       Info doesn't really have a plural, so I need to differentiate somehow
+//
+//       So mangaInfo refers to a single mangaInfo object
+//       And mangaInfos refers to this state, which is the whole collection of mangaInfo-s
+
 // ================================================================================
 // Actions
 // ================================================================================
-const UPDATE_MANGA_REQUEST = 'mangaInfo/UPDATE_MANGA_REQUEST';
-const UPDATE_MANGA_SUCCESS = 'mangaInfo/UPDATE_MANGA_SUCCESS';
-const UPDATE_MANGA_FAILURE = 'mangaInfo/UPDATE_MANGA_FAILURE';
+const UPDATE_MANGA_REQUEST = 'mangaInfos/UPDATE_MANGA_REQUEST';
+const UPDATE_MANGA_SUCCESS = 'mangaInfos/UPDATE_MANGA_SUCCESS';
+const UPDATE_MANGA_FAILURE = 'mangaInfos/UPDATE_MANGA_FAILURE';
 
-const TOGGLE_FAVORITE_REQUEST = 'mangaInfo/TOGGLE_FAVORITE_REQUEST';
-const TOGGLE_FAVORITE_SUCCESS = 'mangaInfo/TOGGLE_FAVORITE_SUCCESS';
-const TOGGLE_FAVORITE_FAILURE = 'mangaInfo/TOGGLE_FAVORITE_FAILURE';
-export const TOGGLE_FAVORITE_ACTION = 'mangaInfo/TOGGLE_FAVORITE';
+const TOGGLE_FAVORITE_REQUEST = 'mangaInfos/TOGGLE_FAVORITE_REQUEST';
+const TOGGLE_FAVORITE_SUCCESS = 'mangaInfos/TOGGLE_FAVORITE_SUCCESS';
+const TOGGLE_FAVORITE_FAILURE = 'mangaInfos/TOGGLE_FAVORITE_FAILURE';
+export const TOGGLE_FAVORITE_ACTION = 'mangaInfos/TOGGLE_FAVORITE';
 
-export const ADD_MANGA = 'mangaInfo/ADD_MANGA';
+export const ADD_MANGA = 'mangaInfos/ADD_MANGA';
 
 // ================================================================================
 // Reducers
 // ================================================================================
-export default function mangaInfoReducer(state = {}, action = {}) {
+export default function mangaInfosReducer(state = {}, action = {}) {
   switch (action.type) {
     case ADD_MANGA:
       return { ...state, ...mangaArrayToObject(action.newManga) };

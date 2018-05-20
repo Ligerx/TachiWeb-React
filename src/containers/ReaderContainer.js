@@ -5,12 +5,12 @@ import { fetchPageCount } from 'redux-ducks/pageCounts';
 import Reader from 'pages/Reader';
 
 const mapStateToProps = (state, ownProps) => {
-  const { mangaInfo, chapters } = state;
+  const { mangaInfos, chapters } = state;
   const { pageCountsByChapterId } = state.pageCounts;
   const { mangaId, chapterId } = ownProps.match.params;
 
   return {
-    mangaInfo: mangaInfo[mangaId],
+    mangaInfo: mangaInfos[mangaId],
     chapters: chapters[mangaId],
     chapter: findChapter(chapters[mangaId], chapterId),
     pageCount: pageCountsByChapterId[chapterId],
