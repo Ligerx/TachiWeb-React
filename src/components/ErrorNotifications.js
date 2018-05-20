@@ -7,26 +7,30 @@ import isEqual from 'lodash/isEqual';
 
 // TODO: test this with 2, and 2+ errors to see if it works as intended
 
-class ErrorNotifications extends Component {
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // Add any new messages to the messages queue
-    if (nextProps.errorMessage && !prevState.messages.includes(nextProps.errorMessage)) {
-      return {
-        ...prevState,
-        messages: [...prevState.messages, nextProps.errorMessage],
-      };
-    }
-    return null;
-  }
+// Rewrite this, simplify it, error is just a string
+//     handleExited should still remove the error in state I believe
+// if I receive a new message
+//     setState for message and open
+// if error becomes empty while a message is currently open
+//     close the message (and remove error in state)
+// if I receive a new message while there is already a message
+//     I think closing the current message may be all that's necessary?
+//
+// so those last 2 situations are actually the same
+// and because the only props this component gets is errorMessage,
+// I can just do whatever in componentDidUpdate()
 
+// running into a bug where it goes in an infinite loop
+// I clear the message, but because the props technically didn't change, it loops forever
+// Solution: store a previousMessage in state?
+
+class ErrorNotifications extends Component {
   constructor(props) {
     super(props);
 
-    // Because there could be more than one error message at a time, use an
-    // array to queue the messages up in order.
     this.state = {
       open: false,
-      messages: [],
+      errorMessage: '',
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -34,20 +38,33 @@ class ErrorNotifications extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { messages } = this.state;
+    const { errorMessage } = this.state;
+    const { errorMessage: newMessage } = this.props;
+
+    const errorRemoved = errorMessage && !newMessage;
+    const replaceError = errorMessage && newMessage && errorMessage !== newMessage;
+
+    if (!errorMessage && newMessage) {
+      this.setState({ open: true, errorMessage: newMessage });
+    } else if (errorRemoved || replaceError) {
+      // handleExited() will deal with clearing the errorMessage in state
+      // Because the state changed, it should then call componentDidUpdate() again
+      // which will then show any new message
+      this.setState({ open: false });
+    }
 
     // On state/prop change when there are still errors queued up, trigger a snackbar
     // If there is one error, show a snackbar
     //
     // If there are more than one, close the current (which will remove it from the queue),
     // then show the next
-    if (messages.length > 0 && !isEqual(prevState.messages, messages)) {
-      if (messages.length === 1) {
-        this.setState({ open: true });
-      } else if (messages.length > 1) {
-        this.setState({ open: false });
-      }
-    }
+    // if (messages.length > 0 && !isEqual(prevState.messages, messages)) {
+    //   if (messages.length === 1) {
+    //     this.setState({ open: true });
+    //   } else if (messages.length > 1) {
+    //     this.setState({ open: false });
+    //   }
+    // }
   }
 
   handleClose(event, reason) {
@@ -58,15 +75,13 @@ class ErrorNotifications extends Component {
 
   handleExited = () => {
     // Remove the message in index 0
-    this.setState({ messages: this.state.messages.slice(1) });
+    this.setState({ errorMessage: '' });
   };
 
   render() {
-    const message = this.state.messages[0];
-
     return (
       <Snackbar
-        key={message}
+        key={this.state.errorMessage}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -75,7 +90,7 @@ class ErrorNotifications extends Component {
         autoHideDuration={6000}
         onClose={this.handleClose}
         onExited={this.handleExited}
-        message={<span id="message-id">{message}</span>}
+        message={<span id="message-id">{this.state.errorMessage}</span>}
         action={
           <IconButton onClick={this.handleClose}>
             <Icon>close</Icon>
