@@ -3,6 +3,9 @@
 // weird array explaination
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_values_from_a_regular_expression_match
 
+// NOTE: the general naming you should follow when referencing this state is [thing]IsLoading
+//       e.g. catalogueIsLoading
+
 import some from 'lodash/some';
 import get from 'lodash/get';
 

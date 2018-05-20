@@ -29,12 +29,12 @@ const mapStateToProps = (state) => {
     chaptersByMangaId: state.chapters,
     // Library props
     mangaLibrary,
-    isTogglingFavorite: favoriteIsToggling(state),
     // Filter props
     initialFilters: state.filters,
     // Fetching props
     catalogueIsLoading: catalogueLoading(state),
     addPageIsLoading: catalogueAddPageLoading(state),
+    favoriteIsToggling: favoriteIsToggling(state),
   };
 };
 

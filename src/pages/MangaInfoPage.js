@@ -54,7 +54,7 @@ class MangaInfoPage extends Component {
         initialTabValue={1}
         onBackClick={Client.library()}
         onRefreshClick={this.handleRefreshClick}
-        isTogglingFavorite={favoriteIsToggling}
+        favoriteIsToggling={favoriteIsToggling}
         toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
       />
     );

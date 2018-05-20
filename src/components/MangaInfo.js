@@ -36,7 +36,7 @@ class MangaInfo extends Component {
   tabContent() {
     const { tabValue } = this.state;
     const {
-      mangaInfo, chapters, isTogglingFavorite, toggleFavorite,
+      mangaInfo, chapters, favoriteIsToggling, toggleFavorite,
     } = this.props;
 
     if (tabValue === 0) {
@@ -44,7 +44,7 @@ class MangaInfo extends Component {
         <MangaInfoDetails mangaInfo={mangaInfo} numChapters={chapters ? chapters.length : 0}>
           <FavoriteFAB
             isFavorite={mangaInfo.favorite}
-            isTogglingFavorite={isTogglingFavorite}
+            favoriteIsToggling={favoriteIsToggling}
             toggleFavorite={toggleFavorite}
           />
         </MangaInfoDetails>
@@ -82,7 +82,7 @@ MangaInfo.propTypes = {
   initialTabValue: PropTypes.number.isRequired,
   onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   onRefreshClick: PropTypes.func.isRequired,
-  isTogglingFavorite: PropTypes.bool.isRequired,
+  favoriteIsToggling: PropTypes.bool.isRequired,
   toggleFavorite: PropTypes.func.isRequired,
 };
 

@@ -177,7 +177,7 @@ class Catalogue extends Component {
       mangaLibrary,
       sources,
       chaptersByMangaId,
-      isTogglingFavorite,
+      favoriteIsToggling,
       toggleFavoriteForManga,
       catalogueIsLoading,
       addPageIsLoading,
@@ -200,7 +200,7 @@ class Catalogue extends Component {
           initialTabValue={0}
           onBackClick={this.handleMangaInfoBackClick}
           onRefreshClick={this.handleRefreshClick}
-          isTogglingFavorite={isTogglingFavorite}
+          favoriteIsToggling={favoriteIsToggling}
           toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
         />
       );
@@ -266,7 +266,7 @@ Catalogue.propTypes = {
   initialFilters: PropTypes.array, // TODO: type
   // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
   chaptersByMangaId: PropTypes.object.isRequired,
-  isTogglingFavorite: PropTypes.bool.isRequired,
+  favoriteIsToggling: PropTypes.bool.isRequired,
   catalogueIsLoading: PropTypes.bool.isRequired,
   addPageIsLoading: PropTypes.bool.isRequired,
   // Below are redux dispatch functions

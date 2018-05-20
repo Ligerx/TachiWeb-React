@@ -18,12 +18,12 @@ const styles = {
 };
 
 const FavoriteFAB = ({
-  classes, isFavorite, isTogglingFavorite, toggleFavorite,
+  classes, isFavorite, favoriteIsToggling, toggleFavorite,
 }) => (
   <React.Fragment>
     <FAB onClick={toggleFavorite}>
       {isFavorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
-      {isTogglingFavorite && (
+      {favoriteIsToggling && (
         <CircularProgress size={70} color="secondary" className={classes.fabProgress} />
       )}
     </FAB>
@@ -33,7 +33,7 @@ const FavoriteFAB = ({
 FavoriteFAB.propTypes = {
   classes: PropTypes.object.isRequired,
   isFavorite: PropTypes.bool.isRequired,
-  isTogglingFavorite: PropTypes.bool.isRequired,
+  favoriteIsToggling: PropTypes.bool.isRequired,
   toggleFavorite: PropTypes.func.isRequired,
 };
 
