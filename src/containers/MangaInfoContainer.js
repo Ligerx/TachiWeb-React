@@ -8,12 +8,11 @@ const getThisManga = (mangaLibrary, mangaId) =>
 
 const mapStateToProps = (state, ownProps) => {
   const { library } = state;
-  const { chaptersByMangaId } = state.chapters;
   const { mangaId } = ownProps.match.params;
 
   return {
     mangaInfo: getThisManga(library.mangaLibrary, mangaId),
-    chapters: chaptersByMangaId[mangaId],
+    chapters: state.chapters[mangaId],
     mangaInfoIsFetching: library.isFetching,
     isTogglingFavorite: library.isTogglingFavorite,
   };

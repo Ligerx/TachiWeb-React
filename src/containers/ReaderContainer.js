@@ -5,23 +5,18 @@ import { fetchPageCount } from 'redux-ducks/pageCounts';
 import Reader from 'pages/Reader';
 
 const mapStateToProps = (state, ownProps) => {
-  const { library } = state;
-  const { chaptersByMangaId } = state.chapters;
+  const { library, chapters } = state;
   const { pageCountsByChapterId } = state.pageCounts;
   const { mangaId, chapterId } = ownProps.match.params;
 
   return {
     mangaInfo: getThisManga(library.mangaLibrary, mangaId),
-    chapters: chaptersByMangaId[mangaId],
-    chapter: chaptersByMangaId[mangaId] ? findChapter(chaptersByMangaId[mangaId], chapterId) : null,
+    chapters: chapters[mangaId],
+    chapter: findChapter(chapters[mangaId], chapterId),
     pageCount: pageCountsByChapterId[chapterId],
     page: parseInt(ownProps.match.params.page, 10),
-    prevChapterId: chaptersByMangaId[mangaId]
-      ? getPrevChapterId(chaptersByMangaId[mangaId], chapterId)
-      : null,
-    nextChapterId: chaptersByMangaId[mangaId]
-      ? getNextChapterId(chaptersByMangaId[mangaId], chapterId)
-      : null,
+    prevChapterId: getPrevChapterId(chapters[mangaId], chapterId),
+    nextChapterId: getNextChapterId(chapters[mangaId], chapterId),
   };
 };
 
@@ -52,6 +47,8 @@ function findChapterIndex(chapters, thisChapterId) {
 }
 
 function getPrevChapterId(chapters, thisChapterId) {
+  if (!chapters) return null;
+
   const thisChapterIndex = findChapterIndex(chapters, thisChapterId);
   if (thisChapterIndex === 0) {
     return null;
@@ -60,6 +57,8 @@ function getPrevChapterId(chapters, thisChapterId) {
 }
 
 function getNextChapterId(chapters, thisChapterId) {
+  if (!chapters) return null;
+
   const thisChapterIndex = findChapterIndex(chapters, thisChapterId);
   if (thisChapterIndex === chapters.length - 1) {
     return null;

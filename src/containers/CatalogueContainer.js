@@ -17,8 +17,7 @@ const mapStateToProps = (state) => {
     hasNextPage,
     catalogueIsFetching,
     // Chapter props
-    chaptersByMangaId: state.chapters.chaptersByMangaId,
-    chaptersAreFetching: state.chapters.isFetching,
+    chaptersByMangaId: state.chapters,
     // Library props
     mangaLibrary,
     isTogglingFavorite: state.library.isTogglingFavorite,

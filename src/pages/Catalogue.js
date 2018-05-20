@@ -176,7 +176,6 @@ class Catalogue extends Component {
       sources,
       catalogueIsFetching,
       chaptersByMangaId,
-      // chaptersAreFetching,
       isTogglingFavorite,
       toggleFavoriteForManga,
     } = this.props;
@@ -264,7 +263,6 @@ Catalogue.propTypes = {
   catalogueIsFetching: PropTypes.bool.isRequired,
   // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
   chaptersByMangaId: PropTypes.object.isRequired,
-  chaptersAreFetching: PropTypes.bool.isRequired,
   isTogglingFavorite: PropTypes.bool.isRequired,
   // Below are redux dispatch functions
   fetchSources: PropTypes.func.isRequired,
