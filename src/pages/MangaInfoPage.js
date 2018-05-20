@@ -32,16 +32,16 @@ class MangaInfoPage extends Component {
 
   render() {
     const {
-      mangaInfoIsFetching,
+      mangaInfoIsLoading,
       mangaInfo,
       chapters,
-      isTogglingFavorite,
+      favoriteIsToggling,
       toggleFavoriteForManga,
     } = this.props;
     const noMangaData = !mangaInfo || Object.getOwnPropertyNames(mangaInfo).length === 0;
 
     if (noMangaData) {
-      if (mangaInfoIsFetching) {
+      if (mangaInfoIsLoading) {
         return <CircularProgress />;
       }
       return null;
@@ -54,7 +54,7 @@ class MangaInfoPage extends Component {
         initialTabValue={1}
         onBackClick={Client.library()}
         onRefreshClick={this.handleRefreshClick}
-        isTogglingFavorite={isTogglingFavorite}
+        isTogglingFavorite={favoriteIsToggling}
         toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
       />
     );
@@ -64,8 +64,8 @@ class MangaInfoPage extends Component {
 MangaInfoPage.propTypes = {
   mangaInfo: mangaType,
   chapters: PropTypes.arrayOf(chapterType),
-  mangaInfoIsFetching: PropTypes.bool.isRequired,
-  isTogglingFavorite: PropTypes.bool.isRequired,
+  mangaInfoIsLoading: PropTypes.bool.isRequired,
+  favoriteIsToggling: PropTypes.bool.isRequired,
   fetchLibrary: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   toggleFavoriteForManga: PropTypes.func.isRequired,

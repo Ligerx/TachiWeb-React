@@ -7,13 +7,14 @@ import {
   CATALOGUE_ADD_PAGE_ACTION,
 } from 'redux-ducks/catalogue';
 import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
-import { toggleFavorite, updateMangaInfo } from 'redux-ducks/library';
 import { fetchFilters } from 'redux-ducks/filters';
+import { toggleFavorite, updateMangaInfo, TOGGLE_FAVORITE_ACTION } from 'redux-ducks/mangaInfo';
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
 
 const catalogueLoading = createLoadingSelector([CATALOGUE_LOAD_ACTION]);
 const catalogueAddPageLoading = createLoadingSelector([CATALOGUE_ADD_PAGE_ACTION]);
+const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE_ACTION]);
 
 const mapStateToProps = (state) => {
   const { mangaIds, hasNextPage } = state.catalogue;
@@ -28,7 +29,7 @@ const mapStateToProps = (state) => {
     chaptersByMangaId: state.chapters,
     // Library props
     mangaLibrary,
-    isTogglingFavorite: state.library.isTogglingFavorite,
+    isTogglingFavorite: favoriteIsToggling(state),
     // Filter props
     initialFilters: state.filters,
     // Fetching props

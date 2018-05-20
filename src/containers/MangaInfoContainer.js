@@ -1,20 +1,22 @@
 import { connect } from 'react-redux';
-import { fetchLibrary, toggleFavorite, updateMangaInfo } from 'redux-ducks/library';
+import { toggleFavorite, updateMangaInfo, TOGGLE_FAVORITE_ACTION } from 'redux-ducks/mangaInfo';
+import { fetchLibrary, LIBRARY_LOAD_ACTION } from 'redux-ducks/library';
 import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
 import MangaInfoPage from 'pages/MangaInfoPage';
+import { createLoadingSelector } from 'redux-ducks/loading';
 
-const getThisManga = (mangaLibrary, mangaId) =>
-  mangaLibrary.find(manga => manga.id === parseInt(mangaId, 10));
+const libraryIsLoading = createLoadingSelector([LIBRARY_LOAD_ACTION]);
+const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE_ACTION]);
 
 const mapStateToProps = (state, ownProps) => {
-  const { library } = state;
+  const { mangaInfo, chapters } = state;
   const { mangaId } = ownProps.match.params;
 
   return {
-    mangaInfo: getThisManga(library.mangaLibrary, mangaId),
-    chapters: state.chapters[mangaId],
-    mangaInfoIsFetching: library.isFetching,
-    isTogglingFavorite: library.isTogglingFavorite,
+    mangaInfo: mangaInfo[mangaId],
+    chapters: chapters[mangaId],
+    mangaInfoIsLoading: libraryIsLoading(state),
+    favoriteIsToggling: favoriteIsToggling(state),
   };
 };
 
