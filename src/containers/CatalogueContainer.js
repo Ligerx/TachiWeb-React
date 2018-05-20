@@ -1,17 +1,13 @@
 import { connect } from 'react-redux';
 import { fetchSources } from 'redux-ducks/sources';
-import { fetchCatalogue, fetchNextCataloguePage, fetchFilters } from 'redux-ducks/catalogue';
+import { fetchCatalogue, fetchNextCataloguePage } from 'redux-ducks/catalogue';
 import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
 import { toggleFavorite, updateMangaInfo } from 'redux-ducks/library';
+import { fetchFilters } from 'redux-ducks/filters';
 import Catalogue from 'pages/Catalogue';
 
 const mapStateToProps = (state) => {
-  const {
-    mangaIds,
-    hasNextPage,
-    initialFilters,
-    isFetching: catalogueIsFetching,
-  } = state.catalogue;
+  const { mangaIds, hasNextPage, isFetching: catalogueIsFetching } = state.catalogue;
   const mangaLibrary = mangaToShow(state.library.mangaLibrary, mangaIds);
 
   return {
@@ -19,7 +15,6 @@ const mapStateToProps = (state) => {
     sources: state.sources,
     // Catalogue props
     hasNextPage,
-    initialFilters,
     catalogueIsFetching,
     // Chapter props
     chaptersByMangaId: state.chapters.chaptersByMangaId,
@@ -27,6 +22,8 @@ const mapStateToProps = (state) => {
     // Library props
     mangaLibrary,
     isTogglingFavorite: state.library.isTogglingFavorite,
+    // Filter props
+    initialFilters: state.filters,
   };
 };
 

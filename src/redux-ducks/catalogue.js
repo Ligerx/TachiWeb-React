@@ -1,5 +1,6 @@
 import { Server } from 'api';
 import { ADD_MANGA as ADD_MANGA_TO_LIBRARY } from './library';
+import { CLEAR_FILTERS } from './filters';
 
 // FIXME: reusing isFetching for multiple types of REQUEST which isn't ideal.
 
@@ -10,13 +11,11 @@ const REQUEST = 'catalogue/LOAD_REQUEST';
 const SUCCESS = 'catalogue/LOAD_SUCCESS';
 const FAILURE = 'catalogue/LOAD_FAILURE';
 const CACHE = 'catalogue/LOAD_CACHE'; // e.g. Catalogue -> view a manga -> go back to catalogue
+
 const ADD_PAGE_REQUEST = 'catalogue/ADD_PAGE_REQUEST';
 const ADD_PAGE_SUCCESS = 'catalogue/ADD_PAGE_SUCCESS';
 const ADD_PAGE_FAILURE = 'catalogue/ADD_PAGE_FAILURE';
 const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE'; // failsafe, don't use
-const FILTERS_REQUEST = 'catalogue/FILTERS_REQUEST';
-const FILTERS_SUCCESS = 'catalogue/FILTERS_SUCCESS';
-const FILTERS_FAILURE = 'catalogue/FILTERS_FAILURE';
 
 // ================================================================================
 // Reducers
@@ -25,24 +24,14 @@ const initialState = {
   mangaIds: [], // array of mangaIds that point that data loaded in library
   page: 1, // TODO: can possibly move this out of redux and into the component state? Not sure.
   hasNextPage: false,
-  initialFilters: null,
   isFetching: false,
   error: false,
 };
 
 export default function chaptersReducer(state = initialState, action = {}) {
   switch (action.type) {
-    case REQUEST: {
-      if (action.retainFilters) {
-        return {
-          ...initialState,
-          initialFilters: state.initialFilters,
-          isFetching: true,
-        };
-      }
-      // Reset using initial state
+    case REQUEST:
       return { ...initialState, isFetching: true };
-    }
     case SUCCESS: {
       const { mangaIds, hasNextPage } = action;
       return {
@@ -74,17 +63,6 @@ export default function chaptersReducer(state = initialState, action = {}) {
       console.error('No next page to fetch. Should not be reaching here');
       return { ...state, isFetching: false, error: true };
     }
-    case FILTERS_REQUEST:
-      return { ...state, isFetching: true, error: false };
-    case FILTERS_SUCCESS:
-      return {
-        ...state,
-        initialFilters: action.initialFilters,
-        isFetching: false,
-        error: false,
-      };
-    case FILTERS_FAILURE:
-      return { ...state, isFetching: false, error: true };
     default:
       return state;
   }
@@ -103,9 +81,15 @@ export function fetchCatalogue(
   return (dispatch) => {
     dispatch({
       type: REQUEST,
-      retainFilters,
       meta: { sourceId, query, filters },
     });
+
+    if (!retainFilters) {
+      // TODO: Not sure if this should be here?
+      //       possibly remove it and place a clearFilters action for the page to call?
+      //       not sure if that's better or worse
+      dispatch({ type: CLEAR_FILTERS });
+    }
 
     return fetch(Server.catalogue(), cataloguePostParameters(1, sourceId, query.trim(), filters))
       .then(handleServerError)
@@ -167,16 +151,6 @@ export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
         },
         error => dispatch({ type: ADD_PAGE_FAILURE, payload: error }),
       );
-  };
-}
-
-export function fetchFilters(sourceId) {
-  return (dispatch) => {
-    dispatch({ type: FILTERS_REQUEST, meta: { sourceId } });
-
-    return fetch(Server.filters(sourceId))
-      .then(res => res.json(), error => dispatch({ type: FILTERS_FAILURE, error }))
-      .then(json => dispatch({ type: FILTERS_SUCCESS, initialFilters: json.content }));
   };
 }
 

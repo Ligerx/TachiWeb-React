@@ -6,6 +6,7 @@ import chapters from './chapters';
 import pageCounts from './pageCounts';
 import sources from './sources';
 import catalogue from './catalogue';
+import filters from './filters';
 
 export default combineReducers({
   loading,
@@ -15,4 +16,5 @@ export default combineReducers({
   pageCounts,
   sources,
   catalogue,
+  filters,
 });
