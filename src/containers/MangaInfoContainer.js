@@ -1,12 +1,29 @@
 import { connect } from 'react-redux';
-import { toggleFavorite, updateMangaInfo, TOGGLE_FAVORITE_ACTION } from 'redux-ducks/mangaInfos';
-import { fetchLibrary, LIBRARY_LOAD_ACTION } from 'redux-ducks/library';
-import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
+import {
+  toggleFavorite,
+  fetchMangaInfo,
+  updateMangaInfo,
+  TOGGLE_FAVORITE_ACTION,
+  FETCH_MANGA_ACTION,
+  UPDATE_MANGA_ACTION,
+} from 'redux-ducks/mangaInfos';
+import {
+  fetchChapters,
+  updateChapters,
+  FETCH_CHAPTERS,
+  UPDATE_CHAPTERS,
+} from 'redux-ducks/chapters';
 import MangaInfoPage from 'pages/MangaInfoPage';
 import { createLoadingSelector } from 'redux-ducks/loading';
 
-const libraryIsLoading = createLoadingSelector([LIBRARY_LOAD_ACTION]);
+const mangaInfoIsLoading = createLoadingSelector([FETCH_MANGA_ACTION]);
 const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE_ACTION]);
+const refreshIsLoading = createLoadingSelector([
+  FETCH_MANGA_ACTION,
+  UPDATE_MANGA_ACTION,
+  FETCH_CHAPTERS,
+  UPDATE_CHAPTERS,
+]);
 
 const mapStateToProps = (state, ownProps) => {
   const { mangaInfos, chapters } = state;
@@ -15,19 +32,23 @@ const mapStateToProps = (state, ownProps) => {
   return {
     mangaInfo: mangaInfos[mangaId],
     chapters: chapters[mangaId],
-    mangaInfoIsLoading: libraryIsLoading(state),
+    mangaInfoIsLoading: mangaInfoIsLoading(state),
     favoriteIsToggling: favoriteIsToggling(state),
+    refreshIsLoading: refreshIsLoading(state),
   };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchLibrary: () => dispatch(fetchLibrary()),
-  fetchChapters: () => dispatch(fetchChapters(ownProps.match.params.mangaId)),
-  // Need a nested function to pass in mangaId in the JSX
-  toggleFavoriteForManga: (mangaId, isFavorite) => () =>
-    dispatch(toggleFavorite(mangaId, isFavorite)),
-  updateChapters: mangaId => dispatch(updateChapters(mangaId)),
-  updateMangaInfo: mangaId => dispatch(updateMangaInfo(mangaId)),
-});
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const mangaId = parseInt(ownProps.match.params.mangaId, 10);
+
+  return {
+    fetchChapters: () => dispatch(fetchChapters(mangaId)),
+    fetchMangaInfo: () => dispatch(fetchMangaInfo(mangaId)),
+    updateChapters: () => dispatch(updateChapters(mangaId)),
+    updateMangaInfo: () => dispatch(updateMangaInfo(mangaId)),
+    // Need a nested function to pass in mangaId in the JSX
+    toggleFavorite: isFavorite => () => dispatch(toggleFavorite(mangaId, isFavorite)),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MangaInfoPage);

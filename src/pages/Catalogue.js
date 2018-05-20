@@ -126,11 +126,13 @@ class Catalogue extends Component {
       //
       // NOTE: This only updates the manga being viewed. Many of your other search results are
       //       likely missing information as well. Viewing them will then fetch the data.
+      //
+      // TODO: might try to do one additional fetch at a slightly later time. e.g. 1000 ms
       const thisManga = this.props.mangaLibrary.find(manga => manga.id === mangaId);
       if (possiblyMissingInfo(thisManga)) {
         setTimeout(() => {
-          this.props.updateMangaInfo(mangaId);
-        }, 500);
+          this.props.fetchMangaInfo(mangaId);
+        }, 300);
       }
     };
   }
@@ -278,6 +280,7 @@ Catalogue.propTypes = {
   toggleFavoriteForManga: PropTypes.func.isRequired,
   updateChapters: PropTypes.func.isRequired,
   updateMangaInfo: PropTypes.func.isRequired,
+  fetchMangaInfo: PropTypes.func.isRequired,
 };
 
 Catalogue.defaultProps = {

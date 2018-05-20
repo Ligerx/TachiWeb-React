@@ -21,13 +21,13 @@ class MangaInfoPage extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchLibrary();
+    this.props.fetchMangaInfo();
     this.props.fetchChapters();
   }
 
   handleRefreshClick() {
-    this.props.updateMangaInfo(this.props.mangaInfo.id);
-    this.props.updateChapters(this.props.mangaInfo.id);
+    this.props.updateMangaInfo();
+    this.props.updateChapters();
   }
 
   render() {
@@ -36,7 +36,7 @@ class MangaInfoPage extends Component {
       mangaInfo,
       chapters,
       favoriteIsToggling,
-      toggleFavoriteForManga,
+      toggleFavorite,
     } = this.props;
     const noMangaData = !mangaInfo || Object.getOwnPropertyNames(mangaInfo).length === 0;
 
@@ -55,7 +55,7 @@ class MangaInfoPage extends Component {
         onBackClick={Client.library()}
         onRefreshClick={this.handleRefreshClick}
         favoriteIsToggling={favoriteIsToggling}
-        toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
+        toggleFavorite={toggleFavorite(mangaInfo.favorite)}
       />
     );
   }
@@ -64,12 +64,15 @@ class MangaInfoPage extends Component {
 MangaInfoPage.propTypes = {
   mangaInfo: mangaType,
   chapters: PropTypes.arrayOf(chapterType),
+
   mangaInfoIsLoading: PropTypes.bool.isRequired,
   favoriteIsToggling: PropTypes.bool.isRequired,
-  fetchLibrary: PropTypes.func.isRequired,
+  refreshIsLoading: PropTypes.bool.isRequired, // use fullscreen loader for this
+
   fetchChapters: PropTypes.func.isRequired,
-  toggleFavoriteForManga: PropTypes.func.isRequired,
+  toggleFavorite: PropTypes.func.isRequired,
   updateChapters: PropTypes.func.isRequired,
+  fetchMangaInfo: PropTypes.func.isRequired,
   updateMangaInfo: PropTypes.func.isRequired,
 };
 

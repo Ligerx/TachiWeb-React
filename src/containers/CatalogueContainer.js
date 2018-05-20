@@ -8,7 +8,12 @@ import {
 } from 'redux-ducks/catalogue';
 import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
 import { fetchFilters } from 'redux-ducks/filters';
-import { toggleFavorite, updateMangaInfo, TOGGLE_FAVORITE_ACTION } from 'redux-ducks/mangaInfos';
+import {
+  toggleFavorite,
+  fetchMangaInfo,
+  updateMangaInfo,
+  TOGGLE_FAVORITE_ACTION,
+} from 'redux-ducks/mangaInfos';
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
 
@@ -52,6 +57,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(fetchNextCataloguePage(sourceId, query, filters)),
   updateChapters: mangaId => dispatch(updateChapters(mangaId)),
   updateMangaInfo: mangaId => dispatch(updateMangaInfo(mangaId)),
+  fetchMangaInfo: mangaId => dispatch(fetchMangaInfo(mangaId)),
 });
 
 // Helper functions

@@ -7,10 +7,12 @@ const REQUEST = 'chapters/LOAD_REQUEST';
 const SUCCESS = 'chapters/LOAD_SUCCESS';
 const FAILURE = 'chapters/LOAD_FAILURE';
 const CACHE = 'chapters/LOAD_CACHE';
+export const FETCH_CHAPTERS = 'chapters/LOAD';
 
 const UPDATE_REQUEST = 'chapters/UPDATE_REQUEST';
 const UPDATE_SUCCESS = 'chapters/UPDATE_SUCCESS';
 const UPDATE_FAILURE = 'chapters/UPDATE_FAILURE';
+export const UPDATE_CHAPTERS = 'chapters/UPDATE';
 
 const UPDATE_READING_STATUS_REQUEST = 'chapters/UPDATE_READING_STATUS_REQUEST';
 const UPDATE_READING_STATUS_SUCCESS = 'chapters/UPDATE_READING_STATUS_SUCCESS';
@@ -104,7 +106,7 @@ export function updateChapters(mangaId) {
           return dispatch(fetchChapters(mangaId, { ignoreCache: true }));
         }
 
-        return dispatch({ type: UPDATE_SUCCESS, meta: { json } });
+        return dispatch({ type: UPDATE_SUCCESS, meta: { note: 'No updates', json } });
       });
   };
 }
