@@ -12,8 +12,8 @@ import { toggleFavorite, updateMangaInfo, TOGGLE_FAVORITE_ACTION } from 'redux-d
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
 
-const catalogueLoading = createLoadingSelector([CATALOGUE_LOAD_ACTION]);
-const catalogueAddPageLoading = createLoadingSelector([CATALOGUE_ADD_PAGE_ACTION]);
+const catalogueIsLoading = createLoadingSelector([CATALOGUE_LOAD_ACTION]);
+const addPageIsLoading = createLoadingSelector([CATALOGUE_ADD_PAGE_ACTION]);
 const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE_ACTION]);
 
 const mapStateToProps = (state) => {
@@ -32,8 +32,8 @@ const mapStateToProps = (state) => {
     // Filter props
     initialFilters: state.filters,
     // Fetching props
-    catalogueIsLoading: catalogueLoading(state),
-    addPageIsLoading: catalogueAddPageLoading(state),
+    catalogueIsLoading: catalogueIsLoading(state),
+    addPageIsLoading: addPageIsLoading(state),
     favoriteIsToggling: favoriteIsToggling(state),
   };
 };
