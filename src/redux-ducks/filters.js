@@ -7,8 +7,7 @@ const REQUEST = 'filters/LOAD_REQUEST';
 const SUCCESS = 'filters/LOAD_SUCCESS';
 const FAILURE = 'filters/LOAD_FAILURE';
 
-const CLEAR_FILTERS = 'filters/CLEAR_FILTERS';
-export { CLEAR_FILTERS };
+export const CLEAR_FILTERS = 'filters/CLEAR_FILTERS';
 
 // ================================================================================
 // Reducers

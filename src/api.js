@@ -1,4 +1,4 @@
-const Server = {
+export const Server = {
   library() {
     return '/api/library';
   },
@@ -74,9 +74,8 @@ const Server = {
     return url;
   },
 };
-export { Server };
 
-const Client = {
+export const Client = {
   library() {
     return '/library';
   },
@@ -94,4 +93,3 @@ const Client = {
     return `/${mangaId}/${chapterId}/${page}`;
   },
 };
-export { Client };

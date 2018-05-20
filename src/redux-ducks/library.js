@@ -22,8 +22,7 @@ const GET_UNREAD_FAILURE = 'library/GET_UNREAD_FAILURE';
 const GET_UNREAD_CACHE = 'library/GET_UNREAD_CACHE';
 const UNREAD_NEEDS_RELOAD = 'library/UNREAD_NEEDS_RELOAD';
 
-const ADD_MANGA = 'library/ADD_MANGA';
-export { ADD_MANGA };
+export const ADD_MANGA = 'library/ADD_MANGA';
 
 // ================================================================================
 // Reducers
