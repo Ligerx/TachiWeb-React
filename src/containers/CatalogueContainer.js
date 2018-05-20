@@ -16,7 +16,7 @@ const mapStateToProps = (state) => {
 
   return {
     // Sources props
-    sources: state.sources.sourcesArray,
+    sources: state.sources,
     // Catalogue props
     hasNextPage,
     initialFilters,
