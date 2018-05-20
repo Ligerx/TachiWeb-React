@@ -3,8 +3,8 @@ import { fetchSources } from 'redux-ducks/sources';
 import {
   fetchCatalogue,
   fetchNextCataloguePage,
-  CATALOGUE_LOAD_ACTION,
-  CATALOGUE_ADD_PAGE_ACTION,
+  FETCH_CATALOGUE,
+  CATALOGUE_ADD_PAGE,
 } from 'redux-ducks/catalogue';
 import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
 import { fetchFilters } from 'redux-ducks/filters';
@@ -12,14 +12,14 @@ import {
   toggleFavorite,
   fetchMangaInfo,
   updateMangaInfo,
-  TOGGLE_FAVORITE_ACTION,
+  TOGGLE_FAVORITE,
 } from 'redux-ducks/mangaInfos';
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
 
-const catalogueIsLoading = createLoadingSelector([CATALOGUE_LOAD_ACTION]);
-const addPageIsLoading = createLoadingSelector([CATALOGUE_ADD_PAGE_ACTION]);
-const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE_ACTION]);
+const catalogueIsLoading = createLoadingSelector([FETCH_CATALOGUE]);
+const addPageIsLoading = createLoadingSelector([CATALOGUE_ADD_PAGE]);
+const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE]);
 
 const mapStateToProps = (state) => {
   const { mangaIds, hasNextPage } = state.catalogue;

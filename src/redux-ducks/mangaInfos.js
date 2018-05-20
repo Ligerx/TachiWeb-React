@@ -10,21 +10,21 @@ import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from './library';
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_MANGA_REQUEST = 'mangaInfos/FETCH_MANGA_REQUEST';
-const FETCH_MANGA_SUCCESS = 'mangaInfos/FETCH_MANGA_SUCCESS';
-const FETCH_MANGA_FAILURE = 'mangaInfos/FETCH_MANGA_FAILURE';
-const FETCH_MANGA_CACHE = 'mangaInfos/FETCH_MANGA_CACHE';
-export const FETCH_MANGA_ACTION = 'mangaInfos/FETCH_MANGA';
+const FETCH_MANGA_REQUEST = 'mangaInfos/FETCH_REQUEST';
+const FETCH_MANGA_SUCCESS = 'mangaInfos/FETCH_SUCCESS';
+const FETCH_MANGA_FAILURE = 'mangaInfos/FETCH_FAILURE';
+const FETCH_MANGA_CACHE = 'mangaInfos/FETCH_CACHE';
+export const FETCH_MANGA = 'mangaInfos/FETCH';
 
-const UPDATE_MANGA_REQUEST = 'mangaInfos/UPDATE_MANGA_REQUEST';
-const UPDATE_MANGA_SUCCESS = 'mangaInfos/UPDATE_MANGA_SUCCESS';
-const UPDATE_MANGA_FAILURE = 'mangaInfos/UPDATE_MANGA_FAILURE';
-export const UPDATE_MANGA_ACTION = 'mangaInfos/UPDATE_MANGA';
+const UPDATE_MANGA_REQUEST = 'mangaInfos/UPDATE_REQUEST';
+const UPDATE_MANGA_SUCCESS = 'mangaInfos/UPDATE_SUCCESS';
+const UPDATE_MANGA_FAILURE = 'mangaInfos/UPDATE_FAILURE';
+export const UPDATE_MANGA = 'mangaInfos/UPDATE';
 
 const TOGGLE_FAVORITE_REQUEST = 'mangaInfos/TOGGLE_FAVORITE_REQUEST';
 const TOGGLE_FAVORITE_SUCCESS = 'mangaInfos/TOGGLE_FAVORITE_SUCCESS';
 const TOGGLE_FAVORITE_FAILURE = 'mangaInfos/TOGGLE_FAVORITE_FAILURE';
-export const TOGGLE_FAVORITE_ACTION = 'mangaInfos/TOGGLE_FAVORITE';
+export const TOGGLE_FAVORITE = 'mangaInfos/TOGGLE_FAVORITE';
 
 export const ADD_MANGA = 'mangaInfos/ADD_MANGA';
 

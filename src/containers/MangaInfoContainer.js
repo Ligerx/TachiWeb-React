@@ -3,9 +3,9 @@ import {
   toggleFavorite,
   fetchMangaInfo,
   updateMangaInfo,
-  TOGGLE_FAVORITE_ACTION,
-  FETCH_MANGA_ACTION,
-  UPDATE_MANGA_ACTION,
+  TOGGLE_FAVORITE,
+  FETCH_MANGA,
+  UPDATE_MANGA,
 } from 'redux-ducks/mangaInfos';
 import {
   fetchChapters,
@@ -16,11 +16,11 @@ import {
 import MangaInfoPage from 'pages/MangaInfoPage';
 import { createLoadingSelector } from 'redux-ducks/loading';
 
-const mangaInfoIsLoading = createLoadingSelector([FETCH_MANGA_ACTION]);
-const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE_ACTION]);
+const mangaInfoIsLoading = createLoadingSelector([FETCH_MANGA]);
+const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE]);
 const refreshIsLoading = createLoadingSelector([
-  FETCH_MANGA_ACTION,
-  UPDATE_MANGA_ACTION,
+  FETCH_MANGA,
+  UPDATE_MANGA,
   FETCH_CHAPTERS,
   UPDATE_CHAPTERS,
 ]);

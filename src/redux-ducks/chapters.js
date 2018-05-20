@@ -3,11 +3,11 @@ import { Server } from 'api';
 // ================================================================================
 // Actions
 // ================================================================================
-const REQUEST = 'chapters/LOAD_REQUEST';
-const SUCCESS = 'chapters/LOAD_SUCCESS';
-const FAILURE = 'chapters/LOAD_FAILURE';
-const CACHE = 'chapters/LOAD_CACHE';
-export const FETCH_CHAPTERS = 'chapters/LOAD';
+const FETCH_CACHE = 'chapters/FETCH_CACHE';
+const FETCH_REQUEST = 'chapters/FETCH_REQUEST';
+const FETCH_SUCCESS = 'chapters/FETCH_SUCCESS';
+const FETCH_FAILURE = 'chapters/FETCH_FAILURE';
+export const FETCH_CHAPTERS = 'chapters/FETCH';
 
 const UPDATE_REQUEST = 'chapters/UPDATE_REQUEST';
 const UPDATE_SUCCESS = 'chapters/UPDATE_SUCCESS';
@@ -24,13 +24,13 @@ const UPDATE_READING_STATUS_FAILURE = 'chapters/UPDATE_READING_STATUS_FAILURE';
 // State should be in the shape of { mangaId: [chapterObjects...] }
 export default function chaptersReducer(state = {}, action = {}) {
   switch (action.type) {
-    case SUCCESS:
+    case FETCH_SUCCESS:
       return {
         ...state,
         [action.mangaId]: action.payload,
       };
 
-    case CACHE:
+    case FETCH_CACHE:
       return state;
 
     case UPDATE_SUCCESS:
@@ -61,18 +61,22 @@ export function fetchChapters(mangaId, { ignoreCache = false } = {}) {
     if (!ignoreCache && getState().chapters[mangaId]) {
       // A bit of a hack I guess. Return a promise so that any function calling fetchChapters
       // can use .then() whether we dispatch cached data or fetch from the server.
-      return Promise.resolve().then(dispatch({ type: CACHE }));
+      return Promise.resolve().then(dispatch({ type: FETCH_CACHE }));
     }
 
-    dispatch({ type: REQUEST, meta: { mangaId } });
+    dispatch({ type: FETCH_REQUEST, meta: { mangaId } });
 
     return fetch(Server.chapters(mangaId))
       .then(
         res => res.json(),
         error =>
-          dispatch({ type: FAILURE, errorMessage: 'Failed to load chapters', meta: { error } }),
+          dispatch({
+            type: FETCH_FAILURE,
+            errorMessage: 'Failed to load chapters',
+            meta: { error },
+          }),
       )
-      .then(json => dispatch({ type: SUCCESS, payload: json.content, mangaId }));
+      .then(json => dispatch({ type: FETCH_SUCCESS, payload: json.content, mangaId }));
   };
 }
 

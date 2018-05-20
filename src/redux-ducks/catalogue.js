@@ -7,17 +7,16 @@ import { ADD_MANGA } from './mangaInfos';
 // ================================================================================
 const RESET_STATE = 'catalogue/RESET_STATE';
 
-const REQUEST = 'catalogue/LOAD_REQUEST';
-const SUCCESS = 'catalogue/LOAD_SUCCESS';
-const FAILURE = 'catalogue/LOAD_FAILURE';
-const CACHE = 'catalogue/LOAD_CACHE'; // e.g. Catalogue -> view a manga -> go back to catalogue
-export const CATALOGUE_LOAD_ACTION = 'catalogue/LOAD';
+const FETCH_CATALOGUE_REQUEST = 'catalogue/FETCH_REQUEST';
+const FETCH_CATALOGUE_SUCCESS = 'catalogue/FETCH_SUCCESS';
+const FETCH_CATALOGUE_FAILURE = 'catalogue/FETCH_FAILURE';
+export const FETCH_CATALOGUE = 'catalogue/FETCH';
 
+const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE'; // failsafe, don't use
 const ADD_PAGE_REQUEST = 'catalogue/ADD_PAGE_REQUEST';
 const ADD_PAGE_SUCCESS = 'catalogue/ADD_PAGE_SUCCESS';
 const ADD_PAGE_FAILURE = 'catalogue/ADD_PAGE_FAILURE';
-const ADD_PAGE_NO_NEXT_PAGE = 'catalogue/ADD_PAGE_NO_NEXT_PAGE'; // failsafe, don't use
-export const CATALOGUE_ADD_PAGE_ACTION = 'catalogue/ADD_PAGE';
+export const CATALOGUE_ADD_PAGE = 'catalogue/ADD_PAGE';
 
 // ================================================================================
 // Reducers
@@ -33,7 +32,7 @@ export default function chaptersReducer(state = initialState, action = {}) {
     case RESET_STATE:
       return initialState;
 
-    case SUCCESS: {
+    case FETCH_CATALOGUE_SUCCESS: {
       const { mangaIds, hasNextPage } = action;
       return {
         ...state,
@@ -41,9 +40,6 @@ export default function chaptersReducer(state = initialState, action = {}) {
         hasNextPage,
       };
     }
-
-    case CACHE:
-      return state;
 
     case ADD_PAGE_SUCCESS: {
       const { mangaIds, page, hasNextPage } = action;
@@ -76,7 +72,7 @@ export function fetchCatalogue(
   return (dispatch) => {
     dispatch({ type: RESET_STATE });
     dispatch({
-      type: REQUEST,
+      type: FETCH_CATALOGUE_REQUEST,
       meta: { sourceId, query, filters },
     });
 
@@ -96,7 +92,7 @@ export function fetchCatalogue(
 
           dispatch({ type: ADD_MANGA, newManga: content });
           dispatch({
-            type: SUCCESS,
+            type: FETCH_CATALOGUE_SUCCESS,
             mangaIds,
             page: 1,
             hasNextPage,
@@ -104,7 +100,7 @@ export function fetchCatalogue(
         },
         error =>
           dispatch({
-            type: FAILURE,
+            type: FETCH_CATALOGUE_FAILURE,
             errorMessage: 'Failed to load this catalogue',
             meta: { error },
           }),

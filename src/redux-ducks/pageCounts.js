@@ -3,17 +3,17 @@ import { Server } from 'api';
 // ================================================================================
 // Actions
 // ================================================================================
-const REQUEST = 'pageCounts/LOAD_REQUEST';
-const SUCCESS = 'pageCounts/LOAD_SUCCESS';
-const FAILURE = 'pageCounts/LOAD_FAILURE';
-const CACHE = 'pageCounts/LOAD_CACHE';
+const FETCH_REQUEST = 'pageCounts/FETCH_REQUEST';
+const FETCH_SUCCESS = 'pageCounts/FETCH_SUCCESS';
+const FETCH_FAILURE = 'pageCounts/FETCH_FAILURE';
+const FETCH_CACHE = 'pageCounts/FETCH_CACHE';
 
 // ================================================================================
 // Reducers
 // ================================================================================
 export default function chaptersReducer(state = { pageCountsByChapterId: {} }, action = {}) {
   switch (action.type) {
-    case SUCCESS:
+    case FETCH_SUCCESS:
       return {
         ...state,
         pageCountsByChapterId: {
@@ -21,7 +21,7 @@ export default function chaptersReducer(state = { pageCountsByChapterId: {} }, a
           [action.chapterId]: action.pageCount,
         },
       };
-    case CACHE:
+    case FETCH_CACHE:
       return state;
     default:
       return state;
@@ -36,20 +36,24 @@ export function fetchPageCount(mangaId, chapterId) {
     // Return manga's chapters' cached pageCount data if they're already in the store
     const { pageCountsByChapterId } = getState().pageCounts;
     if (pageCountsByChapterId[chapterId]) {
-      return dispatch({ type: CACHE });
+      return dispatch({ type: FETCH_CACHE });
     }
 
-    dispatch({ type: REQUEST });
+    dispatch({ type: FETCH_REQUEST });
 
     return fetch(Server.pageCount(mangaId, chapterId))
       .then(
         res => res.json(),
         error =>
-          dispatch({ type: FAILURE, errorMessage: 'Failed to get page count', meta: { error } }),
+          dispatch({
+            type: FETCH_FAILURE,
+            errorMessage: 'Failed to get page count',
+            meta: { error },
+          }),
       )
       .then(json =>
         dispatch({
-          type: SUCCESS,
+          type: FETCH_SUCCESS,
           chapterId,
           pageCount: json.page_count,
         }));

@@ -4,16 +4,15 @@ import { ADD_MANGA } from './mangaInfos';
 // ================================================================================
 // Actions
 // ================================================================================
-const REQUEST = 'library/LOAD_REQUEST';
-const SUCCESS = 'library/LOAD_SUCCESS';
-const FAILURE = 'library/LOAD_FAILURE';
-const CACHE = 'library/LOAD_CACHE';
-export const LIBRARY_LOAD_ACTION = 'library/LOAD';
+const FETCH_LIBRARY_REQUEST = 'library/FETCH_REQUEST';
+const FETCH_LIBRARY_SUCCESS = 'library/FETCH_SUCCESS';
+const FETCH_LIBRARY_FAILURE = 'library/FETCH_FAILURE';
+const FETCH_LIBRARY_CACHE = 'library/FETCH_CACHE';
 
-const GET_UNREAD_REQUEST = 'library/GET_UNREAD_REQUEST';
-const GET_UNREAD_SUCCESS = 'library/GET_UNREAD_SUCCESS';
-const GET_UNREAD_FAILURE = 'library/GET_UNREAD_FAILURE';
-const GET_UNREAD_CACHE = 'library/GET_UNREAD_CACHE';
+const FETCH_UNREAD_REQUEST = 'library/FETCH_UNREAD_REQUEST';
+const FETCH_UNREAD_SUCCESS = 'library/FETCH_UNREAD_SUCCESS';
+const FETCH_UNREAD_FAILURE = 'library/FETCH_UNREAD_FAILURE';
+const FETCH_UNREAD_CACHE = 'library/FETCH_UNREAD_CACHE';
 
 export const ADD_TO_FAVORITES = 'library/ADD_TO_FAVORITES';
 export const REMOVE_FROM_FAVORITES = 'library/REMOVE_FROM_FAVORITES';
@@ -33,24 +32,24 @@ export default function libraryReducer(
   action = {},
 ) {
   switch (action.type) {
-    case SUCCESS:
+    case FETCH_LIBRARY_SUCCESS:
       return {
         ...state,
         mangaIds: action.mangaIds,
         libraryLoaded: true,
       };
 
-    case CACHE:
+    case FETCH_LIBRARY_CACHE:
       return state;
 
-    case GET_UNREAD_SUCCESS:
+    case FETCH_UNREAD_SUCCESS:
       return {
         ...state,
         unread: action.unread,
         reloadUnread: false,
       };
 
-    case GET_UNREAD_CACHE:
+    case FETCH_UNREAD_CACHE:
       return state;
 
     case ADD_TO_FAVORITES:
@@ -78,23 +77,27 @@ export function fetchLibrary({ ignoreCache = false } = {}) {
   return (dispatch, getState) => {
     // Return cached mangaLibrary if it's been loaded before
     if (!ignoreCache && getState().library.libraryLoaded) {
-      return dispatch({ type: CACHE });
+      return dispatch({ type: FETCH_LIBRARY_CACHE });
     }
 
-    dispatch({ type: REQUEST });
+    dispatch({ type: FETCH_LIBRARY_REQUEST });
 
     return fetch(Server.library())
       .then(
         res => res.json(),
         error =>
-          dispatch({ type: FAILURE, errorMessage: 'Failed to load your library', meta: { error } }),
+          dispatch({
+            type: FETCH_LIBRARY_FAILURE,
+            errorMessage: 'Failed to load your library',
+            meta: { error },
+          }),
       )
       .then((json) => {
         const { content } = json;
         const mangaIds = transformToMangaIdsArray(content);
 
         dispatch({ type: ADD_MANGA, newManga: content });
-        dispatch({ type: SUCCESS, mangaIds });
+        dispatch({ type: FETCH_LIBRARY_SUCCESS, mangaIds });
       });
   };
 }
@@ -102,22 +105,23 @@ export function fetchLibrary({ ignoreCache = false } = {}) {
 export function fetchUnread() {
   return (dispatch, getState) => {
     if (!getState().library.reloadUnread) {
-      return dispatch({ type: GET_UNREAD_CACHE });
+      return dispatch({ type: FETCH_UNREAD_CACHE });
     }
 
-    dispatch({ type: GET_UNREAD_REQUEST });
+    dispatch({ type: FETCH_UNREAD_REQUEST });
 
     return fetch(Server.libraryUnread())
       .then(
         res => res.json(),
         error =>
           dispatch({
-            type: GET_UNREAD_FAILURE,
+            type: FETCH_UNREAD_FAILURE,
             errorMessage: 'Failed to get unread chapters for your library',
             meta: { error },
           }),
       )
-      .then(json => dispatch({ type: GET_UNREAD_SUCCESS, unread: transformUnread(json.content) }));
+      .then(json =>
+        dispatch({ type: FETCH_UNREAD_SUCCESS, unread: transformUnread(json.content) }));
   };
 }
 

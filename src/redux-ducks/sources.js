@@ -3,16 +3,16 @@ import { Server } from 'api';
 // ================================================================================
 // Actions
 // ================================================================================
-const REQUEST = 'sources/LOAD_REQUEST';
-const SUCCESS = 'sources/LOAD_SUCCESS';
-const FAILURE = 'sources/LOAD_FAILURE';
+const FETCH_REQUEST = 'sources/FETCH_REQUEST';
+const FETCH_SUCCESS = 'sources/FETCH_SUCCESS';
+const FETCH_FAILURE = 'sources/FETCH_FAILURE';
 
 // ================================================================================
 // Reducers
 // ================================================================================
 export default function sourcesReducer(state = [], action = {}) {
   switch (action.type) {
-    case SUCCESS:
+    case FETCH_SUCCESS:
       return action.payload;
     default:
       return state;
@@ -24,14 +24,18 @@ export default function sourcesReducer(state = [], action = {}) {
 // ================================================================================
 export function fetchSources() {
   return (dispatch) => {
-    dispatch({ type: REQUEST });
+    dispatch({ type: FETCH_REQUEST });
 
     return fetch(Server.sources())
       .then(
         res => res.json(),
         error =>
-          dispatch({ type: FAILURE, errorMessage: 'Failed to load sources', meta: { error } }),
+          dispatch({
+            type: FETCH_FAILURE,
+            errorMessage: 'Failed to load sources',
+            meta: { error },
+          }),
       )
-      .then(json => dispatch({ type: SUCCESS, payload: json.content }));
+      .then(json => dispatch({ type: FETCH_SUCCESS, payload: json.content }));
   };
 }
