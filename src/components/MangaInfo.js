@@ -79,7 +79,7 @@ class MangaInfo extends Component {
 
 MangaInfo.propTypes = {
   mangaInfo: mangaType,
-  chapters: PropTypes.arrayOf(chapterType).isRequired,
+  chapters: PropTypes.arrayOf(chapterType),
   initialTabValue: PropTypes.number.isRequired,
   onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   onRefreshClick: PropTypes.func.isRequired,
@@ -90,6 +90,7 @@ MangaInfo.propTypes = {
 
 MangaInfo.defaultProps = {
   mangaInfo: null,
+  chapters: [],
 };
 
 export default MangaInfo;
