@@ -2,7 +2,7 @@ import React from 'react';
 
 // * backgroundImage
 // linear-gradient hack, put a white filter over the background image
-const BackgroundImage = ({ coverUrl, className = '', children }) => (
+const BackgroundImage = ({ coverUrl = '', className = '', children }) => (
   <div
     className={className}
     style={{

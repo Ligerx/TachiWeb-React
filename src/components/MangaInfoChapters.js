@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { chapterType, mangaType } from 'types';
 
 // TODO: update <ResponsiveGrid> so the list can be a lot tighter width
-// TODO: parent component, sort (and filter?) chapters. Currently they're in reverse order.
 
 // TODO: List is slow with 200+ chapters
 //       Can just use the virtualized library to speed it up.
@@ -39,8 +38,12 @@ const MangaInfoChapters = ({ classes, mangaInfo, chapters }) => (
 
 MangaInfoChapters.propTypes = {
   classes: PropTypes.object.isRequired,
-  mangaInfo: mangaType.isRequired,
+  mangaInfo: mangaType,
   chapters: PropTypes.arrayOf(chapterType).isRequired,
+};
+
+MangaInfoChapters.defaultProps = {
+  mangaInfo: null,
 };
 
 export default withStyles(styles)(MangaInfoChapters);

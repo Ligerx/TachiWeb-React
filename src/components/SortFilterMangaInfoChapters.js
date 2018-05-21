@@ -34,8 +34,12 @@ const SortFilterMangaInfoChapters = ({ mangaInfo, chapters }) => {
 };
 
 SortFilterMangaInfoChapters.propTypes = {
-  mangaInfo: mangaType.isRequired,
+  mangaInfo: mangaType,
   chapters: PropTypes.arrayOf(chapterType).isRequired,
+};
+
+SortFilterMangaInfoChapters.defaultProps = {
+  mangaInfo: null,
 };
 
 export default SortFilterMangaInfoChapters;

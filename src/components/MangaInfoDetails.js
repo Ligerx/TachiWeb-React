@@ -22,33 +22,43 @@ const styles = () => ({
   },
 });
 
-const MangaInfoDetails = ({ classes, mangaInfo, numChapters, children }) => (
-  <React.Fragment>
-    <BackgroundImage coverUrl={Server.cover(mangaInfo.id)}>
-      <ResponsiveGrid className={classNames(classes.gridPadding, classes.fabParent)}>
-        <Grid item xs={4} sm={3}>
-          <MangaCard coverUrl={Server.cover(mangaInfo.id)} />
-        </Grid>
-        <Grid item xs={8} sm={9}>
-          <Typography variant="title" gutterBottom>
-            {mangaInfo.title}
-          </Typography>
-          <DetailComponent fieldName="Chapters" value={numChapters} />
-          {detailsElements(mangaInfo)}
-        </Grid>
+const MangaInfoDetails = ({
+  classes, mangaInfo, numChapters, children,
+}) => {
+  const coverUrl = mangaInfo ? Server.cover(mangaInfo.id) : '';
+  const title = mangaInfo ? mangaInfo.title : '';
+  const description = mangaInfo ? mangaInfo.description : '';
 
-        {children}
+  return (
+    <React.Fragment>
+      <BackgroundImage coverUrl={coverUrl}>
+        <ResponsiveGrid className={classNames(classes.gridPadding, classes.fabParent)}>
+          <Grid item xs={4} sm={3}>
+            <MangaCard coverUrl={coverUrl} />
+          </Grid>
+          <Grid item xs={8} sm={9}>
+            <Typography variant="title" gutterBottom>
+              {title}
+            </Typography>
+            <DetailComponent fieldName="Chapters" value={numChapters} />
+            {detailsElements(mangaInfo)}
+          </Grid>
+
+          {children}
+        </ResponsiveGrid>
+      </BackgroundImage>
+
+      <ResponsiveGrid className={classes.gridPadding}>
+        <DetailComponent fieldName="Description" value={description} />
       </ResponsiveGrid>
-    </BackgroundImage>
-
-    <ResponsiveGrid className={classes.gridPadding}>
-      <DetailComponent fieldName="Description" value={mangaInfo.description} />
-    </ResponsiveGrid>
-  </React.Fragment>
-);
+    </React.Fragment>
+  );
+};
 
 // Helper functions
 function detailsElements(mangaInfo) {
+  if (!mangaInfo) return null;
+
   const fieldNames = [
     'status',
     'source',
@@ -66,7 +76,7 @@ function detailsElements(mangaInfo) {
   });
 }
 
-const DetailComponent = ({fieldName, value}) => (
+const DetailComponent = ({ fieldName, value }) => (
   <Typography>
     <b>{`${upperFirst(fieldName)}: `}</b>
     {value}
@@ -75,12 +85,14 @@ const DetailComponent = ({fieldName, value}) => (
 
 MangaInfoDetails.propTypes = {
   classes: PropTypes.object.isRequired,
-  mangaInfo: mangaType.isRequired,
-  numChapters: PropTypes.number.isRequired,
+  mangaInfo: mangaType,
+  numChapters: PropTypes.number,
   children: PropTypes.node,
 };
 
 MangaInfoDetails.defaultProps = {
+  mangaInfo: null,
+  numChapters: 0,
   children: null,
 };
 

@@ -5,17 +5,13 @@ import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters'
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
 import FavoriteFAB from 'components/FavoriteFAB';
-
-// NOTES: From the previous code: When you update the server's manga info + chapter list,
-//        you should also update the client when it's complete
+import FullScreenLoading from 'components/loading/FullScreenLoading';
 
 // FEATURES TODO:
 // mark as read
 // mark as unread
 // download
 // delete
-// favorite/unfavorite
-// update info and chapters
 
 class MangaInfo extends Component {
   constructor(props) {
@@ -39,11 +35,14 @@ class MangaInfo extends Component {
       mangaInfo, chapters, favoriteIsToggling, toggleFavorite,
     } = this.props;
 
+    const isFavorite = mangaInfo ? mangaInfo.favorite : false;
+    const numChapters = chapters ? chapters.length : 0;
+
     if (tabValue === 0) {
       return (
-        <MangaInfoDetails mangaInfo={mangaInfo} numChapters={chapters ? chapters.length : 0}>
+        <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters}>
           <FavoriteFAB
-            isFavorite={mangaInfo.favorite}
+            isFavorite={isFavorite}
             favoriteIsToggling={favoriteIsToggling}
             toggleFavorite={toggleFavorite}
           />
@@ -59,7 +58,7 @@ class MangaInfo extends Component {
 
   render() {
     const { tabValue } = this.state;
-    const { mangaInfo, onBackClick, onRefreshClick } = this.props;
+    const { mangaInfo, onBackClick, onRefreshClick, isLoading } = this.props;
 
     return (
       <React.Fragment>
@@ -71,19 +70,26 @@ class MangaInfo extends Component {
           onRefreshClick={onRefreshClick}
         />
         {this.tabContent()}
+
+        {isLoading && <FullScreenLoading />}
       </React.Fragment>
     );
   }
 }
 
 MangaInfo.propTypes = {
-  mangaInfo: mangaType.isRequired,
+  mangaInfo: mangaType,
   chapters: PropTypes.arrayOf(chapterType).isRequired,
   initialTabValue: PropTypes.number.isRequired,
   onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   onRefreshClick: PropTypes.func.isRequired,
   favoriteIsToggling: PropTypes.bool.isRequired,
   toggleFavorite: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+};
+
+MangaInfo.defaultProps = {
+  mangaInfo: null,
 };
 
 export default MangaInfo;

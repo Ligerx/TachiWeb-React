@@ -19,20 +19,13 @@ const styles = () => ({
   },
 });
 
-const chapterText = (read, last_page_read) => {
-  let text = '';
-  if (!read && last_page_read > 0) {
-    text = `Page ${last_page_read + 1}`;
-  }
-  return text;
-};
-
 const ChapterListItem = ({ classes, mangaInfo, chapter }) => {
   const dimIfRead = read => classNames({ [classes.read]: read });
   const goToPage = chapter.read ? 0 : chapter.last_page_read;
+  const pageLink = mangaInfo ? Client.page(mangaInfo.id, chapter.id, goToPage) : null;
 
   return (
-    <ListItem button divider component={Link} to={Client.page(mangaInfo.id, chapter.id, goToPage)}>
+    <ListItem button divider component={Link} to={pageLink}>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="subheading" className={dimIfRead(chapter.read)}>
@@ -52,10 +45,25 @@ const ChapterListItem = ({ classes, mangaInfo, chapter }) => {
   );
 };
 
+// Helper Functions
+/* eslint-disable camelcase */
+function chapterText(read, last_page_read) {
+  let text = '';
+  if (!read && last_page_read > 0) {
+    text = `Page ${last_page_read + 1}`;
+  }
+  return text;
+}
+/* eslint-enable camelcase */
+
 ChapterListItem.propTypes = {
   classes: PropTypes.object.isRequired,
-  mangaInfo: mangaType.isRequired,
+  mangaInfo: mangaType,
   chapter: chapterType.isRequired,
+};
+
+ChapterListItem.defaultProps = {
+  mangaInfo: null,
 };
 
 export default withStyles(styles)(ChapterListItem);

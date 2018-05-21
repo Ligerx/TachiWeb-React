@@ -42,12 +42,14 @@ const styles = {
 // At minumum, you should probably wrap it with a <Grid item>
 
 // Gradient will not render if there is no title passed
+// CardMedia / image will not render if there is no coverUrl
 
 // FIXME: title can be too long. Limit the max length of the title.
 
 const MangaCard = ({ classes, title, coverUrl }) => (
   <Card className={classes.fullWidth}>
-    <CardMedia className={classes.image} image={coverUrl} title={title} />
+    {!!coverUrl && <CardMedia className={classes.image} image={coverUrl} title={title} />}
+
     {!!title && (
       <div className={classes.gradient}>
         <Typography variant="title" className={classes.title}>
