@@ -58,7 +58,7 @@ class DynamicSourceFilters extends Component {
         <Button
           variant="raised"
           color="primary"
-          onClick={this.toggleDrawer(true)}
+          onClick={filters ? this.toggleDrawer(true) : () => null}
           className={classes.openButton}
         >
           Filters

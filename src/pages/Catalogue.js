@@ -10,6 +10,7 @@ import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import CatalogueHeader from 'components/CatalogueHeader';
 import CenteredLoading from 'components/loading/CenteredLoading';
+import FullScreenLoading from 'components/loading/FullScreenLoading';
 
 // TODO: sources type
 // TODO: filter type?
@@ -143,11 +144,11 @@ class Catalogue extends Component {
 
   handleLoadNextPage() {
     const {
-      hasNextPage, sources, fetchNextCataloguePage, addPageIsLoading,
+      hasNextPage, sources, fetchNextCataloguePage, catalogueIsLoading,
     } = this.props;
     const { searchQuery, lastUsedFilters, sourceIndex } = this.state;
 
-    if (hasNextPage && !addPageIsLoading) {
+    if (hasNextPage && !catalogueIsLoading) {
       fetchNextCataloguePage(sources[sourceIndex].id, searchQuery, lastUsedFilters);
     }
   }
@@ -181,8 +182,9 @@ class Catalogue extends Component {
       chaptersByMangaId,
       favoriteIsToggling,
       toggleFavoriteForManga,
+      sourcesAreLoading,
       catalogueIsLoading,
-      addPageIsLoading,
+      mangaInfoIsLoading,
     } = this.props;
     const {
       mangaIdBeingViewed,
@@ -193,8 +195,10 @@ class Catalogue extends Component {
 
     const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
     const chapters = chaptersByMangaId[mangaIdBeingViewed];
+    const toggleFavorite = mangaInfo ?
+      toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite) : () => null;
 
-    if (mangaInfo && chapters) {
+    if (mangaIdBeingViewed) {
       return (
         <MangaInfo
           mangaInfo={mangaInfo}
@@ -203,7 +207,8 @@ class Catalogue extends Component {
           onBackClick={this.handleMangaInfoBackClick}
           onRefreshClick={this.handleRefreshClick}
           favoriteIsToggling={favoriteIsToggling}
-          toggleFavorite={toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite)}
+          toggleFavorite={toggleFavorite}
+          isLoading={mangaInfoIsLoading}
         />
       );
     }
@@ -235,7 +240,8 @@ class Catalogue extends Component {
           <Waypoint onEnter={this.handleLoadNextPage} bottomOffset={-300} />
         )}
 
-        {(catalogueIsLoading || addPageIsLoading) && <CenteredLoading />}
+        {catalogueIsLoading && <CenteredLoading />}
+        {sourcesAreLoading && <FullScreenLoading />}
       </React.Fragment>
     );
   }
@@ -267,9 +273,10 @@ Catalogue.propTypes = {
   initialFilters: PropTypes.array, // TODO: type
   // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
   chaptersByMangaId: PropTypes.object.isRequired,
+  sourcesAreLoading: PropTypes.bool.isRequired,
   favoriteIsToggling: PropTypes.bool.isRequired,
   catalogueIsLoading: PropTypes.bool.isRequired,
-  addPageIsLoading: PropTypes.bool.isRequired,
+  mangaInfoIsLoading: PropTypes.bool.isRequired,
   // Below are redux dispatch functions
   fetchSources: PropTypes.func.isRequired,
   fetchCatalogue: PropTypes.func.isRequired,

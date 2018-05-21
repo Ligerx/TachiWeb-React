@@ -1,25 +1,38 @@
 import { connect } from 'react-redux';
-import { fetchSources } from 'redux-ducks/sources';
+import { fetchSources, FETCH_SOURCES } from 'redux-ducks/sources';
 import {
   fetchCatalogue,
   fetchNextCataloguePage,
   FETCH_CATALOGUE,
   CATALOGUE_ADD_PAGE,
 } from 'redux-ducks/catalogue';
-import { fetchChapters, updateChapters } from 'redux-ducks/chapters';
+import {
+  fetchChapters,
+  updateChapters,
+  FETCH_CHAPTERS,
+  UPDATE_CHAPTERS,
+} from 'redux-ducks/chapters';
 import { fetchFilters } from 'redux-ducks/filters';
 import {
   toggleFavorite,
   fetchMangaInfo,
   updateMangaInfo,
   TOGGLE_FAVORITE,
+  FETCH_MANGA,
+  UPDATE_MANGA,
 } from 'redux-ducks/mangaInfos';
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
 
-const catalogueIsLoading = createLoadingSelector([FETCH_CATALOGUE]);
-const addPageIsLoading = createLoadingSelector([CATALOGUE_ADD_PAGE]);
+const sourcesAreLoading = createLoadingSelector([FETCH_SOURCES]);
+const catalogueIsLoading = createLoadingSelector([FETCH_CATALOGUE, CATALOGUE_ADD_PAGE]);
 const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE]);
+const mangaInfoIsLoading = createLoadingSelector([
+  FETCH_MANGA,
+  UPDATE_MANGA,
+  FETCH_CHAPTERS,
+  UPDATE_CHAPTERS,
+]);
 
 const mapStateToProps = (state) => {
   const { mangaIds, hasNextPage } = state.catalogue;
@@ -37,9 +50,10 @@ const mapStateToProps = (state) => {
     // Filter props
     initialFilters: state.filters,
     // Fetching props
+    sourcesAreLoading: sourcesAreLoading(state),
     catalogueIsLoading: catalogueIsLoading(state),
-    addPageIsLoading: addPageIsLoading(state),
     favoriteIsToggling: favoriteIsToggling(state),
+    mangaInfoIsLoading: mangaInfoIsLoading(state),
   };
 };
 

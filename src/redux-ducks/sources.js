@@ -6,6 +6,7 @@ import { Server } from 'api';
 const FETCH_REQUEST = 'sources/FETCH_REQUEST';
 const FETCH_SUCCESS = 'sources/FETCH_SUCCESS';
 const FETCH_FAILURE = 'sources/FETCH_FAILURE';
+export const FETCH_SOURCES = 'sources/FETCH';
 
 // ================================================================================
 // Reducers
