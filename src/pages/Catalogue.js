@@ -6,7 +6,6 @@ import debounce from 'lodash/debounce';
 import MangaGrid from 'components/MangaGrid';
 import CatalogueMangaCard from 'components/CatalogueMangaCard';
 import Waypoint from 'react-waypoint';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import CatalogueHeader from 'components/CatalogueHeader';
