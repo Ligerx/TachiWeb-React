@@ -31,7 +31,6 @@ class ErrorNotifications extends Component {
     this.state = {
       open: false,
       errorMessage: '',
-      previousMessage: '',
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -39,16 +38,13 @@ class ErrorNotifications extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { errorMessage, previousMessage } = this.state;
+    const { errorMessage } = this.state;
     const { errorMessage: newMessage } = this.props;
 
-    // if (newMessage === previousMessage && !errorMessage) return;
-
-    const changedMessage = newMessage !== previousMessage;
     const errorRemoved = errorMessage && !newMessage;
     const replaceError = errorMessage && newMessage && errorMessage !== newMessage;
 
-    if (!errorMessage && newMessage && changedMessage) {
+    if (!errorMessage && newMessage) {
       this.setState({ open: true, errorMessage: newMessage });
     } else if (errorRemoved || replaceError) {
       // handleExited() will deal with clearing the errorMessage in state
@@ -79,7 +75,7 @@ class ErrorNotifications extends Component {
 
   handleExited = () => {
     // Remove the message in index 0
-    this.setState({ errorMessage: '', previousMessage: this.state.errorMessage });
+    this.setState({ errorMessage: '' });
   };
 
   render() {
