@@ -13,20 +13,12 @@ import {
   UPDATE_CHAPTERS,
 } from 'redux-ducks/chapters';
 import { fetchFilters } from 'redux-ducks/filters';
-import {
-  toggleFavorite,
-  fetchMangaInfo,
-  updateMangaInfo,
-  TOGGLE_FAVORITE,
-  FETCH_MANGA,
-  UPDATE_MANGA,
-} from 'redux-ducks/mangaInfos';
+import { fetchMangaInfo, updateMangaInfo, FETCH_MANGA, UPDATE_MANGA } from 'redux-ducks/mangaInfos';
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
 
 const sourcesAreLoading = createLoadingSelector([FETCH_SOURCES]);
 const catalogueIsLoading = createLoadingSelector([FETCH_CATALOGUE, CATALOGUE_ADD_PAGE]);
-const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE]);
 const mangaInfoIsLoading = createLoadingSelector([
   FETCH_MANGA,
   UPDATE_MANGA,
@@ -52,7 +44,6 @@ const mapStateToProps = (state) => {
     // Fetching props
     sourcesAreLoading: sourcesAreLoading(state),
     catalogueIsLoading: catalogueIsLoading(state),
-    favoriteIsToggling: favoriteIsToggling(state),
     mangaInfoIsLoading: mangaInfoIsLoading(state),
   };
 };
@@ -64,9 +55,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(fetchCatalogue(sourceId, query, filters, retainFilters)),
   fetchFilters: sourceId => dispatch(fetchFilters(sourceId)),
   fetchChapters: mangaId => dispatch(fetchChapters(mangaId)),
-  // Need a nested function to pass in mangaId in the JSX
-  toggleFavoriteForManga: (mangaId, isFavorite) => () =>
-    dispatch(toggleFavorite(mangaId, isFavorite)),
   fetchNextCataloguePage: (sourceId, query, filters) =>
     dispatch(fetchNextCataloguePage(sourceId, query, filters)),
   updateChapters: mangaId => dispatch(updateChapters(mangaId)),

@@ -15,9 +15,6 @@ import FullScreenLoading from 'components/loading/FullScreenLoading';
 // TODO: sources type
 // TODO: filter type?
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
-// TODO: if you're looking at a new manga, chapters won't have been scraped by the server yet.
-//       Need to force an update when it's empty?
-//       This is probably also an issue w/ library.
 // TODO: actually split all of this up into components...
 // TODO: maybe add text saying that there are no more pages to load?
 
@@ -180,8 +177,6 @@ class Catalogue extends Component {
       mangaLibrary,
       sources,
       chaptersByMangaId,
-      favoriteIsToggling,
-      toggleFavoriteForManga,
       sourcesAreLoading,
       catalogueIsLoading,
       mangaInfoIsLoading,
@@ -195,8 +190,6 @@ class Catalogue extends Component {
 
     const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
     const chapters = chaptersByMangaId[mangaIdBeingViewed];
-    const toggleFavorite = mangaInfo ?
-      toggleFavoriteForManga(mangaInfo.id, mangaInfo.favorite) : () => null;
 
     if (mangaIdBeingViewed) {
       return (
@@ -206,8 +199,6 @@ class Catalogue extends Component {
           initialTabValue={0}
           onBackClick={this.handleMangaInfoBackClick}
           onRefreshClick={this.handleRefreshClick}
-          favoriteIsToggling={favoriteIsToggling}
-          toggleFavorite={toggleFavorite}
           isLoading={mangaInfoIsLoading}
         />
       );
@@ -274,7 +265,6 @@ Catalogue.propTypes = {
   // TODO: chaptersByMangaId has dynamic keys, so I'm not writing a custom validator right now
   chaptersByMangaId: PropTypes.object.isRequired,
   sourcesAreLoading: PropTypes.bool.isRequired,
-  favoriteIsToggling: PropTypes.bool.isRequired,
   catalogueIsLoading: PropTypes.bool.isRequired,
   mangaInfoIsLoading: PropTypes.bool.isRequired,
   // Below are redux dispatch functions
@@ -283,7 +273,6 @@ Catalogue.propTypes = {
   fetchFilters: PropTypes.func.isRequired,
   fetchNextCataloguePage: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
-  toggleFavoriteForManga: PropTypes.func.isRequired,
   updateChapters: PropTypes.func.isRequired,
   updateMangaInfo: PropTypes.func.isRequired,
   fetchMangaInfo: PropTypes.func.isRequired,
