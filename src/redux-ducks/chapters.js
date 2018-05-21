@@ -1,4 +1,5 @@
 import { Server } from 'api';
+import { DECREMENT_UNREAD } from './library';
 
 // ================================================================================
 // Actions
@@ -129,14 +130,20 @@ export function updateReadingStatus(mangaId, chapter, pageCount, readPage) {
     const didReadLastPage = readPage === pageCount - 1;
 
     return fetch(Server.updateReadingStatus(mangaId, chapter.id, readPage, didReadLastPage)).then(
-      () =>
-        dispatch({
+      () => {
+        if (didReadLastPage) {
+          // Update library unread that there's one less unread chapter
+          dispatch({ type: DECREMENT_UNREAD, mangaId });
+        }
+
+        return dispatch({
           type: UPDATE_READING_STATUS_SUCCESS,
           mangaId,
           chapterId: chapter.id,
           readPage,
           didReadLastPage,
-        }),
+        });
+      },
       error =>
         dispatch({
           type: UPDATE_READING_STATUS_FAILURE,
