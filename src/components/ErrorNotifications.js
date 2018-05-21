@@ -3,50 +3,37 @@ import PropTypes from 'prop-types';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
-import isEqual from 'lodash/isEqual';
 
-// TODO: test this with 2, and 2+ errors to see if it works as intended
+// TODO: Honestly, the logic here feels really fragile, and I don't
+//       have the best grasp of all the edge cases.
+//       Maybe finding a library would be helpful for this.
 
 class ErrorNotifications extends Component {
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // Add any new messages to the messages queue
-    if (nextProps.errorMessage && !prevState.messages.includes(nextProps.errorMessage)) {
-      return {
-        ...prevState,
-        messages: [...prevState.messages, nextProps.errorMessage],
-      };
-    }
-    return null;
-  }
-
   constructor(props) {
     super(props);
 
-    // Because there could be more than one error message at a time, use an
-    // array to queue the messages up in order.
     this.state = {
       open: false,
-      messages: [],
+      message: '',
     };
 
     this.handleClose = this.handleClose.bind(this);
     this.handleExited = this.handleExited.bind(this);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { messages } = this.state;
+  componentDidUpdate() {
+    const { open, message } = this.state;
+    const { errorMessage: propsMessage } = this.props;
 
-    // On state/prop change when there are still errors queued up, trigger a snackbar
-    // If there is one error, show a snackbar
-    //
-    // If there are more than one, close the current (which will remove it from the queue),
-    // then show the next
-    if (messages.length > 0 && !isEqual(prevState.messages, messages)) {
-      if (messages.length === 1) {
-        this.setState({ open: true });
-      } else if (messages.length > 1) {
-        this.setState({ open: false });
-      }
+    if (message === propsMessage) return;
+
+    if (!propsMessage) {
+      this.setState({ open: false, message: '' });
+    } else if (!open) {
+      this.setState({ open: true, message: propsMessage });
+    } else if (open) {
+      this.setState({ open: false });
+      // then let handleExited() update if necessary
     }
   }
 
@@ -56,13 +43,17 @@ class ErrorNotifications extends Component {
     this.setState({ open: false });
   }
 
-  handleExited = () => {
-    // Remove the message in index 0
-    this.setState({ messages: this.state.messages.slice(1) });
-  };
+  handleExited() {
+    const { message } = this.state;
+    const { errorMessage: propsMessage } = this.props;
+
+    if (message !== propsMessage) {
+      this.setState({ open: true, message: propsMessage });
+    }
+  }
 
   render() {
-    const message = this.state.messages[0];
+    const { message } = this.state;
 
     return (
       <Snackbar
@@ -91,7 +82,7 @@ ErrorNotifications.propTypes = {
 };
 
 ErrorNotifications.defaultProps = {
-  errorMessage: null,
+  errorMessage: '',
 };
 
 export default ErrorNotifications;
