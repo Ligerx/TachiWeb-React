@@ -34,6 +34,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 // Helper functions
 function findChapter(chapters, chapterId) {
+  if (!chapters || chapters.length === 0) return null;
+
   return chapters.find(chapter => chapter.id === parseInt(chapterId, 10));
 }
 

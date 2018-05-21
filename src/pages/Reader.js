@@ -9,9 +9,7 @@ import PageSlider from 'components/PageSlider';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import { Link } from 'react-router-dom';
-
-// TODO: in the Url, page # is 0 index. Change it to 1 index for readability.
-//       you'll also have to change the linking in API and possibly other places.
+import FullScreenLoading from 'components/loading/FullScreenLoading';
 
 // TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
 
@@ -24,8 +22,6 @@ import { Link } from 'react-router-dom';
 // TODO: preload pages from the next chapter
 
 // TODO: allow keyboard commands for reading
-
-// TODO: update server about last read page and finished reading
 
 // TODO: just realized that when you finish chapters (or mark as unread),
 //       I need to keep the chapters data up to date or the Library's unread chapters will be stale
@@ -41,6 +37,8 @@ import { Link } from 'react-router-dom';
 //       e.g. jumping pages using the slider, jumping chapters, going backwards in pages
 
 // https://tylermcginnis.com/react-router-programmatically-navigate/
+
+// https://www.javascriptstuff.com/detect-image-load/
 
 const styles = {
   // Need to set the backgroundImage url as well
@@ -146,8 +144,7 @@ class Reader extends Component {
     } = this.props;
 
     if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
-      // TODO: use loading spinner in the cases where that's relevant
-      return null;
+      return <FullScreenLoading />;
     }
 
     const backgroundImageStyle = {
