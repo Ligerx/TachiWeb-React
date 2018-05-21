@@ -28,6 +28,8 @@ export const Server = {
   },
 
   pageCount(mangaId, chapterId) {
+    // FIXME: server side inefficient design
+    //        chapters are unique, so there's no need to require mangaId
     return `/api/page_count/${mangaId}/${chapterId}`;
   },
 
