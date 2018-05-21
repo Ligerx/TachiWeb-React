@@ -10,6 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import { Link } from 'react-router-dom';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
+import compact from 'lodash/compact';
 
 // TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
 
@@ -54,6 +55,7 @@ class Reader extends Component {
   constructor(props) {
     super(props);
 
+    this.getAdjacentPageCounts = this.getAdjacentPageCounts.bind(this);
     this.preloadImages = this.preloadImages.bind(this);
     this.handlePrevPageClick = this.handlePrevPageClick.bind(this);
     this.handleNextPageClick = this.handleNextPageClick.bind(this);
@@ -63,24 +65,51 @@ class Reader extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchLibrary();
+    this.props.fetchMangaInfo();
     this.props.fetchChapters();
-    this.props.fetchPageCount();
+    this.props.fetchPageCount(this.props.chapterId);
   }
 
-  componentDidUpdate() {
-    this.preloadImages();
+  componentDidUpdate(prevProps) {
+    const {
+      page, chapterId, prevChapterId, nextChapterId,
+    } = this.props;
 
-    this.props.fetchLibrary();
-    this.props.fetchChapters();
-    this.props.fetchPageCount();
+    const pageChanged = page !== prevProps.page;
+    const chapterChanged = chapterId !== prevProps.chapterId;
+    const prevChapterChanged = prevChapterId !== prevProps.prevChapterId;
+    const nextChapterChanged = nextChapterId !== prevProps.nextChapterId;
+
+    // Preload more images when page or chapter changes.
+    // Should also fire once on page load.
+    if (pageChanged || chapterChanged) {
+      this.preloadImages();
+    }
+
+    // Always have the adjacent chapters' page counts loaded
+    // Also should fire once on page load.
+    if (chapterChanged || prevChapterChanged || nextChapterChanged) {
+      this.getAdjacentPageCounts();
+    }
+  }
+
+  getAdjacentPageCounts() {
+    // get current, previous, and next chapter page count
+    const {
+      chapterId, prevChapterId, nextChapterId, fetchPageCount,
+    } = this.props;
+    const chapters = compact([chapterId, prevChapterId, nextChapterId]);
+
+    chapters.forEach((thisChapterId) => {
+      fetchPageCount(thisChapterId);
+    });
   }
 
   preloadImages() {
     // https://www.photo-mark.com/notes/image-preloading/
     // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
     const {
-      mangaInfo, chapter, pageCount, page,
+      mangaInfo, chapterId, pageCount, page,
     } = this.props;
     const pageInt = parseInt(page, 10); // params are always strings, string -> int
     const numPreload = 3; // Currently preloading 3 images ahead
@@ -89,58 +118,62 @@ class Reader extends Component {
       if (parseInt(pageInt, 10) + i < pageCount) {
         // Chrome would only preload if a new image object was used every time
         const image = new Image();
-        image.src = Server.image(mangaInfo.id, chapter.id, pageInt + i);
+        image.src = Server.image(mangaInfo.id, chapterId, pageInt + i);
       }
     }
   }
 
   handlePrevPageClick() {
     const {
-      mangaInfo, chapter, page, prevChapterId,
+      mangaInfo, chapterId, page, prevChapterId, pageCounts,
     } = this.props;
     const pageInt = parseInt(page, 10);
 
     if (pageInt > 0) {
-      this.props.history.push(Client.page(mangaInfo.id, chapter.id, pageInt - 1));
+      this.props.history.push(Client.page(mangaInfo.id, chapterId, pageInt - 1));
     } else if (pageInt === 0 && prevChapterId) {
-      this.props.history.push(Client.page(mangaInfo.id, prevChapterId, 0));
+      // If on the first page, go to the previous chapter's last page
+      const prevPageCount = pageCounts[prevChapterId];
+      const lastPage = prevPageCount ? prevPageCount - 1 : 0;
+
+      this.props.history.push(Client.page(mangaInfo.id, prevChapterId, lastPage));
     }
   }
 
   handleNextPageClick() {
     const {
-      mangaInfo, chapter, pageCount, page, nextChapterId, updateReadingStatus,
+      mangaInfo, chapter, chapterId, pageCount, page, nextChapterId, updateReadingStatus,
     } = this.props;
     const pageInt = parseInt(page, 10);
 
     if (pageInt < pageCount - 1) {
       updateReadingStatus(chapter, pageCount, page + 1);
-      this.props.history.push(Client.page(mangaInfo.id, chapter.id, pageInt + 1));
+      this.props.history.push(Client.page(mangaInfo.id, chapterId, pageInt + 1));
     } else if (pageInt === pageCount - 1 && nextChapterId) {
       this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
     }
   }
 
   prevChapterUrl() {
-    // TODO: Ideally this would put you on the LAST page of the previous chapter.
-    //       Would need to first have the previous chapter's pageCount to do so.
-    const { mangaInfo, prevChapterId } = this.props;
-    return Client.page(mangaInfo.id, prevChapterId, 0);
+    // Links to the previous chapter's last page read
+    const { mangaInfo, prevChapterId, chapters } = this.props;
+    return changeChapterUrl(mangaInfo.id, prevChapterId, chapters);
   }
 
   nextChapterUrl() {
-    const { mangaInfo, nextChapterId } = this.props;
-    return Client.page(mangaInfo.id, nextChapterId, 0);
+    // Links to the next chapter's last page read
+    const { mangaInfo, nextChapterId, chapters } = this.props;
+    return changeChapterUrl(mangaInfo.id, nextChapterId, chapters);
   }
 
   handleJumpToPage(newPage) {
-    const { mangaInfo, chapter } = this.props;
-    this.props.history.push(Client.page(mangaInfo.id, chapter.id, newPage - 1));
+    const { mangaInfo, chapterId } = this.props;
+    this.props.history.push(Client.page(mangaInfo.id, chapterId, newPage - 1));
   }
 
   render() {
     const {
-      mangaInfo, chapters, chapter, pageCount, page, classes, prevChapterId, nextChapterId,
+      mangaInfo, chapters, chapter, chapterId, pageCount, page, classes, prevChapterId, nextChapterId,
     } = this.props;
 
     if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
@@ -148,7 +181,7 @@ class Reader extends Component {
     }
 
     const backgroundImageStyle = {
-      backgroundImage: `url(${Server.image(mangaInfo.id, chapter.id, page)})`,
+      backgroundImage: `url(${Server.image(mangaInfo.id, chapterId, page)})`,
     };
 
     return (
@@ -190,16 +223,36 @@ class Reader extends Component {
   }
 }
 
+// Helper methods
+function changeChapterUrl(mangaId, newChapterId, chapters) {
+  const newChapter = findChapter(chapters, newChapterId);
+  let goToPage = newChapter ? newChapter.last_page_read : 0;
+
+  if (newChapter && newChapter.read) {
+    goToPage = 0;
+  }
+
+  return Client.page(mangaId, newChapterId, goToPage);
+}
+
+function findChapter(chapters, chapterId) {
+  if (!chapters || chapters.length === 0) return null;
+
+  return chapters.find(chapter => chapter.id === parseInt(chapterId, 10));
+}
+
 Reader.propTypes = {
   mangaInfo: mangaType,
   chapters: PropTypes.arrayOf(chapterType),
   chapter: chapterType,
+  chapterId: PropTypes.number.isRequired,
+  pageCounts: PropTypes.object.isRequired,
   pageCount: PropTypes.number,
   page: PropTypes.number.isRequired,
   prevChapterId: PropTypes.number,
   nextChapterId: PropTypes.number,
   // Redux actions
-  fetchLibrary: PropTypes.func.isRequired,
+  fetchMangaInfo: PropTypes.func.isRequired,
   fetchChapters: PropTypes.func.isRequired,
   fetchPageCount: PropTypes.func.isRequired,
   updateReadingStatus: PropTypes.func.isRequired,

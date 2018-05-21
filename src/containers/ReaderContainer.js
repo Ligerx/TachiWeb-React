@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { fetchLibrary } from 'redux-ducks/library';
+import { fetchMangaInfo } from 'redux-ducks/mangaInfos';
 import { fetchChapters, updateReadingStatus } from 'redux-ducks/chapters';
 import { fetchPageCount } from 'redux-ducks/pageCounts';
 import Reader from 'pages/Reader';
@@ -13,6 +13,8 @@ const mapStateToProps = (state, ownProps) => {
     mangaInfo: mangaInfos[mangaId],
     chapters: chapters[mangaId],
     chapter: findChapter(chapters[mangaId], chapterId),
+    chapterId: parseInt(chapterId, 10),
+    pageCounts: pageCountsByChapterId,
     pageCount: pageCountsByChapterId[chapterId],
     page: parseInt(ownProps.match.params.page, 10),
     prevChapterId: getPrevChapterId(chapters[mangaId], chapterId),
@@ -21,12 +23,12 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { mangaId, chapterId } = ownProps.match.params;
+  const { mangaId } = ownProps.match.params;
 
   return {
-    fetchLibrary: () => dispatch(fetchLibrary()),
+    fetchMangaInfo: () => dispatch(fetchMangaInfo(mangaId)),
     fetchChapters: () => dispatch(fetchChapters(mangaId)),
-    fetchPageCount: () => dispatch(fetchPageCount(mangaId, chapterId)),
+    fetchPageCount: chapterId => dispatch(fetchPageCount(mangaId, chapterId)),
     updateReadingStatus: (chapter, pageCount, readPage) =>
       dispatch(updateReadingStatus(mangaId, chapter, pageCount, readPage)),
   };
