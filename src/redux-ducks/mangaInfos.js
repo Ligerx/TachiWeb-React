@@ -31,6 +31,8 @@ export const ADD_MANGA = 'mangaInfos/ADD_MANGA';
 // ================================================================================
 // Reducers
 // ================================================================================
+// The state is an object with mangaId keys pointing to mangaInfo objects
+// i.e. { mangaId: {mangaInfoObject} }
 export default function mangaInfosReducer(state = {}, action = {}) {
   switch (action.type) {
     case ADD_MANGA:
