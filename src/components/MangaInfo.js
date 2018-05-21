@@ -4,8 +4,8 @@ import MangaInfoDetails from 'components/MangaInfoDetails';
 import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
-import FavoriteFAB from 'components/FavoriteFAB';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
+import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 
 // FEATURES TODO:
 // mark as read
@@ -32,20 +32,16 @@ class MangaInfo extends Component {
   tabContent() {
     const { tabValue } = this.state;
     const {
-      mangaInfo, chapters, favoriteIsToggling, toggleFavorite,
+      mangaInfo, chapters,
     } = this.props;
 
-    const isFavorite = mangaInfo ? mangaInfo.favorite : false;
     const numChapters = chapters ? chapters.length : 0;
+    const mangaId = mangaInfo ? mangaInfo.id : undefined;
 
     if (tabValue === 0) {
       return (
         <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters}>
-          <FavoriteFAB
-            isFavorite={isFavorite}
-            favoriteIsToggling={favoriteIsToggling}
-            toggleFavorite={toggleFavorite}
-          />
+          <FavoriteFABContainer mangaId={mangaId} />
         </MangaInfoDetails>
       );
     } else if (tabValue === 1) {
@@ -58,7 +54,9 @@ class MangaInfo extends Component {
 
   render() {
     const { tabValue } = this.state;
-    const { mangaInfo, onBackClick, onRefreshClick, isLoading } = this.props;
+    const {
+      mangaInfo, onBackClick, onRefreshClick, isLoading,
+    } = this.props;
 
     return (
       <React.Fragment>
@@ -83,8 +81,6 @@ MangaInfo.propTypes = {
   initialTabValue: PropTypes.number.isRequired,
   onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   onRefreshClick: PropTypes.func.isRequired,
-  favoriteIsToggling: PropTypes.bool.isRequired,
-  toggleFavorite: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 

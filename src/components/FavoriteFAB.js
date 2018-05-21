@@ -21,8 +21,9 @@ const FavoriteFAB = ({
   classes, isFavorite, favoriteIsToggling, toggleFavorite,
 }) => (
   <React.Fragment>
-    <FAB onClick={toggleFavorite}>
+    <FAB onClick={toggleFavorite(isFavorite)}>
       {isFavorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
+
       {favoriteIsToggling && (
         <CircularProgress size={70} color="secondary" className={classes.fabProgress} />
       )}

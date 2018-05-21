@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { mangaType, chapterType } from 'types';
 import PropTypes from 'prop-types';
 import MangaInfo from 'components/MangaInfo';
@@ -31,13 +30,7 @@ class MangaInfoPage extends Component {
   }
 
   render() {
-    const {
-      mangaInfo,
-      chapters,
-      fetchOrRefreshIsLoading,
-      favoriteIsToggling,
-      toggleFavorite,
-    } = this.props;
+    const { mangaInfo, chapters, fetchOrRefreshIsLoading } = this.props;
 
     return (
       <MangaInfo
@@ -46,8 +39,6 @@ class MangaInfoPage extends Component {
         initialTabValue={1}
         onBackClick={Client.library()}
         onRefreshClick={this.handleRefreshClick}
-        favoriteIsToggling={favoriteIsToggling}
-        toggleFavorite={mangaInfo ? toggleFavorite(mangaInfo.favorite) : () => {}}
         isLoading={fetchOrRefreshIsLoading}
       />
     );
@@ -59,10 +50,8 @@ MangaInfoPage.propTypes = {
   chapters: PropTypes.arrayOf(chapterType),
 
   fetchOrRefreshIsLoading: PropTypes.bool.isRequired,
-  favoriteIsToggling: PropTypes.bool.isRequired,
 
   fetchChapters: PropTypes.func.isRequired,
-  toggleFavorite: PropTypes.func.isRequired,
   updateChapters: PropTypes.func.isRequired,
   fetchMangaInfo: PropTypes.func.isRequired,
   updateMangaInfo: PropTypes.func.isRequired,
