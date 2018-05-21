@@ -10,6 +10,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import CatalogueHeader from 'components/CatalogueHeader';
+import CenteredLoading from 'components/loading/CenteredLoading';
 
 // TODO: sources type
 // TODO: filter type?
@@ -235,8 +236,7 @@ class Catalogue extends Component {
           <Waypoint onEnter={this.handleLoadNextPage} bottomOffset={-300} />
         )}
 
-        {catalogueIsLoading && <CircularProgress />}
-        {addPageIsLoading && <CircularProgress />}
+        {(catalogueIsLoading || addPageIsLoading) && <CenteredLoading />}
       </React.Fragment>
     );
   }
