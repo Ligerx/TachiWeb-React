@@ -4,6 +4,7 @@ import MangaGrid from 'components/MangaGrid';
 import LibraryMangaCard from 'components/LibraryMangaCard';
 import PropTypes from 'prop-types';
 import { mangaType } from 'types';
+import FullScreenLoading from 'components/loading/FullScreenLoading';
 
 // TODO: sort/filter mangaLibrary
 
@@ -27,7 +28,7 @@ class Library extends Component {
   }
 
   render() {
-    const { mangaLibrary, unread } = this.props;
+    const { mangaLibrary, unread, libraryIsLoading } = this.props;
 
     return (
       <React.Fragment>
@@ -37,6 +38,8 @@ class Library extends Component {
           mangaLibrary={mangaLibrary}
           cardComponent={<LibraryMangaCard unread={unread} />}
         />
+
+        {libraryIsLoading && <FullScreenLoading />}
       </React.Fragment>
     );
   }
@@ -45,6 +48,8 @@ class Library extends Component {
 Library.propTypes = {
   mangaLibrary: PropTypes.arrayOf(mangaType),
   unread: PropTypes.object.isRequired,
+  libraryIsLoading: PropTypes.bool.isRequired,
+
   fetchLibrary: PropTypes.func.isRequired,
   fetchUnread: PropTypes.func.isRequired,
 };
