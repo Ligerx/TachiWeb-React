@@ -11,15 +11,14 @@ const FETCH_CACHE = 'pageCounts/FETCH_CACHE';
 // ================================================================================
 // Reducers
 // ================================================================================
-export default function chaptersReducer(state = { pageCountsByChapterId: {} }, action = {}) {
+// The state is an object with chapterId keys pointing to pageCount values
+// i.e. { chapterId: pageCount }
+export default function chaptersReducer(state = {}, action = {}) {
   switch (action.type) {
     case FETCH_SUCCESS:
       return {
         ...state,
-        pageCountsByChapterId: {
-          ...state.pageCountsByChapterId,
-          [action.chapterId]: action.pageCount,
-        },
+        [action.chapterId]: action.pageCount,
       };
     case FETCH_CACHE:
       return state;
@@ -34,8 +33,7 @@ export default function chaptersReducer(state = { pageCountsByChapterId: {} }, a
 export function fetchPageCount(mangaId, chapterId) {
   return (dispatch, getState) => {
     // Return manga's chapters' cached pageCount data if they're already in the store
-    const { pageCountsByChapterId } = getState().pageCounts;
-    if (pageCountsByChapterId[chapterId]) {
+    if (getState().pageCounts[chapterId]) {
       return dispatch({ type: FETCH_CACHE });
     }
 
