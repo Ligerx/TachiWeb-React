@@ -1,18 +1,25 @@
+// @flow
 import React, { Component } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Drawer from '@material-ui/core/Drawer';
 import MenuList from 'components/MenuList';
 
-class MenuDrawer extends Component {
-  constructor(props) {
+type State = {
+  drawerOpen: boolean,
+};
+
+class MenuDrawer extends Component<{}, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       drawerOpen: false,
     };
   }
 
-  toggleDrawer = isOpen => () => {
+  // props: Props;
+
+  toggleDrawer = (isOpen: boolean) => () => {
     this.setState({ drawerOpen: isOpen });
   };
 

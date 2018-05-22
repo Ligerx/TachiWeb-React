@@ -1,13 +1,21 @@
+// @flow
 import React from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import PropTypes from 'prop-types';
+
+type Props = {
+  name: string,
+  values: Array<string>,
+  index: number,
+  state: number,
+  onChange: Function,
+};
 
 const FilterSelect = ({
   name, values, index, state, onChange,
-}) => (
+}: Props) => (
   <FormControl>
     <InputLabel htmlFor={generateId(index)}>{name}</InputLabel>
     <Select value={state} onChange={onChange} inputProps={{ id: generateId(index) }}>
@@ -21,16 +29,8 @@ const FilterSelect = ({
 );
 
 // Helper function
-function generateId(index) {
+function generateId(index: number): string {
   return `filter-select-${index}`;
 }
-
-FilterSelect.propTypes = {
-  name: PropTypes.string.isRequired,
-  values: PropTypes.arrayOf(PropTypes.string).isRequired,
-  index: PropTypes.number.isRequired,
-  state: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
 
 export default FilterSelect;

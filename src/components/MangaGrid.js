@@ -1,7 +1,12 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import ResponsiveGrid from 'components/ResponsiveGrid';
-import PropTypes from 'prop-types';
-import { mangaType } from 'types';
+import { MangaType } from 'types';
+
+type Props = {
+  mangaLibrary: Array<MangaType>,
+  cardComponent: React.Node,
+};
 
 // NOTE: You must pass a cardComponent, which is what will be rendered.
 //       As of writing this, there is LibraryMangaCard and CatalogueMangaCard
@@ -10,15 +15,10 @@ import { mangaType } from 'types';
 // https://reactjs.org/docs/composition-vs-inheritance.html
 // https://stackoverflow.com/questions/32370994/how-to-pass-props-to-this-props-children
 
-const MangaGrid = ({ mangaLibrary, cardComponent }) => (
+const MangaGrid = ({ mangaLibrary, cardComponent }: Props) => (
   <ResponsiveGrid container justify="center">
     {mangaLibrary.map(manga => React.cloneElement(cardComponent, { key: manga.id, manga }))}
   </ResponsiveGrid>
 );
-
-MangaGrid.propTypes = {
-  mangaLibrary: PropTypes.arrayOf(mangaType).isRequired,
-  cardComponent: PropTypes.element.isRequired,
-};
 
 export default MangaGrid;

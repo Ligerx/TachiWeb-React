@@ -1,8 +1,18 @@
+// @flow
 import React, { Component } from 'react';
-import { mangaType, chapterType } from 'types';
-import PropTypes from 'prop-types';
+import { MangaType, ChapterType } from 'types';
 import MangaInfo from 'components/MangaInfo';
 import { Client } from 'api';
+
+type Props = {
+  mangaInfo?: MangaType,
+  chapters?: Array<ChapterType>,
+  fetchOrRefreshIsLoading: boolean,
+  fetchChapters: Function,
+  updateChapters: Function,
+  fetchMangaInfo: Function,
+  updateMangaInfo: Function,
+};
 
 // Honestly couldn't come up with a different name to differentiate it from MangaInfo component
 // I might rename the other files in the /pages folder to include _Page at the end. I dunno...
@@ -12,7 +22,12 @@ import { Client } from 'api';
 //       I'm assuming the server would have already scraped once when the
 //       user added a manga via the catalogue.
 
-class MangaInfoPage extends Component {
+class MangaInfoPage extends Component<Props> {
+  static defaultProps = {
+    mangaInfo: null,
+    chapters: [],
+  };
+
   componentDidMount() {
     this.props.fetchMangaInfo();
     this.props.fetchChapters();
@@ -38,24 +53,5 @@ class MangaInfoPage extends Component {
     );
   }
 }
-
-MangaInfoPage.propTypes = {
-  mangaInfo: mangaType,
-  chapters: PropTypes.arrayOf(chapterType),
-
-  fetchOrRefreshIsLoading: PropTypes.bool.isRequired,
-
-  fetchChapters: PropTypes.func.isRequired,
-  updateChapters: PropTypes.func.isRequired,
-  fetchMangaInfo: PropTypes.func.isRequired,
-  updateMangaInfo: PropTypes.func.isRequired,
-};
-
-// When data hasn't loaded yet, mangaInfo and chapters can be non-existant.
-// That causes react to complain about propTypes, so set default values here.
-MangaInfoPage.defaultProps = {
-  mangaInfo: null,
-  chapters: [],
-};
 
 export default MangaInfoPage;

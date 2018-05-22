@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
@@ -7,8 +8,13 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 
-class SearchButton extends Component {
-  constructor(props) {
+type State = {
+  searchVisible: boolean,
+  searchText: string,
+};
+
+class SearchButton extends Component<{}, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       searchVisible: false,

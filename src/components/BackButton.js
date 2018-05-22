@@ -1,10 +1,12 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import { Link } from 'react-router-dom';
 
-const BackButton = ({ onBackClick }) => {
+type Props = { onBackClick: string | Function };
+
+const BackButton = ({ onBackClick }: Props) => {
   if (typeof onBackClick === 'function') {
     return (
       <IconButton onClick={onBackClick}>
@@ -25,10 +27,6 @@ const BackButton = ({ onBackClick }) => {
       <Icon>arrow_back</Icon>
     </IconButton>
   );
-};
-
-BackButton.propTypes = {
-  onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
 };
 
 export default BackButton;

@@ -1,9 +1,9 @@
+// @flow
 import React from 'react';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 
 // * fullWidth
 // Stretch card width to parent container.
@@ -38,6 +38,12 @@ const styles = {
   },
 };
 
+type Props = {
+  classes: Object,
+  coverUrl: string,
+  title?: string,
+};
+
 // NOTE: this is a basic implementation, and is meant to be wrapped by other components
 // At minumum, you should probably wrap it with a <Grid item>
 
@@ -46,25 +52,19 @@ const styles = {
 
 // FIXME: title can be too long. Limit the max length of the title.
 
-const MangaCard = ({ classes, title, coverUrl }) => (
+const MangaCard = ({ classes, title, coverUrl }: Props) => (
   <Card className={classes.fullWidth}>
     {!!coverUrl && <CardMedia className={classes.image} image={coverUrl} title={title} />}
 
     {!!title && (
-      <div className={classes.gradient}>
-        <Typography variant="title" className={classes.title}>
-          {title}
-        </Typography>
-      </div>
-    )}
+    <div className={classes.gradient}>
+      <Typography variant="title" className={classes.title}>
+        {title}
+      </Typography>
+    </div>
+      )}
   </Card>
 );
-
-MangaCard.propTypes = {
-  classes: PropTypes.object.isRequired,
-  coverUrl: PropTypes.string.isRequired,
-  title: PropTypes.string,
-};
 
 MangaCard.defaultProps = {
   title: '',

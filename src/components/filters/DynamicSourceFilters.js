@@ -1,8 +1,8 @@
+// @flow
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import FormGroup from '@material-ui/core/FormGroup';
 import FilterActions from './FilterActions';
 import { filterElements } from './filterUtils';
@@ -35,8 +35,24 @@ const styles = {
   },
 };
 
-class DynamicSourceFilters extends Component {
-  constructor(props) {
+type Props = {
+  classes: Object,
+  filters?: Array<any>, // TODO: filter type
+  onResetClick: Function,
+  onSearchClick: Function,
+  onFilterChange: Function,
+};
+
+type State = {
+  drawerOpen: boolean,
+};
+
+class DynamicSourceFilters extends Component<Props, State> {
+  static defaultProps = {
+    filters: null,
+  };
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       drawerOpen: false,
@@ -77,17 +93,5 @@ class DynamicSourceFilters extends Component {
     );
   }
 }
-
-DynamicSourceFilters.propTypes = {
-  classes: PropTypes.object.isRequired,
-  filters: PropTypes.array,
-  onResetClick: PropTypes.func.isRequired,
-  onSearchClick: PropTypes.func.isRequired,
-  onFilterChange: PropTypes.func.isRequired,
-};
-
-DynamicSourceFilters.defaultProps = {
-  filters: null,
-};
 
 export default withStyles(styles)(DynamicSourceFilters);

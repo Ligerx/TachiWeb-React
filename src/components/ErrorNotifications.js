@@ -1,15 +1,22 @@
+// @flow
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
+
+type Props = { errorMessage?: string };
+type State = { open: boolean, message: string };
 
 // TODO: Honestly, the logic here feels really fragile, and I don't
 //       have the best grasp of all the edge cases.
 //       Maybe finding a library would be helpful for this.
 
-class ErrorNotifications extends Component {
-  constructor(props) {
+class ErrorNotifications extends Component<Props, State> {
+  static defaultProps = {
+    errorMessage: '',
+  };
+
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -73,13 +80,5 @@ class ErrorNotifications extends Component {
     );
   }
 }
-
-ErrorNotifications.propTypes = {
-  errorMessage: PropTypes.string,
-};
-
-ErrorNotifications.defaultProps = {
-  errorMessage: '',
-};
 
 export default ErrorNotifications;

@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -7,10 +8,11 @@ import MoreButton from 'components/MoreButton';
 import RefreshButton from 'components/RefreshButton';
 import SearchButton from 'components/SearchButton';
 import MenuDrawer from 'components/MenuDrawer';
-import PropTypes from 'prop-types';
+
+type Props = { onRefreshClick: Function };
 
 // Every header is different? This is only for the Library header
-const LibraryHeader = ({ onRefreshClick }) => (
+const LibraryHeader = ({ onRefreshClick }: Props) => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
       <MenuDrawer />
@@ -29,9 +31,5 @@ const LibraryHeader = ({ onRefreshClick }) => (
     </Toolbar>
   </AppBar>
 );
-
-LibraryHeader.propTypes = {
-  onRefreshClick: PropTypes.func.isRequired,
-};
 
 export default LibraryHeader;

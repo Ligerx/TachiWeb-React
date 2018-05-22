@@ -1,17 +1,29 @@
+// @flow
 import React, { Component } from 'react';
 import LibraryHeader from 'components/LibraryHeader';
 import MangaGrid from 'components/MangaGrid';
 import LibraryMangaCard from 'components/LibraryMangaCard';
-import PropTypes from 'prop-types';
-import { mangaType } from 'types';
+import { MangaType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
+
+type Props = {
+  mangaLibrary?: Array<MangaType>,
+  unread: Array<number>, // TODO: unread type?
+  libraryIsLoading: boolean,
+  fetchLibrary: Function,
+  fetchUnread: Function,
+};
 
 // TODO: sort/filter mangaLibrary
 
 // NOTE: unread count relies on the server knowing how many chapters there are
 //       If for some reason the server hasn't scraped a list of chapters, this number won't appear
 
-class Library extends Component {
+class Library extends Component<Props> {
+  static defaultProps = {
+    mangaLibrary: [],
+  };
+
   componentDidMount() {
     this.props.fetchLibrary();
     this.props.fetchUnread();
@@ -38,18 +50,5 @@ class Library extends Component {
     );
   }
 }
-
-Library.propTypes = {
-  mangaLibrary: PropTypes.arrayOf(mangaType),
-  unread: PropTypes.object.isRequired,
-  libraryIsLoading: PropTypes.bool.isRequired,
-
-  fetchLibrary: PropTypes.func.isRequired,
-  fetchUnread: PropTypes.func.isRequired,
-};
-
-Library.defaultProps = {
-  mangaLibrary: [],
-};
 
 export default Library;

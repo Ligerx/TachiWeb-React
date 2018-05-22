@@ -1,7 +1,7 @@
+// @flow
 import React from 'react';
 import Icon from '@material-ui/core/Icon';
 import FAB from 'components/FAB';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -17,25 +17,25 @@ const styles = {
   },
 };
 
+type Props = {
+  classes: Object,
+  isFavorite: boolean,
+  favoriteIsToggling: boolean,
+  toggleFavorite: Function,
+};
+
 const FavoriteFAB = ({
   classes, isFavorite, favoriteIsToggling, toggleFavorite,
-}) => (
+}: Props) => (
   <React.Fragment>
     <FAB onClick={toggleFavorite(isFavorite)}>
       {isFavorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
 
       {favoriteIsToggling && (
-        <CircularProgress size={70} color="secondary" className={classes.fabProgress} />
-      )}
+      <CircularProgress size={70} color="secondary" className={classes.fabProgress} />
+        )}
     </FAB>
   </React.Fragment>
 );
-
-FavoriteFAB.propTypes = {
-  classes: PropTypes.object.isRequired,
-  isFavorite: PropTypes.bool.isRequired,
-  favoriteIsToggling: PropTypes.bool.isRequired,
-  toggleFavorite: PropTypes.func.isRequired,
-};
 
 export default withStyles(styles)(FavoriteFAB);

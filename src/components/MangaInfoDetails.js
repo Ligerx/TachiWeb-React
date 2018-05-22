@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import ResponsiveGrid from 'components/ResponsiveGrid';
@@ -6,7 +7,6 @@ import Grid from '@material-ui/core/Grid';
 import BackgroundImage from 'components/BackgroundImage';
 import { withStyles } from '@material-ui/core/styles';
 import { mangaType } from 'types';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Server } from 'api';
 import upperFirst from 'lodash/upperFirst';
@@ -22,9 +22,16 @@ const styles = () => ({
   },
 });
 
+type Props = {
+  classes: Object,
+  mangaInfo?: mangaType,
+  numChapters?: number,
+  children?: number | string | React.Element | Array<any>,
+};
+
 const MangaInfoDetails = ({
   classes, mangaInfo, numChapters, children,
-}) => {
+}: Props) => {
   const coverUrl = mangaInfo ? Server.cover(mangaInfo.id) : '';
   const title = mangaInfo ? mangaInfo.title : '';
   const description = mangaInfo ? mangaInfo.description : '';
@@ -82,13 +89,6 @@ const DetailComponent = ({ fieldName, value }) => (
     {value}
   </Typography>
 );
-
-MangaInfoDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  mangaInfo: mangaType,
-  numChapters: PropTypes.number,
-  children: PropTypes.node,
-};
 
 MangaInfoDetails.defaultProps = {
   mangaInfo: null,

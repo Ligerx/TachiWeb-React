@@ -1,5 +1,5 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -8,9 +8,19 @@ import Icon from '@material-ui/core/Icon';
 import FormGroup from '@material-ui/core/FormGroup';
 import ButtonBase from '@material-ui/core/ButtonBase';
 
+type Props = {
+  values: Array<string>,
+  name: string,
+  state: {
+    index: number,
+    ascending: boolean,
+  },
+  onChange: Function,
+};
+
 const FilterSort = ({
   values, name, state, onChange,
-}) => (
+}: Props) => (
   <ExpansionPanel>
     <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
       <Typography>{name}</Typography>
@@ -19,7 +29,7 @@ const FilterSort = ({
       <FormGroup>
         {values.map((value, nestedIndex) => (
           <ButtonBase onClick={onChange(nestedIndex)} key={nestedIndex}>
-            <Icon>{iconValue(state, nestedIndex)}</Icon>
+            <Icon>{iconValue(state.index, state.ascending, nestedIndex)}</Icon>
             <Typography>{value}</Typography>
           </ButtonBase>
         ))}
@@ -29,21 +39,11 @@ const FilterSort = ({
 );
 
 // Helper methods
-function iconValue({ index, ascending }, nestedIndex) {
+function iconValue(index: number, ascending: boolean, nestedIndex: number): string {
   if (nestedIndex === index) {
     return ascending ? 'arrow_upward' : 'arrow_downward';
   }
-  return null;
+  return '';
 }
-
-FilterSort.propTypes = {
-  values: PropTypes.arrayOf(PropTypes.string).isRequired,
-  name: PropTypes.string.isRequired,
-  state: PropTypes.shape({
-    index: PropTypes.number.isRequired,
-    ascending: PropTypes.bool.isRequired,
-  }).isRequired,
-  onChange: PropTypes.func.isRequired,
-};
 
 export default FilterSort;

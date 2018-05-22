@@ -1,5 +1,5 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -8,9 +8,16 @@ import Icon from '@material-ui/core/Icon';
 import FormGroup from '@material-ui/core/FormGroup';
 import FilterTristate from './FilterTristate';
 
+type Props = {
+  name: string,
+  // array of nested filter options
+  state: Array<any>, // TODO: type this
+  onChange: Function,
+};
+
 // NOTE: Assuming that GROUP will only contain TRISTATE children
 
-const FilterGroup = ({ name, state, onChange }) => (
+const FilterGroup = ({ name, state, onChange }: Props) => (
   <ExpansionPanel>
     <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
       <Typography>{name}</Typography>
@@ -24,16 +31,10 @@ const FilterGroup = ({ name, state, onChange }) => (
             onChange={onChange(nestedIndex)}
             key={nestedIndex}
           />
-        ))}
+          ))}
       </FormGroup>
     </ExpansionPanelDetails>
   </ExpansionPanel>
 );
-
-FilterGroup.propTypes = {
-  name: PropTypes.string.isRequired,
-  state: PropTypes.array.isRequired, // array of nested filter options
-  onChange: PropTypes.func.isRequired,
-};
 
 export default FilterGroup;

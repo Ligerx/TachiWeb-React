@@ -1,9 +1,9 @@
+// @flow
 import React, { Component } from 'react';
 import { Server, Client } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
-import { mangaType, chapterType } from 'types';
-import PropTypes from 'prop-types';
+import { MangaType, ChapterType } from 'types';
 import { withStyles } from '@material-ui/core/styles';
 import PageSlider from 'components/PageSlider';
 import IconButton from '@material-ui/core/IconButton';
@@ -51,7 +51,37 @@ const styles = {
   },
 };
 
-class Reader extends Component {
+type Props = {
+  mangaInfo?: MangaType,
+  chapters?: Array<ChapterType>,
+  chapter?: ChapterType,
+  chapterId: number,
+  pageCounts: Object, // TODO: type???
+  pageCount?: number,
+  page: number,
+  prevChapterId?: number,
+  nextChapterId?: number,
+  // Redux actions
+  fetchMangaInfo: Function,
+  fetchChapters: Function,
+  fetchPageCount: Function,
+  updateReadingStatus: Function,
+  // Classes is the injected styles
+  classes: Object,
+  // Below are react-router props
+  history: { push: Function },
+};
+
+class Reader extends Component<Props> {
+  static defaultProps = {
+    mangaInfo: null,
+    chapters: [],
+    chapter: null,
+    pageCount: 0,
+    prevChapterId: null,
+    nextChapterId: null,
+  }
+
   componentDidMount() {
     this.props.fetchMangaInfo();
     this.props.fetchChapters();
@@ -236,37 +266,5 @@ function findChapter(chapters, chapterId) {
 
   return chapters.find(chapter => chapter.id === parseInt(chapterId, 10));
 }
-
-Reader.propTypes = {
-  mangaInfo: mangaType,
-  chapters: PropTypes.arrayOf(chapterType),
-  chapter: chapterType,
-  chapterId: PropTypes.number.isRequired,
-  pageCounts: PropTypes.object.isRequired,
-  pageCount: PropTypes.number,
-  page: PropTypes.number.isRequired,
-  prevChapterId: PropTypes.number,
-  nextChapterId: PropTypes.number,
-  // Redux actions
-  fetchMangaInfo: PropTypes.func.isRequired,
-  fetchChapters: PropTypes.func.isRequired,
-  fetchPageCount: PropTypes.func.isRequired,
-  updateReadingStatus: PropTypes.func.isRequired,
-  // Classes is the injected styles
-  classes: PropTypes.object.isRequired,
-  // Below are react-router props
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-};
-
-Reader.defaultProps = {
-  mangaInfo: null,
-  chapters: [],
-  chapter: null,
-  pageCount: 0,
-  prevChapterId: null,
-  nextChapterId: null,
-};
 
 export default withStyles(styles)(Reader);

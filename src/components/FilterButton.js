@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
@@ -7,8 +8,15 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
-class FilterButton extends Component {
-  constructor(props) {
+type Props = {}; // TODO: nothing here, flow confused?
+type State = {
+  anchorEl: ?HTMLElement, // don't know what to put here
+  filterDownloaded: boolean,
+  filterUnread: boolean,
+};
+
+class FilterButton extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       anchorEl: null,
@@ -17,7 +25,9 @@ class FilterButton extends Component {
     };
   }
 
-  handleClick = (event) => {
+  // props: Props;
+
+  handleClick = (event: SyntheticEvent<HTMLElement>) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -34,8 +44,8 @@ class FilterButton extends Component {
     this.setState({ anchorEl: null });
   };
 
-  handleChange = name => (event) => {
-    this.setState({ [name]: event.target.checked });
+  handleChange = (name: string) => (event: SyntheticEvent<HTMLInputElement>) => {
+    this.setState({ [name]: event.currentTarget.checked });
   };
 
   render() {

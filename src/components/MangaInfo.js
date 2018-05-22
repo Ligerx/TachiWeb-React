@@ -1,11 +1,24 @@
+// @flow
 import React, { Component } from 'react';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
 import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
-import { mangaType, chapterType } from 'types';
-import PropTypes from 'prop-types';
+import { MangaType, ChapterType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';
+
+type Props = {
+  mangaInfo?: MangaType,
+  chapters?: Array<ChapterType>,
+  initialTabValue: number,
+  onBackClick: string | Function,
+  onRefreshClick: Function,
+  isLoading: boolean,
+};
+
+type State = {
+  tabValue: number,
+};
 
 // FEATURES TODO:
 // mark as read
@@ -13,8 +26,13 @@ import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 // download
 // delete
 
-class MangaInfo extends Component {
-  constructor(props) {
+class MangaInfo extends Component<Props, State> {
+  static defaultProps = {
+    mangaInfo: null,
+    chapters: [],
+  }
+
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -22,7 +40,9 @@ class MangaInfo extends Component {
     };
   }
 
-  handleChangeTab = (event, newValue) => {
+  props: Props;
+
+  handleChangeTab = (event: SyntheticEvent<>, newValue: number) => {
     this.setState({ tabValue: newValue });
   };
 
@@ -71,19 +91,5 @@ class MangaInfo extends Component {
     );
   }
 }
-
-MangaInfo.propTypes = {
-  mangaInfo: mangaType,
-  chapters: PropTypes.arrayOf(chapterType),
-  initialTabValue: PropTypes.number.isRequired,
-  onBackClick: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
-  onRefreshClick: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-};
-
-MangaInfo.defaultProps = {
-  mangaInfo: null,
-  chapters: [],
-};
 
 export default MangaInfo;

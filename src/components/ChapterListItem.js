@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import Moment from 'moment';
@@ -7,8 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import { Client } from 'api';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { chapterType, mangaType } from 'types';
+import { ChapterType, MangaType } from 'types';
 
 // TODO: add additional actions such as mark as read/unread.
 // TODO: align the bottom row text? It's a little off horizontally right now.
@@ -19,7 +19,13 @@ const styles = () => ({
   },
 });
 
-const ChapterListItem = ({ classes, mangaInfo, chapter }) => {
+type Props = {
+  classes: Object,
+  mangaInfo?: MangaType,
+  chapter: ChapterType,
+};
+
+const ChapterListItem = ({ classes, mangaInfo, chapter }: Props) => {
   const dimIfRead = read => classNames({ [classes.read]: read });
   const goToPage = chapter.read ? 0 : chapter.last_page_read;
   const pageLink = mangaInfo ? Client.page(mangaInfo.id, chapter.id, goToPage) : null;
@@ -55,12 +61,6 @@ function chapterText(read, last_page_read) {
   return text;
 }
 /* eslint-enable camelcase */
-
-ChapterListItem.propTypes = {
-  classes: PropTypes.object.isRequired,
-  mangaInfo: mangaType,
-  chapter: chapterType.isRequired,
-};
 
 ChapterListItem.defaultProps = {
   mangaInfo: null,

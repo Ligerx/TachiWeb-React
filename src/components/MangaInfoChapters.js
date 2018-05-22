@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import List from '@material-ui/core/List';
 import Grid from '@material-ui/core/Grid';
@@ -5,8 +6,7 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import ChapterListItem from 'components/ChapterListItem';
-import PropTypes from 'prop-types';
-import { chapterType, mangaType } from 'types';
+import { ChapterType, MangaType } from 'types';
 
 // TODO: update <ResponsiveGrid> so the list can be a lot tighter width
 
@@ -22,7 +22,13 @@ const styles = () => ({
   },
 });
 
-const MangaInfoChapters = ({ classes, mangaInfo, chapters }) => (
+type Props = {
+  classes: Object,
+  mangaInfo?: MangaType,
+  chapters: Array<ChapterType>,
+};
+
+const MangaInfoChapters = ({ classes, mangaInfo, chapters }: Props) => (
   <ResponsiveGrid>
     <Grid item xs={12}>
       <Paper>
@@ -35,12 +41,6 @@ const MangaInfoChapters = ({ classes, mangaInfo, chapters }) => (
     </Grid>
   </ResponsiveGrid>
 );
-
-MangaInfoChapters.propTypes = {
-  classes: PropTypes.object.isRequired,
-  mangaInfo: mangaType,
-  chapters: PropTypes.arrayOf(chapterType).isRequired,
-};
 
 MangaInfoChapters.defaultProps = {
   mangaInfo: null,

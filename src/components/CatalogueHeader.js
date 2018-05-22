@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,11 +7,23 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import PropTypes from 'prop-types';
+import { SourceType } from 'types';
+
+type Props = {
+  sourceIndex: number,
+  sources: Array<SourceType>,
+  searchQuery: string,
+  onSourceChange: Function,
+  onSearchChange: Function,
+};
 
 const CatalogueHeader = ({
-  sourceIndex, sources, searchQuery, onSourceChange, onSearchChange,
-}) => {
+  sourceIndex,
+  sources,
+  searchQuery,
+  onSourceChange,
+  onSearchChange,
+}: Props) => {
   const sourcesExist = sources && sources.length > 0;
 
   return (
@@ -36,15 +49,6 @@ const CatalogueHeader = ({
       </Toolbar>
     </AppBar>
   );
-};
-
-CatalogueHeader.propTypes = {
-  sourceIndex: PropTypes.number.isRequired,
-  sources: PropTypes.array.isRequired,
-  searchQuery: PropTypes.string.isRequired,
-
-  onSourceChange: PropTypes.func.isRequired,
-  onSearchChange: PropTypes.func.isRequired,
 };
 
 export default CatalogueHeader;

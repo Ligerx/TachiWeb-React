@@ -1,22 +1,24 @@
+// @flow
 import React from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Client } from 'api';
 
 // Set the width of the menu
-const classes = {
+const styles = {
   list: {
     width: 250,
   },
 };
 
-const MenuList = props => (
-  <div className={props.classes.list}>
+type Props = { classes: Object };
+
+const MenuList = ({ classes }: Props) => (
+  <div className={classes.list}>
     <List>
       <ListItem>
         <Typography variant="title" gutterBottom>
@@ -42,8 +44,4 @@ const MenuList = props => (
   </div>
 );
 
-MenuList.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(classes)(MenuList);
+export default withStyles(styles)(MenuList);

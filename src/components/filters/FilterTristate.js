@@ -1,7 +1,13 @@
+// @flow
 import React from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import PropTypes from 'prop-types';
 import Checkbox from '@material-ui/core/Checkbox';
+
+type Props = {
+  name: string,
+  state: number,
+  onChange: Function,
+};
 
 // +-------+---------+
 // | Index | State   |
@@ -11,7 +17,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 // | 2     | EXCLUDE |
 // +-------+---------+
 
-const FilterTristate = ({ name, state, onChange }) => {
+const FilterTristate = ({ name, state, onChange }: Props) => {
   const checked = state === 1;
   const indeterminate = state === 0;
 
@@ -21,12 +27,6 @@ const FilterTristate = ({ name, state, onChange }) => {
       label={name}
     />
   );
-};
-
-FilterTristate.propTypes = {
-  name: PropTypes.string.isRequired,
-  state: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired,
 };
 
 export default FilterTristate;

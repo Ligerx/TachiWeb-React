@@ -1,8 +1,8 @@
+// @flow
 import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import 'rc-slider/assets/index.css';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
@@ -23,6 +23,17 @@ const styles = {
   },
 };
 
+type Props = {
+  classes: Object,
+  pageCount: number,
+  page: number,
+  onJumpToPage: Function,
+};
+
+type State = {
+  sliderValue: number,
+};
+
 // rc-slider is finicky. Use state.sliderValue as the value of the slider at all times
 // update it onChange, and use onAfterChange to fire any actual events
 //
@@ -32,14 +43,14 @@ const styles = {
 //        ReaderOverlay has a z-index, which is interfering with the tooltip.
 //        Ideally, this CSS wouldn't be necessary
 
-class PageSlider extends Component {
+class PageSlider extends Component<Props, State> {
   static getDerivedStateFromProps(nextProps) {
     // Set the initial sliderValue to always reflect the page # in the URL
     // 1 indexed for human readability
     return { sliderValue: nextProps.page + 1 };
   }
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -73,13 +84,5 @@ class PageSlider extends Component {
     );
   }
 }
-
-PageSlider.propTypes = {
-  pageCount: PropTypes.number.isRequired,
-  page: PropTypes.number.isRequired,
-  onJumpToPage: PropTypes.func.isRequired,
-  // Classes is the injected styles
-  classes: PropTypes.object.isRequired,
-};
 
 export default withStyles(styles)(PageSlider);

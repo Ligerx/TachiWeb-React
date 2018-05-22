@@ -1,9 +1,9 @@
+// @flow
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import { Client } from 'api';
@@ -30,9 +30,17 @@ const styles = {
   },
 };
 
+type Props = {
+  classes: Object,
+  title: string,
+  chapterNum: number,
+  mangaId: number,
+  children?: number | string | React.Element | Array<any>,
+};
+
 const ReaderOverlay = ({
   title, chapterNum, mangaId, classes, children,
-}) => (
+}: Props) => (
   <AppBar position="static" color="default" className={classes.overlay}>
     <Toolbar>
       <IconButton component={Link} to={Client.manga(mangaId)}>
@@ -48,7 +56,7 @@ const ReaderOverlay = ({
 );
 
 // Helper Function
-function chapterNumFormatter(chapterNum) {
+function chapterNumFormatter(chapterNum: number): string | number {
   // FIXME: This isn't smart enough to deal with more than 1 decimal point of precision
   // Could possibly just keep using toFixed until the trailing digit is 0
   const isInt = chapterNum % 1 === 0;
@@ -57,16 +65,6 @@ function chapterNumFormatter(chapterNum) {
   }
   return chapterNum.toFixed(1);
 }
-
-ReaderOverlay.propTypes = {
-  title: PropTypes.string.isRequired,
-  chapterNum: PropTypes.number.isRequired,
-  mangaId: PropTypes.number.isRequired,
-  // classes is the injected styles
-  classes: PropTypes.object.isRequired,
-  // children is what this component wraps around
-  children: PropTypes.node,
-};
 
 ReaderOverlay.defaultProps = {
   children: null,

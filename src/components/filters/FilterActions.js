@@ -1,5 +1,5 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
@@ -23,22 +23,22 @@ const styles = {
   },
 };
 
-const FilterActions = ({ classes, onResetClick, onSearchClick }) => (
+type Props = {
+  classes: Object,
+  onResetClick: Function,
+  onSearchClick: Function,
+};
+
+const FilterActions = ({ classes, onResetClick, onSearchClick }: Props) => (
   <div className={classes.controls}>
     <div className={classes.actionButtons}>
       <Button onClick={onResetClick}>Reset</Button>
       <Button variant="raised" color="primary" onClick={onSearchClick}>
-        Search
+          Search
       </Button>
     </div>
     <Divider />
   </div>
 );
-
-FilterActions.propTypes = {
-  classes: PropTypes.object.isRequired,
-  onResetClick: PropTypes.func.isRequired,
-  onSearchClick: PropTypes.func.isRequired,
-};
 
 export default withStyles(styles)(FilterActions);
