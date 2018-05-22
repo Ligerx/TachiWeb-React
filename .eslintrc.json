@@ -6,13 +6,16 @@
   },
   "parser": "babel-eslint",
   "extends": "airbnb",
-  "plugins": ["import"],
+  "plugins": ["import", "flowtype"],
   "rules": {
     "import/extensions": [1, "never"],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "react/forbid-prop-types": 0,
-    "no-use-before-define": ["error", { "functions": false }]
+    "no-use-before-define": ["error", { "functions": false }],
+
+    "flowtype/define-flow-type": 1,
+    "flowtype/use-flow-type": 1
   },
   "settings": {
     "import/resolver": {
