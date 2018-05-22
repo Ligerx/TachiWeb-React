@@ -41,7 +41,6 @@ class DynamicSourceFilters extends Component {
     this.state = {
       drawerOpen: false,
     };
-    this.toggleDrawer = this.toggleDrawer.bind(this);
   }
 
   toggleDrawer = isOpen => () => {

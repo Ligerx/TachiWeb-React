@@ -25,11 +25,6 @@ class SearchButton extends Component {
     // inputRef={(input) => {
     //   this.inputRef = input;
     // }}
-
-    this.handleClick = this.handleClick.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClearSearch = this.handleClearSearch.bind(this);
-    this.handleBlur = this.handleBlur.bind(this);
   }
 
   handleClick = () => {

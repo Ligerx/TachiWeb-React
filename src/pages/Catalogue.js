@@ -46,16 +46,6 @@ class Catalogue extends Component {
       currentFilters: null, // temporarily store user changes, use to overwrite lastUsedFilters
       mangaIdBeingViewed: null,
     };
-
-    this.handleSourceChange = this.handleSourceChange.bind(this);
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-    this.handleCardClick = this.handleCardClick.bind(this);
-    this.handleMangaInfoBackClick = this.handleMangaInfoBackClick.bind(this);
-    this.handleLoadNextPage = this.handleLoadNextPage.bind(this);
-    this.handleResetFilters = this.handleResetFilters.bind(this);
-    this.handleFilterChange = this.handleFilterChange.bind(this);
-    this.handleSearchFilters = this.handleSearchFilters.bind(this);
-    this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
   componentDidMount() {
@@ -95,51 +85,49 @@ class Catalogue extends Component {
     this.delayedSearch.cancel();
   }
 
-  handleSourceChange(event) {
+  handleSourceChange = (event) => {
     this.setState({ sourceIndex: event.target.value, searchQuery: '' });
-  }
+  };
 
-  handleSearchChange(event) {
+  handleSearchChange = (event) => {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     this.setState({ searchQuery: event.target.value });
     this.delayedSearch();
-  }
+  };
 
-  handleCardClick(mangaId) {
-    return () => {
-      this.setState({ mangaIdBeingViewed: mangaId });
+  handleCardClick = mangaId => () => {
+    this.setState({ mangaIdBeingViewed: mangaId });
 
-      // Fetch chapters cached on server
-      // If there are none, tell server to scrape the site
-      this.props.fetchChapters(mangaId)
-        .then(() => {
-          const chapters = this.props.chaptersByMangaId[mangaId];
-          if (chapters && chapters.length <= 0) {
-            this.props.updateChapters(mangaId);
-          }
-        });
+    // Fetch chapters cached on server
+    // If there are none, tell server to scrape the site
+    this.props.fetchChapters(mangaId)
+      .then(() => {
+        const chapters = this.props.chaptersByMangaId[mangaId];
+        if (chapters && chapters.length <= 0) {
+          this.props.updateChapters(mangaId);
+        }
+      });
 
-      // If we think the server hasn't had enough time to scrape the source website
-      // for this mangaInfo, wait a little while and try fetching again.
-      //
-      // NOTE: This only updates the manga being viewed. Many of your other search results are
-      //       likely missing information as well. Viewing them will then fetch the data.
-      //
-      // TODO: might try to do one additional fetch at a slightly later time. e.g. 1000 ms
-      const thisManga = this.props.mangaLibrary.find(manga => manga.id === mangaId);
-      if (possiblyMissingInfo(thisManga)) {
-        setTimeout(() => {
-          this.props.fetchMangaInfo(mangaId);
-        }, 300);
-      }
-    };
-  }
+    // If we think the server hasn't had enough time to scrape the source website
+    // for this mangaInfo, wait a little while and try fetching again.
+    //
+    // NOTE: This only updates the manga being viewed. Many of your other search results are
+    //       likely missing information as well. Viewing them will then fetch the data.
+    //
+    // TODO: might try to do one additional fetch at a slightly later time. e.g. 1000 ms
+    const thisManga = this.props.mangaLibrary.find(manga => manga.id === mangaId);
+    if (possiblyMissingInfo(thisManga)) {
+      setTimeout(() => {
+        this.props.fetchMangaInfo(mangaId);
+      }, 300);
+    }
+  };
 
-  handleMangaInfoBackClick() {
+  handleMangaInfoBackClick = () => {
     this.setState({ mangaIdBeingViewed: null });
-  }
+  };
 
-  handleLoadNextPage() {
+  handleLoadNextPage = () => {
     const {
       hasNextPage, sources, fetchNextCataloguePage, catalogueIsLoading,
     } = this.props;
@@ -148,29 +136,29 @@ class Catalogue extends Component {
     if (hasNextPage && !catalogueIsLoading) {
       fetchNextCataloguePage(sources[sourceIndex].id, searchQuery, lastUsedFilters);
     }
-  }
+  };
 
-  handleResetFilters() {
+  handleResetFilters = () => {
     const { initialFilters } = this.props;
     this.setState({ lastUsedFilters: initialFilters, currentFilters: initialFilters });
-  }
+  };
 
-  handleFilterChange(newFilters) {
+  handleFilterChange = (newFilters) => {
     this.setState({ currentFilters: newFilters });
-  }
+  };
 
-  handleSearchFilters() {
+  handleSearchFilters = () => {
     const { fetchCatalogue, sources } = this.props;
     const { sourceIndex, searchQuery, currentFilters } = this.state;
 
     fetchCatalogue(sources[sourceIndex].id, searchQuery, currentFilters, { retainFilters: true });
     this.setState({ lastUsedFilters: currentFilters });
-  }
+  };
 
-  handleRefreshClick() {
+  handleRefreshClick = () => {
     this.props.updateMangaInfo(this.state.mangaIdBeingViewed);
     this.props.updateChapters(this.state.mangaIdBeingViewed);
-  }
+  };
 
   render() {
     const {

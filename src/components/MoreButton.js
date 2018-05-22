@@ -12,10 +12,6 @@ class MoreButton extends Component {
       anchorEl: null,
       editing: false,
     };
-
-    this.handleClick = this.handleClick.bind(this);
-    this.handleEditCategories = this.handleEditCategories.bind(this);
-    this.handleClose = this.handleClose.bind(this);
   }
 
   handleClick = (event) => {

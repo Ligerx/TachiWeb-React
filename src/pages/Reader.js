@@ -52,18 +52,6 @@ const styles = {
 };
 
 class Reader extends Component {
-  constructor(props) {
-    super(props);
-
-    this.getAdjacentPageCounts = this.getAdjacentPageCounts.bind(this);
-    this.preloadImages = this.preloadImages.bind(this);
-    this.handlePrevPageClick = this.handlePrevPageClick.bind(this);
-    this.handleNextPageClick = this.handleNextPageClick.bind(this);
-    this.prevChapterUrl = this.prevChapterUrl.bind(this);
-    this.nextChapterUrl = this.nextChapterUrl.bind(this);
-    this.handleJumpToPage = this.handleJumpToPage.bind(this);
-  }
-
   componentDidMount() {
     this.props.fetchMangaInfo();
     this.props.fetchChapters();
@@ -93,7 +81,7 @@ class Reader extends Component {
     }
   }
 
-  getAdjacentPageCounts() {
+  getAdjacentPageCounts = () => {
     // get current, previous, and next chapter page count
     const {
       chapterId, prevChapterId, nextChapterId, fetchPageCount,
@@ -103,9 +91,9 @@ class Reader extends Component {
     chapters.forEach((thisChapterId) => {
       fetchPageCount(thisChapterId);
     });
-  }
+  };
 
-  preloadImages() {
+  preloadImages = () => {
     // https://www.photo-mark.com/notes/image-preloading/
     // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
     const {
@@ -121,9 +109,9 @@ class Reader extends Component {
         image.src = Server.image(mangaInfo.id, chapterId, pageInt + i);
       }
     }
-  }
+  };
 
-  handlePrevPageClick() {
+  handlePrevPageClick = () => {
     const {
       mangaInfo, chapterId, page, prevChapterId, pageCounts,
     } = this.props;
@@ -138,9 +126,9 @@ class Reader extends Component {
 
       this.props.history.push(Client.page(mangaInfo.id, prevChapterId, lastPage));
     }
-  }
+  };
 
-  handleNextPageClick() {
+  handleNextPageClick = () => {
     const {
       mangaInfo, chapter, chapterId, pageCount, page, nextChapterId, updateReadingStatus,
     } = this.props;
@@ -152,28 +140,36 @@ class Reader extends Component {
     } else if (pageInt === pageCount - 1 && nextChapterId) {
       this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
     }
-  }
+  };
 
-  prevChapterUrl() {
+  prevChapterUrl = () => {
     // Links to the previous chapter's last page read
     const { mangaInfo, prevChapterId, chapters } = this.props;
     return changeChapterUrl(mangaInfo.id, prevChapterId, chapters);
-  }
+  };
 
-  nextChapterUrl() {
+  nextChapterUrl = () => {
     // Links to the next chapter's last page read
     const { mangaInfo, nextChapterId, chapters } = this.props;
     return changeChapterUrl(mangaInfo.id, nextChapterId, chapters);
-  }
+  };
 
-  handleJumpToPage(newPage) {
+  handleJumpToPage = (newPage) => {
     const { mangaInfo, chapterId } = this.props;
     this.props.history.push(Client.page(mangaInfo.id, chapterId, newPage - 1));
-  }
+  };
 
   render() {
     const {
-      mangaInfo, chapters, chapter, chapterId, pageCount, page, classes, prevChapterId, nextChapterId,
+      mangaInfo,
+      chapters,
+      chapter,
+      chapterId,
+      pageCount,
+      page,
+      classes,
+      prevChapterId,
+      nextChapterId,
     } = this.props;
 
     if (!mangaInfo || !chapters.length || !chapter || !pageCount) {

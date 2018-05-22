@@ -16,9 +16,6 @@ class ErrorNotifications extends Component {
       open: false,
       message: '',
     };
-
-    this.handleClose = this.handleClose.bind(this);
-    this.handleExited = this.handleExited.bind(this);
   }
 
   componentDidUpdate() {
@@ -37,20 +34,20 @@ class ErrorNotifications extends Component {
     }
   }
 
-  handleClose(event, reason) {
+  handleClose = (event, reason) => {
     if (reason === 'clickaway') return;
 
     this.setState({ open: false });
-  }
+  };
 
-  handleExited() {
+  handleExited = () => {
     const { message } = this.state;
     const { errorMessage: propsMessage } = this.props;
 
     if (message !== propsMessage) {
       this.setState({ open: true, message: propsMessage });
     }
-  }
+  };
 
   render() {
     const { message } = this.state;

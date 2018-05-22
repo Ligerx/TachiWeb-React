@@ -20,16 +20,13 @@ class MangaInfo extends Component {
     this.state = {
       tabValue: props.initialTabValue,
     };
-
-    this.handleChangeTab = this.handleChangeTab.bind(this);
-    this.tabContent = this.tabContent.bind(this);
   }
 
-  handleChangeTab(event, newValue) {
+  handleChangeTab = (event, newValue) => {
     this.setState({ tabValue: newValue });
-  }
+  };
 
-  tabContent() {
+  tabContent = () => {
     const { tabValue } = this.state;
     const {
       mangaInfo, chapters,
@@ -50,7 +47,7 @@ class MangaInfo extends Component {
 
     console.error('MangaInfo content() error');
     return <div />;
-  }
+  };
 
   render() {
     const { tabValue } = this.state;

@@ -15,11 +15,6 @@ class FilterButton extends Component {
       filterDownloaded: false,
       filterUnread: false,
     };
-
-    this.handleClick = this.handleClick.bind(this);
-    this.handleRemoveFilters = this.handleRemoveFilters.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    this.handleChange = this.handleChange.bind(this);
   }
 
   handleClick = (event) => {

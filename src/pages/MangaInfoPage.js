@@ -13,21 +13,15 @@ import { Client } from 'api';
 //       user added a manga via the catalogue.
 
 class MangaInfoPage extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleRefreshClick = this.handleRefreshClick.bind(this);
-  }
-
   componentDidMount() {
     this.props.fetchMangaInfo();
     this.props.fetchChapters();
   }
 
-  handleRefreshClick() {
+  handleRefreshClick = () => {
     this.props.updateMangaInfo();
     this.props.updateChapters();
-  }
+  };
 
   render() {
     const { mangaInfo, chapters, fetchOrRefreshIsLoading } = this.props;

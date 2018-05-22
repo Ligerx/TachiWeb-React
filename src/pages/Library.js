@@ -12,20 +12,14 @@ import FullScreenLoading from 'components/loading/FullScreenLoading';
 //       If for some reason the server hasn't scraped a list of chapters, this number won't appear
 
 class Library extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleRefreshClick = this.handleRefreshClick.bind(this);
-  }
-
   componentDidMount() {
     this.props.fetchLibrary();
     this.props.fetchUnread();
   }
 
-  handleRefreshClick() {
+  handleRefreshClick = () => {
     this.props.fetchLibrary({ ignoreCache: true });
-  }
+  };
 
   render() {
     const { mangaLibrary, unread, libraryIsLoading } = this.props;

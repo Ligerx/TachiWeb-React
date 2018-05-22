@@ -45,13 +45,11 @@ class PageSlider extends Component {
     this.state = {
       sliderValue: 1,
     };
-
-    this.updateSliderValue = this.updateSliderValue.bind(this);
   }
 
-  updateSliderValue(value) {
+  updateSliderValue = (value) => {
     this.setState({ sliderValue: value });
-  }
+  };
 
   render() {
     const {
