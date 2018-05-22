@@ -10,4 +10,6 @@
   },
   // Disable this while using flow in vscode
   "javascript.validate.enable": false,
+
+  "flow.runOnAllFiles": true
 }
