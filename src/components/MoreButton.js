@@ -20,8 +20,6 @@ class MoreButton extends Component<{}, State> {
     };
   }
 
-  // props: Props;
-
   handleClick = (event: SyntheticEvent<HTMLElement>) => {
     this.setState({ anchorEl: event.currentTarget });
   };

@@ -17,8 +17,6 @@ class MenuDrawer extends Component<{}, State> {
     };
   }
 
-  // props: Props;
-
   toggleDrawer = (isOpen: boolean) => () => {
     this.setState({ drawerOpen: isOpen });
   };

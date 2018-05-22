@@ -25,8 +25,6 @@ class FilterButton extends Component<Props, State> {
     };
   }
 
-  // props: Props;
-
   handleClick = (event: SyntheticEvent<HTMLElement>) => {
     this.setState({ anchorEl: event.currentTarget });
   };
