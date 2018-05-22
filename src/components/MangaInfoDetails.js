@@ -6,7 +6,7 @@ import MangaCard from 'components/MangaCard';
 import Grid from '@material-ui/core/Grid';
 import BackgroundImage from 'components/BackgroundImage';
 import { withStyles } from '@material-ui/core/styles';
-import { mangaType } from 'types';
+import type { MangaType } from 'types';
 import classNames from 'classnames';
 import { Server } from 'api';
 import upperFirst from 'lodash/upperFirst';
@@ -24,7 +24,7 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  mangaInfo?: mangaType,
+  mangaInfo?: MangaType,
   numChapters?: number,
   children?: number | string | React.Element | Array<any>,
 };

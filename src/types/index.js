@@ -1,3 +1,4 @@
+// @flow
 export type MangaType = {
   // NOTE: Many non-required fields may be missing because the server needs time to
   //       scrape the website, but returns a barebones object early anyway.

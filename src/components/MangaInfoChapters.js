@@ -6,7 +6,7 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import ChapterListItem from 'components/ChapterListItem';
-import { ChapterType, MangaType } from 'types';
+import type { ChapterType, MangaType } from 'types';
 
 // TODO: update <ResponsiveGrid> so the list can be a lot tighter width
 

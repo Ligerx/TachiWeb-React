@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { MangaType, ChapterType } from 'types';
+import type { MangaType, ChapterType } from 'types';
 import MangaInfo from 'components/MangaInfo';
 import { Client } from 'api';
 

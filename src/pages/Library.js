@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import LibraryHeader from 'components/LibraryHeader';
 import MangaGrid from 'components/MangaGrid';
 import LibraryMangaCard from 'components/LibraryMangaCard';
-import { MangaType } from 'types';
+import type { MangaType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 
 type Props = {

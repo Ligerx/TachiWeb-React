@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import ResponsiveGrid from 'components/ResponsiveGrid';
-import { MangaType } from 'types';
+import type { MangaType } from 'types';
 
 type Props = {
   mangaLibrary: Array<MangaType>,

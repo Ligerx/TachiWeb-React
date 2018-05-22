@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Server, Client } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
-import { MangaType, ChapterType } from 'types';
+import type { MangaType, ChapterType } from 'types';
 import { withStyles } from '@material-ui/core/styles';
 import PageSlider from 'components/PageSlider';
 import IconButton from '@material-ui/core/IconButton';

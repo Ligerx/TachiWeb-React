@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import MangaCard from 'components/MangaCard';
-import { MangaType } from 'types';
+import type { MangaType } from 'types';
 import { Server } from 'api';
 
 // * fullWidth

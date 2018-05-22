@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { ChapterType, MangaType } from 'types';
+import type { ChapterType, MangaType } from 'types';
 import MangaInfoChapters from './MangaInfoChapters';
 
 // TODO: create buttons in the header to let you select sorts and filters

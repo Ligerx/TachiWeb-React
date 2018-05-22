@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
 import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
-import { MangaType, ChapterType } from 'types';
+import type { MangaType, ChapterType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 
@@ -39,8 +39,6 @@ class MangaInfo extends Component<Props, State> {
       tabValue: props.initialTabValue,
     };
   }
-
-  props: Props;
 
   handleChangeTab = (event: SyntheticEvent<>, newValue: number) => {
     this.setState({ tabValue: newValue });

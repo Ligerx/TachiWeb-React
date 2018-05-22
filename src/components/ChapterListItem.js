@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import { Client } from 'api';
 import { Link } from 'react-router-dom';
-import { ChapterType, MangaType } from 'types';
+import type { ChapterType, MangaType } from 'types';
 
 // TODO: add additional actions such as mark as read/unread.
 // TODO: align the bottom row text? It's a little off horizontally right now.

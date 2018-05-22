@@ -7,7 +7,7 @@ import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import RefreshButton from 'components/RefreshButton';
 import MangaInfoTabs from 'components/MangaInfoTabs';
-import { MangaType } from 'types';
+import type { MangaType } from 'types';
 import BackButton from 'components/BackButton';
 
 type Props = {
