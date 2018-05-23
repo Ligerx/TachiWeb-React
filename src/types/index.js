@@ -1,4 +1,15 @@
 // @flow
+import type {
+  FilterText,
+  FilterSelect,
+  FilterTristate,
+  FilterGroup,
+  FilterSort,
+  FilterHeader,
+  FilterSeparator,
+  FilterCheckbox,
+} from './filters';
+
 export type MangaType = {
   // NOTE: Many non-required fields may be missing because the server needs time to
   //       scrape the website, but returns a barebones object early anyway.
@@ -50,3 +61,14 @@ export type SourceType = {
     display_name: string,
   },
 };
+
+export type FiltersType = Array<
+  | FilterText
+  | FilterSelect
+  | FilterTristate
+  | FilterGroup
+  | FilterSort
+  | FilterHeader
+  | FilterSeparator
+  | FilterCheckbox,
+>;
