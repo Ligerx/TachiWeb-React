@@ -66,7 +66,7 @@ export default function chaptersReducer(state = initialState, action = {}) {
 export function fetchCatalogue(
   sourceId,
   query = '',
-  filters = null,
+  filters = [],
   { retainFilters = false } = {}, // optionally keep previous initialFilters
 ) {
   return (dispatch) => {
@@ -83,7 +83,12 @@ export function fetchCatalogue(
       dispatch({ type: CLEAR_FILTERS });
     }
 
-    return fetch(Server.catalogue(), cataloguePostParameters(1, sourceId, query.trim(), filters))
+    // Filters should be null if empty when requesting from the server
+    const filtersChecked = filters.length ? filters : null;
+    return fetch(
+      Server.catalogue(),
+      cataloguePostParameters(1, sourceId, query.trim(), filtersChecked),
+    )
       .then(handleServerError)
       .then(
         (json) => {

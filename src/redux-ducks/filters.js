@@ -14,12 +14,12 @@ export const CLEAR_FILTERS = 'filters/CLEAR_FILTERS';
 // ================================================================================
 // NOTE: filters should just store the initial filters received by the server
 //       Any edited filters should just be held in local state
-export default function filtersReducer(state = null, action = {}) {
+export default function filtersReducer(state = [], action = {}) {
   switch (action.type) {
     case FETCH_SUCCESS:
       return action.filters;
     case CLEAR_FILTERS:
-      return null;
+      return [];
     default:
       return state;
   }

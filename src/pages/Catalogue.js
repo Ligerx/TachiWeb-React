@@ -60,9 +60,9 @@ class Catalogue extends Component<Props, State> {
   static getDerivedStateFromProps(nextProps, prevState) {
     // Keep two copies of 'filters' in state
     // cloneDeep should be done by the methods that setState
-    const filtersAreNull = !prevState.currentFilters || !prevState.lastUsedFilters;
+    const filtersAreEmpty = !prevState.currentFilters.length || !prevState.lastUsedFilters.length;
 
-    if (filtersAreNull && nextProps.initialFilters && nextProps.initialFilters.length > 0) {
+    if (filtersAreEmpty && nextProps.initialFilters.length) {
       return {
         ...prevState,
         lastUsedFilters: nextProps.initialFilters,
@@ -78,8 +78,8 @@ class Catalogue extends Component<Props, State> {
     this.state = {
       sourceIndex: 0,
       searchQuery: '',
-      lastUsedFilters: null,
-      currentFilters: null,
+      lastUsedFilters: [],
+      currentFilters: [],
       mangaIdBeingViewed: null,
     };
   }
@@ -110,7 +110,7 @@ class Catalogue extends Component<Props, State> {
     const { sources, fetchCatalogue, fetchFilters } = this.props;
 
     if (sourceIndex !== prevState.sourceIndex) {
-      this.setState({ lastUsedFilters: null, currentFilters: null }); /* eslint-disable-line */
+      this.setState({ lastUsedFilters: [], currentFilters: [] }); /* eslint-disable-line */
       fetchCatalogue(sources[sourceIndex].id);
       fetchFilters(sources[sourceIndex].id);
     }
