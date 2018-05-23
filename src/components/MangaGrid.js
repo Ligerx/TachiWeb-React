@@ -5,7 +5,7 @@ import type { MangaType } from 'types';
 
 type Props = {
   mangaLibrary: Array<MangaType>,
-  cardComponent: React.Node,
+  cardComponent: React.Element<any>, // single node only
 };
 
 // NOTE: You must pass a cardComponent, which is what will be rendered.

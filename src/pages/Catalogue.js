@@ -1,5 +1,6 @@
+// @flow
 import React, { Component } from 'react';
-import type { MangaType, SourceType } from 'types';
+import type { MangaType, SourceType, ChapterType, FiltersType } from 'types';
 import MangaInfo from 'components/MangaInfo';
 import debounce from 'lodash/debounce';
 import MangaGrid from 'components/MangaGrid';
@@ -11,8 +12,6 @@ import CatalogueHeader from 'components/CatalogueHeader';
 import CenteredLoading from 'components/loading/CenteredLoading';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 
-// TODO: sources type
-// TODO: filter type?
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 // TODO: actually split all of this up into components...
 // TODO: maybe add text saying that there are no more pages to load?
@@ -21,9 +20,8 @@ type Props = {
   mangaLibrary: Array<MangaType>,
   sources: Array<SourceType>,
   hasNextPage: boolean,
-  initialFilters: Array<any>, // TODO: type
-  // TODO: is chaptersByMangaId type correct? also add chapter type
-  chaptersByMangaId: { [mangaId: number]: Array<any> },
+  initialFilters: FiltersType,
+  chaptersByMangaId: { [mangaId: number]: Array<ChapterType> },
   sourcesAreLoading: boolean,
   catalogueIsLoading: boolean,
   mangaInfoIsLoading: boolean,
@@ -38,29 +36,23 @@ type Props = {
   fetchMangaInfo: Function,
 };
 
-// TODO: update filters type
 type State = {
   // Select based on index of the array instead of id
   // this makes it less reliant on having to sync state with the data
   // May change this in the future?
   sourceIndex: number,
   searchQuery: string,
-  lastUsedFilters: ?Array<any>, // use this for any searches
-  currentFilters: ?Array<any>, // temporarily store user changes, use to overwrite lastUsedFilters
+  lastUsedFilters: FiltersType, // use this for any searches
+  currentFilters: FiltersType, // temporarily store user changes, use to overwrite lastUsedFilters
   mangaIdBeingViewed: ?number,
 };
 
 class Catalogue extends Component<Props, State> {
-  static defaultProps = {
-    mangaLibrary: null,
-    sources: null,
-    initialFilters: null,
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     // Keep two copies of 'filters' in state
     // cloneDeep should be done by the methods that setState
-    const filtersAreEmpty = !prevState.currentFilters.length || !prevState.lastUsedFilters.length;
+    const filtersAreEmpty: boolean =
+      !prevState.currentFilters.length || !prevState.lastUsedFilters.length;
 
     if (filtersAreEmpty && nextProps.initialFilters.length) {
       return {
@@ -72,16 +64,12 @@ class Catalogue extends Component<Props, State> {
     return null;
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      sourceIndex: 0,
-      searchQuery: '',
-      lastUsedFilters: [],
-      currentFilters: [],
-      mangaIdBeingViewed: null,
-    };
+  state = {
+    sourceIndex: 0,
+    searchQuery: '',
+    lastUsedFilters: [],
+    currentFilters: [],
+    mangaIdBeingViewed: null,
   }
 
   componentDidMount() {
@@ -105,7 +93,7 @@ class Catalogue extends Component<Props, State> {
     }, 500);
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     const { sourceIndex } = this.state;
     const { sources, fetchCatalogue, fetchFilters } = this.props;
 
@@ -131,15 +119,15 @@ class Catalogue extends Component<Props, State> {
     this.delayedSearch();
   };
 
-  handleCardClick = mangaId => () => {
+  handleCardClick = (mangaId: number) => () => {
     this.setState({ mangaIdBeingViewed: mangaId });
 
     // Fetch chapters cached on server
     // If there are none, tell server to scrape the site
     this.props.fetchChapters(mangaId)
       .then(() => {
-        const chapters = this.props.chaptersByMangaId[mangaId];
-        if (chapters && chapters.length <= 0) {
+        const chapters: Array<ChapterType> = this.props.chaptersByMangaId[mangaId] || [];
+        if (!chapters.length) {
           this.props.updateChapters(mangaId);
         }
       });
@@ -151,8 +139,8 @@ class Catalogue extends Component<Props, State> {
     //       likely missing information as well. Viewing them will then fetch the data.
     //
     // TODO: might try to do one additional fetch at a slightly later time. e.g. 1000 ms
-    const thisManga = this.props.mangaLibrary.find(manga => manga.id === mangaId);
-    if (possiblyMissingInfo(thisManga)) {
+    const thisManga: ?MangaType = this.props.mangaLibrary.find(manga => manga.id === mangaId);
+    if (thisManga && possiblyMissingInfo(thisManga)) {
       setTimeout(() => {
         this.props.fetchMangaInfo(mangaId);
       }, 300);
@@ -179,7 +167,7 @@ class Catalogue extends Component<Props, State> {
     this.setState({ lastUsedFilters: initialFilters, currentFilters: initialFilters });
   };
 
-  handleFilterChange = (newFilters) => {
+  handleFilterChange = (newFilters: FiltersType) => {
     this.setState({ currentFilters: newFilters });
   };
 
@@ -212,8 +200,9 @@ class Catalogue extends Component<Props, State> {
       searchQuery,
     } = this.state;
 
-    const mangaInfo = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
-    const chapters = chaptersByMangaId[mangaIdBeingViewed];
+    const mangaInfo: ?MangaType = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
+    // TODO: kind of annoying to type check 'chapters' right now.
+    const chapters: Array<ChapterType> = chaptersByMangaId[mangaIdBeingViewed] || [];
 
     if (mangaIdBeingViewed) {
       return (
@@ -263,7 +252,7 @@ class Catalogue extends Component<Props, State> {
 }
 
 // Helper methods
-function possiblyMissingInfo(manga) {
+function possiblyMissingInfo(manga: MangaType): boolean {
   // mangaFields is an array of some values that mangaInfo should probably have
   // Count the number of these fields that are missing
   const mangaFields = ['author', 'description', 'genres', 'categories'];

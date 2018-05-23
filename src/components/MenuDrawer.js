@@ -10,12 +10,9 @@ type State = {
 };
 
 class MenuDrawer extends Component<{}, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      drawerOpen: false,
-    };
-  }
+  state = {
+    drawerOpen: false,
+  };
 
   toggleDrawer = (isOpen: boolean) => () => {
     this.setState({ drawerOpen: isOpen });

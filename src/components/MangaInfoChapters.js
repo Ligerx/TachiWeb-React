@@ -24,7 +24,7 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  mangaInfo?: MangaType,
+  mangaInfo: MangaType,
   chapters: Array<ChapterType>,
 };
 
@@ -41,9 +41,5 @@ const MangaInfoChapters = ({ classes, mangaInfo, chapters }: Props) => (
     </Grid>
   </ResponsiveGrid>
 );
-
-MangaInfoChapters.defaultProps = {
-  mangaInfo: null,
-};
 
 export default withStyles(styles)(MangaInfoChapters);

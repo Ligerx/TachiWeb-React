@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -12,7 +13,13 @@ const styles = () => ({
   },
 });
 
-const MangaInfoTabs = ({ classes, tabValue, handleChange }) => (
+type Props = {
+  classes: Object,
+  tabValue: number,
+  handleChange: Function,
+};
+
+const MangaInfoTabs = ({ classes, tabValue, handleChange }: Props) => (
   <Tabs value={tabValue} onChange={handleChange} indicatorColor="primary" centered>
     <Tab label="Info" className={classes.tab} />
     <Tab label="Chapters" className={classes.tab} />

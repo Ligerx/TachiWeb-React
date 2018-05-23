@@ -28,6 +28,6 @@ export default function loadingReducer(state = {}, action = {}) {
 
 // 'actions' should be an array of strings. Strings should be action prefixes.
 // e.g. ['GET_TODOS'] corresponds to GET_TODOS_REQUEST, _SUCCESS, _FAILURE
-export const createLoadingSelector = actions => state =>
+export const createLoadingSelector = (actions: Array<string>): Function => (state: Object): boolean =>
   // returns true only when all actions is not loading
   some(actions, action => get(state, `loading.${action}`));

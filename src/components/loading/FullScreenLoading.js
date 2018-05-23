@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -13,7 +14,9 @@ const styles = {
   },
 };
 
-const FullScreenLoading = ({ classes }) => (
+type Props = { classes: Object };
+
+const FullScreenLoading = ({ classes }: Props) => (
   <CircularProgress className={classes.loader} size={60} thickness={4.5} />
 );
 

@@ -4,7 +4,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 
-type Props = { errorMessage?: string };
+type Props = { errorMessage: string };
 type State = { open: boolean, message: string };
 
 // TODO: Honestly, the logic here feels really fragile, and I don't
@@ -12,18 +12,10 @@ type State = { open: boolean, message: string };
 //       Maybe finding a library would be helpful for this.
 
 class ErrorNotifications extends Component<Props, State> {
-  static defaultProps = {
-    errorMessage: '',
+  state = {
+    open: false,
+    message: '',
   };
-
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      open: false,
-      message: '',
-    };
-  }
 
   componentDidUpdate() {
     const { open, message } = this.state;
@@ -41,6 +33,7 @@ class ErrorNotifications extends Component<Props, State> {
     }
   }
 
+  // TODO: not sure what flow typing goes here
   handleClose = (event, reason) => {
     if (reason === 'clickaway') return;
 

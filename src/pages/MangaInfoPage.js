@@ -5,8 +5,8 @@ import MangaInfo from 'components/MangaInfo';
 import { Client } from 'api';
 
 type Props = {
-  mangaInfo?: MangaType,
-  chapters?: Array<ChapterType>,
+  mangaInfo: ?MangaType,
+  chapters: Array<ChapterType>,
   fetchOrRefreshIsLoading: boolean,
   fetchChapters: Function,
   updateChapters: Function,
@@ -23,11 +23,6 @@ type Props = {
 //       user added a manga via the catalogue.
 
 class MangaInfoPage extends Component<Props> {
-  static defaultProps = {
-    mangaInfo: null,
-    chapters: [],
-  };
-
   componentDidMount() {
     this.props.fetchMangaInfo();
     this.props.fetchChapters();

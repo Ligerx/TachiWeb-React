@@ -1,3 +1,4 @@
+// @flow
 import { connect } from 'react-redux';
 import { fetchMangaInfo } from 'redux-ducks/mangaInfos';
 import { fetchChapters, updateReadingStatus } from 'redux-ducks/chapters';

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
@@ -36,7 +36,7 @@ const styles = (theme) => {
 type Props = {
   classes: Object,
   className?: string,
-  children: number | string | React.Element | Array<any>,
+  children: React.Node,
 };
 
 const ResponsiveGrid = ({ classes, className, children }: Props) => (
@@ -47,5 +47,9 @@ const ResponsiveGrid = ({ classes, className, children }: Props) => (
     </Grid>
   </Grid>
 );
+
+ResponsiveGrid.defaultProps = {
+  className: '',
+};
 
 export default withStyles(styles)(ResponsiveGrid);

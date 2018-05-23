@@ -1,3 +1,4 @@
+// @flow
 import { connect } from 'react-redux';
 import { fetchMangaInfo, updateMangaInfo, FETCH_MANGA, UPDATE_MANGA } from 'redux-ducks/mangaInfos';
 import {
@@ -8,21 +9,28 @@ import {
 } from 'redux-ducks/chapters';
 import MangaInfoPage from 'pages/MangaInfoPage';
 import { createLoadingSelector } from 'redux-ducks/loading';
+import type { MangaType, ChapterType } from 'types';
 
-const fetchOrRefreshIsLoading = createLoadingSelector([
+const fetchOrRefreshIsLoading: Function = createLoadingSelector([
   FETCH_MANGA,
   UPDATE_MANGA,
   FETCH_CHAPTERS,
   UPDATE_CHAPTERS,
 ]);
 
-const mapStateToProps = (state, ownProps) => {
+type StateToProps = {
+  mangaInfo: ?MangaType,
+  chapters: Array<ChapterType>,
+  fetchOrRefreshIsLoading: boolean,
+};
+
+const mapStateToProps = (state, ownProps): StateToProps => {
   const { mangaInfos, chapters } = state;
   const { mangaId } = ownProps.match.params;
 
   return {
     mangaInfo: mangaInfos[mangaId],
-    chapters: chapters[mangaId],
+    chapters: chapters[mangaId] || [],
     fetchOrRefreshIsLoading: fetchOrRefreshIsLoading(state),
   };
 };

@@ -21,14 +21,14 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  mangaInfo?: MangaType,
+  mangaInfo: MangaType,
   chapter: ChapterType,
 };
 
 const ChapterListItem = ({ classes, mangaInfo, chapter }: Props) => {
-  const dimIfRead = read => classNames({ [classes.read]: read });
-  const goToPage = chapter.read ? 0 : chapter.last_page_read;
-  const pageLink = mangaInfo ? Client.page(mangaInfo.id, chapter.id, goToPage) : null;
+  const dimIfRead: Function = (read: boolean): String => classNames({ [classes.read]: read });
+  const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
+  const pageLink: ?string = mangaInfo ? Client.page(mangaInfo.id, chapter.id, goToPage) : null;
 
   return (
     <ListItem button divider component={Link} to={pageLink}>
@@ -53,17 +53,13 @@ const ChapterListItem = ({ classes, mangaInfo, chapter }: Props) => {
 
 // Helper Functions
 /* eslint-disable camelcase */
-function chapterText(read, last_page_read) {
-  let text = '';
+function chapterText(read: boolean, last_page_read: number) {
+  let text: string = '';
   if (!read && last_page_read > 0) {
     text = `Page ${last_page_read + 1}`;
   }
   return text;
 }
 /* eslint-enable camelcase */
-
-ChapterListItem.defaultProps = {
-  mangaInfo: null,
-};
 
 export default withStyles(styles)(ChapterListItem);

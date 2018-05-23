@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -35,7 +35,7 @@ type Props = {
   title: string,
   chapterNum: number,
   mangaId: number,
-  children?: number | string | React.Element | Array<any>,
+  children?: React.Node,
 };
 
 const ReaderOverlay = ({
@@ -55,6 +55,10 @@ const ReaderOverlay = ({
   </AppBar>
 );
 
+ReaderOverlay.defaultProps = {
+  children: null,
+};
+
 // Helper Function
 function chapterNumFormatter(chapterNum: number): string | number {
   // FIXME: This isn't smart enough to deal with more than 1 decimal point of precision
@@ -65,9 +69,5 @@ function chapterNumFormatter(chapterNum: number): string | number {
   }
   return chapterNum.toFixed(1);
 }
-
-ReaderOverlay.defaultProps = {
-  children: null,
-};
 
 export default withStyles(styles)(ReaderOverlay);

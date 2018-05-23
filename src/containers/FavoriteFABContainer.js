@@ -1,14 +1,21 @@
+// @flow
 import { connect } from 'react-redux';
 import FavoriteFAB from 'components/FavoriteFAB';
 import { createLoadingSelector } from 'redux-ducks/loading';
 import { toggleFavorite, TOGGLE_FAVORITE } from 'redux-ducks/mangaInfos';
 
-const favoriteIsToggling = createLoadingSelector([TOGGLE_FAVORITE]);
+const favoriteIsToggling: Function = createLoadingSelector([TOGGLE_FAVORITE]);
 
-// Should pass in mangaId
-// But it's okay if it is null/undefined (hasn't been loaded yet)
+type Params = {
+  mangaId: number,
+};
 
-const mapStateToProps = (state, ownProps) => ({
+type StateToProps = {
+  isFavorite: boolean,
+  favoriteIsToggling: boolean,
+};
+
+const mapStateToProps = (state: Object, ownProps: Params): StateToProps => ({
   isFavorite: getIsFavorite(state.mangaInfos, ownProps.mangaId),
   favoriteIsToggling: favoriteIsToggling(state),
 });

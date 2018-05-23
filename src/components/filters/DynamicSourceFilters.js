@@ -38,7 +38,7 @@ const styles = {
 
 type Props = {
   classes: Object,
-  filters?: FiltersType,
+  filters: FiltersType,
   onResetClick: Function,
   onSearchClick: Function,
   onFilterChange: Function,
@@ -49,18 +49,11 @@ type State = {
 };
 
 class DynamicSourceFilters extends Component<Props, State> {
-  static defaultProps = {
-    filters: null,
+  state = {
+    drawerOpen: false,
   };
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      drawerOpen: false,
-    };
-  }
-
-  toggleDrawer = isOpen => () => {
+  toggleDrawer = (isOpen: boolean) => () => {
     this.setState({ drawerOpen: isOpen });
   };
 
@@ -74,7 +67,7 @@ class DynamicSourceFilters extends Component<Props, State> {
         <Button
           variant="raised"
           color="primary"
-          onClick={filters ? this.toggleDrawer(true) : () => null}
+          onClick={filters.length ? this.toggleDrawer(true) : () => null}
           className={classes.openButton}
         >
           Filters
@@ -83,7 +76,7 @@ class DynamicSourceFilters extends Component<Props, State> {
         <Drawer anchor="right" open={this.state.drawerOpen} onClose={this.toggleDrawer(false)}>
           <div tabIndex={0} role="button">
             <FilterActions onResetClick={onResetClick} onSearchClick={onSearchClick} />
-            {filters && (
+            {filters.length && (
               <FormGroup className={classes.filters}>
                 {filterElements(filters, onFilterChange)}
               </FormGroup>

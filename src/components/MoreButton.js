@@ -12,13 +12,10 @@ type State = {
 };
 
 class MoreButton extends Component<{}, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      anchorEl: null,
-      editing: false,
-    };
-  }
+  state = {
+    anchorEl: null,
+    editing: false,
+  };
 
   handleClick = (event: SyntheticEvent<HTMLElement>) => {
     this.setState({ anchorEl: event.currentTarget });

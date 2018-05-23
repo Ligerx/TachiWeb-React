@@ -1,21 +1,12 @@
 // @flow
-import type {
-  FilterText,
-  FilterSelect,
-  FilterTristate,
-  FilterGroup,
-  FilterSort,
-  FilterHeader,
-  FilterSeparator,
-  FilterCheckbox,
-} from './filters';
+import type { FilterAnyType } from './filters';
 
 export type MangaType = {
   // NOTE: Many non-required fields may be missing because the server needs time to
   //       scrape the website, but returns a barebones object early anyway.
 
   // Must be included
-  id: string,
+  id: number,
   favorite: boolean,
   title: string,
 
@@ -62,13 +53,4 @@ export type SourceType = {
   },
 };
 
-export type FiltersType = Array<
-  | FilterText
-  | FilterSelect
-  | FilterTristate
-  | FilterGroup
-  | FilterSort
-  | FilterHeader
-  | FilterSeparator
-  | FilterCheckbox,
->;
+export type FiltersType = Array<FilterAnyType>;

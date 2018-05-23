@@ -1,3 +1,4 @@
+// @flow
 import { connect } from 'react-redux';
 import { fetchLibrary, fetchUnread, FETCH_LIBRARY, FETCH_UNREAD } from 'redux-ducks/library';
 import Library from 'pages/Library';

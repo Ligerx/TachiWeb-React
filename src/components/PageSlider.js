@@ -50,15 +50,11 @@ class PageSlider extends Component<Props, State> {
     return { sliderValue: nextProps.page + 1 };
   }
 
-  constructor(props: Props) {
-    super(props);
+  state = {
+    sliderValue: 1,
+  };
 
-    this.state = {
-      sliderValue: 1,
-    };
-  }
-
-  updateSliderValue = (value) => {
+  updateSliderValue = (value: number) => {
     this.setState({ sliderValue: value });
   };
 

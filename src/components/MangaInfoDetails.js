@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import MangaCard from 'components/MangaCard';
@@ -24,17 +24,15 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  mangaInfo?: MangaType,
-  numChapters?: number,
-  children?: number | string | React.Element | Array<any>,
+  mangaInfo: MangaType,
+  numChapters: number,
+  children?: React.Node,
 };
 
 const MangaInfoDetails = ({
   classes, mangaInfo, numChapters, children,
 }: Props) => {
-  const coverUrl = mangaInfo ? Server.cover(mangaInfo.id) : '';
-  const title = mangaInfo ? mangaInfo.title : '';
-  const description = mangaInfo ? mangaInfo.description : '';
+  const coverUrl: string = Server.cover(mangaInfo.id);
 
   return (
     <React.Fragment>
@@ -45,7 +43,7 @@ const MangaInfoDetails = ({
           </Grid>
           <Grid item xs={8} sm={9}>
             <Typography variant="title" gutterBottom>
-              {title}
+              {mangaInfo.title}
             </Typography>
             <DetailComponent fieldName="Chapters" value={numChapters} />
             {detailsElements(mangaInfo)}
@@ -56,16 +54,18 @@ const MangaInfoDetails = ({
       </BackgroundImage>
 
       <ResponsiveGrid className={classes.gridPadding}>
-        <DetailComponent fieldName="Description" value={description} />
+        <DetailComponent fieldName="Description" value={mangaInfo.description || ''} />
       </ResponsiveGrid>
     </React.Fragment>
   );
 };
 
-// Helper functions
-function detailsElements(mangaInfo) {
-  if (!mangaInfo) return null;
+MangaInfoDetails.defaultProps = {
+  children: null,
+};
 
+// Helper functions
+function detailsElements(mangaInfo: MangaType): React.Node {
   const fieldNames = [
     'status',
     'source',
@@ -83,17 +83,16 @@ function detailsElements(mangaInfo) {
   });
 }
 
-const DetailComponent = ({ fieldName, value }) => (
+type DetailComponentProps = {
+  fieldName: string,
+  value: string | Array<string> | number,
+}
+
+const DetailComponent = ({ fieldName, value }: DetailComponentProps): React.Node => (
   <Typography>
     <b>{`${upperFirst(fieldName)}: `}</b>
     {value}
   </Typography>
 );
-
-MangaInfoDetails.defaultProps = {
-  mangaInfo: null,
-  numChapters: 0,
-  children: null,
-};
 
 export default withStyles(styles)(MangaInfoDetails);

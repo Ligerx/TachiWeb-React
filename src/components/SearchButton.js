@@ -14,8 +14,8 @@ type State = {
 };
 
 class SearchButton extends Component<{}, State> {
-  constructor(props: Props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       searchVisible: false,
       searchText: '',

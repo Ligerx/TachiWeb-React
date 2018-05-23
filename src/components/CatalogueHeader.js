@@ -24,7 +24,7 @@ const CatalogueHeader = ({
   onSourceChange,
   onSearchChange,
 }: Props) => {
-  const sourcesExist = sources && sources.length > 0;
+  const sourcesExist: boolean = sources && sources.length > 0;
 
   return (
     <AppBar color="default" position="static" style={{ marginBottom: 20 }}>

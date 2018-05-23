@@ -79,3 +79,15 @@ export type FilterCheckbox = {
   state: boolean,
   _type: 'CHECKBOX',
 };
+
+// Consolidated type
+
+export type FilterAnyType =
+  | FilterText
+  | FilterSelect
+  | FilterTristate
+  | FilterGroup
+  | FilterSort
+  | FilterHeader
+  | FilterSeparator
+  | FilterCheckbox;

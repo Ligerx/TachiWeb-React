@@ -11,16 +11,14 @@ import type { MangaType } from 'types';
 import BackButton from 'components/BackButton';
 
 type Props = {
-  // technically required, but can be null if not fetched yet
-  mangaInfo?: MangaType,
+  // If mangaInfo is null (e.g. when it is being fetched from the server)
+  // Title is empty, refresh click is disabled
+  mangaInfo: ?MangaType,
   tabValue: number,
   handleChangeTab: Function,
   onBackClick: string | Function,
   onRefreshClick: Function,
 };
-
-// If mangaInfo is null (e.g. when it is being fetched from the server)
-// Title is empty, refresh click is disabled
 
 const MangaInfoHeader = ({
   mangaInfo,
@@ -48,10 +46,6 @@ const MangaInfoHeader = ({
       <MangaInfoTabs tabValue={tabValue} handleChange={handleChangeTab} />
     </AppBar>
   );
-};
-
-MangaInfoHeader.defaultProps = {
-  mangaInfo: null,
 };
 
 export default MangaInfoHeader;

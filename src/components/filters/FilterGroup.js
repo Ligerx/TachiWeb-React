@@ -6,12 +6,12 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import FormGroup from '@material-ui/core/FormGroup';
+import type { FilterTristate as FilterTristateType } from 'types/filters';
 import FilterTristate from './FilterTristate';
 
 type Props = {
   name: string,
-  // array of nested filter options
-  state: Array<any>, // TODO: type this
+  state: Array<FilterTristateType>,
   onChange: Function,
 };
 
@@ -31,7 +31,7 @@ const FilterGroup = ({ name, state, onChange }: Props) => (
             onChange={onChange(nestedIndex)}
             key={nestedIndex}
           />
-          ))}
+        ))}
       </FormGroup>
     </ExpansionPanelDetails>
   </ExpansionPanel>

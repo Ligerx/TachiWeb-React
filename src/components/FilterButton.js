@@ -16,14 +16,11 @@ type State = {
 };
 
 class FilterButton extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      anchorEl: null,
-      filterDownloaded: false,
-      filterUnread: false,
-    };
-  }
+  state = {
+    anchorEl: null,
+    filterDownloaded: false,
+    filterUnread: false,
+  };
 
   handleClick = (event: SyntheticEvent<HTMLElement>) => {
     this.setState({ anchorEl: event.currentTarget });

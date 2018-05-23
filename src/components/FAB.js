@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -22,7 +23,13 @@ const styles = () => ({
   },
 });
 
-const FAB = ({ classes, children, onClick }) => (
+type Props = {
+  classes: Object,
+  children: React.Node,
+  onClick: Function,
+};
+
+const FAB = ({ classes, children, onClick }: Props) => (
   <Button variant="fab" color="primary" className={classes.fab} onClick={onClick}>
     {children}
   </Button>

@@ -18,8 +18,8 @@ type Props = {
 // +-------+---------+
 
 const FilterTristate = ({ name, state, onChange }: Props) => {
-  const checked = state === 1;
-  const indeterminate = state === 0;
+  const checked: boolean = state === 1;
+  const indeterminate: boolean = state === 0;
 
   return (
     <FormControlLabel

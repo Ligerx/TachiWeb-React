@@ -1,3 +1,4 @@
+// @flow
 import { connect } from 'react-redux';
 import { fetchSources, FETCH_SOURCES } from 'redux-ducks/sources';
 import {
@@ -16,17 +17,29 @@ import { fetchFilters } from 'redux-ducks/filters';
 import { fetchMangaInfo, updateMangaInfo, FETCH_MANGA, UPDATE_MANGA } from 'redux-ducks/mangaInfos';
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
+import type { SourceType, ChapterType, MangaType, FiltersType } from 'types';
 
-const sourcesAreLoading = createLoadingSelector([FETCH_SOURCES]);
-const catalogueIsLoading = createLoadingSelector([FETCH_CATALOGUE, CATALOGUE_ADD_PAGE]);
-const mangaInfoIsLoading = createLoadingSelector([
+const sourcesAreLoading: Function = createLoadingSelector([FETCH_SOURCES]);
+const catalogueIsLoading: Function = createLoadingSelector([FETCH_CATALOGUE, CATALOGUE_ADD_PAGE]);
+const mangaInfoIsLoading: Function = createLoadingSelector([
   FETCH_MANGA,
   UPDATE_MANGA,
   FETCH_CHAPTERS,
   UPDATE_CHAPTERS,
 ]);
 
-const mapStateToProps = (state) => {
+type StateToProps = {
+  sources: Array<SourceType>,
+  hasNextPage: boolean,
+  chaptersByMangaId: { [mangaId: number]: Array<ChapterType> },
+  mangaLibrary: Array<MangaType>,
+  initialFilters: FiltersType,
+  sourcesAreLoading: boolean,
+  catalogueIsLoading: boolean,
+  mangaInfoIsLoading: boolean,
+};
+
+const mapStateToProps = (state): StateToProps => {
   const { mangaIds, hasNextPage } = state.catalogue;
   const mangaLibrary = mangaToShow(state.mangaInfos, mangaIds);
 

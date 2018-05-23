@@ -1,3 +1,4 @@
+// @flow
 import { connect } from 'react-redux';
 import ErrorNotifications from 'components/ErrorNotifications';
 import { allErrorsSelector } from 'redux-ducks/error';

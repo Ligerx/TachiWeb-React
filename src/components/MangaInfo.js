@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import * as React from 'react';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
 import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
@@ -8,8 +8,8 @@ import FullScreenLoading from 'components/loading/FullScreenLoading';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 
 type Props = {
-  mangaInfo?: MangaType,
-  chapters?: Array<ChapterType>,
+  mangaInfo: ?MangaType,
+  chapters: Array<ChapterType>,
   initialTabValue: number,
   onBackClick: string | Function,
   onRefreshClick: Function,
@@ -26,12 +26,7 @@ type State = {
 // download
 // delete
 
-class MangaInfo extends Component<Props, State> {
-  static defaultProps = {
-    mangaInfo: null,
-    chapters: [],
-  }
-
+class MangaInfo extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -44,27 +39,24 @@ class MangaInfo extends Component<Props, State> {
     this.setState({ tabValue: newValue });
   };
 
-  tabContent = () => {
+  tabContent = (): React.Node => {
     const { tabValue } = this.state;
-    const {
-      mangaInfo, chapters,
-    } = this.props;
+    const { mangaInfo, chapters } = this.props;
 
-    const numChapters = chapters ? chapters.length : 0;
-    const mangaId = mangaInfo ? mangaInfo.id : undefined;
+    const numChapters: number = chapters ? chapters.length : 0;
 
-    if (tabValue === 0) {
-      return (
-        <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters}>
-          <FavoriteFABContainer mangaId={mangaId} />
-        </MangaInfoDetails>
-      );
-    } else if (tabValue === 1) {
-      return <SortFilterMangaInfoChapters mangaInfo={mangaInfo} chapters={chapters} />;
+    if (mangaInfo) {
+      if (tabValue === 0) {
+        return (
+          <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters}>
+            <FavoriteFABContainer mangaId={mangaInfo.id} />
+          </MangaInfoDetails>
+        );
+      } else if (tabValue === 1) {
+        return <SortFilterMangaInfoChapters mangaInfo={mangaInfo} chapters={chapters} />;
+      }
     }
-
-    console.error('MangaInfo content() error');
-    return <div />;
+    return null;
   };
 
   render() {

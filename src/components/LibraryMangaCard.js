@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
@@ -6,8 +7,12 @@ import ButtonBase from '@material-ui/core/ButtonBase';
 import MangaCard from 'components/MangaCard';
 import { Link } from 'react-router-dom';
 import { Server, Client } from 'api';
+import type { MangaType } from 'types';
 
-// TODO: don't pass the whole 'manga' object, only pass down what's necessary
+// TODO: don't pass the whole 'manga' object, only pass down what's necessary?
+
+// TODO: Currently passing in the entire unread object, not just the corresponding number
+//       ^ Would have to rework the component tree a big to make that happen.
 
 // * fullWidth
 // While the grid item is full width, it's children aren't.
@@ -24,10 +29,13 @@ const styles = {
   },
 };
 
-// Currently passing in the entire unread object, not just the corresponding number
-// ^ Would have to rework the component tree a big to make that happen.
+type Props = {
+  classes: Object,
+  manga: MangaType,
+  unread: { [mangaId: number]: number },
+};
 
-const LibraryMangaCard = ({ classes, manga, unread }) => (
+const LibraryMangaCard = ({ classes, manga, unread }: Props) => (
   <Grid item xs={6} sm={3}>
     <Badge
       badgeContent={unread[manga.id] || 0}
@@ -43,7 +51,5 @@ const LibraryMangaCard = ({ classes, manga, unread }) => (
     </Badge>
   </Grid>
 );
-
-// TODO: props validation?
 
 export default withStyles(styles)(LibraryMangaCard);
