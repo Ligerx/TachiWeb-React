@@ -1,18 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-import type { MangaType, ChapterType } from 'types';
 import MangaInfo from 'components/MangaInfo';
 import { Client } from 'api';
-
-type Props = {
-  mangaInfo: ?MangaType,
-  chapters: Array<ChapterType>,
-  fetchOrRefreshIsLoading: boolean,
-  fetchChapters: Function,
-  updateChapters: Function,
-  fetchMangaInfo: Function,
-  updateMangaInfo: Function,
-};
+import type { MangaInfoContainerProps } from 'containers/MangaInfoContainer';
 
 // Honestly couldn't come up with a different name to differentiate it from MangaInfo component
 // I might rename the other files in the /pages folder to include _Page at the end. I dunno...
@@ -22,7 +12,7 @@ type Props = {
 //       I'm assuming the server would have already scraped once when the
 //       user added a manga via the catalogue.
 
-class MangaInfoPage extends Component<Props> {
+class MangaInfoPage extends Component<MangaInfoContainerProps> {
   componentDidMount() {
     this.props.fetchMangaInfo();
     this.props.fetchChapters();

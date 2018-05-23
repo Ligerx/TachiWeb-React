@@ -15,12 +15,16 @@ type StateToProps = {
   favoriteIsToggling: boolean,
 };
 
-const mapStateToProps = (state: Object, ownProps: Params): StateToProps => ({
+const mapStateToProps = (state, ownProps: Params): StateToProps => ({
   isFavorite: getIsFavorite(state.mangaInfos, ownProps.mangaId),
   favoriteIsToggling: favoriteIsToggling(state),
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+type DispatchToProps = {
+  toggleFavorite: Function,
+};
+
+const mapDispatchToProps = (dispatch, ownProps: Params): DispatchToProps => ({
   toggleFavorite: isFavorite => () => {
     const { mangaId } = ownProps;
     if (!mangaId) return () => null;
@@ -30,11 +34,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 // Helper Functions
-function getIsFavorite(mangaInfos, mangaId) {
+function getIsFavorite(mangaInfos, mangaId): boolean {
   if (!mangaId) return false;
 
   const mangaInfo = mangaInfos[mangaId];
   return mangaInfo.favorite;
 }
 
+export type FavoriteFABContainerProps = StateToProps & DispatchToProps;
 export default connect(mapStateToProps, mapDispatchToProps)(FavoriteFAB);

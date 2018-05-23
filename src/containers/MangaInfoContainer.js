@@ -35,7 +35,14 @@ const mapStateToProps = (state, ownProps): StateToProps => {
   };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+type DispatchToProps = {
+  fetchChapters: Function,
+  fetchMangaInfo: Function,
+  updateChapters: Function,
+  updateMangaInfo: Function,
+};
+
+const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
   const mangaId = parseInt(ownProps.match.params.mangaId, 10);
 
   return {
@@ -46,4 +53,5 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   };
 };
 
+export type MangaInfoContainerProps = StateToProps & DispatchToProps;
 export default connect(mapStateToProps, mapDispatchToProps)(MangaInfoPage);

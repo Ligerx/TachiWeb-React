@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Server, Client } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import ReaderNavButtons from 'components/ReaderNavButtons';
-import type { MangaType, ChapterType } from 'types';
 import { withStyles } from '@material-ui/core/styles';
 import PageSlider from 'components/PageSlider';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,6 +10,8 @@ import Icon from '@material-ui/core/Icon';
 import { Link } from 'react-router-dom';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
+import type { ReaderContainerProps } from 'containers/ReaderContainer';
+import type { ChapterType } from 'types';
 
 // TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
 
@@ -30,9 +31,6 @@ import compact from 'lodash/compact';
 // FIXME: For some reason, loading a Reader page send out a bazillion requests. Refer to
 //        the redux actions. It's not breaking anything, but I want to fix this.
 
-// TODO: remove any instance of parseInt used to convert page from string -> int
-//       the container is already doing that conversation when passing props
-
 // NOTE: only updating read status when the user presses the next page button
 //       not sure if it's necessary to do it in more cases than this
 //       e.g. jumping pages using the slider, jumping chapters, going backwards in pages
@@ -51,44 +49,19 @@ const styles = {
   },
 };
 
-type Props = {
-  mangaInfo?: MangaType,
-  chapters?: Array<ChapterType>,
-  chapter?: ChapterType,
-  chapterId: number,
-  pageCounts: Object, // TODO: type???
-  pageCount?: number,
-  page: number,
-  prevChapterId?: number,
-  nextChapterId?: number,
-  // Redux actions
-  fetchMangaInfo: Function,
-  fetchChapters: Function,
-  fetchPageCount: Function,
-  updateReadingStatus: Function,
-  // Classes is the injected styles
-  classes: Object,
-  // Below are react-router props
-  history: { push: Function },
+type Props = ReaderContainerProps & {
+  classes: Object, // Classes is the injected styles
+  history: { push: Function }, // Below are react-router props
 };
 
 class Reader extends Component<Props> {
-  static defaultProps = {
-    mangaInfo: null,
-    chapters: [],
-    chapter: null,
-    pageCount: 0,
-    prevChapterId: null,
-    nextChapterId: null,
-  }
-
   componentDidMount() {
     this.props.fetchMangaInfo();
     this.props.fetchChapters();
     this.props.fetchPageCount(this.props.chapterId);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     const {
       page, chapterId, prevChapterId, nextChapterId,
     } = this.props;
@@ -116,7 +89,7 @@ class Reader extends Component<Props> {
     const {
       chapterId, prevChapterId, nextChapterId, fetchPageCount,
     } = this.props;
-    const chapters = compact([chapterId, prevChapterId, nextChapterId]);
+    const chapters: Array<number> = compact([chapterId, prevChapterId, nextChapterId]);
 
     chapters.forEach((thisChapterId) => {
       fetchPageCount(thisChapterId);
@@ -129,14 +102,13 @@ class Reader extends Component<Props> {
     const {
       mangaInfo, chapterId, pageCount, page,
     } = this.props;
-    const pageInt = parseInt(page, 10); // params are always strings, string -> int
     const numPreload = 3; // Currently preloading 3 images ahead
 
     for (let i = 1; i <= numPreload; i += 1) {
-      if (parseInt(pageInt, 10) + i < pageCount) {
+      if (page + i < pageCount) {
         // Chrome would only preload if a new image object was used every time
         const image = new Image();
-        image.src = Server.image(mangaInfo.id, chapterId, pageInt + i);
+        image.src = Server.image(mangaInfo.id, chapterId, page + i);
       }
     }
   };
@@ -145,13 +117,12 @@ class Reader extends Component<Props> {
     const {
       mangaInfo, chapterId, page, prevChapterId, pageCounts,
     } = this.props;
-    const pageInt = parseInt(page, 10);
 
-    if (pageInt > 0) {
-      this.props.history.push(Client.page(mangaInfo.id, chapterId, pageInt - 1));
-    } else if (pageInt === 0 && prevChapterId) {
+    if (page > 0) {
+      this.props.history.push(Client.page(mangaInfo.id, chapterId, page - 1));
+    } else if (page === 0 && prevChapterId) {
       // If on the first page, go to the previous chapter's last page
-      const prevPageCount = pageCounts[prevChapterId];
+      const prevPageCount: ?number = pageCounts[prevChapterId];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
       this.props.history.push(Client.page(mangaInfo.id, prevChapterId, lastPage));
@@ -162,12 +133,11 @@ class Reader extends Component<Props> {
     const {
       mangaInfo, chapter, chapterId, pageCount, page, nextChapterId, updateReadingStatus,
     } = this.props;
-    const pageInt = parseInt(page, 10);
 
-    if (pageInt < pageCount - 1) {
+    if (page < pageCount - 1) {
       updateReadingStatus(chapter, pageCount, page + 1);
-      this.props.history.push(Client.page(mangaInfo.id, chapterId, pageInt + 1));
-    } else if (pageInt === pageCount - 1 && nextChapterId) {
+      this.props.history.push(Client.page(mangaInfo.id, chapterId, page + 1));
+    } else if (page === pageCount - 1 && nextChapterId) {
       this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
     }
   };
@@ -184,7 +154,7 @@ class Reader extends Component<Props> {
     return changeChapterUrl(mangaInfo.id, nextChapterId, chapters);
   };
 
-  handleJumpToPage = (newPage) => {
+  handleJumpToPage = (newPage: number) => {
     const { mangaInfo, chapterId } = this.props;
     this.props.history.push(Client.page(mangaInfo.id, chapterId, newPage - 1));
   };
@@ -250,8 +220,8 @@ class Reader extends Component<Props> {
 }
 
 // Helper methods
-function changeChapterUrl(mangaId, newChapterId, chapters) {
-  const newChapter = findChapter(chapters, newChapterId);
+function changeChapterUrl(mangaId: number, newChapterId: number, chapters: Array<ChapterType>): string {
+  const newChapter: ?ChapterType = findChapter(chapters, newChapterId);
   let goToPage = newChapter ? newChapter.last_page_read : 0;
 
   if (newChapter && newChapter.read) {
@@ -261,10 +231,10 @@ function changeChapterUrl(mangaId, newChapterId, chapters) {
   return Client.page(mangaId, newChapterId, goToPage);
 }
 
-function findChapter(chapters, chapterId) {
+function findChapter(chapters: Array<ChapterType>, chapterId: number): ?ChapterType {
   if (!chapters || chapters.length === 0) return null;
 
-  return chapters.find(chapter => chapter.id === parseInt(chapterId, 10));
+  return chapters.find(chapter => chapter.id === chapterId);
 }
 
 export default withStyles(styles)(Reader);

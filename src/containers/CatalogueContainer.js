@@ -61,7 +61,18 @@ const mapStateToProps = (state): StateToProps => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+type DispatchToProps = {
+  fetchSources: Function,
+  fetchCatalogue: Function,
+  fetchFilters: Function,
+  fetchChapters: Function,
+  fetchNextCataloguePage: Function,
+  updateChapters: Function,
+  updateMangaInfo: Function,
+  fetchMangaInfo: Function,
+};
+
+const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchSources: () => dispatch(fetchSources()),
   // Passing in the new catalogue search settings
   fetchCatalogue: (sourceId, query, filters, retainFilters) =>
@@ -80,4 +91,5 @@ function mangaToShow(mangaLibrary, mangaIds) {
   return mangaIds.map(mangaId => mangaLibrary[mangaId]);
 }
 
+export type CatalogueContainerProps = StateToProps & DispatchToProps;
 export default connect(mapStateToProps, mapDispatchToProps)(Catalogue);

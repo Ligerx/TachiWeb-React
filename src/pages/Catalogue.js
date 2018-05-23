@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import type { MangaType, SourceType, ChapterType, FiltersType } from 'types';
+import type { MangaType, ChapterType, FiltersType } from 'types';
 import MangaInfo from 'components/MangaInfo';
 import debounce from 'lodash/debounce';
 import MangaGrid from 'components/MangaGrid';
@@ -11,30 +11,11 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 import CatalogueHeader from 'components/CatalogueHeader';
 import CenteredLoading from 'components/loading/CenteredLoading';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
+import type { CatalogueContainerProps } from 'containers/CatalogueContainer';
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 // TODO: actually split all of this up into components...
 // TODO: maybe add text saying that there are no more pages to load?
-
-type Props = {
-  mangaLibrary: Array<MangaType>,
-  sources: Array<SourceType>,
-  hasNextPage: boolean,
-  initialFilters: FiltersType,
-  chaptersByMangaId: { [mangaId: number]: Array<ChapterType> },
-  sourcesAreLoading: boolean,
-  catalogueIsLoading: boolean,
-  mangaInfoIsLoading: boolean,
-  // Below are redux dispatch functions
-  fetchSources: Function,
-  fetchCatalogue: Function,
-  fetchFilters: Function,
-  fetchNextCataloguePage: Function,
-  fetchChapters: Function,
-  updateChapters: Function,
-  updateMangaInfo: Function,
-  fetchMangaInfo: Function,
-};
 
 type State = {
   // Select based on index of the array instead of id
@@ -47,8 +28,8 @@ type State = {
   mangaIdBeingViewed: ?number,
 };
 
-class Catalogue extends Component<Props, State> {
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+class Catalogue extends Component<CatalogueContainerProps, State> {
+  static getDerivedStateFromProps(nextProps: CatalogueContainerProps, prevState: State) {
     // Keep two copies of 'filters' in state
     // cloneDeep should be done by the methods that setState
     const filtersAreEmpty: boolean =
@@ -93,7 +74,7 @@ class Catalogue extends Component<Props, State> {
     }, 500);
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: CatalogueContainerProps, prevState: State) {
     const { sourceIndex } = this.state;
     const { sources, fetchCatalogue, fetchFilters } = this.props;
 

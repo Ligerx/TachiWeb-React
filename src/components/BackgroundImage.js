@@ -3,8 +3,8 @@ import * as React from 'react';
 
 type Props = {
   coverUrl: ?string,
-  className: ?string,
-  children?: React.Node,
+  className?: string,
+  children: React.Node, // require children to be passed
 };
 
 // * backgroundImage
@@ -25,7 +25,7 @@ const BackgroundImage = ({ coverUrl, className, children }: Props) => (
 );
 
 BackgroundImage.defaultProps = {
-  children: null,
+  className: '',
 };
 
 export default BackgroundImage;
