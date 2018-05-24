@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';
-import type { ChapterType } from 'types';
+import type { ChapterType, MangaType } from 'types';
 
 // TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
 
@@ -104,6 +104,8 @@ class Reader extends Component<Props> {
     } = this.props;
     const numPreload = 3; // Currently preloading 3 images ahead
 
+    if (!mangaInfo) return;
+
     for (let i = 1; i <= numPreload; i += 1) {
       if (page + i < pageCount) {
         // Chrome would only preload if a new image object was used every time
@@ -117,6 +119,8 @@ class Reader extends Component<Props> {
     const {
       mangaInfo, chapterId, page, prevChapterId, pageCounts,
     } = this.props;
+
+    if (!mangaInfo) return;
 
     if (page > 0) {
       this.props.history.push(Client.page(mangaInfo.id, chapterId, page - 1));
@@ -134,6 +138,8 @@ class Reader extends Component<Props> {
       mangaInfo, chapter, chapterId, pageCount, page, nextChapterId, updateReadingStatus,
     } = this.props;
 
+    if (!mangaInfo) return;
+
     if (page < pageCount - 1) {
       updateReadingStatus(chapter, pageCount, page + 1);
       this.props.history.push(Client.page(mangaInfo.id, chapterId, page + 1));
@@ -145,17 +151,19 @@ class Reader extends Component<Props> {
   prevChapterUrl = () => {
     // Links to the previous chapter's last page read
     const { mangaInfo, prevChapterId, chapters } = this.props;
-    return changeChapterUrl(mangaInfo.id, prevChapterId, chapters);
+    return changeChapterUrl(mangaInfo, prevChapterId, chapters);
   };
 
   nextChapterUrl = () => {
     // Links to the next chapter's last page read
     const { mangaInfo, nextChapterId, chapters } = this.props;
-    return changeChapterUrl(mangaInfo.id, nextChapterId, chapters);
+    return changeChapterUrl(mangaInfo, nextChapterId, chapters);
   };
 
   handleJumpToPage = (newPage: number) => {
     const { mangaInfo, chapterId } = this.props;
+
+    if (!mangaInfo) return;
     this.props.history.push(Client.page(mangaInfo.id, chapterId, newPage - 1));
   };
 
@@ -220,7 +228,17 @@ class Reader extends Component<Props> {
 }
 
 // Helper methods
-function changeChapterUrl(mangaId: number, newChapterId: number, chapters: Array<ChapterType>): string {
+function changeChapterUrl(
+  mangaInfo: ?MangaType,
+  newChapterId: ?number,
+  chapters: Array<ChapterType>,
+): string {
+  if (!mangaInfo || !newChapterId) {
+    // react-router Link does not take null, so use this to create a no-op link
+    // This link should not actually be clickable in the first place
+    return 'javascript:void(0);'; // eslint-disable-line no-script-url
+  }
+
   const newChapter: ?ChapterType = findChapter(chapters, newChapterId);
   let goToPage = newChapter ? newChapter.last_page_read : 0;
 
@@ -228,7 +246,7 @@ function changeChapterUrl(mangaId: number, newChapterId: number, chapters: Array
     goToPage = 0;
   }
 
-  return Client.page(mangaId, newChapterId, goToPage);
+  return Client.page(mangaInfo.id, newChapterId, goToPage);
 }
 
 function findChapter(chapters: Array<ChapterType>, chapterId: number): ?ChapterType {

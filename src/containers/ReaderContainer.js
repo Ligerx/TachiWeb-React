@@ -24,7 +24,7 @@ const mapStateToProps = (state, ownProps): StateToProps => {
 
   return {
     mangaInfo: mangaInfos[mangaId],
-    chapters: chapters[mangaId],
+    chapters: chapters[mangaId] || [],
     chapter: findChapter(chapters[mangaId], chapterId),
     chapterId: parseInt(chapterId, 10),
     pageCounts,
