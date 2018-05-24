@@ -22,7 +22,7 @@ class FilterButton extends Component<Props, State> {
     filterUnread: false,
   };
 
-  handleClick = (event: SyntheticEvent<HTMLElement>) => {
+  handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 

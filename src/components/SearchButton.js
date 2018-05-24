@@ -33,13 +33,15 @@ class SearchButton extends Component<{}, State> {
     // }}
   }
 
+  inputRef = null;
+
   handleClick = () => {
     this.setState({ searchVisible: true });
     // this.inputRef.focus();
   };
 
-  handleChange = (event) => {
-    this.setState({ searchText: event.target.value });
+  handleChange = (event: SyntheticEvent<HTMLInputElement>) => {
+    this.setState({ searchText: event.currentTarget.value });
   };
 
   handleClearSearch = () => {

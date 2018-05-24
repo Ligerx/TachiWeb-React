@@ -69,12 +69,13 @@ export default function libraryReducer(
         reloadUnread: true,
       };
 
-    case REMOVE_FROM_FAVORITES:
+    case REMOVE_FROM_FAVORITES: {
+      const newMangaIds: Array<number> = state.mangaIds.filter(mangaId => mangaId !== action.mangaId);
       return {
         ...state,
-        mangaIds: state.mangaIds.filter(mangaId => mangaId !== action.mangaId),
+        mangaIds: newMangaIds,
       };
-
+    }
     case DECREMENT_UNREAD: {
       const { unread } = state;
       const { mangaId } = action;

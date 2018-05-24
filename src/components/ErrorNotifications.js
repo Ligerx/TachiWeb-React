@@ -23,6 +23,7 @@ class ErrorNotifications extends Component<Props, State> {
 
     if (message === propsMessage) return;
 
+    /* eslint-disable react/no-did-update-set-state */
     if (!propsMessage) {
       this.setState({ open: false, message: '' });
     } else if (!open) {
@@ -31,10 +32,10 @@ class ErrorNotifications extends Component<Props, State> {
       this.setState({ open: false });
       // then let handleExited() update if necessary
     }
+    /* eslint-enable react/no-did-update-set-state */
   }
 
-  // TODO: not sure what flow typing goes here
-  handleClose = (event, reason) => {
+  handleClose = (event: SyntheticEvent<>, reason: ?string) => {
     if (reason === 'clickaway') return;
 
     this.setState({ open: false });

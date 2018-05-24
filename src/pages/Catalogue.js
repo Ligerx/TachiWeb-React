@@ -90,13 +90,19 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     this.delayedSearch.cancel();
   }
 
-  handleSourceChange = (event) => {
-    this.setState({ sourceIndex: event.target.value, searchQuery: '' });
+  // Placeholder, this gets replaced in componentDidMount()
+  delayedSearch = () => null;
+
+  handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
+    // NOTE: Using LIElement because that's how my HTML is structured.
+    //       Doubt it'll cause problems, but change this or the actual component if needed.
+    const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
+    this.setState({ sourceIndex: newSourceIndex, searchQuery: '' });
   };
 
-  handleSearchChange = (event) => {
+  handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
-    this.setState({ searchQuery: event.target.value });
+    this.setState({ searchQuery: event.currentTarget.value });
     this.delayedSearch();
   };
 
@@ -182,8 +188,9 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     } = this.state;
 
     const mangaInfo: ?MangaType = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
-    // TODO: kind of annoying to type check 'chapters' right now.
-    const chapters: Array<ChapterType> = chaptersByMangaId[mangaIdBeingViewed] || [];
+    // a little complex, but basically just returns the chapter list or an empty array
+    const chapters: Array<ChapterType> =
+      mangaIdBeingViewed ? (chaptersByMangaId[mangaIdBeingViewed] || []) : [];
 
     if (mangaIdBeingViewed) {
       return (

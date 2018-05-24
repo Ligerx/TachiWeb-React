@@ -17,7 +17,7 @@ class MoreButton extends Component<{}, State> {
     editing: false,
   };
 
-  handleClick = (event: SyntheticEvent<HTMLElement>) => {
+  handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
