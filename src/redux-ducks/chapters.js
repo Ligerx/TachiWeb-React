@@ -120,13 +120,18 @@ export function updateChapters(mangaId: number) {
   };
 }
 
-// NOTE: This is only to update one chapter object's read + last_read_page
-export function updateReadingStatus(mangaId: number, chapter: ChapterType, pageCount: number, readPage: number) {
+// NOTE: This is only to update one chapter object's read + last_page_read
+export function updateReadingStatus(
+  mangaId: number,
+  chapter: ChapterType,
+  pageCount: number,
+  readPage: number,
+) {
   return (dispatch: Function) => {
     // Handle checking if no update needs to happen. Escape early if so.
     // NOTE: Returning null should work, but idk if redux-thunk
     //       wants me to return a dispatch instead.
-    if (chapter.read || readPage <= chapter.last_read_page) {
+    if (chapter.read || readPage <= chapter.last_page_read) {
       return null;
     }
 
