@@ -14,55 +14,56 @@ import FilterSort from './FilterSort';
 //        Other suggestions here - https://medium.freecodecamp.org/handling-state-in-react-four-immutable-approaches-to-consider-d1f5c00249d5
 //        last resort, I might have to do a normal object update
 
-/* eslint-disable import/prefer-default-export */
+/* eslint-disable import/prefer-default-export, no-underscore-dangle, react/no-array-index-key */
 
 export function filterElements(filters: FiltersType, onChange: Function): Array<React.Node> {
   return filters.map((filter: FilterAnyType, index: number) => {
-    // FIXME: typing is wonky cause I'm combining multiple types together.
-    type Props = {
-      _type: string,
-      name: string,
-      state: string | number | boolean,
-      values?: Array<string>,
-    };
-    const {
-      _type: type, name, state, values,
-    }: Props = filter;
-
-    const updateFunc: Function = updateFiltersObject(index, type, filters, onChange);
+    const updateFunc: Function = updateFiltersObject(index, filter._type, filters, onChange);
 
     // TODO: header, separator, checkbox
     //       not doing right now because none of the sources use it
-    if (type === 'HEADER') {
+    if (filter._type === 'HEADER') {
       console.error('DynamicSourcesFilters HEADER not implemented');
       return null;
-    } else if (type === 'SEPARATOR') {
+    } else if (filter._type === 'SEPARATOR') {
       console.error('DynamicSourcesFilters SEPARATOR not implemented');
       return null;
-    } else if (type === 'CHECKBOX') {
+    } else if (filter._type === 'CHECKBOX') {
       console.error('DynamicSourcesFilters CHECKBOX not implemented');
       return null;
-    } else if (type === 'TEXT') {
-      return <TextField label={name} value={state} onChange={updateFunc} key={index} />;
-    } else if (type === 'SELECT') {
+    } else if (filter._type === 'TEXT') {
+      return (
+        <TextField label={filter.name} value={filter.state} onChange={updateFunc} key={index} />
+      );
+    } else if (filter._type === 'SELECT') {
       return (
         <FilterSelect
           index={index}
-          values={values}
-          name={name}
-          state={state}
+          values={filter.values}
+          name={filter.name}
+          state={filter.state}
           onChange={updateFunc}
           key={index}
         />
       );
-    } else if (type === 'TRISTATE') {
-      return <FilterTristate name={name} state={state} onChange={updateFunc} key={index} />;
-    } else if (type === 'GROUP') {
-      // NOTE: Assuming that GROUP will only contain TRISTATE children
-      return <FilterGroup name={name} state={state} onChange={updateFunc} key={index} />;
-    } else if (type === 'SORT') {
+    } else if (filter._type === 'TRISTATE') {
       return (
-        <FilterSort values={values} name={name} state={state} onChange={updateFunc} key={index} />
+        <FilterTristate name={filter.name} state={filter.state} onChange={updateFunc} key={index} />
+      );
+    } else if (filter._type === 'GROUP') {
+      // NOTE: Assuming that GROUP will only contain TRISTATE children
+      return (
+        <FilterGroup name={filter.name} state={filter.state} onChange={updateFunc} key={index} />
+      );
+    } else if (filter._type === 'SORT') {
+      return (
+        <FilterSort
+          values={filter.values}
+          name={filter.name}
+          state={filter.state}
+          onChange={updateFunc}
+          key={index}
+        />
       );
     }
 
@@ -93,9 +94,12 @@ function updateFiltersObject(
 
 function handleChange(index: number, filters: FiltersType, onChange: Function) {
   // Generic handler, should handle input, select
-  return (event: SyntheticInputEvent<HTMLInputElement> | SyntheticInputEvent<HTMLSelectElement>) => {
+  // NOTE: LIElement is actually within a select
+  // TODO: input handler would use event.currentTarget.value
+  //       select handler would use event.currentTarget.dataset.value
+  return (event: SyntheticEvent<HTMLInputElement> | SyntheticEvent<HTMLLIElement>) => {
     const newFilters: FiltersType = cloneDeep(filters);
-    newFilters[index].state = event.currentTarget.value;
+    newFilters[index].state = event.target.value;
     onChange(newFilters);
   };
 }
@@ -146,7 +150,7 @@ function updateTristate(oldState: number): number {
   return 0;
 }
 
-function cloneDeep(oldObject: Object): Object {
+function cloneDeep<T>(oldObject: T): T {
   // This is supposed to be faster than lodash cloneDeep
   // As long as the object is only text, there shouldn't be any problems
   return JSON.parse(JSON.stringify(oldObject));
