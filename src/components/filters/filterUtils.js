@@ -2,7 +2,7 @@
 import * as React from 'react';
 import TextField from '@material-ui/core/TextField';
 import type { FiltersType } from 'types';
-import type { FilterAnyType } from 'types/filters';
+import type { FilterAnyType, FilterText } from 'types/filters';
 import FilterSelect from './FilterSelect';
 import FilterTristate from './FilterTristate';
 import FilterGroup from './FilterGroup';
@@ -14,12 +14,10 @@ import FilterSort from './FilterSort';
 //        Other suggestions here - https://medium.freecodecamp.org/handling-state-in-react-four-immutable-approaches-to-consider-d1f5c00249d5
 //        last resort, I might have to do a normal object update
 
-/* eslint-disable import/prefer-default-export, no-underscore-dangle, react/no-array-index-key */
-
+/* eslint-disable import/prefer-default-export, no-underscore-dangle */
+// NOTE: using filter.name as the key. I doubt it'll be a problem.
 export function filterElements(filters: FiltersType, onChange: Function): Array<React.Node> {
   return filters.map((filter: FilterAnyType, index: number) => {
-    const updateFunc: Function = updateFiltersObject(index, filter._type, filters, onChange);
-
     // TODO: header, separator, checkbox
     //       not doing right now because none of the sources use it
     if (filter._type === 'HEADER') {
@@ -33,7 +31,12 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
       return null;
     } else if (filter._type === 'TEXT') {
       return (
-        <TextField label={filter.name} value={filter.state} onChange={updateFunc} key={index} />
+        <TextField
+          label={filter.name}
+          value={filter.state}
+          onChange={handleTextChange(index, filter, filters, onChange)}
+          key={filter.name}
+        />
       );
     } else if (filter._type === 'SELECT') {
       return (
@@ -42,18 +45,28 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
           values={filter.values}
           name={filter.name}
           state={filter.state}
-          onChange={updateFunc}
-          key={index}
+          onChange={handleSelectChange(index, filters, onChange)}
+          key={filter.name}
         />
       );
     } else if (filter._type === 'TRISTATE') {
       return (
-        <FilterTristate name={filter.name} state={filter.state} onChange={updateFunc} key={index} />
+        <FilterTristate
+          name={filter.name}
+          state={filter.state}
+          onChange={handleTristateChange(index, filters, onChange)}
+          key={filter.name}
+        />
       );
     } else if (filter._type === 'GROUP') {
       // NOTE: Assuming that GROUP will only contain TRISTATE children
       return (
-        <FilterGroup name={filter.name} state={filter.state} onChange={updateFunc} key={index} />
+        <FilterGroup
+          name={filter.name}
+          state={filter.state}
+          onChange={handleGroupChange(index, filters, onChange)}
+          key={filter.name}
+        />
       );
     } else if (filter._type === 'SORT') {
       return (
@@ -61,8 +74,8 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
           values={filter.values}
           name={filter.name}
           state={filter.state}
-          onChange={updateFunc}
-          key={index}
+          onChange={handleSortChange(index, filters, onChange)}
+          key={filter.name}
         />
       );
     }
@@ -72,34 +85,24 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
 }
 
 // TODO: update so that updating doesn't remake the ENTIRE filters object
-function updateFiltersObject(
+
+function handleTextChange(
   index: number,
-  type: string,
+  filter: FilterText,
   filters: FiltersType,
   onChange: Function,
-): Function {
-  if (type === 'TEXT' || type === 'SELECT') {
-    return handleChange(index, filters, onChange);
-  } else if (type === 'TRISTATE') {
-    return handleTristateChange(index, filters, onChange);
-  } else if (type === 'GROUP') {
-    return handleGroupChange(index, filters, onChange);
-  } else if (type === 'SORT') {
-    return handleSortChange(index, filters, onChange);
-  }
-
-  console.error('filterUtils updateFiltersObject no match found');
-  return () => null;
+) {
+  return (event: SyntheticEvent<HTMLInputElement>) => {
+    const updatedFilter: FilterText = { ...filter, state: event.currentTarget.value };
+    onChange(updateArray(index, updatedFilter, filters));
+  };
 }
 
-function handleChange(index: number, filters: FiltersType, onChange: Function) {
-  // Generic handler, should handle input, select
+function handleSelectChange(index: number, filters: FiltersType, onChange: Function) {
   // NOTE: LIElement is actually within a select
-  // TODO: input handler would use event.currentTarget.value
-  //       select handler would use event.currentTarget.dataset.value
-  return (event: SyntheticEvent<HTMLInputElement> | SyntheticEvent<HTMLLIElement>) => {
+  return (event: SyntheticEvent<HTMLLIElement>) => {
     const newFilters: FiltersType = cloneDeep(filters);
-    newFilters[index].state = event.target.value;
+    newFilters[index].state = event.currentTarget.dataset.value;
     onChange(newFilters);
   };
 }
@@ -154,4 +157,8 @@ function cloneDeep<T>(oldObject: T): T {
   // This is supposed to be faster than lodash cloneDeep
   // As long as the object is only text, there shouldn't be any problems
   return JSON.parse(JSON.stringify(oldObject));
+}
+
+function updateArray(index: number, updatedFilter: FilterText, filters: FiltersType): FiltersType {
+  return [...filters.slice(0, index), updatedFilter, ...filters.slice(index + 1)];
 }
