@@ -1,4 +1,6 @@
+// @flow
 import { Server } from 'api';
+import type { FiltersType, MangaType } from 'types';
 import { CLEAR_FILTERS } from './filters';
 import { ADD_MANGA } from './mangaInfos';
 
@@ -21,13 +23,19 @@ export const CATALOGUE_ADD_PAGE = 'catalogue/ADD_PAGE';
 // ================================================================================
 // Reducers
 // ================================================================================
+type State = {
+  +mangaIds: $ReadOnlyArray<number>,
+  +page: number,
+  +hasNextPage: boolean,
+};
+
 const initialState = {
   mangaIds: [], // array of mangaIds that point that data loaded in mangaInfos reducer
   page: 1, // TODO: can possibly move this out of redux and into the component state? Not sure.
   hasNextPage: false,
 };
 
-export default function chaptersReducer(state = initialState, action = {}) {
+export default function chaptersReducer(state: State = initialState, action = {}) {
   switch (action.type) {
     case RESET_STATE:
       return initialState;
@@ -63,13 +71,14 @@ export default function chaptersReducer(state = initialState, action = {}) {
 // ================================================================================
 // Action Creators
 // ================================================================================
+type Obj = { retainFilters?: boolean };
 export function fetchCatalogue(
-  sourceId,
-  query = '',
-  filters = [],
-  { retainFilters = false } = {}, // optionally keep previous initialFilters
+  sourceId: number,
+  query: string = '',
+  filters: FiltersType = [],
+  { retainFilters = false }: Obj = {}, // optionally keep previous initialFilters
 ) {
-  return (dispatch) => {
+  return (dispatch: Function) => {
     dispatch({ type: RESET_STATE });
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
@@ -113,8 +122,12 @@ export function fetchCatalogue(
   };
 }
 
-export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
-  return (dispatch, getState) => {
+export function fetchNextCataloguePage(
+  sourceId: number,
+  query: string = '',
+  filters: FiltersType = [],
+) {
+  return (dispatch: Function, getState: Function) => {
     const { page, hasNextPage } = getState().catalogue;
     const nextPage = page + 1;
 
@@ -133,9 +146,10 @@ export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
       },
     });
 
+    const filtersChecked = filters.length ? filters : null;
     return fetch(
       Server.catalogue(),
-      cataloguePostParameters(nextPage, sourceId, query.trim(), filters),
+      cataloguePostParameters(nextPage, sourceId, query.trim(), filtersChecked),
     )
       .then(handleServerError)
       .then(
@@ -164,7 +178,12 @@ export function fetchNextCataloguePage(sourceId, query = '', filters = null) {
 // ================================================================================
 // Helper Functions
 // ================================================================================
-function cataloguePostParameters(page, sourceId, query, filters) {
+function cataloguePostParameters(
+  page: number,
+  sourceId: number,
+  query: string,
+  filters: ?FiltersType,
+): Object {
   return {
     method: 'POST',
     body: JSON.stringify({
@@ -193,6 +212,6 @@ function handleServerError(res) {
   return res.json();
 }
 
-function transformToMangaIdsArray(mangaArray) {
+function transformToMangaIdsArray(mangaArray: Array<MangaType>): Array<number> {
   return mangaArray.map(manga => manga.id);
 }

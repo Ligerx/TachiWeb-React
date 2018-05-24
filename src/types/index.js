@@ -40,7 +40,7 @@ export type ChapterType = {
   chapter_number: number,
   download_status: string,
   id: number,
-  last_page_read: number,
+  last_read_page: number,
 };
 
 export type SourceType = {

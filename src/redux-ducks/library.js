@@ -1,4 +1,6 @@
+// @flow
 import { Server } from 'api';
+import type { MangaType } from 'types';
 import { ADD_MANGA } from './mangaInfos';
 
 // ================================================================================
@@ -23,10 +25,15 @@ export const DECREMENT_UNREAD = 'library/DECREMENT_UNREAD';
 // ================================================================================
 // Reducers
 // ================================================================================
+type State = {
+  +mangaIds: $ReadOnlyArray<number>,
+  +libraryLoaded: boolean,
+  +unread: { +[mangaId: number]: number },
+  +reloadUnread: boolean,
+};
 
-// TODO: remove 'error' flag when error is fixed? Is there a more efficient way to do this?
 export default function libraryReducer(
-  state = {
+  state: State = {
     mangaIds: [], // array of mangaIds that point that data loaded in mangaInfos reducer
     libraryLoaded: false, // Library should be loaded once on first visit
     unread: {}, // { mangaId: int }
@@ -87,8 +94,9 @@ export default function libraryReducer(
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchLibrary({ ignoreCache = false } = {}) {
-  return (dispatch, getState) => {
+type Obj = { ignoreCache?: boolean };
+export function fetchLibrary({ ignoreCache = false }: Obj = {}) {
+  return (dispatch: Function, getState: Function) => {
     // Return cached mangaLibrary if it's been loaded before
     if (!ignoreCache && getState().library.libraryLoaded) {
       return dispatch({ type: FETCH_LIBRARY_CACHE });
@@ -117,7 +125,7 @@ export function fetchLibrary({ ignoreCache = false } = {}) {
 }
 
 export function fetchUnread() {
-  return (dispatch, getState) => {
+  return (dispatch: Function, getState: Function) => {
     if (!getState().library.reloadUnread) {
       return dispatch({ type: FETCH_UNREAD_CACHE });
     }
@@ -142,8 +150,10 @@ export function fetchUnread() {
 // ================================================================================
 // Helper functions
 // ================================================================================
-function transformUnread(unreadArray) {
-  // [ { id: number, unread: number } ] -> { mangaId: unread }
+type Param = Array<{ id: number, unread: number }>;
+type Return = { [mangaId: number]: number };
+
+function transformUnread(unreadArray: Param): Return {
   const newUnread = {};
   unreadArray.forEach((unreadObj) => {
     newUnread[unreadObj.id] = unreadObj.unread;
@@ -151,6 +161,6 @@ function transformUnread(unreadArray) {
   return newUnread;
 }
 
-function transformToMangaIdsArray(mangaArray) {
+function transformToMangaIdsArray(mangaArray: Array<MangaType>): Array<number> {
   return mangaArray.map(manga => manga.id);
 }

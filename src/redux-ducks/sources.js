@@ -1,4 +1,6 @@
+// @flow
 import { Server } from 'api';
+import type { SourceType } from 'types';
 
 // ================================================================================
 // Actions
@@ -11,7 +13,9 @@ export const FETCH_SOURCES = 'sources/FETCH';
 // ================================================================================
 // Reducers
 // ================================================================================
-export default function sourcesReducer(state = [], action = {}) {
+type State = $ReadOnlyArray<SourceType>;
+
+export default function sourcesReducer(state: State = [], action = {}) {
   switch (action.type) {
     case FETCH_SUCCESS:
       return action.payload;
@@ -24,7 +28,7 @@ export default function sourcesReducer(state = [], action = {}) {
 // Action Creators
 // ================================================================================
 export function fetchSources() {
-  return (dispatch) => {
+  return (dispatch: Function) => {
     dispatch({ type: FETCH_REQUEST });
 
     return fetch(Server.sources())

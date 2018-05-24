@@ -1,4 +1,7 @@
+// @flow
+
 import { Server } from 'api';
+import type { MangaType } from 'types';
 import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from './library';
 
 // NOTE: for clarity, this will be called mangaInfos (with an s)
@@ -31,9 +34,9 @@ export const ADD_MANGA = 'mangaInfos/ADD_MANGA';
 // ================================================================================
 // Reducers
 // ================================================================================
-// The state is an object with mangaId keys pointing to mangaInfo objects
-// i.e. { mangaId: {mangaInfoObject} }
-export default function mangaInfosReducer(state = {}, action = {}) {
+type State = { +[mangaId: number]: MangaType };
+
+export default function mangaInfosReducer(state: State = {}, action = {}) {
   switch (action.type) {
     case ADD_MANGA:
       return { ...state, ...mangaArrayToObject(action.newManga) };
@@ -64,8 +67,9 @@ export default function mangaInfosReducer(state = {}, action = {}) {
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchMangaInfo(mangaId, { ignoreCache = false } = {}) {
-  return (dispatch, getState) => {
+type Obj = { ignoreCache?: boolean };
+export function fetchMangaInfo(mangaId: number, { ignoreCache = false }: Obj = {}) {
+  return (dispatch: Function, getState: Function) => {
     // Return cached mangaInfo if already loaded
     if (!ignoreCache && getState().library.libraryLoaded) {
       return dispatch({ type: FETCH_MANGA_CACHE });
@@ -87,8 +91,8 @@ export function fetchMangaInfo(mangaId, { ignoreCache = false } = {}) {
   };
 }
 
-export function updateMangaInfo(mangaId) {
-  return (dispatch) => {
+export function updateMangaInfo(mangaId: number) {
+  return (dispatch: Function) => {
     dispatch({ type: UPDATE_MANGA_REQUEST, meta: { mangaId } });
 
     return fetch(Server.updateMangaInfo(mangaId))
@@ -108,8 +112,8 @@ export function updateMangaInfo(mangaId) {
   };
 }
 
-export function toggleFavorite(mangaId, isCurrentlyFavorite) {
-  return (dispatch) => {
+export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
+  return (dispatch: Function) => {
     dispatch({ type: TOGGLE_FAVORITE_REQUEST, meta: { mangaId, isCurrentlyFavorite } });
 
     return fetch(Server.toggleFavorite(mangaId, isCurrentlyFavorite)).then(
@@ -141,7 +145,7 @@ export function toggleFavorite(mangaId, isCurrentlyFavorite) {
 // ================================================================================
 // Helper Functions
 // ================================================================================
-function mangaArrayToObject(mangaArray) {
+function mangaArrayToObject(mangaArray: Array<MangaType>): State {
   const mangaObject = {};
   mangaArray.forEach((manga) => {
     mangaObject[manga.id] = manga;

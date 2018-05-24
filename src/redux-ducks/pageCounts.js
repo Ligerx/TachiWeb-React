@@ -1,3 +1,4 @@
+// @flow
 import { Server } from 'api';
 
 // ================================================================================
@@ -11,9 +12,9 @@ const FETCH_CACHE = 'pageCounts/FETCH_CACHE';
 // ================================================================================
 // Reducers
 // ================================================================================
-// The state is an object with chapterId keys pointing to pageCount values
-// i.e. { chapterId: pageCount }
-export default function chaptersReducer(state = {}, action = {}) {
+type State = { +[chapterId: number]: number };
+
+export default function pageCountsReducer(state: State = {}, action = {}) {
   switch (action.type) {
     case FETCH_SUCCESS:
       return {
@@ -30,8 +31,8 @@ export default function chaptersReducer(state = {}, action = {}) {
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchPageCount(mangaId, chapterId) {
-  return (dispatch, getState) => {
+export function fetchPageCount(mangaId: number, chapterId: number) {
+  return (dispatch: Function, getState: Function) => {
     // Return manga's chapters' cached pageCount data if they're already in the store
     if (getState().pageCounts[chapterId]) {
       return dispatch({ type: FETCH_CACHE });

@@ -1,3 +1,5 @@
+// @flow
+
 // Based on this great article
 // https://medium.com/stashaway-engineering/react-redux-tips-better-way-to-handle-loading-flags-in-your-reducers-afda42a804c6
 // weird array explaination
@@ -5,7 +7,9 @@
 
 import compact from 'lodash/compact';
 
-export default function errorReducer(state = {}, action = {}) {
+type State = { +[action: string]: string };
+
+export default function errorReducer(state: State = {}, action = {}) {
   const { type, errorMessage } = action;
   const matches = /(.*)_(REQUEST|FAILURE)/.exec(type);
 
@@ -22,7 +26,7 @@ export default function errorReducer(state = {}, action = {}) {
   };
 }
 
-export const allErrorsSelector = (state) => {
+export const allErrorsSelector = (state: State): string => {
   const allErrors = compact(Object.values(state.error));
   return allErrors[0] || '';
 };

@@ -1,4 +1,6 @@
+// @flow
 import { Server } from 'api';
+import type { FilterAnyType } from 'types/filters';
 
 // ================================================================================
 // Actions
@@ -14,7 +16,7 @@ export const CLEAR_FILTERS = 'filters/CLEAR_FILTERS';
 // ================================================================================
 // NOTE: filters should just store the initial filters received by the server
 //       Any edited filters should just be held in local state
-export default function filtersReducer(state = [], action = {}) {
+export default function filtersReducer(state: $ReadOnlyArray<FilterAnyType> = [], action = {}) {
   switch (action.type) {
     case FETCH_SUCCESS:
       return action.filters;
@@ -28,8 +30,8 @@ export default function filtersReducer(state = [], action = {}) {
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchFilters(sourceId) {
-  return (dispatch) => {
+export function fetchFilters(sourceId: number) {
+  return (dispatch: Function) => {
     dispatch({ type: FETCH_REQUEST, meta: { sourceId } });
 
     return fetch(Server.filters(sourceId))

@@ -1,4 +1,6 @@
+// @flow
 import { Server } from 'api';
+import type { ChapterType } from 'types';
 import { DECREMENT_UNREAD } from './library';
 
 // ================================================================================
@@ -22,8 +24,9 @@ const UPDATE_READING_STATUS_FAILURE = 'chapters/UPDATE_READING_STATUS_FAILURE';
 // ================================================================================
 // Reducers
 // ================================================================================
-// State should be in the shape of { mangaId: [chapterObjects...] }
-export default function chaptersReducer(state = {}, action = {}) {
+type State = { +[mangaId: number]: Array<ChapterType> };
+
+export default function chaptersReducer(state: State = {}, action = {}) {
   switch (action.type) {
     case FETCH_SUCCESS:
       return {
@@ -56,8 +59,9 @@ export default function chaptersReducer(state = {}, action = {}) {
 // Action Creators
 // ================================================================================
 // Fetch the chapters that are currently cached by the server
-export function fetchChapters(mangaId, { ignoreCache = false } = {}) {
-  return (dispatch, getState) => {
+type Obj = { ignoreCache?: boolean };
+export function fetchChapters(mangaId: number, { ignoreCache = false }: Obj = {}) {
+  return (dispatch: Function, getState: Function) => {
     // Return manga's cached chapters if they're already in the store
     if (!ignoreCache && getState().chapters[mangaId]) {
       // A bit of a hack I guess. Return a promise so that any function calling fetchChapters
@@ -83,8 +87,8 @@ export function fetchChapters(mangaId, { ignoreCache = false } = {}) {
 
 // Request the server to re-scrape the source site for chapters
 // If there have been any changes, re-fetch the cached chapter list from the server
-export function updateChapters(mangaId) {
-  return (dispatch) => {
+export function updateChapters(mangaId: number) {
+  return (dispatch: Function) => {
     dispatch({ type: UPDATE_REQUEST, meta: { mangaId } });
 
     return fetch(Server.updateMangaChapters(mangaId))
@@ -117,8 +121,8 @@ export function updateChapters(mangaId) {
 }
 
 // NOTE: This is only to update one chapter object's read + last_read_page
-export function updateReadingStatus(mangaId, chapter, pageCount, readPage) {
-  return (dispatch) => {
+export function updateReadingStatus(mangaId: number, chapter: ChapterType, pageCount: number, readPage: number) {
+  return (dispatch: Function) => {
     // Handle checking if no update needs to happen. Escape early if so.
     // NOTE: Returning null should work, but idk if redux-thunk
     //       wants me to return a dispatch instead.
