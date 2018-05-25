@@ -1,7 +1,6 @@
 // @flow
 import { Server } from 'api';
 import type { FiltersType, MangaType } from 'types';
-import { CLEAR_FILTERS } from './filters';
 import { ADD_MANGA } from './mangaInfos';
 
 // ================================================================================
@@ -82,19 +81,8 @@ export default function catalogueReducer(state: State = initialState, action = {
 // ================================================================================
 // Action Creators
 // ================================================================================
-type Obj = { retainFilters?: boolean };
-export function fetchCatalogue(
-  sourceId: number,
-  { retainFilters = false }: Obj = {}, // optionally keep previous initialFilters
-) {
+export function fetchCatalogue(sourceId: number) {
   return (dispatch: Function, getState: Function) => {
-    if (!retainFilters) {
-      // TODO: Not sure if this should be here?
-      //       possibly remove it and place a clearFilters action for the page to call?
-      //       not sure if that's better or worse
-      dispatch({ type: CLEAR_FILTERS, meta: { in: 'fetchCatalogue' } });
-    }
-
     const { lastUsedFilters } = getState().filters;
     const { searchQuery } = getState().catalogue;
 

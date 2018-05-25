@@ -5,8 +5,6 @@ import type { FilterAnyType } from 'types/filters';
 // ================================================================================
 // Actions
 // ================================================================================
-export const CLEAR_FILTERS = 'filters/CLEAR_FILTERS';
-
 const FETCH_REQUEST = 'filters/FETCH_REQUEST';
 const FETCH_SUCCESS = 'filters/FETCH_SUCCESS';
 const FETCH_FAILURE = 'filters/FETCH_FAILURE';
@@ -36,7 +34,7 @@ const initialState: State = {
 };
 export default function filtersReducer(state: State = initialState, action = {}) {
   switch (action.type) {
-    case CLEAR_FILTERS:
+    case FETCH_REQUEST:
       return initialState;
 
     case FETCH_SUCCESS:

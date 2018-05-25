@@ -99,7 +99,7 @@ type DispatchToProps = {
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchSources: () => dispatch(fetchSources()),
   // Passing in the new catalogue search settings
-  fetchCatalogue: (sourceId, retainFilters) => dispatch(fetchCatalogue(sourceId, retainFilters)),
+  fetchCatalogue: sourceId => dispatch(fetchCatalogue(sourceId)),
   fetchNextCataloguePage: sourceId => dispatch(fetchNextCataloguePage(sourceId)),
   resetCatalogue: () => dispatch(resetCatalogue()),
   updateSearchQuery: newSearchQuery => dispatch(updateSearchQuery(newSearchQuery)),

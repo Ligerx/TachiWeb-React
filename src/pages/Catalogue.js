@@ -46,19 +46,23 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
       const { sourceIndex } = this.state;
-      fetchCatalogue(this.props.sources[sourceIndex].id, {
-        retainFilters: true,
-      });
+      fetchCatalogue(this.props.sources[sourceIndex].id);
     }, 500);
   }
 
   componentDidUpdate(prevProps: CatalogueContainerProps, prevState: State) {
     const { sourceIndex } = this.state;
-    const { sources, fetchCatalogue, fetchFilters } = this.props;
+    const {
+      sources, resetCatalogue, fetchCatalogue, fetchFilters,
+    } = this.props;
 
+    // TODO: move this out of componentDidUpdate when I move up sourceId to redux
+    // If source changed
     if (sourceIndex !== prevState.sourceIndex) {
-      fetchCatalogue(sources[sourceIndex].id);
+      resetCatalogue();
+      // should come before fetchCatalogue so filters don't get used between sources
       fetchFilters(sources[sourceIndex].id);
+      fetchCatalogue(sources[sourceIndex].id);
     }
   }
 
@@ -73,9 +77,6 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
     const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
-
-    this.props.resetCatalogue();
-
     this.setState({ sourceIndex: newSourceIndex });
   };
 
@@ -141,7 +142,7 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     const { sourceIndex } = this.state;
 
     updateLastUsedFilters(); // Must come before fetchCatalogue. This is a synchronous function.
-    fetchCatalogue(sources[sourceIndex].id, { retainFilters: true });
+    fetchCatalogue(sources[sourceIndex].id);
   };
 
   handleRefreshClick = () => {
