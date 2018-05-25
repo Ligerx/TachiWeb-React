@@ -30,7 +30,7 @@ const FilterSort = ({
     <ExpansionPanelDetails>
       <FormGroup>
         {values.map((value, nestedIndex) => (
-          <ButtonBase onClick={onChange(nestedIndex)} key={name}>
+          <ButtonBase onClick={onChange(nestedIndex)} key={`${name} ${value}`}>
             <Icon>{iconValue(state.index, state.ascending, nestedIndex)}</Icon>
             <Typography>{value}</Typography>
           </ButtonBase>

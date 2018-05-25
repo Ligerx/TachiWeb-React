@@ -30,7 +30,7 @@ const FilterGroup = ({ name, state, onChange }: Props) => (
             name={tristate.name}
             state={tristate.state}
             onChange={onChange(nestedIndex)}
-            key={tristate.name}
+            key={`${name} ${tristate.name}`}
           />
         ))}
       </FormGroup>
