@@ -21,10 +21,13 @@ export const CATALOGUE_ADD_PAGE = 'catalogue/ADD_PAGE';
 
 const UPDATE_SEARCH_QUERY = 'catalogue/UPDATE_SEARCH_QUERY';
 
+const CHANGE_SOURCEID = 'catalogue/CHANGE_SOURCEID';
+
 // ================================================================================
 // Reducers
 // ================================================================================
 type State = {
+  +sourceId: ?number,
   +mangaIds: $ReadOnlyArray<number>,
   +page: number,
   +hasNextPage: boolean,
@@ -32,6 +35,7 @@ type State = {
 };
 
 const initialState = {
+  sourceId: null,
   mangaIds: [], // array of mangaIds that point that data loaded in mangaInfos reducer
   page: 1,
   hasNextPage: false,
@@ -73,6 +77,9 @@ export default function catalogueReducer(state: State = initialState, action = {
     case UPDATE_SEARCH_QUERY:
       return { ...state, searchQuery: action.searchQuery };
 
+    case CHANGE_SOURCEID:
+      return { ...state, sourceId: action.newSourceId };
+
     default:
       return state;
   }
@@ -81,15 +88,23 @@ export default function catalogueReducer(state: State = initialState, action = {
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchCatalogue(sourceId: number) {
+export function fetchCatalogue() {
   return (dispatch: Function, getState: Function) => {
     const { lastUsedFilters } = getState().filters;
-    const { searchQuery } = getState().catalogue;
+    const { searchQuery, sourceId } = getState().catalogue;
 
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
       meta: { sourceId, searchQuery, lastUsedFilters },
     });
+
+    if (sourceId == null) {
+      return dispatch({
+        type: FETCH_CATALOGUE_FAILURE,
+        errorMessage: 'No source selected',
+        meta: 'fetchCatalogue() sourceId is null',
+      });
+    }
 
     // Filters should be null if empty when requesting from the server
     const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
@@ -121,14 +136,23 @@ export function fetchCatalogue(sourceId: number) {
   };
 }
 
-export function fetchNextCataloguePage(sourceId: number) {
+export function fetchNextCataloguePage() {
   return (dispatch: Function, getState: Function) => {
-    const { page, hasNextPage, searchQuery } = getState().catalogue;
+    const {
+      page, hasNextPage, searchQuery, sourceId,
+    } = getState().catalogue;
     const { lastUsedFilters } = getState().filters;
     const nextPage = page + 1;
 
     if (!hasNextPage) {
       return dispatch({ type: ADD_PAGE_NO_NEXT_PAGE });
+    }
+    if (sourceId == null) {
+      return dispatch({
+        type: ADD_PAGE_FAILURE,
+        errorMessage: 'There was a problem loading the next page of manga',
+        meta: 'fetchNextCataloguePage() sourceId is null',
+      });
     }
 
     dispatch({
@@ -178,6 +202,10 @@ export function resetCatalogue() {
 export function updateSearchQuery(newSearchQuery: string) {
   return (dispatch: Function) =>
     dispatch({ type: UPDATE_SEARCH_QUERY, searchQuery: newSearchQuery });
+}
+
+export function changeSourceId(newSourceId: number) {
+  return (dispatch: Function) => dispatch({ type: CHANGE_SOURCEID, newSourceId });
 }
 
 // ================================================================================

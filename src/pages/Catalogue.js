@@ -18,52 +18,34 @@ import type { CatalogueContainerProps } from 'containers/CatalogueContainer';
 // TODO: maybe add text saying that there are no more pages to load?
 
 type State = {
-  // Select based on index of the array instead of id
-  // this makes it less reliant on having to sync state with the data
-  // May change this in the future?
-  sourceIndex: number,
   mangaIdBeingViewed: ?number,
 };
 
 class Catalogue extends Component<CatalogueContainerProps, State> {
   state = {
-    sourceIndex: 0,
     mangaIdBeingViewed: null,
   }
 
   componentDidMount() {
-    const { fetchSources, fetchCatalogue, fetchFilters } = this.props;
+    const {
+      fetchSources, fetchCatalogue, fetchFilters, changeSourceId,
+    } = this.props;
 
-    // I think there's a bug in babel. I should be able to reference 'this' (in the outer scope)
-    // when using an arrow function, but it's undefined. So I'm manually binding 'this'.
+    // https://github.com/babel/babel/issues/2141
+    // this is undefined in the promise, so manually bind this
     const that = this;
+
     fetchSources().then(() => {
-      fetchCatalogue(that.props.sources[0].id);
-      fetchFilters(that.props.sources[0].id);
+      changeSourceId(that.props.sources[0].id); // use the first available source
+      fetchCatalogue();
+      fetchFilters();
     });
 
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
-      const { sourceIndex } = this.state;
-      fetchCatalogue(this.props.sources[sourceIndex].id);
+      fetchCatalogue();
     }, 500);
-  }
-
-  componentDidUpdate(prevProps: CatalogueContainerProps, prevState: State) {
-    const { sourceIndex } = this.state;
-    const {
-      sources, resetCatalogue, fetchCatalogue, fetchFilters,
-    } = this.props;
-
-    // TODO: move this out of componentDidUpdate when I move up sourceId to redux
-    // If source changed
-    if (sourceIndex !== prevState.sourceIndex) {
-      resetCatalogue();
-      // should come before fetchCatalogue so filters don't get used between sources
-      fetchFilters(sources[sourceIndex].id);
-      fetchCatalogue(sources[sourceIndex].id);
-    }
   }
 
   componentWillUnmount() {
@@ -76,8 +58,16 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
   handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
+    const {
+      changeSourceId, resetCatalogue, fetchFilters, fetchCatalogue,
+    } = this.props;
+
     const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
-    this.setState({ sourceIndex: newSourceIndex });
+
+    changeSourceId(newSourceIndex);
+    resetCatalogue();
+    fetchFilters(); // call before fetchCatalogue so filters don't get used between sources
+    fetchCatalogue();
   };
 
   handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
@@ -120,12 +110,11 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
 
   handleLoadNextPage = () => {
     const {
-      hasNextPage, sources, fetchNextCataloguePage, catalogueIsLoading,
+      hasNextPage, fetchNextCataloguePage, catalogueIsLoading,
     } = this.props;
-    const { sourceIndex } = this.state;
 
     if (hasNextPage && !catalogueIsLoading) {
-      fetchNextCataloguePage(sources[sourceIndex].id);
+      fetchNextCataloguePage();
     }
   };
 
@@ -138,11 +127,10 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
   };
 
   handleSearchFilters = () => {
-    const { fetchCatalogue, updateLastUsedFilters, sources } = this.props;
-    const { sourceIndex } = this.state;
+    const { fetchCatalogue, updateLastUsedFilters } = this.props;
 
     updateLastUsedFilters(); // Must come before fetchCatalogue. This is a synchronous function.
-    fetchCatalogue(sources[sourceIndex].id);
+    fetchCatalogue();
   };
 
   handleRefreshClick = () => {
@@ -160,10 +148,10 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
       mangaInfoIsLoading,
       currentFilters,
       searchQuery,
+      sourceId,
     } = this.props;
     const {
       mangaIdBeingViewed,
-      sourceIndex,
     } = this.state;
 
     const mangaInfo: ?MangaType = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
@@ -187,7 +175,7 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     return (
       <React.Fragment>
         <CatalogueHeader
-          sourceIndex={sourceIndex}
+          sourceId={sourceId}
           sources={sources}
           searchQuery={searchQuery}
           onSourceChange={this.handleSourceChange}

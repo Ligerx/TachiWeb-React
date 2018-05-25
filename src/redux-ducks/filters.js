@@ -63,9 +63,18 @@ export default function filtersReducer(state: State = initialState, action = {})
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchFilters(sourceId: number) {
-  return (dispatch: Function) => {
+export function fetchFilters() {
+  return (dispatch: Function, getState: Function) => {
+    const { sourceId }: { sourceId: ?number } = getState().catalogue;
     dispatch({ type: FETCH_REQUEST, meta: { sourceId } });
+
+    if (sourceId == null) {
+      return dispatch({
+        type: FETCH_FAILURE,
+        errorMessage: 'Failed to get the filters.',
+        meta: 'fetchFilters() sourceId is null',
+      });
+    }
 
     return fetch(Server.filters(sourceId))
       .then(

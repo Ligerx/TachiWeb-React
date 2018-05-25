@@ -6,6 +6,7 @@ import {
   fetchNextCataloguePage,
   resetCatalogue,
   updateSearchQuery,
+  changeSourceId,
   FETCH_CATALOGUE,
   CATALOGUE_ADD_PAGE,
 } from 'redux-ducks/catalogue';
@@ -38,8 +39,10 @@ const mangaInfoIsLoading: Function = createLoadingSelector([
 
 type StateToProps = {
   sources: Array<SourceType>,
+
   hasNextPage: boolean,
   searchQuery: string,
+  sourceId: ?number,
 
   chaptersByMangaId: { [mangaId: number]: Array<ChapterType> },
   mangaLibrary: Array<MangaType>,
@@ -54,7 +57,9 @@ type StateToProps = {
 };
 
 const mapStateToProps = (state): StateToProps => {
-  const { mangaIds, hasNextPage, searchQuery } = state.catalogue;
+  const {
+    mangaIds, hasNextPage, searchQuery, sourceId,
+  } = state.catalogue;
   const mangaLibrary = mangaToShow(state.mangaInfos, mangaIds);
 
   return {
@@ -63,6 +68,7 @@ const mapStateToProps = (state): StateToProps => {
     // Catalogue props
     hasNextPage,
     searchQuery,
+    sourceId,
     // Chapter props
     chaptersByMangaId: state.chapters,
     // Library props
@@ -84,6 +90,7 @@ type DispatchToProps = {
   fetchNextCataloguePage: Function,
   resetCatalogue: Function,
   updateSearchQuery: Function,
+  changeSourceId: Function,
 
   fetchChapters: Function,
   updateChapters: Function,
@@ -99,17 +106,18 @@ type DispatchToProps = {
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchSources: () => dispatch(fetchSources()),
   // Passing in the new catalogue search settings
-  fetchCatalogue: sourceId => dispatch(fetchCatalogue(sourceId)),
-  fetchNextCataloguePage: sourceId => dispatch(fetchNextCataloguePage(sourceId)),
+  fetchCatalogue: () => dispatch(fetchCatalogue()),
+  fetchNextCataloguePage: () => dispatch(fetchNextCataloguePage()),
   resetCatalogue: () => dispatch(resetCatalogue()),
   updateSearchQuery: newSearchQuery => dispatch(updateSearchQuery(newSearchQuery)),
+  changeSourceId: newSourceId => dispatch(changeSourceId(newSourceId)),
 
   fetchChapters: mangaId => dispatch(fetchChapters(mangaId)),
   updateChapters: mangaId => dispatch(updateChapters(mangaId)),
   updateMangaInfo: mangaId => dispatch(updateMangaInfo(mangaId)),
   fetchMangaInfo: mangaId => dispatch(fetchMangaInfo(mangaId)),
 
-  fetchFilters: sourceId => dispatch(fetchFilters(sourceId)),
+  fetchFilters: () => dispatch(fetchFilters()),
   resetFilters: () => dispatch(resetFilters()),
   updateLastUsedFilters: () => dispatch(updateLastUsedFilters()),
   updateCurrentFilters: newFilters => dispatch(updateCurrentFilters(newFilters)),

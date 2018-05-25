@@ -10,7 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import type { SourceType } from 'types';
 
 type Props = {
-  sourceIndex: number,
+  sourceId: ?number,
   sources: Array<SourceType>,
   searchQuery: string,
   onSourceChange: Function,
@@ -18,7 +18,7 @@ type Props = {
 };
 
 const CatalogueHeader = ({
-  sourceIndex,
+  sourceId,
   sources,
   searchQuery,
   onSourceChange,
@@ -31,24 +31,29 @@ const CatalogueHeader = ({
       <Toolbar>
         <MenuDrawer />
 
-        {sourcesExist && (
-          <form onSubmit={e => e.preventDefault()}>
-            <FormControl>
-              <Select value={sourceIndex} onChange={onSourceChange}>
-                {sources.map((source, index) => (
-                  <MenuItem value={index} key={source.id}>
-                    {source.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+        {sourcesExist &&
+          sourceId != null && (
+            <form onSubmit={e => e.preventDefault()}>
+              <FormControl>
+                <Select value={findSourceIndex(sources, sourceId)} onChange={onSourceChange}>
+                  {sources.map((source, index) => (
+                    <MenuItem value={index} key={source.id}>
+                      {source.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <TextField label="Search" value={searchQuery} onChange={onSearchChange} />
-          </form>
-        )}
+              <TextField label="Search" value={searchQuery} onChange={onSearchChange} />
+            </form>
+          )}
       </Toolbar>
     </AppBar>
   );
 };
+
+function findSourceIndex(sources, sourceId) {
+  return sources.findIndex(source => source.id === sourceId);
+}
 
 export default CatalogueHeader;
