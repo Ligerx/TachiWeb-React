@@ -20,6 +20,8 @@ const ADD_PAGE_SUCCESS = 'catalogue/ADD_PAGE_SUCCESS';
 const ADD_PAGE_FAILURE = 'catalogue/ADD_PAGE_FAILURE';
 export const CATALOGUE_ADD_PAGE = 'catalogue/ADD_PAGE';
 
+const UPDATE_SEARCH_QUERY = 'catalogue/UPDATE_SEARCH_QUERY';
+
 // ================================================================================
 // Reducers
 // ================================================================================
@@ -27,12 +29,14 @@ type State = {
   +mangaIds: $ReadOnlyArray<number>,
   +page: number,
   +hasNextPage: boolean,
+  +searchQuery: string,
 };
 
 const initialState = {
   mangaIds: [], // array of mangaIds that point that data loaded in mangaInfos reducer
-  page: 1, // TODO: can possibly move this out of redux and into the component state? Not sure.
+  page: 1,
   hasNextPage: false,
+  searchQuery: '',
 };
 
 export default function catalogueReducer(state: State = initialState, action = {}) {
@@ -63,6 +67,10 @@ export default function catalogueReducer(state: State = initialState, action = {
       console.error('No next page to fetch. Should not be reaching here');
       return state;
     }
+
+    case UPDATE_SEARCH_QUERY:
+      return { ...state, searchQuery: action.searchQuery };
+
     default:
       return state;
   }
@@ -74,7 +82,6 @@ export default function catalogueReducer(state: State = initialState, action = {
 type Obj = { retainFilters?: boolean };
 export function fetchCatalogue(
   sourceId: number,
-  query: string = '',
   { retainFilters = false }: Obj = {}, // optionally keep previous initialFilters
 ) {
   return (dispatch: Function, getState: Function) => {
@@ -86,18 +93,19 @@ export function fetchCatalogue(
     }
 
     const { lastUsedFilters } = getState().filters;
+    const { searchQuery } = getState().catalogue;
 
     dispatch({ type: RESET_STATE });
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
-      meta: { sourceId, query, lastUsedFilters },
+      meta: { sourceId, searchQuery, lastUsedFilters },
     });
 
     // Filters should be null if empty when requesting from the server
     const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
     return fetch(
       Server.catalogue(),
-      cataloguePostParameters(1, sourceId, query.trim(), filtersChecked),
+      cataloguePostParameters(1, sourceId, searchQuery.trim(), filtersChecked),
     )
       .then(handleServerError)
       .then(
@@ -123,9 +131,9 @@ export function fetchCatalogue(
   };
 }
 
-export function fetchNextCataloguePage(sourceId: number, query: string = '') {
+export function fetchNextCataloguePage(sourceId: number) {
   return (dispatch: Function, getState: Function) => {
-    const { page, hasNextPage } = getState().catalogue;
+    const { page, hasNextPage, searchQuery } = getState().catalogue;
     const { lastUsedFilters } = getState().filters;
     const nextPage = page + 1;
 
@@ -139,7 +147,7 @@ export function fetchNextCataloguePage(sourceId: number, query: string = '') {
         sourceId,
         nextPage,
         hasNextPage,
-        query,
+        searchQuery,
         lastUsedFilters,
       },
     });
@@ -147,7 +155,7 @@ export function fetchNextCataloguePage(sourceId: number, query: string = '') {
     const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
     return fetch(
       Server.catalogue(),
-      cataloguePostParameters(nextPage, sourceId, query.trim(), filtersChecked),
+      cataloguePostParameters(nextPage, sourceId, searchQuery.trim(), filtersChecked),
     )
       .then(handleServerError)
       .then(
@@ -171,6 +179,15 @@ export function fetchNextCataloguePage(sourceId: number, query: string = '') {
           }),
       );
   };
+}
+
+export function resetCatalogue() {
+  return (dispatch: Function) => dispatch({ type: RESET_STATE });
+}
+
+export function updateSearchQuery(newSearchQuery: string) {
+  return (dispatch: Function) =>
+    dispatch({ type: UPDATE_SEARCH_QUERY, searchQuery: newSearchQuery });
 }
 
 // ================================================================================

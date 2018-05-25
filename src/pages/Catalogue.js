@@ -22,14 +22,12 @@ type State = {
   // this makes it less reliant on having to sync state with the data
   // May change this in the future?
   sourceIndex: number,
-  searchQuery: string,
   mangaIdBeingViewed: ?number,
 };
 
 class Catalogue extends Component<CatalogueContainerProps, State> {
   state = {
     sourceIndex: 0,
-    searchQuery: '',
     mangaIdBeingViewed: null,
   }
 
@@ -47,8 +45,8 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
-      const { sourceIndex, searchQuery } = this.state;
-      fetchCatalogue(this.props.sources[sourceIndex].id, searchQuery, {
+      const { sourceIndex } = this.state;
+      fetchCatalogue(this.props.sources[sourceIndex].id, {
         retainFilters: true,
       });
     }, 500);
@@ -75,12 +73,14 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
     const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
-    this.setState({ sourceIndex: newSourceIndex, searchQuery: '' });
+    // TODO: Should just reset all of catalogue here.
+    //       Should also help remove those optional checks for fetch statements
+    this.setState({ sourceIndex: newSourceIndex });
   };
 
   handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
-    this.setState({ searchQuery: event.currentTarget.value });
+    this.props.updateSearchQuery(event.currentTarget.value);
     this.delayedSearch();
   };
 
@@ -120,10 +120,10 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     const {
       hasNextPage, sources, fetchNextCataloguePage, catalogueIsLoading,
     } = this.props;
-    const { searchQuery, sourceIndex } = this.state;
+    const { sourceIndex } = this.state;
 
     if (hasNextPage && !catalogueIsLoading) {
-      fetchNextCataloguePage(sources[sourceIndex].id, searchQuery);
+      fetchNextCataloguePage(sources[sourceIndex].id);
     }
   };
 
@@ -137,10 +137,10 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
 
   handleSearchFilters = () => {
     const { fetchCatalogue, updateLastUsedFilters, sources } = this.props;
-    const { sourceIndex, searchQuery } = this.state;
+    const { sourceIndex } = this.state;
 
     updateLastUsedFilters(); // must come first. It is a synchronous function, no promise needed
-    fetchCatalogue(sources[sourceIndex].id, searchQuery, { retainFilters: true });
+    fetchCatalogue(sources[sourceIndex].id, { retainFilters: true });
   };
 
   handleRefreshClick = () => {
@@ -157,11 +157,11 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
       catalogueIsLoading,
       mangaInfoIsLoading,
       currentFilters,
+      searchQuery,
     } = this.props;
     const {
       mangaIdBeingViewed,
       sourceIndex,
-      searchQuery,
     } = this.state;
 
     const mangaInfo: ?MangaType = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
