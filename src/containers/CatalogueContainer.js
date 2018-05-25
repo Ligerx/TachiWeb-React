@@ -13,11 +13,17 @@ import {
   FETCH_CHAPTERS,
   UPDATE_CHAPTERS,
 } from 'redux-ducks/chapters';
-import { fetchFilters } from 'redux-ducks/filters';
+import {
+  fetchFilters,
+  resetFilters,
+  updateLastUsedFilters,
+  updateCurrentFilters,
+} from 'redux-ducks/filters';
 import { fetchMangaInfo, updateMangaInfo, FETCH_MANGA, UPDATE_MANGA } from 'redux-ducks/mangaInfos';
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
 import type { SourceType, ChapterType, MangaType, FiltersType } from 'types';
+import type { FilterAnyType } from 'types/filters';
 
 const sourcesAreLoading: Function = createLoadingSelector([FETCH_SOURCES]);
 const catalogueIsLoading: Function = createLoadingSelector([FETCH_CATALOGUE, CATALOGUE_ADD_PAGE]);
@@ -33,7 +39,11 @@ type StateToProps = {
   hasNextPage: boolean,
   chaptersByMangaId: { [mangaId: number]: Array<ChapterType> },
   mangaLibrary: Array<MangaType>,
+
   initialFilters: FiltersType,
+  lastUsedFilters: Array<FilterAnyType>,
+  currentFilters: Array<FilterAnyType>,
+
   sourcesAreLoading: boolean,
   catalogueIsLoading: boolean,
   mangaInfoIsLoading: boolean,
@@ -53,7 +63,9 @@ const mapStateToProps = (state): StateToProps => {
     // Library props
     mangaLibrary,
     // Filter props
-    initialFilters: state.filters,
+    initialFilters: state.filters.initialFilters,
+    lastUsedFilters: state.filters.lastUsedFilters,
+    currentFilters: state.filters.currentFilters,
     // Fetching props
     sourcesAreLoading: sourcesAreLoading(state),
     catalogueIsLoading: catalogueIsLoading(state),
@@ -64,26 +76,33 @@ const mapStateToProps = (state): StateToProps => {
 type DispatchToProps = {
   fetchSources: Function,
   fetchCatalogue: Function,
-  fetchFilters: Function,
   fetchChapters: Function,
   fetchNextCataloguePage: Function,
   updateChapters: Function,
   updateMangaInfo: Function,
   fetchMangaInfo: Function,
+
+  fetchFilters: Function,
+  resetFilters: Function,
+  updateLastUsedFilters: Function,
+  updateCurrentFilters: Function,
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchSources: () => dispatch(fetchSources()),
   // Passing in the new catalogue search settings
-  fetchCatalogue: (sourceId, query, filters, retainFilters) =>
-    dispatch(fetchCatalogue(sourceId, query, filters, retainFilters)),
-  fetchFilters: sourceId => dispatch(fetchFilters(sourceId)),
+  fetchCatalogue: (sourceId, query, retainFilters) =>
+    dispatch(fetchCatalogue(sourceId, query, retainFilters)),
   fetchChapters: mangaId => dispatch(fetchChapters(mangaId)),
-  fetchNextCataloguePage: (sourceId, query, filters) =>
-    dispatch(fetchNextCataloguePage(sourceId, query, filters)),
+  fetchNextCataloguePage: (sourceId, query) => dispatch(fetchNextCataloguePage(sourceId, query)),
   updateChapters: mangaId => dispatch(updateChapters(mangaId)),
   updateMangaInfo: mangaId => dispatch(updateMangaInfo(mangaId)),
   fetchMangaInfo: mangaId => dispatch(fetchMangaInfo(mangaId)),
+
+  fetchFilters: sourceId => dispatch(fetchFilters(sourceId)),
+  resetFilters: () => dispatch(resetFilters()),
+  updateLastUsedFilters: () => dispatch(updateLastUsedFilters()),
+  updateCurrentFilters: newFilters => dispatch(updateCurrentFilters(newFilters)),
 });
 
 // Helper functions

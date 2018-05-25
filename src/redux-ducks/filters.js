@@ -5,23 +5,58 @@ import type { FilterAnyType } from 'types/filters';
 // ================================================================================
 // Actions
 // ================================================================================
+export const CLEAR_FILTERS = 'filters/CLEAR_FILTERS';
+
 const FETCH_REQUEST = 'filters/FETCH_REQUEST';
 const FETCH_SUCCESS = 'filters/FETCH_SUCCESS';
 const FETCH_FAILURE = 'filters/FETCH_FAILURE';
 
-export const CLEAR_FILTERS = 'filters/CLEAR_FILTERS';
+const RESET_FILTERS = 'filters/RESET_FILTERS';
+const UPDATE_LAST_USED_FILTERS = 'filters/UPDATE_LAST_USED_FILTERS';
+const UPDATE_CURRENT_FILTERS = 'filters/UPDATE_CURRENT_FILTERS';
 
 // ================================================================================
 // Reducers
 // ================================================================================
 // NOTE: filters should just store the initial filters received by the server
 //       Any edited filters should just be held in local state
-export default function filtersReducer(state: $ReadOnlyArray<FilterAnyType> = [], action = {}) {
+type State = {
+  +initialFilters: $ReadOnlyArray<FilterAnyType>,
+  +lastUsedFilters: $ReadOnlyArray<FilterAnyType>, // use this for the actual search fetches
+
+  // having this in the redux store is going to create a ton of actions being logged
+  // consider keeping this in local state, meaning temp changes would be wiped out every time
+  // you navigated away from the page (but lastUsedFilters will replace it when you come back)
+  +currentFilters: $ReadOnlyArray<FilterAnyType>, // stores changes that haven't been submitted yet
+};
+const initialState: State = {
+  initialFilters: [],
+  lastUsedFilters: [],
+  currentFilters: [],
+};
+export default function filtersReducer(state: State = initialState, action = {}) {
   switch (action.type) {
-    case FETCH_SUCCESS:
-      return action.filters;
     case CLEAR_FILTERS:
-      return [];
+      return initialState;
+
+    case FETCH_SUCCESS:
+      return {
+        initialFilters: action.filters,
+        lastUsedFilters: action.filters,
+        currentFilters: action.filters,
+      };
+
+    case RESET_FILTERS:
+      // This is specifically for what data in the UI the user is seeing/using
+      return { ...state, currentFilters: state.initialFilters };
+
+    case UPDATE_LAST_USED_FILTERS:
+      // record the current filters as what was last used to search
+      return { ...state, lastUsedFilters: state.currentFilters };
+
+    case UPDATE_CURRENT_FILTERS:
+      return { ...state, currentFilters: action.filters };
+
     default:
       return state;
   }
@@ -46,4 +81,16 @@ export function fetchFilters(sourceId: number) {
       )
       .then(json => dispatch({ type: FETCH_SUCCESS, filters: json.content }));
   };
+}
+
+export function resetFilters() {
+  return (dispatch: Function) => dispatch({ type: RESET_FILTERS });
+}
+
+export function updateLastUsedFilters() {
+  return (dispatch: Function) => dispatch({ type: UPDATE_LAST_USED_FILTERS });
+}
+
+export function updateCurrentFilters(filters: Array<FilterAnyType>) {
+  return (dispatch: Function) => dispatch({ type: UPDATE_CURRENT_FILTERS, filters });
 }

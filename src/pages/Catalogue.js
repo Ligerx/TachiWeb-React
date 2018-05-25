@@ -23,33 +23,13 @@ type State = {
   // May change this in the future?
   sourceIndex: number,
   searchQuery: string,
-  lastUsedFilters: FiltersType, // use this for any searches
-  currentFilters: FiltersType, // temporarily store user changes, use to overwrite lastUsedFilters
   mangaIdBeingViewed: ?number,
 };
 
 class Catalogue extends Component<CatalogueContainerProps, State> {
-  static getDerivedStateFromProps(nextProps: CatalogueContainerProps, prevState: State) {
-    // Keep two copies of 'filters' in state
-    // cloneDeep should be done by the methods that setState
-    const filtersAreEmpty: boolean =
-      !prevState.currentFilters.length || !prevState.lastUsedFilters.length;
-
-    if (filtersAreEmpty && nextProps.initialFilters.length) {
-      return {
-        ...prevState,
-        lastUsedFilters: nextProps.initialFilters,
-        currentFilters: nextProps.initialFilters,
-      };
-    }
-    return null;
-  }
-
   state = {
     sourceIndex: 0,
     searchQuery: '',
-    lastUsedFilters: [],
-    currentFilters: [],
     mangaIdBeingViewed: null,
   }
 
@@ -67,8 +47,8 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
     this.delayedSearch = debounce(() => {
-      const { sourceIndex, searchQuery, lastUsedFilters } = this.state;
-      fetchCatalogue(this.props.sources[sourceIndex].id, searchQuery, lastUsedFilters, {
+      const { sourceIndex, searchQuery } = this.state;
+      fetchCatalogue(this.props.sources[sourceIndex].id, searchQuery, {
         retainFilters: true,
       });
     }, 500);
@@ -79,7 +59,6 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     const { sources, fetchCatalogue, fetchFilters } = this.props;
 
     if (sourceIndex !== prevState.sourceIndex) {
-      this.setState({ lastUsedFilters: [], currentFilters: [] }); /* eslint-disable-line */
       fetchCatalogue(sources[sourceIndex].id);
       fetchFilters(sources[sourceIndex].id);
     }
@@ -90,8 +69,7 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     this.delayedSearch.cancel();
   }
 
-  // Placeholder, this gets replaced in componentDidMount()
-  delayedSearch = () => null;
+  delayedSearch = () => null; // Placeholder, this gets replaced in componentDidMount()
 
   handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
     // NOTE: Using LIElement because that's how my HTML is structured.
@@ -142,28 +120,27 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     const {
       hasNextPage, sources, fetchNextCataloguePage, catalogueIsLoading,
     } = this.props;
-    const { searchQuery, lastUsedFilters, sourceIndex } = this.state;
+    const { searchQuery, sourceIndex } = this.state;
 
     if (hasNextPage && !catalogueIsLoading) {
-      fetchNextCataloguePage(sources[sourceIndex].id, searchQuery, lastUsedFilters);
+      fetchNextCataloguePage(sources[sourceIndex].id, searchQuery);
     }
   };
 
   handleResetFilters = () => {
-    const { initialFilters } = this.props;
-    this.setState({ lastUsedFilters: initialFilters, currentFilters: initialFilters });
+    this.props.resetFilters();
   };
 
   handleFilterChange = (newFilters: FiltersType) => {
-    this.setState({ currentFilters: newFilters });
+    this.props.updateCurrentFilters(newFilters);
   };
 
   handleSearchFilters = () => {
-    const { fetchCatalogue, sources } = this.props;
-    const { sourceIndex, searchQuery, currentFilters } = this.state;
+    const { fetchCatalogue, updateLastUsedFilters, sources } = this.props;
+    const { sourceIndex, searchQuery } = this.state;
 
-    fetchCatalogue(sources[sourceIndex].id, searchQuery, currentFilters, { retainFilters: true });
-    this.setState({ lastUsedFilters: currentFilters });
+    updateLastUsedFilters(); // must come first. It is a synchronous function, no promise needed
+    fetchCatalogue(sources[sourceIndex].id, searchQuery, { retainFilters: true });
   };
 
   handleRefreshClick = () => {
@@ -179,11 +156,11 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
       sourcesAreLoading,
       catalogueIsLoading,
       mangaInfoIsLoading,
+      currentFilters,
     } = this.props;
     const {
       mangaIdBeingViewed,
       sourceIndex,
-      currentFilters,
       searchQuery,
     } = this.state;
 

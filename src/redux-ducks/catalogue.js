@@ -35,7 +35,7 @@ const initialState = {
   hasNextPage: false,
 };
 
-export default function chaptersReducer(state: State = initialState, action = {}) {
+export default function catalogueReducer(state: State = initialState, action = {}) {
   switch (action.type) {
     case RESET_STATE:
       return initialState;
@@ -75,25 +75,26 @@ type Obj = { retainFilters?: boolean };
 export function fetchCatalogue(
   sourceId: number,
   query: string = '',
-  filters: FiltersType = [],
   { retainFilters = false }: Obj = {}, // optionally keep previous initialFilters
 ) {
-  return (dispatch: Function) => {
-    dispatch({ type: RESET_STATE });
-    dispatch({
-      type: FETCH_CATALOGUE_REQUEST,
-      meta: { sourceId, query, filters },
-    });
-
+  return (dispatch: Function, getState: Function) => {
     if (!retainFilters) {
       // TODO: Not sure if this should be here?
       //       possibly remove it and place a clearFilters action for the page to call?
       //       not sure if that's better or worse
-      dispatch({ type: CLEAR_FILTERS });
+      dispatch({ type: CLEAR_FILTERS, meta: { in: 'fetchCatalogue' } });
     }
 
+    const { lastUsedFilters } = getState().filters;
+
+    dispatch({ type: RESET_STATE });
+    dispatch({
+      type: FETCH_CATALOGUE_REQUEST,
+      meta: { sourceId, query, lastUsedFilters },
+    });
+
     // Filters should be null if empty when requesting from the server
-    const filtersChecked = filters.length ? filters : null;
+    const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
     return fetch(
       Server.catalogue(),
       cataloguePostParameters(1, sourceId, query.trim(), filtersChecked),
@@ -122,13 +123,10 @@ export function fetchCatalogue(
   };
 }
 
-export function fetchNextCataloguePage(
-  sourceId: number,
-  query: string = '',
-  filters: FiltersType = [],
-) {
+export function fetchNextCataloguePage(sourceId: number, query: string = '') {
   return (dispatch: Function, getState: Function) => {
     const { page, hasNextPage } = getState().catalogue;
+    const { lastUsedFilters } = getState().filters;
     const nextPage = page + 1;
 
     if (!hasNextPage) {
@@ -142,11 +140,11 @@ export function fetchNextCataloguePage(
         nextPage,
         hasNextPage,
         query,
-        filters,
+        lastUsedFilters,
       },
     });
 
-    const filtersChecked = filters.length ? filters : null;
+    const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
     return fetch(
       Server.catalogue(),
       cataloguePostParameters(nextPage, sourceId, query.trim(), filtersChecked),
