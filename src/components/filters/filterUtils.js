@@ -2,7 +2,13 @@
 import * as React from 'react';
 import TextField from '@material-ui/core/TextField';
 import type { FiltersType } from 'types';
-import type { FilterAnyType, FilterText } from 'types/filters';
+import type {
+  FilterAnyType,
+  FilterText as FilterTextType,
+  FilterSelect as FilterSelectType,
+  FilterTristate as FilterTristateType,
+  FilterSort as FilterSortType,
+} from 'types/filters';
 import FilterSelect from './FilterSelect';
 import FilterTristate from './FilterTristate';
 import FilterGroup from './FilterGroup';
@@ -45,7 +51,7 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
           values={filter.values}
           name={filter.name}
           state={filter.state}
-          onChange={handleSelectChange(index, filters, onChange)}
+          onChange={handleSelectChange(index, filter, filters, onChange)}
           key={filter.name}
         />
       );
@@ -54,7 +60,7 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
         <FilterTristate
           name={filter.name}
           state={filter.state}
-          onChange={handleTristateChange(index, filters, onChange)}
+          onChange={handleTristateChange(index, filter, filters, onChange)}
           key={filter.name}
         />
       );
@@ -74,7 +80,7 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
           values={filter.values}
           name={filter.name}
           state={filter.state}
-          onChange={handleSortChange(index, filters, onChange)}
+          onChange={handleSortChange(index, filter, filters, onChange)}
           key={filter.name}
         />
       );
@@ -88,31 +94,39 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
 
 function handleTextChange(
   index: number,
-  filter: FilterText,
+  filter: FilterTextType,
   filters: FiltersType,
   onChange: Function,
 ) {
   return (event: SyntheticEvent<HTMLInputElement>) => {
-    const updatedFilter: FilterText = { ...filter, state: event.currentTarget.value };
+    const updatedFilter: FilterTextType = { ...filter, state: event.currentTarget.value };
     onChange(updateArray(index, updatedFilter, filters));
   };
 }
 
-function handleSelectChange(index: number, filters: FiltersType, onChange: Function) {
+function handleSelectChange(
+  index: number,
+  filter: FilterSelectType,
+  filters: FiltersType,
+  onChange: Function,
+) {
   // NOTE: LIElement is actually within a select
   return (event: SyntheticEvent<HTMLLIElement>) => {
-    const newFilters: FiltersType = cloneDeep(filters);
-    newFilters[index].state = event.currentTarget.dataset.value;
-    onChange(newFilters);
+    const newSelection = parseInt(event.currentTarget.dataset.value, 10);
+    const updatedFilter: FilterSelectType = { ...filter, state: newSelection };
+    onChange(updateArray(index, updatedFilter, filters));
   };
 }
 
-function handleTristateChange(index: number, filters: FiltersType, onChange: Function) {
+function handleTristateChange(
+  index: number,
+  filter: FilterTristateType,
+  filters: FiltersType,
+  onChange: Function,
+) {
   return () => {
-    const newFilters: FiltersType = cloneDeep(filters);
-    const { state } = filters[index];
-    newFilters[index].state = updateTristate(state);
-    onChange(newFilters);
+    const updatedFilter: FilterTristateType = { ...filter, state: updateTristate(filter.state) };
+    onChange(updateArray(index, updatedFilter, filters));
   };
 }
 
@@ -128,20 +142,20 @@ function handleGroupChange(index: number, filters: FiltersType, onChange: Functi
   };
 }
 
-function handleSortChange(index: number, filters: FiltersType, onChange: Function) {
-  return (nestedIndex: number) => () => {
-    const newFilters: FiltersType = cloneDeep(filters);
-    const currentlyAscending: boolean = newFilters[index].state.ascending;
-    const currentIndex: number = newFilters[index].state.index;
+type SortState = { index: number, ascending: boolean };
+function handleSortChange(
+  index: number,
+  filter: FilterSortType,
+  filters: FiltersType,
+  onChange: Function,
+) {
+  return (clickedIndex: number) => () => {
+    const isAscending: boolean = filter.state.ascending;
+    const currentIndex: number = filter.state.index;
 
-    if (currentIndex === nestedIndex) {
-      newFilters[index].state.ascending = !currentlyAscending;
-    } else {
-      newFilters[index].state.index = nestedIndex;
-      newFilters[index].state.ascending = false;
-    }
-
-    onChange(newFilters);
+    const newState: SortState = updateSort(currentIndex, clickedIndex, isAscending);
+    const updatedFilter: FilterSortType = { ...filter, state: newState };
+    onChange(updateArray(index, updatedFilter, filters));
   };
 }
 
@@ -153,12 +167,23 @@ function updateTristate(oldState: number): number {
   return 0;
 }
 
+function updateSort(index: number, clickedIndex: number, isAscending: boolean): SortState {
+  return {
+    index: clickedIndex,
+    ascending: index === clickedIndex ? !isAscending : false,
+  };
+}
+
 function cloneDeep<T>(oldObject: T): T {
   // This is supposed to be faster than lodash cloneDeep
   // As long as the object is only text, there shouldn't be any problems
   return JSON.parse(JSON.stringify(oldObject));
 }
 
-function updateArray(index: number, updatedFilter: FilterText, filters: FiltersType): FiltersType {
+function updateArray(
+  index: number,
+  updatedFilter: FilterAnyType,
+  filters: FiltersType,
+): FiltersType {
   return [...filters.slice(0, index), updatedFilter, ...filters.slice(index + 1)];
 }
