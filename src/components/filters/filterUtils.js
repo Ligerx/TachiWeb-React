@@ -8,24 +8,30 @@ import type {
   FilterSelect as FilterSelectType,
   FilterTristate as FilterTristateType,
   FilterSort as FilterSortType,
+  FilterGroup as FilterGroupType,
 } from 'types/filters';
 import FilterSelect from './FilterSelect';
 import FilterTristate from './FilterTristate';
 import FilterGroup from './FilterGroup';
 import FilterSort from './FilterSort';
 
-// FIXME: still too laggy. (may partially be caused in dev by React DevTools)
+// FIXME: Still feels a little laggy in dev mode.
+//        May partially be caused in dev by React DevTools
+//        https://stackoverflow.com/questions/32911519/react-slow-with-multiple-controlled-text-inputs
+//
 //        Try a production build to see how bad it is.
+//
 //        If it's still bad, try using immer - https://github.com/mweststrate/immer
 //        Other suggestions here - https://medium.freecodecamp.org/handling-state-in-react-four-immutable-approaches-to-consider-d1f5c00249d5
-//        last resort, I might have to do a normal object update
 
 /* eslint-disable import/prefer-default-export, no-underscore-dangle */
-// NOTE: using filter.name as the key. I doubt it'll be a problem.
 export function filterElements(filters: FiltersType, onChange: Function): Array<React.Node> {
   return filters.map((filter: FilterAnyType, index: number) => {
     // TODO: header, separator, checkbox
     //       not doing right now because none of the sources use it
+
+    // NOTE: using filter.name as the key. I doubt it'll be a problem.
+
     if (filter._type === 'HEADER') {
       console.error('DynamicSourcesFilters HEADER not implemented');
       return null;
@@ -70,7 +76,7 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
         <FilterGroup
           name={filter.name}
           state={filter.state}
-          onChange={handleGroupChange(index, filters, onChange)}
+          onChange={handleGroupChange(index, filter, filters, onChange)}
           key={filter.name}
         />
       );
@@ -89,8 +95,6 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
     return null;
   });
 }
-
-// TODO: update so that updating doesn't remake the ENTIRE filters object
 
 function handleTextChange(
   index: number,
@@ -130,15 +134,28 @@ function handleTristateChange(
   };
 }
 
-function handleGroupChange(index: number, filters: FiltersType, onChange: Function) {
+function handleGroupChange(
+  index: number,
+  filter: FilterGroupType,
+  filters: FiltersType,
+  onChange: Function,
+) {
   // NOTE: Assuming that GROUP will only contain TRISTATE children
-  return nestedIndex => () => {
-    const newFilters: FiltersType = cloneDeep(filters);
+  return (clickedIndex: number) => () => {
+    // Nested filters, so it's a bit more complex to update
+    // First update the nested tristate's state
+    const tristate = filter.state[clickedIndex];
+    const updatedTristate: FilterTristateType = {
+      ...tristate,
+      state: updateTristate(tristate.state),
+    };
 
-    const { state } = filters[index]; // This is an array of objects
-    const nestedState = state[nestedIndex].state; // This is the tristate value
-    newFilters[index].state[nestedIndex].state = updateTristate(nestedState);
-    onChange(newFilters);
+    // Then insert the updated tristate into the original array of tristates
+    const updatedTristateArray = updateArray(clickedIndex, updatedTristate, filter.state);
+
+    // Then update the group's state with the new array and update the whole state
+    const updatedFilter: FilterGroupType = { ...filter, state: updatedTristateArray };
+    onChange(updateArray(index, updatedFilter, filters));
   };
 }
 
@@ -150,8 +167,8 @@ function handleSortChange(
   onChange: Function,
 ) {
   return (clickedIndex: number) => () => {
-    const isAscending: boolean = filter.state.ascending;
-    const currentIndex: number = filter.state.index;
+    const isAscending = filter.state.ascending;
+    const currentIndex = filter.state.index;
 
     const newState: SortState = updateSort(currentIndex, clickedIndex, isAscending);
     const updatedFilter: FilterSortType = { ...filter, state: newState };
@@ -174,16 +191,6 @@ function updateSort(index: number, clickedIndex: number, isAscending: boolean): 
   };
 }
 
-function cloneDeep<T>(oldObject: T): T {
-  // This is supposed to be faster than lodash cloneDeep
-  // As long as the object is only text, there shouldn't be any problems
-  return JSON.parse(JSON.stringify(oldObject));
-}
-
-function updateArray(
-  index: number,
-  updatedFilter: FilterAnyType,
-  filters: FiltersType,
-): FiltersType {
-  return [...filters.slice(0, index), updatedFilter, ...filters.slice(index + 1)];
+function updateArray<T>(index: number, newElement: T, array: Array<T>): Array<T> {
+  return [...array.slice(0, index), newElement, ...array.slice(index + 1)];
 }
