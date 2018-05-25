@@ -4,6 +4,7 @@ import { fetchSources, FETCH_SOURCES } from 'redux-ducks/sources';
 import {
   fetchCatalogue,
   fetchNextCataloguePage,
+  resetCatalogue,
   updateSearchQuery,
   FETCH_CATALOGUE,
   CATALOGUE_ADD_PAGE,
@@ -81,6 +82,7 @@ type DispatchToProps = {
   fetchSources: Function,
   fetchCatalogue: Function,
   fetchNextCataloguePage: Function,
+  resetCatalogue: Function,
   updateSearchQuery: Function,
 
   fetchChapters: Function,
@@ -99,6 +101,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => ({
   // Passing in the new catalogue search settings
   fetchCatalogue: (sourceId, retainFilters) => dispatch(fetchCatalogue(sourceId, retainFilters)),
   fetchNextCataloguePage: sourceId => dispatch(fetchNextCataloguePage(sourceId)),
+  resetCatalogue: () => dispatch(resetCatalogue()),
   updateSearchQuery: newSearchQuery => dispatch(updateSearchQuery(newSearchQuery)),
 
   fetchChapters: mangaId => dispatch(fetchChapters(mangaId)),

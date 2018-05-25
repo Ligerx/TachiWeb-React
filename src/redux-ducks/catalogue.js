@@ -44,6 +44,9 @@ export default function catalogueReducer(state: State = initialState, action = {
     case RESET_STATE:
       return initialState;
 
+    case FETCH_CATALOGUE_REQUEST:
+      return { ...state, mangaIds: [] }; // also clear manga shown when loading
+
     case FETCH_CATALOGUE_SUCCESS: {
       const { mangaIds, hasNextPage } = action;
       return {
@@ -95,7 +98,6 @@ export function fetchCatalogue(
     const { lastUsedFilters } = getState().filters;
     const { searchQuery } = getState().catalogue;
 
-    dispatch({ type: RESET_STATE });
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
       meta: { sourceId, searchQuery, lastUsedFilters },

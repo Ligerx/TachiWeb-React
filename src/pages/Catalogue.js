@@ -73,8 +73,9 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
     const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
-    // TODO: Should just reset all of catalogue here.
-    //       Should also help remove those optional checks for fetch statements
+
+    this.props.resetCatalogue();
+
     this.setState({ sourceIndex: newSourceIndex });
   };
 
@@ -139,7 +140,7 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     const { fetchCatalogue, updateLastUsedFilters, sources } = this.props;
     const { sourceIndex } = this.state;
 
-    updateLastUsedFilters(); // must come first. It is a synchronous function, no promise needed
+    updateLastUsedFilters(); // Must come before fetchCatalogue. This is a synchronous function.
     fetchCatalogue(sources[sourceIndex].id, { retainFilters: true });
   };
 
