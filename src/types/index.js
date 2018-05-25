@@ -28,7 +28,7 @@ export type MangaType = {
   description: ?string,
   thumbnail_url: ?string,
   genres: ?string,
-  categories: ?(string[]),
+  categories: ?Array<string>,
   status: ?string,
 };
 
