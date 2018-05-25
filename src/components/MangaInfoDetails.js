@@ -74,10 +74,11 @@ function detailsElements(mangaInfo: MangaType): React.Node {
     'categories',
   ];
 
-  return fieldNames.map((fieldName, index) => {
+  return fieldNames.map((fieldName) => {
     const value = mangaInfo[fieldName];
     if ((!Array.isArray(value) && value) || (Array.isArray(value) && value.length > 0)) {
-      return <DetailComponent fieldName={fieldName} value={value} key={index} />;
+      // NOTE: using field name as the key, this shouldn't be a problem
+      return <DetailComponent fieldName={fieldName} value={value} key={fieldName} />;
     }
     return null;
   });

@@ -16,6 +16,7 @@ type Props = {
 };
 
 // NOTE: Assuming that GROUP will only contain TRISTATE children
+// NOTE: using name as the key, this shouldn't be a problem
 
 const FilterGroup = ({ name, state, onChange }: Props) => (
   <ExpansionPanel>
@@ -29,7 +30,7 @@ const FilterGroup = ({ name, state, onChange }: Props) => (
             name={tristate.name}
             state={tristate.state}
             onChange={onChange(nestedIndex)}
-            key={nestedIndex}
+            key={tristate.name}
           />
         ))}
       </FormGroup>

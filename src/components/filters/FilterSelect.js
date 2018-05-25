@@ -5,6 +5,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
+// NOTE: using name as the key, this shouldn't be a problem
+
 type Props = {
   name: string,
   values: Array<string>,
@@ -20,7 +22,7 @@ const FilterSelect = ({
     <InputLabel htmlFor={generateId(index)}>{name}</InputLabel>
     <Select value={state} onChange={onChange} inputProps={{ id: generateId(index) }}>
       {values.map((text, valuesIndex) => (
-        <MenuItem value={valuesIndex} key={valuesIndex}>
+        <MenuItem value={valuesIndex} key={name}>
           {text}
         </MenuItem>
       ))}

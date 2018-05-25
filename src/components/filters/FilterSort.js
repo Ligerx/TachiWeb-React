@@ -8,6 +8,8 @@ import Icon from '@material-ui/core/Icon';
 import FormGroup from '@material-ui/core/FormGroup';
 import ButtonBase from '@material-ui/core/ButtonBase';
 
+// NOTE: using name as the key, this shouldn't be a problem
+
 type Props = {
   values: Array<string>,
   name: string,
@@ -28,7 +30,7 @@ const FilterSort = ({
     <ExpansionPanelDetails>
       <FormGroup>
         {values.map((value, nestedIndex) => (
-          <ButtonBase onClick={onChange(nestedIndex)} key={nestedIndex}>
+          <ButtonBase onClick={onChange(nestedIndex)} key={name}>
             <Icon>{iconValue(state.index, state.ascending, nestedIndex)}</Icon>
             <Typography>{value}</Typography>
           </ButtonBase>
