@@ -20,13 +20,17 @@ const Router = () => (
         <Route path="/library" component={LibraryContainer} />
         <Route
           path="/catalogue/:mangaId"
-          render={props => <MangaInfoContainer {...props} backUrl={Client.catalogue()} />}
+          render={props => (
+            <MangaInfoContainer {...props} backUrl={Client.catalogue()} defaultTab={0} />
+          )}
         />
         <Route path="/catalogue" component={CatalogueContainer} />
         <Route path="/:mangaId/:chapterId/:page" component={ReaderContainer} />
         <Route
           path="/:mangaId"
-          render={props => <MangaInfoContainer {...props} backUrl={Client.library()} />}
+          render={props => (
+            <MangaInfoContainer {...props} backUrl={Client.library()} defaultTab={1} />
+          )}
         />
       </Switch>
     </BrowserRouter>
