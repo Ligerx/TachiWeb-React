@@ -17,15 +17,7 @@ import type { CatalogueContainerProps } from 'containers/CatalogueContainer';
 // TODO: actually split all of this up into components...
 // TODO: maybe add text saying that there are no more pages to load?
 
-type State = {
-  mangaIdBeingViewed: ?number,
-};
-
-class Catalogue extends Component<CatalogueContainerProps, State> {
-  state = {
-    mangaIdBeingViewed: null,
-  }
-
+class Catalogue extends Component<CatalogueContainerProps> {
   componentDidMount() {
     const {
       sources, sourceId, fetchSources, fetchCatalogue, fetchFilters, changeSourceId,
@@ -108,10 +100,6 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     }
   };
 
-  handleMangaInfoBackClick = () => {
-    this.setState({ mangaIdBeingViewed: null });
-  };
-
   handleLoadNextPage = () => {
     const {
       hasNextPage, fetchNextCataloguePage, catalogueIsLoading,
@@ -137,44 +125,16 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     fetchCatalogue();
   };
 
-  handleRefreshClick = () => {
-    this.props.updateMangaInfo(this.state.mangaIdBeingViewed);
-    this.props.updateChapters(this.state.mangaIdBeingViewed);
-  };
-
   render() {
     const {
       mangaLibrary,
       sources,
-      chaptersByMangaId,
       sourcesAreLoading,
       catalogueIsLoading,
-      mangaInfoIsLoading,
       currentFilters,
       searchQuery,
       sourceId,
     } = this.props;
-    const {
-      mangaIdBeingViewed,
-    } = this.state;
-
-    const mangaInfo: ?MangaType = mangaLibrary.find(manga => manga.id === mangaIdBeingViewed);
-    // a little complex, but basically just returns the chapter list or an empty array
-    const chapters: Array<ChapterType> =
-      mangaIdBeingViewed ? (chaptersByMangaId[mangaIdBeingViewed] || []) : [];
-
-    if (mangaIdBeingViewed) {
-      return (
-        <MangaInfo
-          mangaInfo={mangaInfo}
-          chapters={chapters}
-          initialTabValue={0}
-          onBackClick={this.handleMangaInfoBackClick}
-          onRefreshClick={this.handleRefreshClick}
-          isLoading={mangaInfoIsLoading}
-        />
-      );
-    }
 
     return (
       <React.Fragment>
@@ -197,7 +157,7 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
 
         <MangaGrid
           mangaLibrary={mangaLibrary}
-          cardComponent={<CatalogueMangaCard onClick={this.handleCardClick} />}
+          cardComponent={<CatalogueMangaCard />}
         />
         {mangaLibrary.length > 0 && (
           <Waypoint onEnter={this.handleLoadNextPage} bottomOffset={-300} />

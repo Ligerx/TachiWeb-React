@@ -5,7 +5,8 @@ import { withStyles } from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import MangaCard from 'components/MangaCard';
 import type { MangaType } from 'types';
-import { Server } from 'api';
+import { Server, Client } from 'api';
+import { Link } from 'react-router-dom';
 
 // * fullWidth
 // While the grid item is full width, it's children aren't.
@@ -22,12 +23,11 @@ const styles = {
 type Props = {
   classes: Object,
   manga: MangaType,
-  onClick: Function,
 };
 
-const CatalogueMangaCard = ({ classes, manga, onClick }: Props) => (
+const CatalogueMangaCard = ({ classes, manga }: Props) => (
   <Grid item xs={6} sm={3} className={manga.favorite ? classes.isFavorited : null}>
-    <ButtonBase className={classes.fullWidth} onClick={onClick(manga.id)}>
+    <ButtonBase className={classes.fullWidth} component={Link} to={Client.catalogueManga(manga.id)}>
       <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
     </ButtonBase>
   </Grid>

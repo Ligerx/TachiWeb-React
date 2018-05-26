@@ -16,11 +16,11 @@ export const Server = {
   },
 
   updateMangaInfo(mangaId) {
-    return `api/update/${mangaId}/info`;
+    return `/api/update/${mangaId}/info`;
   },
 
   updateMangaChapters(mangaId) {
-    return `api/update/${mangaId}/chapters`;
+    return `/api/update/${mangaId}/chapters`;
   },
 
   cover(mangaId) {
@@ -88,6 +88,10 @@ export const Client = {
 
   manga(mangaId) {
     return `/${mangaId}`;
+  },
+
+  catalogueManga(mangaId) {
+    return `/catalogue/${mangaId}`;
   },
 
   page(mangaId, chapterId, page) {
