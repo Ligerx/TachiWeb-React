@@ -64,7 +64,8 @@ export default function catalogueReducer(state: State = initialState, action = {
       const { mangaIds, page, hasNextPage } = action;
       return {
         ...state,
-        mangaIds: [...state.mangaIds, ...mangaIds],
+        // some sources send duplicate results for some reason, so only add unique values
+        mangaIds: addUnique(state.mangaIds, mangaIds),
         page,
         hasNextPage,
       };
@@ -230,4 +231,9 @@ function cataloguePostParameters(
       'Content-Type': 'application/json',
     }),
   };
+}
+
+function addUnique(oldArray, newArray) {
+  const newUniques = newArray.filter(val => !oldArray.includes(val));
+  return [...oldArray, ...newUniques];
 }
