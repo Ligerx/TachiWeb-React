@@ -3,6 +3,7 @@
 import { Server } from 'api';
 import type { MangaType } from 'types';
 import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from './library';
+import { handleHTMLError } from './utils';
 
 // NOTE: for clarity, this will be called mangaInfos (with an s)
 //       Info doesn't really have a plural, so I need to differentiate somehow
@@ -78,16 +79,16 @@ export function fetchMangaInfo(mangaId: number, { ignoreCache = false }: Obj = {
     dispatch({ type: FETCH_MANGA_REQUEST, meta: { mangaId } });
 
     return fetch(Server.mangaInfo(mangaId))
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        json => dispatch({ type: FETCH_MANGA_SUCCESS, mangaInfo: json.content }),
         error =>
           dispatch({
             type: FETCH_MANGA_FAILURE,
             errorMessage: "Failed to get this manga's information",
             meta: { error },
           }),
-      )
-      .then(json => dispatch({ type: FETCH_MANGA_SUCCESS, mangaInfo: json.content }));
+      );
   };
 }
 
@@ -96,19 +97,19 @@ export function updateMangaInfo(mangaId: number) {
     dispatch({ type: UPDATE_MANGA_REQUEST, meta: { mangaId } });
 
     return fetch(Server.updateMangaInfo(mangaId))
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        (json) => {
+          dispatch({ type: UPDATE_MANGA_SUCCESS, meta: { json } });
+          return dispatch(fetchMangaInfo(mangaId, { ignoreCache: true }));
+        },
         error =>
           dispatch({
             type: UPDATE_MANGA_FAILURE,
             errorMessage: "Failed to update this manga's information",
             meta: { error },
           }),
-      )
-      .then((json) => {
-        dispatch({ type: UPDATE_MANGA_SUCCESS, meta: { json } });
-        return dispatch(fetchMangaInfo(mangaId, { ignoreCache: true }));
-      });
+      );
   };
 }
 
@@ -116,29 +117,31 @@ export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
   return (dispatch: Function) => {
     dispatch({ type: TOGGLE_FAVORITE_REQUEST, meta: { mangaId, isCurrentlyFavorite } });
 
-    return fetch(Server.toggleFavorite(mangaId, isCurrentlyFavorite)).then(
-      () => {
-        const newFavoriteState = !isCurrentlyFavorite;
+    return fetch(Server.toggleFavorite(mangaId, isCurrentlyFavorite))
+      .then(handleHTMLError)
+      .then(
+        () => {
+          const newFavoriteState = !isCurrentlyFavorite;
 
-        dispatch({
-          type: TOGGLE_FAVORITE_SUCCESS,
-          mangaId,
-          newFavoriteState: !isCurrentlyFavorite,
-        });
+          dispatch({
+            type: TOGGLE_FAVORITE_SUCCESS,
+            mangaId,
+            newFavoriteState: !isCurrentlyFavorite,
+          });
 
-        if (newFavoriteState) {
-          return dispatch({ type: ADD_TO_FAVORITES, mangaId });
-        }
-        return dispatch({ type: REMOVE_FROM_FAVORITES, mangaId });
-      },
-      () =>
-        dispatch({
-          type: TOGGLE_FAVORITE_FAILURE,
-          errorMessage: isCurrentlyFavorite
-            ? 'Failed to unfavorite this manga'
-            : 'Failed to favorite this manga',
-        }),
-    );
+          if (newFavoriteState) {
+            return dispatch({ type: ADD_TO_FAVORITES, mangaId });
+          }
+          return dispatch({ type: REMOVE_FROM_FAVORITES, mangaId });
+        },
+        () =>
+          dispatch({
+            type: TOGGLE_FAVORITE_FAILURE,
+            errorMessage: isCurrentlyFavorite
+              ? 'Failed to unfavorite this manga'
+              : 'Failed to favorite this manga',
+          }),
+      );
   };
 }
 

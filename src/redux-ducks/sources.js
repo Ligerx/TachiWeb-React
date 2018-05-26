@@ -1,6 +1,7 @@
 // @flow
 import { Server } from 'api';
 import type { SourceType } from 'types';
+import { handleHTMLError } from './utils';
 
 // ================================================================================
 // Actions
@@ -32,15 +33,15 @@ export function fetchSources() {
     dispatch({ type: FETCH_REQUEST });
 
     return fetch(Server.sources())
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        json => dispatch({ type: FETCH_SUCCESS, payload: json.content }),
         error =>
           dispatch({
             type: FETCH_FAILURE,
             errorMessage: 'Failed to load sources',
             meta: { error },
           }),
-      )
-      .then(json => dispatch({ type: FETCH_SUCCESS, payload: json.content }));
+      );
   };
 }

@@ -2,6 +2,7 @@
 import { Server } from 'api';
 import type { ChapterType } from 'types';
 import { DECREMENT_UNREAD } from './library';
+import { handleHTMLError } from './utils';
 
 // ================================================================================
 // Actions
@@ -70,16 +71,16 @@ export function fetchChapters(mangaId: number, { ignoreCache = false }: Obj = {}
     dispatch({ type: FETCH_REQUEST, meta: { mangaId } });
 
     return fetch(Server.chapters(mangaId))
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        json => dispatch({ type: FETCH_SUCCESS, payload: json.content, mangaId }),
         error =>
           dispatch({
             type: FETCH_FAILURE,
             errorMessage: 'Failed to load chapters',
             meta: { error },
           }),
-      )
-      .then(json => dispatch({ type: FETCH_SUCCESS, payload: json.content, mangaId }));
+      );
   };
 }
 
@@ -90,31 +91,31 @@ export function updateChapters(mangaId: number) {
     dispatch({ type: UPDATE_REQUEST, meta: { mangaId } });
 
     return fetch(Server.updateMangaChapters(mangaId))
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        (json) => {
+          if (!json.success) {
+            return dispatch({
+              type: UPDATE_FAILURE,
+              errorMessage: 'Failed to update the chapters list',
+              meta: { json },
+            });
+          }
+
+          if (json.added.length > 0 || json.removed.length > 0) {
+            dispatch({ type: UPDATE_SUCCESS, meta: { json } });
+            return dispatch(fetchChapters(mangaId, { ignoreCache: true }));
+          }
+
+          return dispatch({ type: UPDATE_SUCCESS, meta: { note: 'No updates', json } });
+        },
         error =>
           dispatch({
             type: UPDATE_FAILURE,
             errorMessage: 'Failed to update the chapters list',
             meta: { error },
           }),
-      )
-      .then((json) => {
-        if (!json.success) {
-          return dispatch({
-            type: UPDATE_FAILURE,
-            errorMessage: 'Failed to update the chapters list',
-            meta: { json },
-          });
-        }
-
-        if (json.added.length > 0 || json.removed.length > 0) {
-          dispatch({ type: UPDATE_SUCCESS, meta: { json } });
-          return dispatch(fetchChapters(mangaId, { ignoreCache: true }));
-        }
-
-        return dispatch({ type: UPDATE_SUCCESS, meta: { note: 'No updates', json } });
-      });
+      );
   };
 }
 
@@ -136,28 +137,30 @@ export function updateReadingStatus(
     dispatch({ type: UPDATE_READING_STATUS_REQUEST });
     const didReadLastPage = readPage === pageCount - 1;
 
-    return fetch(Server.updateReadingStatus(mangaId, chapter.id, readPage, didReadLastPage)).then(
-      () => {
-        if (didReadLastPage) {
-          // Update library unread that there's one less unread chapter
-          dispatch({ type: DECREMENT_UNREAD, mangaId });
-        }
+    return fetch(Server.updateReadingStatus(mangaId, chapter.id, readPage, didReadLastPage))
+      .then(handleHTMLError)
+      .then(
+        () => {
+          if (didReadLastPage) {
+            // Update library unread that there's one less unread chapter
+            dispatch({ type: DECREMENT_UNREAD, mangaId });
+          }
 
-        return dispatch({
-          type: UPDATE_READING_STATUS_SUCCESS,
-          mangaId,
-          chapterId: chapter.id,
-          readPage,
-          didReadLastPage,
-        });
-      },
-      error =>
-        dispatch({
-          type: UPDATE_READING_STATUS_FAILURE,
-          errorMessage: 'Failed to save your reading status',
-          meta: { error },
-        }),
-    );
+          return dispatch({
+            type: UPDATE_READING_STATUS_SUCCESS,
+            mangaId,
+            chapterId: chapter.id,
+            readPage,
+            didReadLastPage,
+          });
+        },
+        error =>
+          dispatch({
+            type: UPDATE_READING_STATUS_FAILURE,
+            errorMessage: 'Failed to save your reading status',
+            meta: { error },
+          }),
+      );
   };
 }
 

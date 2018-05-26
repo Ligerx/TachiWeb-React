@@ -2,6 +2,7 @@
 import { Server } from 'api';
 import type { MangaType } from 'types';
 import { ADD_MANGA } from './mangaInfos';
+import { handleHTMLError } from './utils';
 
 // ================================================================================
 // Actions
@@ -106,22 +107,22 @@ export function fetchLibrary({ ignoreCache = false }: Obj = {}) {
     dispatch({ type: FETCH_LIBRARY_REQUEST });
 
     return fetch(Server.library())
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        (json) => {
+          const { content } = json;
+          const mangaIds = transformToMangaIdsArray(content);
+
+          dispatch({ type: ADD_MANGA, newManga: content });
+          dispatch({ type: FETCH_LIBRARY_SUCCESS, mangaIds });
+        },
         error =>
           dispatch({
             type: FETCH_LIBRARY_FAILURE,
             errorMessage: 'Failed to load your library',
             meta: { error },
           }),
-      )
-      .then((json) => {
-        const { content } = json;
-        const mangaIds = transformToMangaIdsArray(content);
-
-        dispatch({ type: ADD_MANGA, newManga: content });
-        dispatch({ type: FETCH_LIBRARY_SUCCESS, mangaIds });
-      });
+      );
   };
 }
 
@@ -134,17 +135,16 @@ export function fetchUnread() {
     dispatch({ type: FETCH_UNREAD_REQUEST });
 
     return fetch(Server.libraryUnread())
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        json => dispatch({ type: FETCH_UNREAD_SUCCESS, unread: transformUnread(json.content) }),
         error =>
           dispatch({
             type: FETCH_UNREAD_FAILURE,
             errorMessage: 'Failed to get unread chapters for your library',
             meta: { error },
           }),
-      )
-      .then(json =>
-        dispatch({ type: FETCH_UNREAD_SUCCESS, unread: transformUnread(json.content) }));
+      );
   };
 }
 

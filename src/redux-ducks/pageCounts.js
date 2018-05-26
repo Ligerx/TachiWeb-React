@@ -1,5 +1,6 @@
 // @flow
 import { Server } from 'api';
+import { handleHTMLError } from './utils';
 
 // ================================================================================
 // Actions
@@ -41,20 +42,20 @@ export function fetchPageCount(mangaId: number, chapterId: number) {
     dispatch({ type: FETCH_REQUEST });
 
     return fetch(Server.pageCount(mangaId, chapterId))
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        json =>
+          dispatch({
+            type: FETCH_SUCCESS,
+            chapterId,
+            pageCount: json.page_count,
+          }),
         error =>
           dispatch({
             type: FETCH_FAILURE,
             errorMessage: 'Failed to get page count',
             meta: { error },
           }),
-      )
-      .then(json =>
-        dispatch({
-          type: FETCH_SUCCESS,
-          chapterId,
-          pageCount: json.page_count,
-        }));
+      );
   };
 }

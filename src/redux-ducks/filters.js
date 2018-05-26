@@ -1,6 +1,7 @@
 // @flow
 import { Server } from 'api';
 import type { FilterAnyType } from 'types/filters';
+import { handleHTMLError } from './utils';
 
 // ================================================================================
 // Actions
@@ -77,16 +78,16 @@ export function fetchFilters() {
     }
 
     return fetch(Server.filters(sourceId))
+      .then(handleHTMLError)
       .then(
-        res => res.json(),
+        json => dispatch({ type: FETCH_SUCCESS, filters: json.content }),
         error =>
           dispatch({
             type: FETCH_FAILURE,
             errorMessage: 'Failed to get the filters for this source',
             meta: { error },
           }),
-      )
-      .then(json => dispatch({ type: FETCH_SUCCESS, filters: json.content }));
+      );
   };
 }
 
