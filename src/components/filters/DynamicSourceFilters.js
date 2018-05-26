@@ -57,9 +57,14 @@ class DynamicSourceFilters extends Component<Props, State> {
     this.setState({ drawerOpen: isOpen });
   };
 
+  handleSearchClick = (/* event */) => {
+    this.props.onSearchClick();
+    this.setState({ drawerOpen: false }); // also close drawer on search
+  };
+
   render() {
     const {
-      classes, filters, onSearchClick, onFilterChange, onResetClick,
+      classes, filters, onFilterChange, onResetClick,
     } = this.props;
 
     return (
@@ -75,7 +80,7 @@ class DynamicSourceFilters extends Component<Props, State> {
 
         <Drawer anchor="right" open={this.state.drawerOpen} onClose={this.toggleDrawer(false)}>
           <div tabIndex={0} role="button">
-            <FilterActions onResetClick={onResetClick} onSearchClick={onSearchClick} />
+            <FilterActions onResetClick={onResetClick} onSearchClick={this.handleSearchClick} />
             {filters.length && (
               <FormGroup className={classes.filters}>
                 {filterElements(filters, onFilterChange)}
