@@ -11,6 +11,7 @@ import CenteredLoading from 'components/loading/CenteredLoading';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import type { FilterAnyType } from 'types/filters';
 import type { CatalogueContainerProps } from 'containers/CatalogueContainer';
+import Typography from '@material-ui/core/Typography';
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 // TODO: actually split all of this up into components...
@@ -105,7 +106,10 @@ class Catalogue extends Component<CatalogueContainerProps> {
       currentFilters,
       searchQuery,
       sourceId,
+      hasNextPage,
     } = this.props;
+
+    const noMoreResults = !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
 
     return (
       <React.Fragment>
@@ -136,6 +140,11 @@ class Catalogue extends Component<CatalogueContainerProps> {
 
         {catalogueIsLoading && <CenteredLoading />}
         {sourcesAreLoading && <FullScreenLoading />}
+        {noMoreResults &&
+          <Typography variant="caption" align="center" style={{ marginTop: 40, marginBottom: 60 }}>
+            No more results
+          </Typography>
+        }
       </React.Fragment>
     );
   }
