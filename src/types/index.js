@@ -52,5 +52,3 @@ export type SourceType = {
     display_name: string,
   },
 };
-
-export type FiltersType = Array<FilterAnyType>;

@@ -1,6 +1,5 @@
 // @flow
 import React, { Component } from 'react';
-import type { FiltersType } from 'types';
 import debounce from 'lodash/debounce';
 import MangaGrid from 'components/MangaGrid';
 import CatalogueMangaCard from 'components/CatalogueMangaCard';
@@ -10,6 +9,7 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 import CatalogueHeader from 'components/CatalogueHeader';
 import CenteredLoading from 'components/loading/CenteredLoading';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
+import type { FilterAnyType } from 'types/filters';
 import type { CatalogueContainerProps } from 'containers/CatalogueContainer';
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
@@ -85,7 +85,7 @@ class Catalogue extends Component<CatalogueContainerProps> {
     this.props.resetFilters();
   };
 
-  handleFilterChange = (newFilters: FiltersType) => {
+  handleFilterChange = (newFilters: Array<FilterAnyType>) => {
     this.props.updateCurrentFilters(newFilters);
   };
 

@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import FormGroup from '@material-ui/core/FormGroup';
-import type { FiltersType } from 'types';
+import type { FilterAnyType } from 'types/filters';
 import FilterActions from './FilterActions';
 import { filterElements } from './filterUtils';
 
@@ -38,7 +38,7 @@ const styles = {
 
 type Props = {
   classes: Object,
-  filters: FiltersType,
+  filters: Array<FilterAnyType>,
   onResetClick: Function,
   onSearchClick: Function,
   onFilterChange: Function,

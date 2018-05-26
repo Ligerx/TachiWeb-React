@@ -25,7 +25,7 @@ import {
 import { fetchMangaInfo, updateMangaInfo, FETCH_MANGA, UPDATE_MANGA } from 'redux-ducks/mangaInfos';
 import Catalogue from 'pages/Catalogue';
 import { createLoadingSelector } from 'redux-ducks/loading';
-import type { SourceType, ChapterType, MangaType, FiltersType } from 'types';
+import type { SourceType, ChapterType, MangaType } from 'types';
 import type { FilterAnyType } from 'types/filters';
 
 const sourcesAreLoading: Function = createLoadingSelector([FETCH_SOURCES]);
@@ -47,7 +47,7 @@ type StateToProps = {
   chaptersByMangaId: { [mangaId: number]: Array<ChapterType> },
   mangaLibrary: Array<MangaType>,
 
-  initialFilters: FiltersType,
+  initialFilters: Array<FilterAnyType>,
   lastUsedFilters: Array<FilterAnyType>,
   currentFilters: Array<FilterAnyType>,
 

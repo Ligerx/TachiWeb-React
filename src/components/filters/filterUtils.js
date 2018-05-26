@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import TextField from '@material-ui/core/TextField';
-import type { FiltersType } from 'types';
 import type {
   FilterAnyType,
   FilterText as FilterTextType,
@@ -25,7 +24,10 @@ import FilterSort from './FilterSort';
 //        Other suggestions here - https://medium.freecodecamp.org/handling-state-in-react-four-immutable-approaches-to-consider-d1f5c00249d5
 
 /* eslint-disable import/prefer-default-export, no-underscore-dangle */
-export function filterElements(filters: FiltersType, onChange: Function): Array<React.Node> {
+export function filterElements(
+  filters: Array<FilterAnyType>,
+  onChange: Function,
+): Array<React.Node> {
   return filters.map((filter: FilterAnyType, index: number) => {
     // TODO: header, separator, checkbox
     //       not doing right now because none of the sources use it
@@ -99,7 +101,7 @@ export function filterElements(filters: FiltersType, onChange: Function): Array<
 function handleTextChange(
   index: number,
   filter: FilterTextType,
-  filters: FiltersType,
+  filters: Array<FilterAnyType>,
   onChange: Function,
 ) {
   return (event: SyntheticEvent<HTMLInputElement>) => {
@@ -111,7 +113,7 @@ function handleTextChange(
 function handleSelectChange(
   index: number,
   filter: FilterSelectType,
-  filters: FiltersType,
+  filters: Array<FilterAnyType>,
   onChange: Function,
 ) {
   // NOTE: LIElement is actually within a select
@@ -125,7 +127,7 @@ function handleSelectChange(
 function handleTristateChange(
   index: number,
   filter: FilterTristateType,
-  filters: FiltersType,
+  filters: Array<FilterAnyType>,
   onChange: Function,
 ) {
   return () => {
@@ -137,7 +139,7 @@ function handleTristateChange(
 function handleGroupChange(
   index: number,
   filter: FilterGroupType,
-  filters: FiltersType,
+  filters: Array<FilterAnyType>,
   onChange: Function,
 ) {
   // NOTE: Assuming that GROUP will only contain TRISTATE children
@@ -163,7 +165,7 @@ type SortState = { index: number, ascending: boolean };
 function handleSortChange(
   index: number,
   filter: FilterSortType,
-  filters: FiltersType,
+  filters: Array<FilterAnyType>,
   onChange: Function,
 ) {
   return (clickedIndex: number) => () => {

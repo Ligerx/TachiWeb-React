@@ -1,6 +1,7 @@
 // @flow
 import { Server } from 'api';
-import type { FiltersType, MangaType } from 'types';
+import type { MangaType } from 'types';
+import type { FilterAnyType } from 'types/filters';
 import { ADD_MANGA } from './mangaInfos';
 
 // ================================================================================
@@ -215,7 +216,7 @@ function cataloguePostParameters(
   page: number,
   sourceId: number,
   query: string,
-  filters: ?FiltersType,
+  filters: ?Array<FilterAnyType>,
 ): Object {
   return {
     method: 'POST',
