@@ -54,7 +54,7 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
 
   return {
     fetchChapters: () => dispatch(fetchChapters(mangaId)),
-    fetchMangaInfo: () => dispatch(fetchMangaInfo(mangaId)),
+    fetchMangaInfo: (options = {}) => dispatch(fetchMangaInfo(mangaId, options)),
     updateChapters: () => dispatch(updateChapters(mangaId)),
     updateMangaInfo: () => dispatch(updateMangaInfo(mangaId)),
   };

@@ -21,3 +21,12 @@ export default combineReducers({
   filters,
   mangaInfos,
 });
+
+// NOTE: some Thunks (asynchronous calls) may escape early
+//       (e.g. return cached data) instead of returning a promise.
+//
+// A consequence of this is that you can't call .then() on them safely.
+// A workaround is to forcefully return a promise so that any function can use
+// .then() regardless of cached data or fetch from the server.
+//
+// Not every function has had this modification made, only the ones that have caused problems.

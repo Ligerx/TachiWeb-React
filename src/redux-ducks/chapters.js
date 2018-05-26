@@ -64,8 +64,6 @@ export function fetchChapters(mangaId: number, { ignoreCache = false }: Obj = {}
   return (dispatch: Function, getState: Function) => {
     // Return manga's cached chapters if they're already in the store
     if (!ignoreCache && getState().chapters[mangaId]) {
-      // A bit of a hack I guess. Return a promise so that any function calling fetchChapters
-      // can use .then() whether we dispatch cached data or fetch from the server.
       return Promise.resolve().then(dispatch({ type: FETCH_CACHE }));
     }
 

@@ -22,7 +22,10 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
       const { mangaInfo } = this.props;
       if (mangaInfo && possiblyMissingInfo(mangaInfo)) {
         setTimeout(() => {
-          fetchMangaInfo();
+          // You could use updateMangaInfo() so you don't need the {ignoreCache: true} object,
+          // but that's an extra server call for no reason.
+          // Maybe I'm over optimizing, but feel free to change it if it's problematic/confusing.
+          fetchMangaInfo({ ignoreCache: true });
         }, 300);
       }
     });

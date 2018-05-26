@@ -72,7 +72,7 @@ export function fetchMangaInfo(mangaId: number, { ignoreCache = false }: Obj = {
   return (dispatch: Function, getState: Function) => {
     // Return cached mangaInfo if already loaded
     if (!ignoreCache && getState().library.libraryLoaded) {
-      return dispatch({ type: FETCH_MANGA_CACHE });
+      return Promise.resolve().then(dispatch({ type: FETCH_MANGA_CACHE }));
     }
 
     dispatch({ type: FETCH_MANGA_REQUEST, meta: { mangaId } });
