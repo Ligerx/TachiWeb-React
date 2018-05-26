@@ -24,14 +24,16 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
   };
 
   render() {
-    const { mangaInfo, chapters, fetchOrRefreshIsLoading } = this.props;
+    const {
+      mangaInfo, chapters, fetchOrRefreshIsLoading, backUrl,
+    } = this.props;
 
     return (
       <MangaInfo
         mangaInfo={mangaInfo}
         chapters={chapters}
         initialTabValue={1}
-        onBackClick={Client.library()}
+        onBackClick={backUrl}
         onRefreshClick={this.handleRefreshClick}
         isLoading={fetchOrRefreshIsLoading}
       />

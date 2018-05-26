@@ -22,6 +22,7 @@ type StateToProps = {
   mangaInfo: ?MangaType,
   chapters: Array<ChapterType>,
   fetchOrRefreshIsLoading: boolean,
+  backUrl: string, // should be passed in by router
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
@@ -32,6 +33,7 @@ const mapStateToProps = (state, ownProps): StateToProps => {
     mangaInfo: mangaInfos[mangaId],
     chapters: chapters[mangaId] || [],
     fetchOrRefreshIsLoading: fetchOrRefreshIsLoading(state),
+    backUrl: ownProps.backUrl,
   };
 };
 
