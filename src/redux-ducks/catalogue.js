@@ -1,9 +1,8 @@
 // @flow
 import { Server } from 'api';
-import type { MangaType } from 'types';
 import type { FilterAnyType } from 'types/filters';
 import { ADD_MANGA } from './mangaInfos';
-import { handleHTMLError } from './utils';
+import { handleHTMLError, transformToMangaIdsArray } from './utils';
 
 // ================================================================================
 // Actions
@@ -231,8 +230,4 @@ function cataloguePostParameters(
       'Content-Type': 'application/json',
     }),
   };
-}
-
-function transformToMangaIdsArray(mangaArray: Array<MangaType>): Array<number> {
-  return mangaArray.map(manga => manga.id);
 }

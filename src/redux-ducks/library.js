@@ -1,8 +1,7 @@
 // @flow
 import { Server } from 'api';
-import type { MangaType } from 'types';
 import { ADD_MANGA } from './mangaInfos';
-import { handleHTMLError } from './utils';
+import { handleHTMLError, transformToMangaIdsArray } from './utils';
 
 // ================================================================================
 // Actions
@@ -160,8 +159,4 @@ function transformUnread(unreadArray: Param): Return {
     newUnread[unreadObj.id] = unreadObj.unread;
   });
   return newUnread;
-}
-
-function transformToMangaIdsArray(mangaArray: Array<MangaType>): Array<number> {
-  return mangaArray.map(manga => manga.id);
 }
