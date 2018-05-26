@@ -28,18 +28,21 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
 
   componentDidMount() {
     const {
-      fetchSources, fetchCatalogue, fetchFilters, changeSourceId,
+      sources, sourceId, fetchSources, fetchCatalogue, fetchFilters, changeSourceId,
     } = this.props;
 
     // https://github.com/babel/babel/issues/2141
     // this is undefined in the promise, so manually bind this
     const that = this;
 
-    fetchSources().then(() => {
-      changeSourceId(that.props.sources[0].id); // use the first available source
-      fetchCatalogue();
-      fetchFilters();
-    });
+    // Only reload on component mount if it's missing data
+    if (!sources.length || sourceId == null) {
+      fetchSources().then(() => {
+        changeSourceId(that.props.sources[0].id); // use the first available source
+        fetchCatalogue();
+        fetchFilters();
+      });
+    }
 
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
