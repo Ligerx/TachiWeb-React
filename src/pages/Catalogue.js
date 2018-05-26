@@ -59,13 +59,14 @@ class Catalogue extends Component<CatalogueContainerProps, State> {
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
     const {
-      changeSourceId, resetCatalogue, fetchFilters, fetchCatalogue,
+      sources, changeSourceId, resetCatalogue, fetchFilters, fetchCatalogue,
     } = this.props;
 
     const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
+    const newSourceId = sources[newSourceIndex].id;
 
-    changeSourceId(newSourceIndex);
     resetCatalogue();
+    changeSourceId(newSourceId);
     fetchFilters(); // call before fetchCatalogue so filters don't get used between sources
     fetchCatalogue();
   };
