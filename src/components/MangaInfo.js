@@ -14,6 +14,8 @@ type Props = {
   onBackClick: string | Function,
   onRefreshClick: Function,
   isLoading: boolean,
+
+  chapterUrl: Function,
 };
 
 type State = {
@@ -41,7 +43,7 @@ class MangaInfo extends React.Component<Props, State> {
 
   tabContent = (): React.Node => {
     const { tabValue } = this.state;
-    const { mangaInfo, chapters } = this.props;
+    const { mangaInfo, chapters, chapterUrl } = this.props;
 
     const numChapters: number = chapters ? chapters.length : 0;
 
@@ -53,7 +55,7 @@ class MangaInfo extends React.Component<Props, State> {
           </MangaInfoDetails>
         );
       } else if (tabValue === 1) {
-        return <SortFilterMangaInfoChapters mangaInfo={mangaInfo} chapters={chapters} />;
+        return <SortFilterMangaInfoChapters mangaInfo={mangaInfo} chapters={chapters} chapterUrl={chapterUrl} />;
       }
     }
     return null;

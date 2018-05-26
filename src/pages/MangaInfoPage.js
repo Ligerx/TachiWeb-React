@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import MangaInfo from 'components/MangaInfo';
 import type { MangaInfoContainerProps } from 'containers/MangaInfoContainer';
 import type { MangaType } from 'types';
+import { Client } from 'api';
 
 // Honestly couldn't come up with a different name to differentiate it from MangaInfo component
 // I might rename the other files in the /pages folder to include _Page at the end. I dunno...
@@ -44,9 +45,24 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
     this.props.updateChapters();
   };
 
+  chapterUrl = (mangaInfo: MangaType, chapterId: number, goToPage: number) => {
+    const { urlPrefix } = this.props;
+
+    if (mangaInfo) {
+      return urlPrefix + Client.page(mangaInfo.id, chapterId, goToPage);
+    }
+    // react-router Link does not take null, so use this to create a no-op link
+    // This link should not actually be clickable in the first place
+    return 'javascript:void(0);'; // eslint-disable-line no-script-url
+  };
+
   render() {
     const {
-      mangaInfo, chapters, fetchOrRefreshIsLoading, backUrl, defaultTab,
+      mangaInfo,
+      chapters,
+      fetchOrRefreshIsLoading,
+      backUrl,
+      defaultTab,
     } = this.props;
 
     return (
@@ -57,6 +73,7 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
         onBackClick={backUrl}
         onRefreshClick={this.handleRefreshClick}
         isLoading={fetchOrRefreshIsLoading}
+        chapterUrl={this.chapterUrl}
       />
     );
   }

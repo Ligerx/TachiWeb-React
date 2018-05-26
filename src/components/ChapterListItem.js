@@ -23,15 +23,17 @@ type Props = {
   classes: Object,
   mangaInfo: MangaType,
   chapter: ChapterType,
+  chapterUrl: Function,
 };
 
-const ChapterListItem = ({ classes, mangaInfo, chapter }: Props) => {
+const ChapterListItem = ({
+  classes, mangaInfo, chapter, chapterUrl,
+}: Props) => {
   const dimIfRead: Function = (read: boolean): String => classNames({ [classes.read]: read });
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
-  const pageLink: ?string = mangaInfo ? Client.page(mangaInfo.id, chapter.id, goToPage) : null;
 
   return (
-    <ListItem button divider component={Link} to={pageLink}>
+    <ListItem button divider component={Link} to={chapterUrl(mangaInfo, chapter.id, goToPage)}>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="subheading" className={dimIfRead(chapter.read)}>

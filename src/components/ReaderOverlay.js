@@ -11,7 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 // TODO: using two toolbars currently, but it might be too big. Consider changing/customizing later.
 // NOTE: Material-UI v1 hasn't ported a slider component yet, so using an external library.
-//       When it is added to Material-UI, use that instead.
+//       When it is added to Material-UI, consider using that instead.
 //       https://github.com/mui-org/material-ui/issues/4793
 
 const styles = {
@@ -36,14 +36,16 @@ type Props = {
   chapterNum: number,
   mangaId: number,
   children?: React.Node,
+
+  urlPrefix: string, // kind of a hack
 };
 
 const ReaderOverlay = ({
-  title, chapterNum, mangaId, classes, children,
+  title, chapterNum, mangaId, classes, children, urlPrefix,
 }: Props) => (
   <AppBar position="static" color="default" className={classes.overlay}>
     <Toolbar>
-      <IconButton component={Link} to={Client.manga(mangaId)}>
+      <IconButton component={Link} to={urlPrefix + Client.manga(mangaId)}>
         <Icon>arrow_back</Icon>
       </IconButton>
       <Typography variant="title" style={{ flex: 1 }}>

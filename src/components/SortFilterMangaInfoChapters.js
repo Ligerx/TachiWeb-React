@@ -32,12 +32,15 @@ const FILTERS = {
 type Props = {
   mangaInfo: MangaType,
   chapters: Array<ChapterType>,
+  chapterUrl: Function,
 };
 
-const SortFilterMangaInfoChapters = ({ mangaInfo, chapters }: Props) => {
+const SortFilterMangaInfoChapters = ({ mangaInfo, chapters, chapterUrl }: Props) => {
   const sortedChapters = SORTS.DEFAULT(chapters);
 
-  return <MangaInfoChapters mangaInfo={mangaInfo} chapters={sortedChapters} />;
+  return (
+    <MangaInfoChapters mangaInfo={mangaInfo} chapters={sortedChapters} chapterUrl={chapterUrl} />
+  );
 };
 
 export default SortFilterMangaInfoChapters;

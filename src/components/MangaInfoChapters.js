@@ -26,15 +26,23 @@ type Props = {
   classes: Object,
   mangaInfo: MangaType,
   chapters: Array<ChapterType>,
+  chapterUrl: Function,
 };
 
-const MangaInfoChapters = ({ classes, mangaInfo, chapters }: Props) => (
+const MangaInfoChapters = ({
+  classes, mangaInfo, chapters, chapterUrl,
+}: Props) => (
   <ResponsiveGrid>
     <Grid item xs={12}>
       <Paper>
         <List className={classes.list}>
           {chapters.map(chapter => (
-            <ChapterListItem key={chapter.id} mangaInfo={mangaInfo} chapter={chapter} />
+            <ChapterListItem
+              key={chapter.id}
+              mangaInfo={mangaInfo}
+              chapter={chapter}
+              chapterUrl={chapterUrl}
+            />
           ))}
         </List>
       </Paper>

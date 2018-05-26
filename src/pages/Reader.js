@@ -13,6 +13,9 @@ import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';
 import type { ChapterType, MangaType } from 'types';
 
+// NOTE: prepending urlPrefix to all links in this component so I can accomodate
+//       Library and Catalogue Readers. This is sort of hacky, but it works for now.
+
 // TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
 
 // TODO: eventually create a preloading component?
@@ -117,54 +120,54 @@ class Reader extends Component<Props> {
 
   handlePrevPageClick = () => {
     const {
-      mangaInfo, chapterId, page, prevChapterId, pageCounts,
+      mangaInfo, chapterId, page, prevChapterId, pageCounts, urlPrefix,
     } = this.props;
 
     if (!mangaInfo) return;
 
     if (page > 0) {
-      this.props.history.push(Client.page(mangaInfo.id, chapterId, page - 1));
+      this.props.history.push(urlPrefix + Client.page(mangaInfo.id, chapterId, page - 1));
     } else if (page === 0 && prevChapterId) {
       // If on the first page, go to the previous chapter's last page
       const prevPageCount: ?number = pageCounts[prevChapterId];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
-      this.props.history.push(Client.page(mangaInfo.id, prevChapterId, lastPage));
+      this.props.history.push(urlPrefix + Client.page(mangaInfo.id, prevChapterId, lastPage));
     }
   };
 
   handleNextPageClick = () => {
     const {
-      mangaInfo, chapter, chapterId, pageCount, page, nextChapterId, updateReadingStatus,
+      mangaInfo, chapter, chapterId, pageCount, page, nextChapterId, updateReadingStatus, urlPrefix,
     } = this.props;
 
     if (!mangaInfo) return;
 
     if (page < pageCount - 1) {
       updateReadingStatus(chapter, pageCount, page + 1);
-      this.props.history.push(Client.page(mangaInfo.id, chapterId, page + 1));
+      this.props.history.push(urlPrefix + Client.page(mangaInfo.id, chapterId, page + 1));
     } else if (page === pageCount - 1 && nextChapterId) {
-      this.props.history.push(Client.page(mangaInfo.id, nextChapterId, 0));
+      this.props.history.push(urlPrefix + Client.page(mangaInfo.id, nextChapterId, 0));
     }
   };
 
   prevChapterUrl = () => {
     // Links to the previous chapter's last page read
-    const { mangaInfo, prevChapterId, chapters } = this.props;
-    return changeChapterUrl(mangaInfo, prevChapterId, chapters);
+    const { mangaInfo, prevChapterId, chapters, urlPrefix } = this.props;
+    return urlPrefix + changeChapterUrl(mangaInfo, prevChapterId, chapters);
   };
 
   nextChapterUrl = () => {
     // Links to the next chapter's last page read
-    const { mangaInfo, nextChapterId, chapters } = this.props;
-    return changeChapterUrl(mangaInfo, nextChapterId, chapters);
+    const { mangaInfo, nextChapterId, chapters, urlPrefix } = this.props;
+    return urlPrefix + changeChapterUrl(mangaInfo, nextChapterId, chapters);
   };
 
   handleJumpToPage = (newPage: number) => {
-    const { mangaInfo, chapterId } = this.props;
+    const { mangaInfo, chapterId, urlPrefix } = this.props;
 
     if (!mangaInfo) return;
-    this.props.history.push(Client.page(mangaInfo.id, chapterId, newPage - 1));
+    this.props.history.push(urlPrefix + Client.page(mangaInfo.id, chapterId, newPage - 1));
   };
 
   render() {
@@ -196,6 +199,7 @@ class Reader extends Component<Props> {
           chapterNum={chapter.chapter_number}
           pageCount={pageCount}
           mangaId={mangaInfo.id}
+          urlPrefix={this.props.urlPrefix}
         >
           <IconButton component={Link} to={this.prevChapterUrl()} disabled={!prevChapterId}>
             <Icon>skip_previous</Icon>
