@@ -3,6 +3,7 @@ import { Server } from 'api';
 import type { MangaType } from 'types';
 import type { FilterAnyType } from 'types/filters';
 import { ADD_MANGA } from './mangaInfos';
+import { handleHTMLError } from './utils';
 
 // ================================================================================
 // Actions
@@ -113,7 +114,7 @@ export function fetchCatalogue() {
       Server.catalogue(),
       cataloguePostParameters(1, sourceId, searchQuery.trim(), filtersChecked),
     )
-      .then(handleServerError)
+      .then(handleHTMLError)
       .then(
         (json) => {
           const { content, has_next: hasNextPage } = json;
@@ -172,7 +173,7 @@ export function fetchNextCataloguePage() {
       Server.catalogue(),
       cataloguePostParameters(nextPage, sourceId, searchQuery.trim(), filtersChecked),
     )
-      .then(handleServerError)
+      .then(handleHTMLError)
       .then(
         (json) => {
           const { content, has_next: hasNextPageUpdated } = json;
@@ -230,20 +231,6 @@ function cataloguePostParameters(
       'Content-Type': 'application/json',
     }),
   };
-}
-
-function handleServerError(res) {
-  // NOTE: This should be used in tandem with a Promise
-
-  // Kissmanga error would return <html><body><h2>500 Internal Error</h2></body></html>
-  // This is not JSON, and causes a crash with the error handler.
-  // I have to manually handle the error =(
-
-  if (res.status === 500) {
-    // Server Error occurred, html returned. Throw error.
-    return Promise.reject(new Error('500 Server Error encountered when trying to fetch catalogue'));
-  }
-  return res.json();
 }
 
 function transformToMangaIdsArray(mangaArray: Array<MangaType>): Array<number> {
