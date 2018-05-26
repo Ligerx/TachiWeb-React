@@ -60,19 +60,15 @@ type Props = ReaderContainerProps & {
 class Reader extends Component<Props> {
   componentDidMount() {
     this.props.fetchMangaInfo();
-    this.props.fetchChapters();
-    this.props.fetchPageCount(this.props.chapterId);
+    this.props.fetchChapters()
+      .then(this.getAdjacentPageCounts);
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      page, chapterId, prevChapterId, nextChapterId,
-    } = this.props;
+    const { page, chapterId } = this.props;
 
     const pageChanged = page !== prevProps.page;
     const chapterChanged = chapterId !== prevProps.chapterId;
-    const prevChapterChanged = prevChapterId !== prevProps.prevChapterId;
-    const nextChapterChanged = nextChapterId !== prevProps.nextChapterId;
 
     // Preload more images when page or chapter changes.
     // Should also fire once on page load.
@@ -81,8 +77,7 @@ class Reader extends Component<Props> {
     }
 
     // Always have the adjacent chapters' page counts loaded
-    // Also should fire once on page load.
-    if (chapterChanged || prevChapterChanged || nextChapterChanged) {
+    if (chapterChanged) {
       this.getAdjacentPageCounts();
     }
   }
@@ -153,13 +148,17 @@ class Reader extends Component<Props> {
 
   prevChapterUrl = () => {
     // Links to the previous chapter's last page read
-    const { mangaInfo, prevChapterId, chapters, urlPrefix } = this.props;
+    const {
+      mangaInfo, prevChapterId, chapters, urlPrefix,
+    } = this.props;
     return urlPrefix + changeChapterUrl(mangaInfo, prevChapterId, chapters);
   };
 
   nextChapterUrl = () => {
     // Links to the next chapter's last page read
-    const { mangaInfo, nextChapterId, chapters, urlPrefix } = this.props;
+    const {
+      mangaInfo, nextChapterId, chapters, urlPrefix,
+    } = this.props;
     return urlPrefix + changeChapterUrl(mangaInfo, nextChapterId, chapters);
   };
 
