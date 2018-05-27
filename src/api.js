@@ -75,6 +75,10 @@ export const Server = {
     }
     return url;
   },
+
+  backupDownload() {
+    return '/api/backup?force-download=true';
+  },
 };
 
 export const Client = {
@@ -97,5 +101,9 @@ export const Client = {
   page(mangaId, chapterId, page) {
     // URL of the manga page on the client
     return `/${mangaId}/${chapterId}/${page}`;
+  },
+
+  backupRestore() {
+    return '/backup_restore';
   },
 };

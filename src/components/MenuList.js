@@ -37,7 +37,7 @@ const MenuList = ({ classes }: Props) => (
       <ListItem button>
         <ListItemText primary="Settings" />
       </ListItem>
-      <ListItem button>
+      <ListItem button component={Link} to={Client.backupRestore()}>
         <ListItemText primary="Backup/Restore" />
       </ListItem>
     </List>

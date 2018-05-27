@@ -1,15 +1,16 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Client } from 'api';
 import LibraryContainer from 'containers/LibraryContainer';
 import MangaInfoContainer from 'containers/MangaInfoContainer';
 import ReaderContainer from 'containers/ReaderContainer';
 import CatalogueContainer from 'containers/CatalogueContainer';
 import ErrorNotificationsContainer from 'containers/ErrorNotificationsContainer';
-import { Client } from 'api';
+import BackupRestore from 'pages/BackupRestore';
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
-// FIXME: Including GlobalErrorMessageContainer here because I have to
+// FIXME: Including ErrorNotificationsContainer here because I have to
 //        Not idea, refactor out an App component or something.
 
 const Router = () => (
@@ -18,6 +19,7 @@ const Router = () => (
       <Switch>
         <Route exact path="/" component={LibraryContainer} />
         <Route path="/library" component={LibraryContainer} />
+        <Route path="/backup_restore" component={BackupRestore} />
 
         <Route
           path="/catalogue/:mangaId/:chapterId/:page"
