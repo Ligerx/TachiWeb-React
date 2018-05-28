@@ -29,6 +29,7 @@ const MangaInfoHeader = ({
 }: Props) => {
   const title = mangaInfo ? mangaInfo.title : '';
   const handleRefreshClick = mangaInfo ? onRefreshClick : () => null;
+  const siteUrl = mangaInfo ? mangaInfo.url : ''; // empty href in IconButton will not render <a>
 
   return (
     <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
@@ -38,7 +39,7 @@ const MangaInfoHeader = ({
           {title}
         </Typography>
         <RefreshButton onClick={handleRefreshClick} />
-        <IconButton>
+        <IconButton href={siteUrl} target="_blank">
           <Icon>open_in_new</Icon>
         </IconButton>
       </Toolbar>
