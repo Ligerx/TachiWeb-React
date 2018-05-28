@@ -22,6 +22,11 @@ export const ADD_TO_FAVORITES = 'library/ADD_TO_FAVORITES';
 export const REMOVE_FROM_FAVORITES = 'library/REMOVE_FROM_FAVORITES';
 export const DECREMENT_UNREAD = 'library/DECREMENT_UNREAD';
 
+const UPLOAD_RESTORE_REQUEST = 'library/UPLOAD_RESTORE_REQUEST';
+const UPLOAD_RESTORE_SUCCESS = 'library/UPLOAD_RESTORE_SUCCESS';
+const UPLOAD_RESTORE_FAILURE = 'library/UPLOAD_RESTORE_FAILURE';
+export const UPLOAD_RESTORE = 'library/UPLOAD_RESTORE';
+
 // ================================================================================
 // Reducers
 // ================================================================================
@@ -147,6 +152,24 @@ export function fetchUnread() {
   };
 }
 
+export function uploadRestoreData(file: File) {
+  return (dispatch: Function) => {
+    dispatch({ type: UPLOAD_RESTORE_REQUEST });
+
+    return fetch(Server.restoreUpload(), uploadPostParameters(file))
+      .then(handleHTMLError)
+      .then(
+        () => dispatch({ type: UPLOAD_RESTORE_SUCCESS }), // this might break because there is no json to parse?
+        error =>
+          dispatch({
+            type: UPLOAD_RESTORE_FAILURE,
+            errorMessage: `Failed to restore library from ${file.name}`,
+            meta: { error },
+          }),
+      );
+  };
+}
+
 // ================================================================================
 // Helper functions
 // ================================================================================
@@ -159,4 +182,11 @@ function transformUnread(unreadArray: Param): Return {
     newUnread[unreadObj.id] = unreadObj.unread;
   });
   return newUnread;
+}
+
+function uploadPostParameters(file: File): Object {
+  const formData = new FormData();
+  formData.append('uploaded_file', file);
+
+  return { method: 'POST', body: formData };
 }

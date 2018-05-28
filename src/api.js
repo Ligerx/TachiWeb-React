@@ -85,6 +85,10 @@ export const Server = {
     // Don't use react router Link component, just use a normal <a href="..." download>
     return 'http://localhost:4567/api/backup?force-download=true';
   },
+
+  restoreUpload() {
+    return '/api/restore_file';
+  },
 };
 
 export const Client = {
