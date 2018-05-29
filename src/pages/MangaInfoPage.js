@@ -63,6 +63,7 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
       fetchOrRefreshIsLoading,
       backUrl,
       defaultTab,
+      setFlag,
     } = this.props;
 
     return (
@@ -74,6 +75,7 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
         onRefreshClick={this.handleRefreshClick}
         isLoading={fetchOrRefreshIsLoading}
         chapterUrl={this.chapterUrl}
+        setFlag={setFlag}
       />
     );
   }

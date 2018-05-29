@@ -10,10 +10,10 @@ import MangaInfoChapters from './MangaInfoChapters';
 // TODO: pass down the new state to this component
 // TODO: implement the sorting and filtering here
 
-// The manga chapters naturally come in 'reverse' order, so flip them
+// The manga chapters naturally come in ascending order, so flip them
 const SORTS = {
-  DEFAULT: list => [...list].reverse(),
-  REVERSE: list => list,
+  DESCENDING: list => [...list].reverse(),
+  ASCENDING: list => list,
 };
 
 // READ only shows chapters you've read, UNREAD is the opposite. (a little confusing I know)
@@ -36,7 +36,12 @@ type Props = {
 };
 
 const SortFilterMangaInfoChapters = ({ mangaInfo, chapters, chapterUrl }: Props) => {
-  const sortedChapters = SORTS.DEFAULT(chapters);
+  let sortedChapters;
+  if (mangaInfo.flags.SORT_DIRECTION === 'DESCENDING') {
+    sortedChapters = SORTS.DESCENDING(chapters);
+  } else {
+    sortedChapters = SORTS.ASCENDING(chapters);
+  }
 
   return (
     <MangaInfoChapters mangaInfo={mangaInfo} chapters={sortedChapters} chapterUrl={chapterUrl} />

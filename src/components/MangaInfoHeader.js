@@ -10,6 +10,10 @@ import MangaInfoTabs from 'components/MangaInfoTabs';
 import type { MangaType } from 'types';
 import BackButton from 'components/BackButton';
 
+// TODO: tooltips
+
+// NOTE: empty href in IconButton will not render <a>
+
 type Props = {
   // If mangaInfo is null (e.g. when it is being fetched from the server)
   // Title is empty, refresh click is disabled
@@ -18,6 +22,7 @@ type Props = {
   handleChangeTab: Function,
   onBackClick: string | Function,
   onRefreshClick: Function,
+  setFlag: Function,
 };
 
 const MangaInfoHeader = ({
@@ -26,27 +31,46 @@ const MangaInfoHeader = ({
   handleChangeTab,
   onBackClick,
   onRefreshClick,
-}: Props) => {
-  const title = mangaInfo ? mangaInfo.title : '';
-  const handleRefreshClick = mangaInfo ? onRefreshClick : () => null;
-  const siteUrl = mangaInfo ? mangaInfo.url : ''; // empty href in IconButton will not render <a>
+  setFlag,
+}: Props) => (
+  <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+    <Toolbar>
+      {mangaInfo && (
+        <React.Fragment>
+          <BackButton onBackClick={onBackClick} />
+          <Typography variant="title" style={{ flex: 1 }}>
+            {mangaInfo.title}
+          </Typography>
 
-  return (
-    <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
-      <Toolbar>
-        <BackButton onBackClick={onBackClick} />
-        <Typography variant="title" style={{ flex: 1 }}>
-          {title}
-        </Typography>
-        <RefreshButton onClick={handleRefreshClick} />
-        <IconButton href={siteUrl} target="_blank">
-          <Icon>open_in_new</Icon>
-        </IconButton>
-      </Toolbar>
+          <RefreshButton onClick={onRefreshClick} />
+          <IconButton href={mangaInfo.url} target="_blank">
+            <Icon>open_in_new</Icon>
+          </IconButton>
 
-      <MangaInfoTabs tabValue={tabValue} handleChange={handleChangeTab} />
-    </AppBar>
-  );
-};
+          <IconButton>
+            <Icon>filter_list</Icon>
+          </IconButton>
+
+          <IconButton onClick={handleSortClick(setFlag, mangaInfo.flags)}>
+            <Icon>sort_by_alpha</Icon>
+          </IconButton>
+
+          <IconButton>
+            <Icon>more_vert</Icon>
+          </IconButton>
+        </React.Fragment>
+      )}
+    </Toolbar>
+
+    <MangaInfoTabs tabValue={tabValue} handleChange={handleChangeTab} />
+  </AppBar>
+);
+
+function handleSortClick(setFlag, flags) {
+  return () => {
+    const newState = flags.SORT_DIRECTION === 'DESCENDING' ? 'ASCENDING' : 'DESCENDING';
+    setFlag('SORT_DIRECTION', newState);
+  };
+}
 
 export default MangaInfoHeader;

@@ -1,6 +1,12 @@
 // @flow
 import { connect } from 'react-redux';
-import { fetchMangaInfo, updateMangaInfo, FETCH_MANGA, UPDATE_MANGA } from 'redux-ducks/mangaInfos';
+import {
+  fetchMangaInfo,
+  updateMangaInfo,
+  FETCH_MANGA,
+  UPDATE_MANGA,
+  setFlag,
+} from 'redux-ducks/mangaInfos';
 import {
   fetchChapters,
   updateChapters,
@@ -51,6 +57,7 @@ type DispatchToProps = {
   fetchMangaInfo: Function,
   updateChapters: Function,
   updateMangaInfo: Function,
+  setFlag: Function,
 };
 
 const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
@@ -61,6 +68,7 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
     fetchMangaInfo: (options = {}) => dispatch(fetchMangaInfo(mangaId, options)),
     updateChapters: () => dispatch(updateChapters(mangaId)),
     updateMangaInfo: () => dispatch(updateMangaInfo(mangaId)),
+    setFlag: (flag, state) => dispatch(setFlag(mangaId, flag, state)),
   };
 };
 

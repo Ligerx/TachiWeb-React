@@ -89,6 +89,10 @@ export const Server = {
   restoreUpload() {
     return '/api/restore_file';
   },
+
+  setFlag(mangaId: number, flag: string, state: string) {
+    return `/api/set_flag/${mangaId}/${flag}/${state}`;
+  },
 };
 
 export const Client = {

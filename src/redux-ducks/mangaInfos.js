@@ -32,6 +32,10 @@ export const TOGGLE_FAVORITE = 'mangaInfos/TOGGLE_FAVORITE';
 
 export const ADD_MANGA = 'mangaInfos/ADD_MANGA';
 
+const SET_FLAG_REQUEST = 'mangaInfos/SET_FLAG_REQUEST';
+const SET_FLAG_SUCCESS = 'mangaInfos/SET_FLAG_SUCCESS';
+const SET_FLAG_FAILURE = 'mangaInfos/SET_FLAG_FAILURE';
+
 // ================================================================================
 // Reducers
 // ================================================================================
@@ -57,6 +61,18 @@ export default function mangaInfosReducer(state: State = {}, action = {}) {
         [action.mangaId]: {
           ...state[action.mangaId],
           favorite: action.newFavoriteState,
+        },
+      };
+
+    case SET_FLAG_REQUEST:
+      return {
+        ...state,
+        [action.mangaId]: {
+          ...state[action.mangaId],
+          flags: {
+            ...state[action.mangaId].flags,
+            [action.flag]: action.state,
+          },
         },
       };
 
@@ -142,6 +158,26 @@ export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
               : 'Failed to favorite this manga',
           }),
       );
+  };
+}
+
+export function setFlag(mangaId: number, flag: string, state: string) {
+  // TODO: dispatches
+  // Also, I guess I'll just update the redux first, without waiting for the server to reply
+  // this means I don't have to do anything when SUCCESS happens.
+  // And failure should just pop up a message
+
+  return (dispatch: Function) => {
+    dispatch({
+      type: SET_FLAG_REQUEST,
+      mangaId,
+      flag,
+      state,
+    });
+
+    return fetch(Server.setFlag(mangaId, flag, state));
+    // TODO: error handling. Or maybe just don't bother idk
+    // Should send the failure/success dispatch so the store loading/error is correct
   };
 }
 

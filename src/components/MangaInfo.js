@@ -14,6 +14,7 @@ type Props = {
   onBackClick: string | Function,
   onRefreshClick: Function,
   isLoading: boolean,
+  setFlag: Function,
 
   chapterUrl: Function,
 };
@@ -64,7 +65,7 @@ class MangaInfo extends React.Component<Props, State> {
   render() {
     const { tabValue } = this.state;
     const {
-      mangaInfo, onBackClick, onRefreshClick, isLoading,
+      mangaInfo, onBackClick, onRefreshClick, isLoading, setFlag,
     } = this.props;
 
     return (
@@ -75,6 +76,7 @@ class MangaInfo extends React.Component<Props, State> {
           handleChangeTab={this.handleChangeTab}
           onBackClick={onBackClick}
           onRefreshClick={onRefreshClick}
+          setFlag={setFlag}
         />
         {this.tabContent()}
 
