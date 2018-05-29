@@ -11,7 +11,7 @@ import MangaInfoChapters from './MangaInfoChapters';
 // TODO: implement the sorting and filtering here
 
 // The manga chapters naturally come in ascending order, so flip them
-const SORTS = {
+const SORT_DIRECTION = {
   DESCENDING: list => [...list].reverse(),
   ASCENDING: list => list,
 };
@@ -38,9 +38,9 @@ type Props = {
 const SortFilterMangaInfoChapters = ({ mangaInfo, chapters, chapterUrl }: Props) => {
   let sortedChapters;
   if (mangaInfo.flags.SORT_DIRECTION === 'DESCENDING') {
-    sortedChapters = SORTS.DESCENDING(chapters);
+    sortedChapters = SORT_DIRECTION.DESCENDING(chapters);
   } else {
-    sortedChapters = SORTS.ASCENDING(chapters);
+    sortedChapters = SORT_DIRECTION.ASCENDING(chapters);
   }
 
   return (
