@@ -31,13 +31,14 @@ const ChapterListItem = ({
 }: Props) => {
   const dimIfRead: Function = (read: boolean): String => classNames({ [classes.read]: read });
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
+  const chapterName: string = mangaInfo.flags.DISPLAY_MODE === 'NAME' ? chapter.name : `Chapter ${chapter.chapter_number}`;
 
   return (
     <ListItem button divider component={Link} to={chapterUrl(mangaInfo, chapter.id, goToPage)}>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="subheading" className={dimIfRead(chapter.read)}>
-            {chapter.name}
+            {chapterName}
           </Typography>
         </Grid>
         <Grid item style={{ flex: 1 }}>

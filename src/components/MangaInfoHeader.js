@@ -9,6 +9,7 @@ import RefreshButton from 'components/RefreshButton';
 import MangaInfoTabs from 'components/MangaInfoTabs';
 import type { MangaType } from 'types';
 import BackButton from 'components/BackButton';
+import MangaInfoMore from 'components/mangaInfo/MangaInfoMore';
 
 // TODO: tooltips
 
@@ -55,9 +56,10 @@ const MangaInfoHeader = ({
             <Icon>sort_by_alpha</Icon>
           </IconButton>
 
-          <IconButton>
-            <Icon>more_vert</Icon>
-          </IconButton>
+          <MangaInfoMore
+            flagState={mangaInfo.flags.DISPLAY_MODE}
+            onDisplayModeChange={handleDisplayModeChange(setFlag)}
+          />
         </React.Fragment>
       )}
     </Toolbar>
@@ -71,6 +73,10 @@ function handleSortClick(setFlag, flags) {
     const newState = flags.SORT_DIRECTION === 'DESCENDING' ? 'ASCENDING' : 'DESCENDING';
     setFlag('SORT_DIRECTION', newState);
   };
+}
+
+function handleDisplayModeChange(setFlag) {
+  return newDisplayMode => setFlag('DISPLAY_MODE', newDisplayMode);
 }
 
 export default MangaInfoHeader;
