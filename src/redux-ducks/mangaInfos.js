@@ -162,11 +162,8 @@ export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
 }
 
 export function setFlag(mangaId: number, flag: string, state: string) {
-  // TODO: dispatches
-  // Also, I guess I'll just update the redux first, without waiting for the server to reply
-  // this means I don't have to do anything when SUCCESS happens.
+  // I'm just updating the store without waiting for the server to reply
   // And failure should just pop up a message
-
   return (dispatch: Function) => {
     dispatch({
       type: SET_FLAG_REQUEST,
@@ -175,9 +172,11 @@ export function setFlag(mangaId: number, flag: string, state: string) {
       state,
     });
 
-    return fetch(Server.setFlag(mangaId, flag, state));
-    // TODO: error handling. Or maybe just don't bother idk
-    // Should send the failure/success dispatch so the store loading/error is correct
+    // TODO: It's possible that the server might respond with
+    //       { "success": false }, but I'm not checking that right now.
+    return fetch(Server.setFlag(mangaId, flag, state))
+      .then(handleHTMLError)
+      .then(() => dispatch({ type: SET_FLAG_SUCCESS }), () => dispatch({ type: SET_FLAG_FAILURE }));
   };
 }
 
