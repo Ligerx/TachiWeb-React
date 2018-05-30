@@ -35,6 +35,7 @@ export const ADD_MANGA = 'mangaInfos/ADD_MANGA';
 const SET_FLAG_REQUEST = 'mangaInfos/SET_FLAG_REQUEST';
 const SET_FLAG_SUCCESS = 'mangaInfos/SET_FLAG_SUCCESS';
 const SET_FLAG_FAILURE = 'mangaInfos/SET_FLAG_FAILURE';
+const SET_FLAG_NO_CHANGE = 'mangaInfos/SET_FLAG_NO_CHANGE';
 
 // ================================================================================
 // Reducers
@@ -164,7 +165,11 @@ export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
 export function setFlag(mangaId: number, flag: string, state: string) {
   // I'm just updating the store without waiting for the server to reply
   // And failure should just pop up a message
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
+    if (getState().mangaInfos[mangaId].flags[flag] === state) {
+      return dispatch({ type: SET_FLAG_NO_CHANGE, meta: { mangaId, flag, state } });
+    }
+
     dispatch({
       type: SET_FLAG_REQUEST,
       mangaId,
