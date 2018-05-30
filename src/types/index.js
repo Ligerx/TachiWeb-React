@@ -1,5 +1,11 @@
 // @flow
-import type { FilterAnyType } from './filters';
+export type FlagsType = {
+  DISPLAY_MODE: 'NAME' | 'NUMBER',
+  READ_FILTER: 'READ' | 'UNREAD' | 'ALL',
+  SORT_DIRECTION: 'ASCENDING' | 'DESCENDING',
+  SORT_TYPE: 'SOURCE' | 'NUMBER',
+  DOWNLOADED_FILTER: 'DOWNLOADED' | 'NOT_DOWNLOADED' | 'ALL',
+};
 
 export type MangaType = {
   // NOTE: Many non-required fields may be missing because the server needs time to
@@ -14,13 +20,7 @@ export type MangaType = {
   source: string,
   url: string,
   downloaded: boolean,
-  flags: {
-    DISPLAY_MODE: string,
-    READ_FILTER: string,
-    SORT_DIRECTION: string,
-    SORT_TYPE: string,
-    DOWNLOADED_FILTER: string,
-  },
+  flags: FlagsType,
 
   chapters: ?number,
   unread: ?number,

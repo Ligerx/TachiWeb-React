@@ -10,9 +10,14 @@ import MangaInfoChapters from './MangaInfoChapters';
 // TODO: pass down the new state to this component
 // TODO: implement the sorting and filtering here
 
-// The manga chapters naturally come in ascending order, so flip them
+const SORT_TYPE = {
+  SOURCE: list => list.slice().sort((a, b) => b.source_order - a.source_order),
+  NUMBER: list => list.slice().sort((a, b) => a.chapter_number - b.chapter_number),
+};
+
+// The manga chapters naturally come in ascending order
 const SORT_DIRECTION = {
-  DESCENDING: list => [...list].reverse(),
+  DESCENDING: list => list.slice().reverse(),
   ASCENDING: list => list,
 };
 
@@ -20,11 +25,11 @@ const SORT_DIRECTION = {
 const FILTERS = {
   NONE: list => list,
   READ: list =>
-    [...list].filter((chapter) => {
+    list.slice().filter((chapter) => {
       chapter.read;
     }),
   UNREAD: list =>
-    [...list].filter((chapter) => {
+    list.slice().filter((chapter) => {
       !chapter.read;
     }),
 };
@@ -36,15 +41,22 @@ type Props = {
 };
 
 const SortFilterMangaInfoChapters = ({ mangaInfo, chapters, chapterUrl }: Props) => {
-  let sortedChapters;
-  if (mangaInfo.flags.SORT_DIRECTION === 'DESCENDING') {
-    sortedChapters = SORT_DIRECTION.DESCENDING(chapters);
-  } else {
-    sortedChapters = SORT_DIRECTION.ASCENDING(chapters);
-  }
+  // TODO: design the code so that I can chain functions?
+
+  const sortTypeFlag = mangaInfo.flags.SORT_TYPE;
+  const sortTypeChapters = SORT_TYPE[sortTypeFlag](chapters);
+
+  const sortDirectionFlag = mangaInfo.flags.SORT_DIRECTION;
+  const sortDirectionChapters = SORT_DIRECTION[sortDirectionFlag](sortTypeChapters);
+
+  const sortedFilteredChapters = sortDirectionChapters;
 
   return (
-    <MangaInfoChapters mangaInfo={mangaInfo} chapters={sortedChapters} chapterUrl={chapterUrl} />
+    <MangaInfoChapters
+      mangaInfo={mangaInfo}
+      chapters={sortedFilteredChapters}
+      chapterUrl={chapterUrl}
+    />
   );
 };
 

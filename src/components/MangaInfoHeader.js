@@ -57,8 +57,9 @@ const MangaInfoHeader = ({
           </IconButton>
 
           <MangaInfoMore
-            flagState={mangaInfo.flags.DISPLAY_MODE}
+            flags={mangaInfo.flags}
             onDisplayModeChange={handleDisplayModeChange(setFlag)}
+            onSortTypeChange={handleSortTypeChange(setFlag)}
           />
         </React.Fragment>
       )}
@@ -77,6 +78,10 @@ function handleSortClick(setFlag, flags) {
 
 function handleDisplayModeChange(setFlag) {
   return newDisplayMode => setFlag('DISPLAY_MODE', newDisplayMode);
+}
+
+function handleSortTypeChange(setFlag) {
+  return newSortType => setFlag('SORT_TYPE', newSortType);
 }
 
 export default MangaInfoHeader;
