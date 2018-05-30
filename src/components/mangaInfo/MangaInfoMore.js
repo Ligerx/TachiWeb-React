@@ -5,6 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import type { FlagsType } from 'types';
+import Tooltip from '@material-ui/core/Tooltip';
 import RadioOptionsDialogue from './RadioOptionsDialogue';
 
 const displayModes = [
@@ -73,9 +74,11 @@ class MangaInfoMore extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <IconButton onClick={this.handleClick}>
-          <Icon>more_vert</Icon>
-        </IconButton>
+        <Tooltip title="More options">
+          <IconButton onClick={this.handleClick}>
+            <Icon>more_vert</Icon>
+          </IconButton>
+        </Tooltip>
 
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleClose}>
           <MenuItem onClick={this.handleDisplayModeClick}>Change Display Mode</MenuItem>

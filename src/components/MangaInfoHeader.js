@@ -10,6 +10,7 @@ import MangaInfoTabs from 'components/MangaInfoTabs';
 import type { MangaType } from 'types';
 import BackButton from 'components/BackButton';
 import MangaInfoMore from 'components/mangaInfo/MangaInfoMore';
+import Tooltip from '@material-ui/core/Tooltip';
 
 // TODO: tooltips
 
@@ -43,18 +44,25 @@ const MangaInfoHeader = ({
             {mangaInfo.title}
           </Typography>
 
+          <Tooltip title="Open source website">
+            <IconButton href={mangaInfo.url} target="_blank">
+              <Icon>open_in_new</Icon>
+            </IconButton>
+          </Tooltip>
+
           <RefreshButton onClick={onRefreshClick} />
-          <IconButton href={mangaInfo.url} target="_blank">
-            <Icon>open_in_new</Icon>
-          </IconButton>
 
-          <IconButton>
-            <Icon>filter_list</Icon>
-          </IconButton>
+          <Tooltip title="Filter">
+            <IconButton>
+              <Icon>filter_list</Icon>
+            </IconButton>
+          </Tooltip>
 
-          <IconButton onClick={handleSortClick(setFlag, mangaInfo.flags)}>
-            <Icon>sort_by_alpha</Icon>
-          </IconButton>
+          <Tooltip title="Sort">
+            <IconButton onClick={handleSortClick(setFlag, mangaInfo.flags)}>
+              <Icon>sort_by_alpha</Icon>
+            </IconButton>
+          </Tooltip>
 
           <MangaInfoMore
             flags={mangaInfo.flags}
