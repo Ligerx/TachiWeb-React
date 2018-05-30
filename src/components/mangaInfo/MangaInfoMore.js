@@ -4,7 +4,12 @@ import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import DisplayModeDialogue from './DisplayModeDialogue';
+import RadioOptionsDialogue from './RadioOptionsDialogue';
+
+const displayModes = [
+  { flagState: 'NAME', label: 'Show title' },
+  { flagState: 'NUMBER', label: 'Show chapter number' },
+];
 
 type Props = {
   flagState: string,
@@ -57,9 +62,11 @@ class MangaInfoMore extends React.Component<Props, State> {
           {/* <MenuItem>Download</MenuItem> */}
         </Menu>
 
-        <DisplayModeDialogue
+        <RadioOptionsDialogue
+          title="Choose Display Mode"
           open={this.state.displayModeOpen}
           value={this.props.flagState}
+          options={displayModes}
           onClose={this.handleDisplayModeClose}
         />
       </React.Fragment>

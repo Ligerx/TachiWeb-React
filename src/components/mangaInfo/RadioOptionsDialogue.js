@@ -9,22 +9,24 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 
-const displayModes = [
-  { flagState: 'NAME', label: 'Show title' },
-  { flagState: 'NUMBER', label: 'Show chapter number' },
-];
+// Renders a Dialogue with a RadioGroup of options.
+// onClose function should handle setting open = false.
+// This passes a new value to onClose when the user makes a new selection.
 
 type Props = {
+  title: string,
   open: boolean,
   value: string,
+  options: Array<{ flagState: string, label: string }>,
   onClose: Function,
 };
 
 type State = {
+  // Keep a local copy of value for the user to edit
   value: string,
 };
 
-class DisplayModeDialogue extends Component<Props, State> {
+class RadioOptionsDialogue extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -48,34 +50,37 @@ class DisplayModeDialogue extends Component<Props, State> {
     this.props.onClose(this.state.value);
   };
 
-  handleChange = (event, value) => {
+  handleChange = (event: SyntheticEvent<>, value: string) => {
     this.setState({ value });
   };
 
   render() {
+    const { title, open, options } = this.props;
+    const { value } = this.state;
+
     return (
-      <Dialog open={this.props.open} onEntering={this.handleEntering}>
-        <DialogTitle>Choose Display Mode</DialogTitle>
+      <Dialog open={open} onEntering={this.handleEntering} onClose={this.handleCancel}>
+        <DialogTitle>{title}</DialogTitle>
+
         <DialogContent>
           <RadioGroup
             ref={(node) => {
               this.radioGroup = node;
             }}
-            aria-label="ringtone"
-            name="ringtone"
-            value={this.state.value}
+            value={value}
             onChange={this.handleChange}
           >
-            {displayModes.map(displayMode => (
+            {options.map(option => (
               <FormControlLabel
-                value={displayMode.flagState}
-                key={displayMode.flagState}
+                value={option.flagState}
+                key={option.flagState}
                 control={<Radio />}
-                label={displayMode.label}
+                label={option.label}
               />
             ))}
           </RadioGroup>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={this.handleCancel}>Cancel</Button>
           <Button onClick={this.handleOk}>Select</Button>
@@ -85,4 +90,4 @@ class DisplayModeDialogue extends Component<Props, State> {
   }
 }
 
-export default DisplayModeDialogue;
+export default RadioOptionsDialogue;
