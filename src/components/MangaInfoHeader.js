@@ -11,6 +11,7 @@ import type { MangaType } from 'types';
 import BackButton from 'components/BackButton';
 import MangaInfoMore from 'components/mangaInfo/MangaInfoMore';
 import Tooltip from '@material-ui/core/Tooltip';
+import MangaInfoFilter from 'components/mangaInfo/MangaInfoFilter';
 
 // TODO: tooltips
 
@@ -52,11 +53,7 @@ const MangaInfoHeader = ({
 
           <RefreshButton onClick={onRefreshClick} />
 
-          <Tooltip title="Filter">
-            <IconButton>
-              <Icon>filter_list</Icon>
-            </IconButton>
-          </Tooltip>
+          <MangaInfoFilter />
 
           <Tooltip title="Sort">
             <IconButton onClick={handleSortClick(setFlag, mangaInfo.flags)}>
