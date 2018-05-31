@@ -2,7 +2,8 @@
 import * as React from 'react';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
-import SortFilterMangaInfoChapters from 'components/SortFilterMangaInfoChapters';
+import SortFilterChaptersHOC from 'components/SortFilterChaptersHOC';
+import MangaInfoChapters from 'components/MangaInfoChapters';
 import type { MangaType, ChapterType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';
@@ -56,7 +57,14 @@ class MangaInfo extends React.Component<Props, State> {
           </MangaInfoDetails>
         );
       } else if (tabValue === 1) {
-        return <SortFilterMangaInfoChapters mangaInfo={mangaInfo} chapters={chapters} chapterUrl={chapterUrl} />;
+        const SortFilterMangaInfoChapters = SortFilterChaptersHOC(MangaInfoChapters);
+        return (
+          <SortFilterMangaInfoChapters
+            mangaInfo={mangaInfo}
+            chapters={chapters}
+            chapterUrl={chapterUrl}
+          />
+        );
       }
     }
     return null;
