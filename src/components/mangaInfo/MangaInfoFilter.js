@@ -36,8 +36,12 @@ class MangaInfoFilter extends Component<Props, State> {
   };
 
   handleRemoveFilters = () => {
-    // Close the menu as well
-    this.setState({ anchorEl: null });
+    const { onReadFilterChange, onDownloadsFilterChange } = this.props;
+
+    onReadFilterChange('ALL');
+    onDownloadsFilterChange('ALL');
+
+    this.setState({ anchorEl: null }); // Also close the menu
   };
 
   handleClose = () => {

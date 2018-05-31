@@ -47,7 +47,7 @@ const SortFilterMangaInfoChapters = ({ mangaInfo, chapters, chapterUrl }: Props)
   const sortDirectionFlag = mangaInfo.flags.SORT_DIRECTION;
 
   let sortedFilteredChapters = chapters
-    .slice()
+    .slice() // clone array
     .sort(sortTypeFunc)
     .filter(readFilterFunc)
     .filter(downloadedFilterFunc);
