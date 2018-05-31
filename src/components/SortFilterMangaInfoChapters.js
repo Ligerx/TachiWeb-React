@@ -11,27 +11,21 @@ import MangaInfoChapters from './MangaInfoChapters';
 // TODO: implement the sorting and filtering here
 
 const SORT_TYPE = {
-  SOURCE: list => list.slice().sort((a, b) => b.source_order - a.source_order),
-  NUMBER: list => list.slice().sort((a, b) => a.chapter_number - b.chapter_number),
+  SOURCE: (a, b) => b.source_order - a.source_order,
+  NUMBER: (a, b) => a.chapter_number - b.chapter_number,
 };
 
-// The manga chapters naturally come in ascending order
-const SORT_DIRECTION = {
-  DESCENDING: list => list.slice().reverse(),
-  ASCENDING: list => list,
+// READ shows chapters you've completed, UNREAD shows uncompleted chapters
+const READ_FILTER = {
+  ALL: () => true,
+  READ: chapter => chapter.read,
+  UNREAD: chapter => !chapter.read,
 };
 
-// READ only shows chapters you've read, UNREAD is the opposite. (a little confusing I know)
-const FILTERS = {
-  NONE: list => list,
-  READ: list =>
-    list.slice().filter((chapter) => {
-      chapter.read;
-    }),
-  UNREAD: list =>
-    list.slice().filter((chapter) => {
-      !chapter.read;
-    }),
+const DOWNLOADED_FILTER = {
+  ALL: () => true,
+  DOWNLOADED: chapter => chapter.download_status === 'DOWNLOADED',
+  NOT_DOWNLOADED: chapter => chapter.download_status === 'NOT_DOWNLOADED', // unused
 };
 
 type Props = {
@@ -41,15 +35,27 @@ type Props = {
 };
 
 const SortFilterMangaInfoChapters = ({ mangaInfo, chapters, chapterUrl }: Props) => {
-  // TODO: design the code so that I can chain functions?
-
   const sortTypeFlag = mangaInfo.flags.SORT_TYPE;
-  const sortTypeChapters = SORT_TYPE[sortTypeFlag](chapters);
+  const sortTypeFunc = SORT_TYPE[sortTypeFlag];
+
+  const readFilterFlag = mangaInfo.flags.READ_FILTER;
+  const readFilterFunc = READ_FILTER[readFilterFlag];
+
+  const downloadedFilterFlag = mangaInfo.flags.DOWNLOADED_FILTER;
+  const downloadedFilterFunc = DOWNLOADED_FILTER[downloadedFilterFlag];
 
   const sortDirectionFlag = mangaInfo.flags.SORT_DIRECTION;
-  const sortDirectionChapters = SORT_DIRECTION[sortDirectionFlag](sortTypeChapters);
 
-  const sortedFilteredChapters = sortDirectionChapters;
+  let sortedFilteredChapters = chapters
+    .slice()
+    .sort(sortTypeFunc)
+    .filter(readFilterFunc)
+    .filter(downloadedFilterFunc);
+
+  // The manga chapters naturally come in ascending order
+  if (sortDirectionFlag === 'DESCENDING') {
+    sortedFilteredChapters = sortedFilteredChapters.reverse();
+  }
 
   return (
     <MangaInfoChapters
