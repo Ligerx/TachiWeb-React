@@ -53,7 +53,11 @@ const MangaInfoHeader = ({
 
           <RefreshButton onClick={onRefreshClick} />
 
-          <MangaInfoFilter />
+          <MangaInfoFilter
+            flags={mangaInfo.flags}
+            onReadFilterChange={handleReadFilterChange(setFlag)}
+            onDownloadsFilterChange={handleDownloadedFilterChange(setFlag)}
+          />
 
           <Tooltip title="Sort">
             <IconButton onClick={handleSortClick(setFlag, mangaInfo.flags)}>
@@ -87,6 +91,14 @@ function handleDisplayModeChange(setFlag) {
 
 function handleSortTypeChange(setFlag) {
   return newSortType => setFlag('SORT_TYPE', newSortType);
+}
+
+function handleReadFilterChange(setFlag) {
+  return newReadFilter => setFlag('READ_FILTER', newReadFilter);
+}
+
+function handleDownloadedFilterChange(setFlag) {
+  return newDownloadedFilter => setFlag('DOWNLOADED_FILTER', newDownloadedFilter);
 }
 
 export default MangaInfoHeader;
