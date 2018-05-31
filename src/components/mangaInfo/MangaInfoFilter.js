@@ -121,8 +121,9 @@ class MangaInfoFilter extends Component<Props, State> {
             <FormControlLabel
               label="Bookmarked"
               onChange={null}
-              control={<Checkbox checked={null} />}
+              control={<Checkbox checked={false} />}
               disabled
+              style={{ textDecoration: 'line-through' }}
             />
           </MenuItem>
 
