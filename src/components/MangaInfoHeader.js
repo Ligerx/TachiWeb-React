@@ -13,13 +13,9 @@ import MangaInfoMore from 'components/mangaInfo/MangaInfoMore';
 import Tooltip from '@material-ui/core/Tooltip';
 import MangaInfoFilter from 'components/mangaInfo/MangaInfoFilter';
 
-// TODO: tooltips
-
 // NOTE: empty href in IconButton will not render <a>
 
 type Props = {
-  // If mangaInfo is null (e.g. when it is being fetched from the server)
-  // Title is empty, refresh click is disabled
   mangaInfo: ?MangaType,
   tabValue: number,
   handleChangeTab: Function,

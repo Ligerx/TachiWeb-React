@@ -5,11 +5,6 @@ import MangaInfoChapters from './MangaInfoChapters';
 
 // TODO: change this into an HOC? (it's not rendering anything extra)
 
-// TODO: create buttons in the header to let you select sorts and filters
-// TODO: link up that header to the MangaInfo state
-// TODO: pass down the new state to this component
-// TODO: implement the sorting and filtering here
-
 const SORT_TYPE = {
   SOURCE: (a, b) => b.source_order - a.source_order,
   NUMBER: (a, b) => a.chapter_number - b.chapter_number,
