@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import type { ChapterType, MangaType } from 'types';
 
 const SORT_TYPE = {
   SOURCE: (a, b) => b.source_order - a.source_order,
@@ -20,12 +19,8 @@ const DOWNLOADED_FILTER = {
   NOT_DOWNLOADED: chapter => chapter.download_status === 'NOT_DOWNLOADED', // unused
 };
 
-// type Props = {
-//   mangaInfo: MangaType,
-//   chapters: Array<ChapterType>,
-//   chapterUrl: Function,
-// };
-
+/* eslint-disable react/prefer-stateless-function */
+// Having a named class allows it to show up in react dev tools
 const SortFilterChaptersHOC = (WrappedComponent: React.Node) =>
   class withSortedFilteredChapters extends React.Component {
     render() {
