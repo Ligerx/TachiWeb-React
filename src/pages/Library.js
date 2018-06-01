@@ -18,6 +18,7 @@ class Library extends Component<LibraryContainerProps> {
   }
 
   handleRefreshClick = () => {
+    // TODO: this should actually force the server to rescrape all the chapters shouldn't it?
     this.props.fetchLibrary({ ignoreCache: true });
   };
 
