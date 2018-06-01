@@ -6,7 +6,6 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
-import { Client } from 'api';
 import { Link } from 'react-router-dom';
 import type { ChapterType, MangaType } from 'types';
 
@@ -31,7 +30,8 @@ const ChapterListItem = ({
 }: Props) => {
   const dimIfRead: Function = (read: boolean): String => classNames({ [classes.read]: read });
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
-  const chapterName: string = mangaInfo.flags.DISPLAY_MODE === 'NAME' ? chapter.name : `Chapter ${chapter.chapter_number}`;
+  const chapterName: string =
+    mangaInfo.flags.DISPLAY_MODE === 'NAME' ? chapter.name : `Chapter ${chapter.chapter_number}`;
 
   return (
     <ListItem button divider component={Link} to={chapterUrl(mangaInfo, chapter.id, goToPage)}>
