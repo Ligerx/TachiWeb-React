@@ -4,13 +4,16 @@ import { fetchLibrary, fetchUnread, FETCH_LIBRARY, FETCH_UNREAD } from 'redux-du
 import Library from 'pages/Library';
 import { createLoadingSelector } from 'redux-ducks/loading';
 import type { MangaType } from 'types';
+import { updateChapters, UPDATE_CHAPTERS, FETCH_CHAPTERS } from 'redux-ducks/chapters';
 
 const libraryIsLoading = createLoadingSelector([FETCH_LIBRARY, FETCH_UNREAD]);
+const chaptersAreUpdating = createLoadingSelector([UPDATE_CHAPTERS, FETCH_CHAPTERS]);
 
 type StateToProps = {
   mangaLibrary: Array<MangaType>,
   unread: { [mangaId: number]: number },
   libraryIsLoading: boolean,
+  chaptersAreUpdating: boolean,
 };
 
 const mapStateToProps = state =>
@@ -18,16 +21,19 @@ const mapStateToProps = state =>
     mangaLibrary: getMangaLibrary(state.mangaInfos, state.library.mangaIds),
     unread: state.library.unread,
     libraryIsLoading: libraryIsLoading(state),
+    chaptersAreUpdating: chaptersAreUpdating(state),
   }: StateToProps);
 
 type DispatchToProps = {
   fetchLibrary: Function,
   fetchUnread: Function,
+  updateChapters: Function,
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchLibrary: options => dispatch(fetchLibrary(options)),
-  fetchUnread: () => dispatch(fetchUnread()),
+  fetchUnread: options => dispatch(fetchUnread(options)),
+  updateChapters: mangaId => dispatch(updateChapters(mangaId)),
 });
 
 // Helper Functions

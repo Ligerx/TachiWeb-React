@@ -100,8 +100,8 @@ export default function libraryReducer(
 // ================================================================================
 // Action Creators
 // ================================================================================
-type Obj = { ignoreCache?: boolean };
-export function fetchLibrary({ ignoreCache = false }: Obj = {}) {
+type Options = { ignoreCache?: boolean };
+export function fetchLibrary({ ignoreCache = false }: Options = {}) {
   return (dispatch: Function, getState: Function) => {
     // Return cached mangaLibrary if it's been loaded before
     if (!ignoreCache && getState().library.libraryLoaded) {
@@ -130,9 +130,9 @@ export function fetchLibrary({ ignoreCache = false }: Obj = {}) {
   };
 }
 
-export function fetchUnread() {
+export function fetchUnread({ ignoreCache = false }: Options = {}) {
   return (dispatch: Function, getState: Function) => {
-    if (!getState().library.reloadUnread) {
+    if (!ignoreCache && !getState().library.reloadUnread) {
       return dispatch({ type: FETCH_UNREAD_CACHE });
     }
 

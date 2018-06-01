@@ -8,6 +8,8 @@ import type { LibraryContainerProps } from 'containers/LibraryContainer';
 
 // TODO: sort/filter mangaLibrary
 
+// TODO: no feedback of success/errors after clicking the library update button
+
 // NOTE: unread count relies on the server knowing how many chapters there are
 //       If for some reason the server hasn't scraped a list of chapters, this number won't appear
 
@@ -18,12 +20,23 @@ class Library extends Component<LibraryContainerProps> {
   }
 
   handleRefreshClick = () => {
-    // TODO: this should actually force the server to rescrape all the chapters shouldn't it?
-    this.props.fetchLibrary({ ignoreCache: true });
+    const {
+      mangaLibrary, updateChapters, fetchLibrary, fetchUnread,
+    } = this.props;
+
+    // Create an array of promise functions
+    // Since calling updateChapters runs the function, create an intermediate function
+    const updateChapterPromises = mangaLibrary.map(mangaInfo => () => updateChapters(mangaInfo.id));
+
+    serialPromiseChain(updateChapterPromises)
+      .then(() => fetchLibrary({ ignoreCache: true }))
+      .then(() => fetchUnread({ ignoreCache: true }));
   };
 
   render() {
-    const { mangaLibrary, unread, libraryIsLoading } = this.props;
+    const {
+      mangaLibrary, unread, libraryIsLoading, chaptersAreUpdating,
+    } = this.props;
 
     return (
       <React.Fragment>
@@ -34,10 +47,19 @@ class Library extends Component<LibraryContainerProps> {
           cardComponent={<LibraryMangaCard unread={unread} />}
         />
 
-        {libraryIsLoading && <FullScreenLoading />}
+        {(libraryIsLoading || chaptersAreUpdating) && <FullScreenLoading />}
       </React.Fragment>
     );
   }
+}
+
+// Helper Functions
+// https://decembersoft.com/posts/promises-in-serial-with-array-reduce/
+function serialPromiseChain(promiseArray) {
+  return promiseArray.reduce(
+    (promiseChain, currentPromise) => promiseChain.then(() => currentPromise()),
+    Promise.resolve([]),
+  );
 }
 
 export default Library;
