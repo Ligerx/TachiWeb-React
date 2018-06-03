@@ -1,20 +1,39 @@
 // @flow
 import * as React from 'react';
 
+// TODO: Consider using a fuzzy search package for the search filter
+
+// NOTE: localeCompare is for string comparison
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare
+function stringComparison(a: string, b: string) {
+  return a.localeCompare(b, 'en', { sensitivity: 'base' }); // case insensitive
+}
+
 // NOTE: sortFuncs.UNREAD and readFilterFuncs require the # of unread chapters for a manga
 //       Because I'm keeping unread data separate from the mangaInfo, I need to pass unread
 //       to them (even though sortFuncs only needs it for one type).
 
+// If whatever sort comparison is equal, fallback on ordering by title
 const sortFuncs = unread => ({
-  ALPHABETICALLY: (a, b) => {
-    const aTitle = a.title.toUpperCase();
-    const bTitle = b.title.toUpperCase();
-
-    return aTitle < bTitle ? -1 : 1; // Do I need to account for when they're equal (return 0)?
+  ALPHABETICALLY: (a, b) => stringComparison(a.title, b.title),
+  UNREAD: (a, b) => {
+    if (unread[a.id] !== unread[b.id]) {
+      return unread[a.id] - unread[b.id];
+    }
+    return stringComparison(a.title, b.title);
   },
-  UNREAD: (a, b) => unread[a.id] - unread[b.id],
-  TOTAL_CHAPTERS: (a, b) => a.chapters - b.chapters,
-  SOURCE: () => -1, // is this a valid way to NOT sort an array?
+  TOTAL_CHAPTERS: (a, b) => {
+    if (a.chapters !== b.chapters) {
+      return a.chapters - b.chapters;
+    }
+    return stringComparison(a.title, b.title);
+  },
+  SOURCE: (a, b) => {
+    if (a.source !== b.source) {
+      return stringComparison(a.source, b.source);
+    }
+    return stringComparison(a.title, b.title);
+  },
 
   // TODO: I don't think I have or can easily get the data needed for these sorts
   // LAST_READ: ,
@@ -45,17 +64,17 @@ const searchFilterFunc = searchQuery => mangaInfo =>
 /* eslint-disable react/prefer-stateless-function */
 // Having a named class allows it to show up in react dev tools
 const SortFilterLibraryHOC = (WrappedComponent: React.Node) =>
-  class withSortedFilteredChapters extends React.Component {
+  class withSortedFilteredLibrary extends React.Component {
     render() {
       const {
-        mangaInfos, flags, searchQuery, unread, ...otherProps
+        mangaLibrary, flags, searchQuery, unread, ...otherProps
       } = this.props;
 
       const {
         SORT_TYPE, READ_FILTER, DOWNLOADED_FILTER, COMPLETED_FILTER, SORT_DIRECTION,
       } = flags;
 
-      let sortedFilteredLibrary = mangaInfos
+      let sortedFilteredLibrary = mangaLibrary
         .slice() // clone array
         .sort(sortFuncs(unread)[SORT_TYPE])
         .filter(readFilterFuncs(unread)[READ_FILTER])

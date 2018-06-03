@@ -5,6 +5,7 @@ import MangaGrid from 'components/MangaGrid';
 import LibraryMangaCard from 'components/LibraryMangaCard';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import type { LibraryContainerProps } from 'containers/LibraryContainer';
+import SortFilterLibraryHOC from 'components/library/SortFilterLibraryHOC';
 
 // TODO: sort/filter mangaLibrary
 
@@ -49,8 +50,7 @@ class Library extends Component<LibraryContainerProps, State> {
     } = this.props;
     const { searchQuery } = this.state;
 
-    const searchFilteredMangaLibrary = mangaLibrary.filter(mangaInfo =>
-      mangaInfo.title.toUpperCase().includes(searchQuery.toUpperCase()));
+    const SortFilterLibrary = SortFilterLibraryHOC(MangaGrid);
 
     return (
       <React.Fragment>
@@ -61,8 +61,11 @@ class Library extends Component<LibraryContainerProps, State> {
           onRefreshClick={this.handleRefreshClick}
         />
 
-        <MangaGrid
-          mangaLibrary={searchFilteredMangaLibrary}
+        <SortFilterLibrary
+          mangaLibrary={mangaLibrary}
+          flags={flags}
+          searchQuery={searchQuery}
+          unread={unread}
           cardComponent={<LibraryMangaCard unread={unread} />}
         />
 

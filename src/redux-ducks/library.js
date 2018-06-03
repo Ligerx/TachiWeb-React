@@ -55,7 +55,7 @@ export default function libraryReducer(
       READ_FILTER: 'ALL',
       COMPLETED_FILTER: 'ALL',
       SORT_TYPE: 'ALPHABETICALLY',
-      SORT_DIRECTION: 'DESCENDING',
+      SORT_DIRECTION: 'ASCENDING',
     },
   },
   action = {},
