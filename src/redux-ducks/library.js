@@ -30,11 +30,22 @@ export const UPLOAD_RESTORE = 'library/UPLOAD_RESTORE';
 // ================================================================================
 // Reducers
 // ================================================================================
+// TODO: I'm inventing my own library flags. Update to match and integrate with the server
+//       when that eventually gets implemented into the backend.
+type LibraryFlagsType = {
+  +DOWNLOADED_FILTER: 'DOWNLOADED' | 'ALL',
+  +READ_FILTER: 'UNREAD' | 'ALL',
+  +COMPLETED_FILTER: 'COMPLETED' | 'ALL',
+  +SORT_TYPE: 'ALPHABETICALLY' | 'LAST_READ' | 'LAST_UPDATED' | 'UNREAD' | 'TOTAL_CHAPTERS' | 'SOURCE',
+  +SORT_DIRECTION: 'ASCENDING' | 'DESCENDING',
+};
+
 type State = {
   +mangaIds: $ReadOnlyArray<number>,
   +libraryLoaded: boolean,
   +unread: { +[mangaId: number]: number },
   +reloadUnread: boolean,
+  +flags: LibraryFlagsType,
 };
 
 export default function libraryReducer(
@@ -43,6 +54,13 @@ export default function libraryReducer(
     libraryLoaded: false, // Library should be loaded once on first visit
     unread: {}, // { mangaId: int }
     reloadUnread: true, // should refresh unread for library if something new is added
+    flags: {
+      DOWNLOADED_FILTER: 'ALL',
+      READ_FILTER: 'ALL',
+      COMPLETED_FILTER: 'ALL',
+      SORT_TYPE: 'ALPHABETICALLY',
+      SORT_DIRECTION: 'DESCENDING',
+    },
   },
   action = {},
 ) {
