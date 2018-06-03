@@ -1,5 +1,6 @@
 // @flow
 import { Server } from 'api';
+import type { LibraryFlagsType } from 'types';
 import { ADD_MANGA } from './mangaInfos';
 import { handleHTMLError, transformToMangaIdsArray } from './utils';
 
@@ -27,19 +28,14 @@ const UPLOAD_RESTORE_SUCCESS = 'library/UPLOAD_RESTORE_SUCCESS';
 const UPLOAD_RESTORE_FAILURE = 'library/UPLOAD_RESTORE_FAILURE';
 export const UPLOAD_RESTORE = 'library/UPLOAD_RESTORE';
 
+const SET_FLAG_REQUEST = 'library/SET_FLAG_REQUEST';
+const SET_FLAG_SUCCESS = 'library/SET_FLAG_SUCCESS';
+const SET_FLAG_FAILURE = 'library/SET_FLAG_FAILURE';
+const SET_FLAG_NO_CHANGE = 'library/SET_FLAG_NO_CHANGE';
+
 // ================================================================================
 // Reducers
 // ================================================================================
-// TODO: I'm inventing my own library flags. Update to match and integrate with the server
-//       when that eventually gets implemented into the backend.
-type LibraryFlagsType = {
-  +DOWNLOADED_FILTER: 'DOWNLOADED' | 'ALL',
-  +READ_FILTER: 'UNREAD' | 'ALL',
-  +COMPLETED_FILTER: 'COMPLETED' | 'ALL',
-  +SORT_TYPE: 'ALPHABETICALLY' | 'LAST_READ' | 'LAST_UPDATED' | 'UNREAD' | 'TOTAL_CHAPTERS' | 'SOURCE',
-  +SORT_DIRECTION: 'ASCENDING' | 'DESCENDING',
-};
-
 type State = {
   +mangaIds: $ReadOnlyArray<number>,
   +libraryLoaded: boolean,
@@ -110,6 +106,16 @@ export default function libraryReducer(
         },
       };
     }
+
+    case SET_FLAG_REQUEST:
+      return {
+        ...state,
+        flags: {
+          ...state.flags,
+          [action.flag]: action.state,
+        },
+      };
+
     default:
       return state;
   }
@@ -186,6 +192,19 @@ export function uploadRestoreData(file: File) {
             meta: { error },
           }),
       );
+  };
+}
+
+export function setLibraryFlag(flag: string, state: string) {
+  // TODO: there are no library flags on the server yet, so this is all local
+  //       Update this function when the server eventually stores this data.
+  return (dispatch: Function, getState: Function) => {
+    if (getState().library.flags[flag] === state) {
+      return dispatch({ type: SET_FLAG_NO_CHANGE, meta: { flag, state } });
+    }
+
+    dispatch({ type: SET_FLAG_REQUEST, flag, state });
+    return dispatch({ type: SET_FLAG_SUCCESS });
   };
 }
 

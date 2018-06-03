@@ -52,3 +52,19 @@ export type SourceType = {
     display_name: string,
   },
 };
+
+// TODO: I'm inventing my own library flags. Update to match and integrate with the server
+//       when that eventually gets implemented into the backend.
+export type LibraryFlagsType = {
+  +DOWNLOADED_FILTER: 'DOWNLOADED' | 'ALL',
+  +READ_FILTER: 'UNREAD' | 'ALL',
+  +COMPLETED_FILTER: 'COMPLETED' | 'ALL',
+  +SORT_TYPE:
+    | 'ALPHABETICALLY'
+    | 'LAST_READ'
+    | 'LAST_UPDATED'
+    | 'UNREAD'
+    | 'TOTAL_CHAPTERS'
+    | 'SOURCE',
+  +SORT_DIRECTION: 'ASCENDING' | 'DESCENDING',
+};

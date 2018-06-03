@@ -10,6 +10,8 @@ import type { LibraryContainerProps } from 'containers/LibraryContainer';
 
 // TODO: no feedback of success/errors after clicking the library update button
 
+// TODO: rename variables, mangaLibrary -> mangaInfos
+
 // NOTE: unread count relies on the server knowing how many chapters there are
 //       If for some reason the server hasn't scraped a list of chapters, this number won't appear
 
@@ -43,7 +45,7 @@ class Library extends Component<LibraryContainerProps, State> {
 
   render() {
     const {
-      mangaLibrary, unread, libraryIsLoading, chaptersAreUpdating,
+      mangaLibrary, unread, flags, libraryIsLoading, chaptersAreUpdating,
     } = this.props;
     const { searchQuery } = this.state;
 
@@ -54,6 +56,7 @@ class Library extends Component<LibraryContainerProps, State> {
       <React.Fragment>
         <LibraryHeader
           searchQuery={searchQuery}
+          flags={flags}
           onSearchChange={this.handleSearchChange}
           onRefreshClick={this.handleRefreshClick}
         />

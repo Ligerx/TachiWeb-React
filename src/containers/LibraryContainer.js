@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { fetchLibrary, fetchUnread, FETCH_LIBRARY, FETCH_UNREAD } from 'redux-ducks/library';
 import Library from 'pages/Library';
 import { createLoadingSelector } from 'redux-ducks/loading';
-import type { MangaType } from 'types';
+import type { MangaType, LibraryFlagsType } from 'types';
 import { updateChapters, UPDATE_CHAPTERS, FETCH_CHAPTERS } from 'redux-ducks/chapters';
 
 const libraryIsLoading = createLoadingSelector([FETCH_LIBRARY, FETCH_UNREAD]);
@@ -14,12 +14,14 @@ type StateToProps = {
   unread: { [mangaId: number]: number },
   libraryIsLoading: boolean,
   chaptersAreUpdating: boolean,
+  flags: LibraryFlagsType,
 };
 
 const mapStateToProps = state =>
   ({
     mangaLibrary: getMangaLibrary(state.mangaInfos, state.library.mangaIds),
     unread: state.library.unread,
+    flags: state.library.flags,
     libraryIsLoading: libraryIsLoading(state),
     chaptersAreUpdating: chaptersAreUpdating(state),
   }: StateToProps);

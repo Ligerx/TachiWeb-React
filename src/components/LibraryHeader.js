@@ -22,9 +22,9 @@ const LibraryHeader = ({ searchQuery, onSearchChange, onRefreshClick }: Props) =
 
       <SearchButton searchQuery={searchQuery} onSearchChange={onSearchChange} />
 
-      <FilterButton />
-
       <RefreshButton onClick={onRefreshClick} />
+
+      <FilterButton />
 
       <MoreButton />
     </Toolbar>
