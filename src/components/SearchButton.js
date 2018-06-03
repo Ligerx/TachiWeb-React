@@ -8,18 +8,15 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 
-type State = {
-  searchVisible: boolean,
-  searchText: string,
-};
+type Props = { searchQuery: string, onSearchChange: Function };
 
-class SearchButton extends Component<{}, State> {
+type State = { searchVisible: boolean };
+
+class SearchButton extends Component<Props, State> {
   constructor() {
     super();
-    this.state = {
-      searchVisible: false,
-      searchText: '',
-    };
+    this.state = { searchVisible: false };
+
     // TODO: Animate search bar in and out.
     //       I tried before, but was having trouble figuring out how to do it.
 
@@ -41,31 +38,28 @@ class SearchButton extends Component<{}, State> {
   };
 
   handleChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    this.setState({ searchText: event.currentTarget.value });
+    this.props.onSearchChange(event.currentTarget.value);
   };
 
   handleClearSearch = () => {
     // this.formControlRef
     // this.inputRef.blur(); // Remove focus from input
-    this.setState({
-      searchText: '',
-      searchVisible: false,
-    });
+    this.setState({ searchVisible: false });
+    this.props.onSearchChange('');
   };
 
   handleBlur = () => {
     // TODO: clicking on the search icon will call this because it's not part of the input
     //       not my intended interaction, but maybe not an important fix?
-    if (!this.state.searchText) {
-      this.setState({
-        searchText: '',
-        searchVisible: false,
-      });
+    if (!this.props.searchQuery) {
+      this.setState({ searchVisible: false });
+      this.props.onSearchChange('');
     }
   };
 
   render() {
-    const { searchVisible, searchText } = this.state;
+    const { searchQuery } = this.props;
+    const { searchVisible } = this.state;
 
     return (
       <React.Fragment>
@@ -80,7 +74,7 @@ class SearchButton extends Component<{}, State> {
             <InputLabel htmlFor="library-search-text">Search Library</InputLabel>
             <Input
               id="library-search-text"
-              value={searchText}
+              value={searchQuery}
               autoFocus
               onChange={this.handleChange}
               onBlur={this.handleBlur}

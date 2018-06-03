@@ -13,7 +13,11 @@ import type { LibraryContainerProps } from 'containers/LibraryContainer';
 // NOTE: unread count relies on the server knowing how many chapters there are
 //       If for some reason the server hasn't scraped a list of chapters, this number won't appear
 
-class Library extends Component<LibraryContainerProps> {
+type State = { searchQuery: string };
+
+class Library extends Component<LibraryContainerProps, State> {
+  state = { searchQuery: '' };
+
   componentDidMount() {
     this.props.fetchLibrary();
     this.props.fetchUnread();
@@ -33,17 +37,29 @@ class Library extends Component<LibraryContainerProps> {
       .then(() => fetchUnread({ ignoreCache: true }));
   };
 
+  handleSearchChange = (newSearchQuery: string) => {
+    this.setState({ searchQuery: newSearchQuery });
+  };
+
   render() {
     const {
       mangaLibrary, unread, libraryIsLoading, chaptersAreUpdating,
     } = this.props;
+    const { searchQuery } = this.state;
+
+    const searchFilteredMangaLibrary = mangaLibrary.filter(mangaInfo =>
+      mangaInfo.title.toUpperCase().includes(searchQuery.toUpperCase()));
 
     return (
       <React.Fragment>
-        <LibraryHeader onRefreshClick={this.handleRefreshClick} />
+        <LibraryHeader
+          searchQuery={searchQuery}
+          onSearchChange={this.handleSearchChange}
+          onRefreshClick={this.handleRefreshClick}
+        />
 
         <MangaGrid
-          mangaLibrary={mangaLibrary}
+          mangaLibrary={searchFilteredMangaLibrary}
           cardComponent={<LibraryMangaCard unread={unread} />}
         />
 

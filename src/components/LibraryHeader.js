@@ -9,10 +9,9 @@ import RefreshButton from 'components/RefreshButton';
 import SearchButton from 'components/SearchButton';
 import MenuDrawer from 'components/MenuDrawer';
 
-type Props = { onRefreshClick: Function };
+type Props = { searchQuery: string, onSearchChange: Function, onRefreshClick: Function };
 
-// Every header is different? This is only for the Library header
-const LibraryHeader = ({ onRefreshClick }: Props) => (
+const LibraryHeader = ({ searchQuery, onSearchChange, onRefreshClick }: Props) => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
       <MenuDrawer />
@@ -21,9 +20,9 @@ const LibraryHeader = ({ onRefreshClick }: Props) => (
         Library
       </Typography>
 
-      <FilterButton />
+      <SearchButton searchQuery={searchQuery} onSearchChange={onSearchChange} />
 
-      <SearchButton />
+      <FilterButton />
 
       <RefreshButton onClick={onRefreshClick} />
 
