@@ -159,7 +159,8 @@ export function uploadRestoreData(file: File) {
     return fetch(Server.restoreUpload(), uploadPostParameters(file))
       .then(handleHTMLError)
       .then(
-        () => dispatch({ type: UPLOAD_RESTORE_SUCCESS }), // this might break because there is no json to parse?
+        // TODO: I'm not currently if the response message says failure or success
+        () => dispatch({ type: UPLOAD_RESTORE_SUCCESS }),
         error =>
           dispatch({
             type: UPLOAD_RESTORE_FAILURE,
@@ -177,6 +178,11 @@ type Param = Array<{ id: number, unread: number }>;
 type Return = { [mangaId: number]: number };
 
 function transformUnread(unreadArray: Param): Return {
+  // FIXME: server currently returns {"success":true} when Library is empty
+  //        instead of {"success":true,"content":[]}
+  //        Remove this redundant check once this is fixed
+  if (unreadArray == null) return {};
+
   const newUnread = {};
   unreadArray.forEach((unreadObj) => {
     newUnread[unreadObj.id] = unreadObj.unread;
