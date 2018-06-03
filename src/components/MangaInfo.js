@@ -2,7 +2,7 @@
 import * as React from 'react';
 import MangaInfoHeader from 'components/MangaInfoHeader';
 import MangaInfoDetails from 'components/MangaInfoDetails';
-import SortFilterChaptersHOC from 'components/SortFilterChaptersHOC';
+import SortFilterChaptersHOC from 'components/mangaInfo/SortFilterChaptersHOC';
 import MangaInfoChapters from 'components/MangaInfoChapters';
 import type { MangaType, ChapterType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
