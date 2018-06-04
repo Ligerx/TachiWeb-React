@@ -83,7 +83,14 @@ class MangaInfoMore extends React.Component<Props, State> {
           </IconButton>
         </Tooltip>
 
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleClose}>
+        {/* getContentAnchorEl must be null to make anchorOrigin work */}
+        <Menu
+          anchorEl={anchorEl}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          getContentAnchorEl={null}
+          open={Boolean(anchorEl)}
+          onClose={this.handleClose}
+        >
           <MenuItem onClick={this.handleDisplayModeClick}>Change Display Mode</MenuItem>
           <MenuItem onClick={this.handleSortTypeClick}>Sorting Mode</MenuItem>
           {/* <MenuItem>Download</MenuItem> */}
