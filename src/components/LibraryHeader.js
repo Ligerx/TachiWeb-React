@@ -45,7 +45,7 @@ const LibraryHeader = ({
         onCompletedFilterChange={handleCompletedFilterChange(setLibraryFlag)}
       />
 
-      <LibrarySort flags={flags} />
+      <LibrarySort flags={flags} onChange={handleSortChange(setLibraryFlag)} />
 
       <MoreButton />
     </Toolbar>
@@ -62,6 +62,18 @@ function handleDownloadedFilterChange(setLibraryFlag) {
 
 function handleCompletedFilterChange(setLibraryFlag) {
   return newCompletedFilter => setLibraryFlag('COMPLETED_FILTER', newCompletedFilter);
+}
+
+function handleSortChange(setLibraryFlag) {
+  return (currentFlag, currentDirection, newFlag) => {
+    if (currentFlag === newFlag) {
+      const newDirection = currentDirection === 'ASCENDING' ? 'DESCENDING' : 'ASCENDING';
+      return setLibraryFlag('SORT_DIRECTION', newDirection);
+    }
+
+    setLibraryFlag('SORT_TYPE', newFlag);
+    return setLibraryFlag('SORT_DIRECTION', 'ASCENDING');
+  };
 }
 
 export default LibraryHeader;
