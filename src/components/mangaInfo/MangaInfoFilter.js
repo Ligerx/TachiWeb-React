@@ -20,12 +20,10 @@ import type { FlagsType } from 'types';
 //
 //   Also, apply same fixes to LibraryFilter
 
-// TODO: onDownloadsFilterChange why is it Downloads and not Downloaded. Change this.
-
 type Props = {
   flags: FlagsType,
   onReadFilterChange: Function,
-  onDownloadsFilterChange: Function,
+  onDownloadedFilterChange: Function,
 };
 
 type State = { anchorEl: ?HTMLElement };
@@ -40,10 +38,10 @@ class MangaInfoFilter extends Component<Props, State> {
   };
 
   handleRemoveFilters = () => {
-    const { onReadFilterChange, onDownloadsFilterChange } = this.props;
+    const { onReadFilterChange, onDownloadedFilterChange } = this.props;
 
     onReadFilterChange('ALL');
-    onDownloadsFilterChange('ALL');
+    onDownloadedFilterChange('ALL');
 
     this.setState({ anchorEl: null }); // Also close the menu
   };
@@ -65,9 +63,9 @@ class MangaInfoFilter extends Component<Props, State> {
   };
 
   handleDownloadedClick = () => {
-    const { flags, onDownloadsFilterChange } = this.props;
+    const { flags, onDownloadedFilterChange } = this.props;
     const newDownloadedFlag = flags.DOWNLOADED_FILTER === 'ALL' ? 'DOWNLOADED' : 'ALL';
-    onDownloadsFilterChange(newDownloadedFlag);
+    onDownloadedFilterChange(newDownloadedFlag);
   };
 
   render() {

@@ -46,7 +46,7 @@ const MangaInfoHeader = ({
           <MangaInfoFilter
             flags={mangaInfo.flags}
             onReadFilterChange={handleReadFilterChange(setFlag)}
-            onDownloadsFilterChange={handleDownloadedFilterChange(setFlag)}
+            onDownloadedFilterChange={handleDownloadedFilterChange(setFlag)}
           />
 
           <Tooltip title="Sort">
