@@ -10,39 +10,41 @@ import { Client } from 'api';
 
 class MangaInfoPage extends Component<MangaInfoContainerProps> {
   componentDidMount() {
-    const { fetchMangaInfo, fetchChapters, updateChapters } = this.props;
+    const {
+      fetchMangaInfo, fetchChapters, updateMangaInfo, updateChapters,
+    } = this.props;
 
-    fetchMangaInfo().then(() => {
-      // If we think the server hasn't had enough time to scrape the source website
-      // for this mangaInfo, wait a little while and try fetching again.
-      //
-      // NOTE: This only updates the manga being viewed. Many of your other search results are
-      //       likely missing information as well. Viewing them will then fetch the data.
-      //
-      // TODO: might try to do one additional fetch at a slightly later time. e.g. 1000 ms
-      const { mangaInfo } = this.props;
-      if (mangaInfo && possiblyMissingInfo(mangaInfo)) {
-        setTimeout(() => {
-          // You could use updateMangaInfo() so you don't need the {ignoreCache: true} object,
-          // but that's an extra server call for no reason.
-          // Maybe I'm over optimizing, but feel free to change it if it's problematic/confusing.
-          fetchMangaInfo({ ignoreCache: true });
-        }, 300);
-      }
-    });
-
-    fetchChapters().then(() => {
-      // Fetch chapters cached on the server
-      // If there are none, tell the server to scrape chapters from the site
-      if (!this.props.chapters.length) {
-        updateChapters();
-      }
-    });
+    fetchChapters()
+      .then(() => {
+        // Fetch chapters cached on the server
+        // If there are none, tell the server to scrape chapters from the site
+        if (!this.props.chapters.length) {
+          return updateChapters(); // return promise so next .then()'s wait
+        }
+        return null;
+      })
+      .then(() => fetchMangaInfo())
+      .then(() => {
+        // If we think the server hasn't had enough time to scrape the source website
+        // for this mangaInfo, wait a little while and try fetching again.
+        //
+        // NOTE: This only updates the manga being viewed. Many of your other search results are
+        //       likely missing information as well. Viewing them will then fetch the data.
+        //
+        // TODO: might try to do one additional fetch at a slightly later time. e.g. 1000 ms
+        const { mangaInfo } = this.props;
+        if (mangaInfo && possiblyMissingInfo(mangaInfo)) {
+          setTimeout(() => updateMangaInfo(), 300);
+        }
+      });
   }
 
   handleRefreshClick = () => {
-    this.props.updateMangaInfo();
-    this.props.updateChapters();
+    const { updateChapters, updateMangaInfo } = this.props;
+
+    // Running updateChapters also updates mangaInfo.chapters and mangaInfo.unread
+    // So run updateMangaInfo after chapters
+    updateChapters().then(() => updateMangaInfo());
   };
 
   chapterUrl = (mangaInfo: MangaType, chapterId: number, goToPage: number) => {
