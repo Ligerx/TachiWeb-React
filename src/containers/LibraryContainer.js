@@ -1,6 +1,12 @@
 // @flow
 import { connect } from 'react-redux';
-import { fetchLibrary, fetchUnread, FETCH_LIBRARY, FETCH_UNREAD } from 'redux-ducks/library';
+import {
+  fetchLibrary,
+  fetchUnread,
+  setLibraryFlag,
+  FETCH_LIBRARY,
+  FETCH_UNREAD,
+} from 'redux-ducks/library';
 import Library from 'pages/Library';
 import { createLoadingSelector } from 'redux-ducks/loading';
 import type { MangaType, LibraryFlagsType } from 'types';
@@ -30,12 +36,14 @@ type DispatchToProps = {
   fetchLibrary: Function,
   fetchUnread: Function,
   updateChapters: Function,
+  setLibraryFlag: Function,
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchLibrary: options => dispatch(fetchLibrary(options)),
   fetchUnread: options => dispatch(fetchUnread(options)),
   updateChapters: mangaId => dispatch(updateChapters(mangaId)),
+  setLibraryFlag: (flag, state) => dispatch(setLibraryFlag(flag, state)),
 });
 
 // Helper Functions

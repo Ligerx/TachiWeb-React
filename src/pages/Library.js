@@ -46,7 +46,7 @@ class Library extends Component<LibraryContainerProps, State> {
 
   render() {
     const {
-      mangaLibrary, unread, flags, libraryIsLoading, chaptersAreUpdating,
+      mangaLibrary, unread, flags, setLibraryFlag, libraryIsLoading, chaptersAreUpdating,
     } = this.props;
     const { searchQuery } = this.state;
 
@@ -59,6 +59,7 @@ class Library extends Component<LibraryContainerProps, State> {
           flags={flags}
           onSearchChange={this.handleSearchChange}
           onRefreshClick={this.handleRefreshClick}
+          setLibraryFlag={setLibraryFlag}
         />
 
         <SortFilterLibrary

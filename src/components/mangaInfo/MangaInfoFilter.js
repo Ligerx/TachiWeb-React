@@ -17,6 +17,10 @@ import type { FlagsType } from 'types';
 //
 //   I tried using MenuItem onClick instead, but clicking on FormControlLabel was causing it to
 //   fire twice for some reason.
+//
+//   Also, apply same fixes to LibraryFilter
+
+// TODO: onDownloadsFilterChange why is it Downloads and not Downloaded. Change this.
 
 type Props = {
   flags: FlagsType,
@@ -46,11 +50,6 @@ class MangaInfoFilter extends Component<Props, State> {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
-  };
-
-  // TODO: remove this? dead code?
-  handleChange = (name: string) => (event: SyntheticEvent<HTMLInputElement>) => {
-    this.setState({ [name]: event.currentTarget.checked });
   };
 
   handleReadClick = () => {
