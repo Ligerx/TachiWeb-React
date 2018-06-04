@@ -14,4 +14,4 @@ After cloning the project, run `npm install`
 
 To start the project, run `npm start`
 
-By default, you can access the project from [localhost:3000](localhost:3000)
+By default, you can access the project from **localhost:3000** in your browser
