@@ -41,12 +41,6 @@ const MangaInfoHeader = ({
             {mangaInfo.title}
           </Typography>
 
-          <Tooltip title="Open source website">
-            <IconButton href={mangaInfo.url} target="_blank">
-              <Icon>open_in_new</Icon>
-            </IconButton>
-          </Tooltip>
-
           <RefreshButton onClick={onRefreshClick} />
 
           <MangaInfoFilter
@@ -62,6 +56,7 @@ const MangaInfoHeader = ({
           </Tooltip>
 
           <MangaInfoMore
+            sourceUrl={mangaInfo.url}
             flags={mangaInfo.flags}
             onDisplayModeChange={handleDisplayModeChange(setFlag)}
             onSortTypeChange={handleSortTypeChange(setFlag)}

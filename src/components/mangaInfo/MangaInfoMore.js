@@ -6,6 +6,8 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import type { FlagsType } from 'types';
 import Tooltip from '@material-ui/core/Tooltip';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import RadioOptionsDialogue from './RadioOptionsDialogue';
 
 const displayModes = [
@@ -19,6 +21,7 @@ const sortingModes = [
 ];
 
 type Props = {
+  sourceUrl: string,
   flags: FlagsType,
   onDisplayModeChange: Function,
   onSortTypeChange: Function,
@@ -84,6 +87,13 @@ class MangaInfoMore extends React.Component<Props, State> {
           <MenuItem onClick={this.handleDisplayModeClick}>Change Display Mode</MenuItem>
           <MenuItem onClick={this.handleSortTypeClick}>Sorting Mode</MenuItem>
           {/* <MenuItem>Download</MenuItem> */}
+
+          <MenuItem component="a" href={this.props.sourceUrl} target="_blank">
+            <ListItemIcon style={{ marginRight: 0 }}>
+              <Icon>open_in_new</Icon>
+            </ListItemIcon>
+            <ListItemText primary="Open source website" />
+          </MenuItem>
         </Menu>
 
         <RadioOptionsDialogue
