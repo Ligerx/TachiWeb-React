@@ -10,6 +10,7 @@ import { Client } from 'api';
 import { withStyles } from '@material-ui/core/styles';
 
 // TODO: using two toolbars currently, but it might be too big. Consider changing/customizing later.
+
 // NOTE: Material-UI v1 hasn't ported a slider component yet, so using an external library.
 //       When it is added to Material-UI, consider using that instead.
 //       https://github.com/mui-org/material-ui/issues/4793

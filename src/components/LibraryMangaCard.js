@@ -9,8 +9,6 @@ import { Link } from 'react-router-dom';
 import { Server, Client } from 'api';
 import type { MangaType } from 'types';
 
-// TODO: don't pass the whole 'manga' object, only pass down what's necessary?
-
 // TODO: Currently passing in the entire unread object, not just the corresponding number
 //       ^ Would have to rework the component tree a big to make that happen.
 
