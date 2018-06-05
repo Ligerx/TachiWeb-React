@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { Server, Client } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
-import ReaderNavButtons from 'components/ReaderNavButtons';
 import { withStyles } from '@material-ui/core/styles';
 import PageSlider from 'components/PageSlider';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,6 +11,7 @@ import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';
 import type { ChapterType, MangaType } from 'types';
+import SinglePageReader from 'components/reader/SinglePageReader';
 
 // NOTE: prepending urlPrefix to all links in this component so I can accomodate
 //       Library and Catalogue Readers. This is sort of hacky, but it works for now.
@@ -28,15 +28,9 @@ import type { ChapterType, MangaType } from 'types';
 
 // TODO: allow keyboard commands for reading
 
-// TODO: just realized that when you finish chapters (or mark as unread),
-//       I need to keep the chapters data up to date or the Library's unread chapters will be stale
-
-// FIXME: For some reason, loading a Reader page send out a bazillion requests. Refer to
-//        the redux actions. It's not breaking anything, but I want to fix this.
-
-// NOTE: only updating read status when the user presses the next page button
-//       not sure if it's necessary to do it in more cases than this
-//       e.g. jumping pages using the slider, jumping chapters, going backwards in pages
+// TODO: might need to update read status if you press next page while on the last page of a chapter
+//       Possible scenario, you skip to the last page via the slider.
+//       When you press next to go to the next chapter, your reading status has not been changed.
 
 // https://tylermcginnis.com/react-router-programmatically-navigate/
 
@@ -186,8 +180,9 @@ class Reader extends Component<Props> {
       return <FullScreenLoading />;
     }
 
+    const imageSource = Server.image(mangaInfo.id, chapterId, page);
     const backgroundImageStyle = {
-      backgroundImage: `url(${Server.image(mangaInfo.id, chapterId, page)})`,
+      backgroundImage: `url(${imageSource})`,
     };
 
     return (
@@ -215,14 +210,10 @@ class Reader extends Component<Props> {
           </IconButton>
         </ReaderOverlay>
 
-        <ReaderNavButtons
-          onPrevPageClick={this.handlePrevPageClick}
+        <SinglePageReader
+          imageSource={imageSource}
           onNextPageClick={this.handleNextPageClick}
-        />
-
-        <div
-          className={classes.mangaImage}
-          style={backgroundImageStyle}
+          onPrevPageClick={this.handlePrevPageClick}
         />
 
       </React.Fragment>

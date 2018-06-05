@@ -19,7 +19,7 @@ const styles = {
   overlay: {
     // Overlay it above the image
     width: '100%',
-    position: 'absolute',
+    position: 'fixed',
     zIndex: 1,
 
     // Visible only on hover
