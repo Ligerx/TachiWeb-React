@@ -78,8 +78,11 @@ class ImageWithLoader extends Component<Props, State> {
     } = this.props;
     const { status, retries } = this.state;
 
-    // when image fails to load, a placeholder thing appears in the DOM. Hide that.
-    const hiddenOnError = { display: status === 'FAILED' ? 'none' : 'block' };
+    const imgStyles = {
+      width: '100%',
+      // when image fails to load, a placeholder thing appears in the DOM. Hide that.
+      display: status === 'FAILED' ? 'none' : 'block',
+    };
 
     return (
       <div className={className}>
@@ -88,7 +91,7 @@ class ImageWithLoader extends Component<Props, State> {
           onLoad={this.handleImageLoad}
           onError={this.handleImageError}
           src={src}
-          style={hiddenOnError}
+          style={imgStyles}
           key={`${src}-${retries}`}
         />
 
