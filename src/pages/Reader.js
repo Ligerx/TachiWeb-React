@@ -171,7 +171,6 @@ class Reader extends Component<Props> {
       chapterId,
       pageCount,
       page,
-      classes,
       prevChapterId,
       nextChapterId,
     } = this.props;
@@ -181,9 +180,6 @@ class Reader extends Component<Props> {
     }
 
     const imageSource = Server.image(mangaInfo.id, chapterId, page);
-    const backgroundImageStyle = {
-      backgroundImage: `url(${imageSource})`,
-    };
 
     return (
       <React.Fragment>
