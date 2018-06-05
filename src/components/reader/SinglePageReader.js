@@ -6,11 +6,15 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 import ScrollToTop from 'components/ScrollToTop';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
+import ImageWithLoader from 'components/reader/ImageWithLoader';
 
 // TODO: disable next / prev page buttons if there is no page?
 
 // TODO: image loading state
 //       also set a min size for the loading image?
+
+// TODO: add some spacing around the nav buttons
+// TODO: evenly space them?
 
 const styles = {
   page: {
@@ -45,7 +49,7 @@ class SinglePageReader extends Component<Props> {
 
         <ResponsiveGrid>
           <Grid item xs={12}>
-            <img src={imageSource} onClick={onNextPageClick} className={classes.page} />
+            <ImageWithLoader src={imageSource} onClick={onNextPageClick} className={classes.page} />
           </Grid>
 
           <Grid item xs={12} className={classes.navButtonsParent}>
