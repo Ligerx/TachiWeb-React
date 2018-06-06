@@ -13,6 +13,11 @@ import ImageWithLoader from 'components/reader/ImageWithLoader';
 // TODO: add some spacing around the nav buttons
 // TODO: evenly space them?
 
+// TODO: add instructions on how to use reader
+//       e.g. keyboard actions, clicking on the image
+
+// TODO: add a way to go back? I'm thinking esc key would be good.
+
 // Left and right arrow key press will change the page
 //
 // References for key press events
@@ -23,7 +28,6 @@ const styles = {
   page: {
     width: '100%',
     cursor: 'pointer', // to indicate clickable
-    marginTop: 144, // pushes content below header (128px high)
     marginBottom: 80,
   },
   navButtonsParent: {
@@ -72,7 +76,12 @@ class SinglePageReader extends Component<Props> {
 
         <ResponsiveGrid>
           <Grid item xs={12}>
-            <ImageWithLoader src={imageSource} onClick={onNextPageClick} className={classes.page} />
+            <ImageWithLoader
+              src={imageSource}
+              onClick={onNextPageClick}
+              className={classes.page}
+              topOffset={144}
+            />
           </Grid>
 
           <Grid item xs={12} className={classes.navButtonsParent}>

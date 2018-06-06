@@ -8,6 +8,8 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 
+// TODO: pressing ESC to clear and close the search? That would be cool.
+
 type Props = { searchQuery: string, onSearchChange: Function };
 
 type State = { searchVisible: boolean };

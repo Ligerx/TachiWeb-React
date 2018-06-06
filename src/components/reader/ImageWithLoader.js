@@ -27,9 +27,9 @@ const styles = {
 };
 
 type Props = {
-  className?: string, // FIXME: parent might have injected styles. Need to manually apply it.
   classes: Object, // injected styles (for this component)
   src: string,
+  topOffset?: number,
   // extra props will be passed to <img>
 };
 
@@ -39,6 +39,10 @@ type State = {
 };
 
 class ImageWithLoader extends Component<Props, State> {
+  static defaultProps = {
+    topOffset: 0,
+  };
+
   state = {
     status: 'LOADING',
     retries: 0,
@@ -74,18 +78,18 @@ class ImageWithLoader extends Component<Props, State> {
 
   render() {
     const {
-      className, classes, src, ...otherProps
+      classes, src, topOffset, ...otherProps
     } = this.props;
     const { status, retries } = this.state;
 
     const imgStyles = {
       width: '100%',
-      // when image fails to load, a placeholder thing appears in the DOM. Hide that.
-      display: status === 'FAILED' ? 'none' : 'block',
+      // Only show when image is loaded
+      display: status === 'LOADED' ? 'block' : 'none',
     };
 
     return (
-      <div className={className}>
+      <div style={{ marginTop: topOffset }}>
         <img
           {...otherProps}
           onLoad={this.handleImageLoad}
