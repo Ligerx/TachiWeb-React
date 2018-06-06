@@ -16,7 +16,7 @@ type Props = {
 // https://stackoverflow.com/questions/32370994/how-to-pass-props-to-this-props-children
 
 const MangaGrid = ({ mangaLibrary, cardComponent }: Props) => (
-  <ResponsiveGrid container justify="center">
+  <ResponsiveGrid>
     {mangaLibrary.map(manga => React.cloneElement(cardComponent, { key: manga.id, manga }))}
   </ResponsiveGrid>
 );

@@ -11,7 +11,8 @@ import SortFilterLibraryHOC from 'components/library/SortFilterLibraryHOC';
 
 // TODO: no feedback of success/errors after clicking the library update button
 
-// TODO: rename variables, mangaLibrary -> mangaInfos
+// FIXME: LibraryMangaCard - unread badge is positioning too far right. This is causing
+//        library to have an x-overflow
 
 // NOTE: unread count relies on the server knowing how many chapters there are
 //       If for some reason the server hasn't scraped a list of chapters, this number won't appear

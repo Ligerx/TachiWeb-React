@@ -1,55 +1,59 @@
 // @flow
 import * as React from 'react';
 import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
 
-// Responsive Grid, when the window is larger than a threshhold, constrain a max width on content
-// based on this example
+// TODO: tweak defailt maxWidth to something that makes sense (on an average monitor)
+
+// Parent Grid centers the child Grid
+// Also constrains child Grid's max width
 // https://stackoverflow.com/questions/49251454/grid-container-like-bootstrap-container
 
-// TODO: Adjust maxWidth breakpoint to be something reasonable
-// TODO: Make sure maxWidth transitions smoothly between breakpoints
+// NOTE: Material-ui Grid has a weird limitation where you must add
+//       padding or it will overflow.
+// https://material-ui.com/layout/grid/#negative-margin
 
-// note - Material-UI does some weird things with margin which
-//        1. create horizontal scroll that I want to get rid of
-//        2. have an effect on the calculation of the correct maxWidth
-
-const styles = (theme) => {
-  const breakPointPx = 960;
-  const padding = 16;
-  const maxWidth = breakPointPx - padding;
-
-  return {
-    responsive: {
-      [theme.breakpoints.up('md')]: {
-        maxWidth,
-      },
-      [theme.breakpoints.down('sm')]: {
-        paddingLeft: padding,
-        paddingRight: padding,
-      },
-    },
-  };
+// Based on material-ui's grid breakpoints (max val, not min val)
+// https://material-ui.com/customization/default-theme/#default-theme
+const breakpoints = {
+  xs: 599,
+  sm: 959,
+  md: 1279,
+  lg: 1919,
+  xl: 1920,
 };
 
 type Props = {
-  classes: Object,
-  className?: string,
   children: React.Node,
+  innerGridClassName?: string, // use this to pass any withStyles className
+  spacing?: number,
+  maxWidth?: number | 'xs' | 'sm' | 'md' | 'lg' | 'xl',
 };
 
-const ResponsiveGrid = ({ classes, className, children }: Props) => (
-  <Grid container justify="center">
-    {/* Top level Grid centers the child Grid */}
-    <Grid container className={classNames(classes.responsive, className)} spacing={16}>
-      {children}
+const ResponsiveGrid = ({
+  innerGridClassName, children, spacing, maxWidth,
+}: Props) => {
+  const calcMaxWidth = typeof maxWidth === 'string' ? breakpoints[maxWidth] : maxWidth;
+  const maxWidthStyle = { maxWidth: calcMaxWidth };
+
+  const padding = Math.max(8, spacing / 2); // at least 8px on each side
+  const fixXOverflow = {
+    paddingLeft: padding,
+    paddingRight: padding,
+  };
+
+  return (
+    <Grid container justify="center" style={fixXOverflow}>
+      <Grid container className={innerGridClassName} spacing={spacing} style={maxWidthStyle}>
+        {children}
+      </Grid>
     </Grid>
-  </Grid>
-);
+  );
+};
 
 ResponsiveGrid.defaultProps = {
-  className: '',
+  innerGridClassName: '',
+  spacing: 16,
+  maxWidth: 'md',
 };
 
-export default withStyles(styles)(ResponsiveGrid);
+export default ResponsiveGrid;

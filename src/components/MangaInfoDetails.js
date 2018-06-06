@@ -13,6 +13,9 @@ import upperFirst from 'lodash/upperFirst';
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
+// TODO: I'm applying padding to the ResponsiveGrid. This doesn't feel very elegant.
+//       Is there any simple way to keep all the styling in THIS component?
+
 const styles = () => ({
   gridPadding: {
     padding: '32px 24px',
@@ -37,7 +40,7 @@ const MangaInfoDetails = ({
   return (
     <React.Fragment>
       <BackgroundImage coverUrl={coverUrl}>
-        <ResponsiveGrid className={classNames(classes.gridPadding, classes.fabParent)}>
+        <ResponsiveGrid innerGridClassName={classNames(classes.gridPadding, classes.fabParent)}>
           <Grid item xs={4} sm={3}>
             <MangaCard coverUrl={coverUrl} />
           </Grid>
@@ -53,7 +56,7 @@ const MangaInfoDetails = ({
         </ResponsiveGrid>
       </BackgroundImage>
 
-      <ResponsiveGrid className={classes.gridPadding}>
+      <ResponsiveGrid innerGridClassName={classes.gridPadding}>
         <DetailComponent fieldName="Description" value={mangaInfo.description || ''} />
       </ResponsiveGrid>
     </React.Fragment>
