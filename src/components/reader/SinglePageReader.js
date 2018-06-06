@@ -18,6 +18,11 @@ import ImageWithLoader from 'components/reader/ImageWithLoader';
 
 // TODO: add a way to go back? I'm thinking esc key would be good.
 
+// TODO: what's a good maxWidth for the image?
+
+// TODO: It could be cool to return the user to the MangaInfo page if they click next page
+//       and there are no more chapters/pages
+
 // Left and right arrow key press will change the page
 //
 // References for key press events

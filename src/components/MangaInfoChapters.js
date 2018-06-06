@@ -8,7 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ChapterListItem from 'components/ChapterListItem';
 import type { ChapterType, MangaType } from 'types';
 
-// TODO: update <ResponsiveGrid> so the list can be a lot tighter width
+// TODO: I've made ResponsiveGrid maxWidth="xs". What happens when the chapter title is too long?
 
 // TODO: List is slow with 200+ chapters
 //       Can just use the virtualized library to speed it up.
@@ -32,7 +32,7 @@ type Props = {
 const MangaInfoChapters = ({
   classes, mangaInfo, chapters, chapterUrl,
 }: Props) => (
-  <ResponsiveGrid>
+  <ResponsiveGrid maxWidth="xs">
     <Grid item xs={12}>
       <Paper>
         <List className={classes.list}>
