@@ -18,9 +18,10 @@ import { Link } from 'react-router-dom';
 type Props = {
   chapters: Array<ChapterType>,
   mangaId: number,
+  // otherProps passed to Button
 };
 
-const ContinueReadingButton = ({ chapters, mangaId }: Props) => {
+const ContinueReadingButton = ({ chapters, mangaId, ...otherProps }: Props) => {
   if (!chapters.length) return null;
 
   const firstUnreadChapter = findFirstUnreadChapter(chapters);
@@ -28,14 +29,14 @@ const ContinueReadingButton = ({ chapters, mangaId }: Props) => {
   if (firstUnreadChapter) {
     const pageUrl = Client.page(mangaId, firstUnreadChapter.id, firstUnreadChapter.last_page_read);
     return (
-      <Button variant="contained" color="primary" component={Link} to={pageUrl}>
+      <Button variant="contained" color="primary" component={Link} to={pageUrl} {...otherProps}>
         <Icon>play_arrow</Icon>
         Continue Reading Ch. {firstUnreadChapter.chapter_number}
       </Button>
     );
   }
   return (
-    <Button variant="contained" disabled>
+    <Button variant="contained" disabled {...otherProps}>
       All Chapters Read
     </Button>
   );
