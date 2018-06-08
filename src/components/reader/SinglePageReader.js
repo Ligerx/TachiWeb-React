@@ -82,8 +82,8 @@ class SinglePageReader extends Component<Props> {
       <React.Fragment>
         <ScrollToTop />
 
-        <ResponsiveGrid>
-          <Grid item xs={12} className={classes.topOffset}>
+        <ResponsiveGrid className={classes.topOffset}>
+          <Grid item xs={12}>
             <ImageWithLoader
               src={imageSource}
               onClick={onNextPageClick}

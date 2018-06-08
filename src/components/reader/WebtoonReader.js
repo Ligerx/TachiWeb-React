@@ -27,6 +27,9 @@ const styles = {
     justifyContent: 'center',
     marginBottom: 40,
   },
+  topOffset: {
+    marginTop: 144,
+  },
 };
 
 type Props = {
@@ -56,7 +59,7 @@ class WebtoonReader extends Component<Props> {
 
     return (
       <React.Fragment>
-        <ResponsiveGrid spacing={0}>
+        <ResponsiveGrid spacing={0} className={classes.topOffset}>
           {sources.map(source => (
             <Grid item xs={12} key={source}>
               <ImageWithLoader src={source} className={classes.page} />
