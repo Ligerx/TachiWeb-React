@@ -12,6 +12,7 @@ import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';
 import type { ChapterType, MangaType } from 'types';
 import SinglePageReader from 'components/reader/SinglePageReader';
+import WebtoonReader from 'components/reader/WebtoonReader';
 
 // NOTE: prepending urlPrefix to all links in this component so I can accomodate
 //       Library and Catalogue Readers. This is sort of hacky, but it works for now.
@@ -206,10 +207,18 @@ class Reader extends Component<Props> {
           </IconButton>
         </ReaderOverlay>
 
-        <SinglePageReader
+        {/* <SinglePageReader
           imageSource={imageSource}
           onNextPageClick={this.handleNextPageClick}
           onPrevPageClick={this.handlePrevPageClick}
+        /> */}
+
+        <WebtoonReader
+          mangaId={mangaInfo.id}
+          pageCount={pageCount}
+          chapter={chapter}
+          nextChapterUrl={this.nextChapterUrl()}
+          prevChapterUrl={this.prevChapterUrl()}
         />
 
       </React.Fragment>
@@ -226,7 +235,7 @@ function changeChapterUrl(
   if (!mangaInfo || !newChapterId) {
     // react-router Link does not take null, so use this to create a no-op link
     // This link should not actually be clickable in the first place
-    return 'javascript:void(0);'; // eslint-disable-line no-script-url
+    return 'javascript:void(0)'; // eslint-disable-line no-script-url
   }
 
   const newChapter: ?ChapterType = findChapter(chapters, newChapterId);
