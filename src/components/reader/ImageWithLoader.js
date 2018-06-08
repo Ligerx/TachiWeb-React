@@ -20,15 +20,17 @@ import { withStyles } from '@material-ui/core/styles';
 //      I'm guessing React is confused that it's image (in cache) changed, but the src/key didn't.
 
 const styles = {
-  retryParent: {
+  verticallyCenter: {
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
   },
 };
 
 type Props = {
   classes: Object, // injected styles (for this component)
   src: string,
+  notLoadedHeight?: number | string, // any valid height
   // extra props will be passed to <img>
 };
 
@@ -38,6 +40,10 @@ type State = {
 };
 
 class ImageWithLoader extends Component<Props, State> {
+  static defaultProps = {
+    notLoadedHeight: '40vh',
+  };
+
   state = {
     status: 'LOADING',
     retries: 0,
@@ -72,7 +78,9 @@ class ImageWithLoader extends Component<Props, State> {
   };
 
   render() {
-    const { classes, src, ...otherProps } = this.props;
+    const {
+      classes, src, notLoadedHeight, ...otherProps
+    } = this.props;
     const { status, retries } = this.state;
 
     const imgStyles = {
@@ -92,9 +100,13 @@ class ImageWithLoader extends Component<Props, State> {
           key={`${src}-${retries}`}
         />
 
-        {status === 'LOADING' && <CenteredLoading />}
+        {status === 'LOADING' && (
+          <div className={classes.verticallyCenter} style={{ height: notLoadedHeight }}>
+            <CenteredLoading />
+          </div>
+        )}
         {status === 'FAILED' && (
-          <div className={classes.retryParent}>
+          <div className={classes.verticallyCenter} style={{ height: notLoadedHeight }}>
             <Button variant="contained" onClick={this.handleRetryClick}>
               <Icon>refresh</Icon>
               Retry
