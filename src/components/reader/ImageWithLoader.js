@@ -90,7 +90,7 @@ class ImageWithLoader extends Component<Props, State> {
     };
 
     return (
-      <div>
+      <React.Fragment>
         <img
           {...otherProps}
           onLoad={this.handleImageLoad}
@@ -113,7 +113,7 @@ class ImageWithLoader extends Component<Props, State> {
             </Button>
           </div>
         )}
-      </div>
+      </React.Fragment>
     );
   }
 }
