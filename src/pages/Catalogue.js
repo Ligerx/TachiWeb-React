@@ -12,12 +12,24 @@ import FullScreenLoading from 'components/loading/FullScreenLoading';
 import type { FilterAnyType } from 'types/filters';
 import type { CatalogueContainerProps } from 'containers/CatalogueContainer';
 import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 // TODO: actually split all of this up into components...
 // TODO: maybe add text saying that there are no more pages to load?
 
-class Catalogue extends Component<CatalogueContainerProps> {
+const styles = {
+  loading: {
+    marginTop: 24,
+    marginBottom: 40,
+  },
+  noMoreResults: {
+    marginTop: 40,
+    marginBottom: 60,
+  },
+};
+
+class Catalogue extends Component<CatalogueContainerProps & { classes: Object }> {
   componentDidMount() {
     const {
       sources, sourceId, fetchSources, fetchCatalogue, fetchFilters, changeSourceId,
@@ -99,6 +111,7 @@ class Catalogue extends Component<CatalogueContainerProps> {
 
   render() {
     const {
+      classes,
       mangaLibrary,
       sources,
       sourcesAreLoading,
@@ -138,10 +151,10 @@ class Catalogue extends Component<CatalogueContainerProps> {
           <Waypoint onEnter={this.handleLoadNextPage} bottomOffset={-300} />
         )}
 
-        {catalogueIsLoading && <CenteredLoading />}
+        {catalogueIsLoading && <CenteredLoading className={classes.loading} />}
         {sourcesAreLoading && <FullScreenLoading />}
         {noMoreResults &&
-          <Typography variant="caption" align="center" style={{ marginTop: 40, marginBottom: 60 }}>
+          <Typography variant="caption" align="center" className={classes.noMoreResults}>
             No more results
           </Typography>
         }
@@ -150,4 +163,4 @@ class Catalogue extends Component<CatalogueContainerProps> {
   }
 }
 
-export default Catalogue;
+export default withStyles(styles)(Catalogue);

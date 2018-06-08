@@ -1,25 +1,17 @@
 // @flow
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CenteredHOC from 'components/CenteredHOC';
 
-const styles = {
-  loaderParent: {
-    // based on CircularProgress size
-    width: 40,
-    height: 40,
+type Props = {
+  className?: string, // parent passing a styled className
+}; // otherProps will be passed to CircularProgress
 
-    margin: '24px auto 40px',
-  },
-  // Not styling the spinner directly because it's rotating, so its size fluctuates
+const CenteredLoading = ({ className, ...otherProps }: Props) => {
+  const CenteredCircularProgress = CenteredHOC(CircularProgress);
+  return <CenteredCircularProgress className={className} {...otherProps} />;
 };
 
-type Props = { classes: Object };
+CenteredLoading.defaultProps = { className: null };
 
-const CenteredLoading = ({ classes }: Props) => (
-  <div className={classes.loaderParent}>
-    <CircularProgress />
-  </div>
-);
-
-export default withStyles(styles)(CenteredLoading);
+export default CenteredLoading;
