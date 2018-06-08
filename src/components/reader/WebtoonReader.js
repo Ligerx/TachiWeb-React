@@ -57,7 +57,7 @@ class WebtoonReader extends Component<Props> {
     return (
       <React.Fragment>
         <ResponsiveGrid spacing={0}>
-          {sources.map((source) => (
+          {sources.map(source => (
             <Grid item xs={12} key={source}>
               <ImageWithLoader src={source} className={classes.page} />
             </Grid>
@@ -82,8 +82,8 @@ class WebtoonReader extends Component<Props> {
 // Helper functions
 function createImageSrcArray(mangaId, chapter, pageCount) {
   const sources = [];
-  for (let i = 0; i < pageCount; i += 1) {
-    sources.push(Server.image(mangaId, chapter.id, i));
+  for (let page = 0; page < pageCount; page += 1) {
+    sources.push(Server.image(mangaId, chapter.id, page));
   }
   return sources;
 }
