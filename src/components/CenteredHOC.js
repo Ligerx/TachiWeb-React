@@ -11,8 +11,15 @@ const CenteredHOC = (WrappedComponent: React.Node) =>
 
     render() {
       const { className, ...otherProps } = this.props;
+
+      const centerStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start', // children height auto
+      };
+
       return (
-        <div style={{ display: 'flex', justifyContent: 'center' }} className={className}>
+        <div style={centerStyle} className={className}>
           <WrappedComponent {...otherProps} />
         </div>
       );
