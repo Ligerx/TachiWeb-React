@@ -5,6 +5,10 @@ import * as React from 'react';
 // Having a named class allows it to show up in react dev tools
 const CenteredHOC = (WrappedComponent: React.Node) =>
   class withCenteredHOC extends React.Component<{ className?: string }> {
+    static defaultProps = {
+      className: null,
+    };
+
     render() {
       const { className, ...otherProps } = this.props;
       return (

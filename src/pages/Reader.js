@@ -207,12 +207,13 @@ class Reader extends Component<Props> {
           </IconButton>
         </ReaderOverlay>
 
-        {/* <SinglePageReader
+        <SinglePageReader
           imageSource={imageSource}
           onNextPageClick={this.handleNextPageClick}
           onPrevPageClick={this.handlePrevPageClick}
-        /> */}
+        />
 
+        {/*
         <WebtoonReader
           mangaId={mangaInfo.id}
           pageCount={pageCount}
@@ -220,6 +221,7 @@ class Reader extends Component<Props> {
           nextChapterUrl={this.nextChapterUrl()}
           prevChapterUrl={this.prevChapterUrl()}
         />
+        */}
 
       </React.Fragment>
     );

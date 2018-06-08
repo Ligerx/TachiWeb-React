@@ -40,6 +40,9 @@ const styles = {
     justifyContent: 'center',
     marginBottom: 40,
   },
+  topOffset: {
+    marginTop: 144,
+  },
 };
 
 type Props = {
@@ -80,12 +83,11 @@ class SinglePageReader extends Component<Props> {
         <ScrollToTop />
 
         <ResponsiveGrid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.topOffset}>
             <ImageWithLoader
               src={imageSource}
               onClick={onNextPageClick}
               className={classes.page}
-              topOffset={144}
             />
           </Grid>
 

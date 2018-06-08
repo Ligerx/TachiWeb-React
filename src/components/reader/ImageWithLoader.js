@@ -29,7 +29,6 @@ const styles = {
 type Props = {
   classes: Object, // injected styles (for this component)
   src: string,
-  topOffset?: number,
   // extra props will be passed to <img>
 };
 
@@ -39,10 +38,6 @@ type State = {
 };
 
 class ImageWithLoader extends Component<Props, State> {
-  static defaultProps = {
-    topOffset: 0,
-  };
-
   state = {
     status: 'LOADING',
     retries: 0,
@@ -77,9 +72,7 @@ class ImageWithLoader extends Component<Props, State> {
   };
 
   render() {
-    const {
-      classes, src, topOffset, ...otherProps
-    } = this.props;
+    const { classes, src, ...otherProps } = this.props;
     const { status, retries } = this.state;
 
     const imgStyles = {
@@ -89,7 +82,7 @@ class ImageWithLoader extends Component<Props, State> {
     };
 
     return (
-      <div style={{ marginTop: topOffset }}>
+      <div>
         <img
           {...otherProps}
           onLoad={this.handleImageLoad}
