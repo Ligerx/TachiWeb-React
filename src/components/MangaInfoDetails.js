@@ -40,7 +40,7 @@ const MangaInfoDetails = ({
   return (
     <React.Fragment>
       <BackgroundImage coverUrl={coverUrl}>
-        <ResponsiveGrid innerGridClassName={classNames(classes.gridPadding, classes.fabParent)}>
+        <ResponsiveGrid className={classNames(classes.gridPadding, classes.fabParent)}>
           <Grid item xs={4} sm={3}>
             <MangaCard coverUrl={coverUrl} />
           </Grid>
@@ -56,7 +56,7 @@ const MangaInfoDetails = ({
         </ResponsiveGrid>
       </BackgroundImage>
 
-      <ResponsiveGrid innerGridClassName={classes.gridPadding}>
+      <ResponsiveGrid className={classes.gridPadding}>
         <DetailComponent fieldName="Description" value={mangaInfo.description || ''} />
       </ResponsiveGrid>
     </React.Fragment>

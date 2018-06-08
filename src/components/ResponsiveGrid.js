@@ -4,6 +4,8 @@ import Grid from '@material-ui/core/Grid';
 
 // TODO: tweak defailt maxWidth to something that makes sense (on an average monitor)
 
+// TODO: add an 'outerGridClassName' prop if necessary in the future
+
 // Parent Grid centers the child Grid
 // Also constrains child Grid's max width
 // https://stackoverflow.com/questions/49251454/grid-container-like-bootstrap-container
@@ -24,13 +26,12 @@ const breakpoints = {
 
 type Props = {
   children: React.Node,
-  innerGridClassName?: string, // use this to pass any withStyles className
   spacing?: number,
   maxWidth?: number | 'xs' | 'sm' | 'md' | 'lg' | 'xl',
-};
+}; // other props get passed to the inner grid
 
 const ResponsiveGrid = ({
-  innerGridClassName, children, spacing, maxWidth,
+  children, spacing, maxWidth, ...otherProps
 }: Props) => {
   const calcMaxWidth = typeof maxWidth === 'string' ? breakpoints[maxWidth] : maxWidth;
   const maxWidthStyle = { maxWidth: calcMaxWidth };
@@ -43,7 +44,7 @@ const ResponsiveGrid = ({
 
   return (
     <Grid container justify="center" style={fixXOverflow}>
-      <Grid container className={innerGridClassName} spacing={spacing} style={maxWidthStyle}>
+      <Grid container {...otherProps} spacing={spacing} style={maxWidthStyle}>
         {children}
       </Grid>
     </Grid>
@@ -51,7 +52,6 @@ const ResponsiveGrid = ({
 };
 
 ResponsiveGrid.defaultProps = {
-  innerGridClassName: '',
   spacing: 16,
   maxWidth: 'md',
 };
