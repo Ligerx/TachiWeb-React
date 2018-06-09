@@ -166,6 +166,7 @@ class Reader extends Component<Props> {
 
   render() {
     const {
+      urlPrefix,
       mangaInfo,
       chapters,
       chapter,
@@ -216,6 +217,7 @@ class Reader extends Component<Props> {
         */}
 
         <WebtoonReader
+          urlPrefix={urlPrefix}
           mangaId={mangaInfo.id}
           pageCount={pageCount}
           chapter={chapter}

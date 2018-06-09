@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import ImageWithLoader from 'components/reader/ImageWithLoader';
 import type { ChapterType } from 'types';
-import { Server } from 'api';
+import { Server, Client } from 'api';
 import { Link, withRouter } from 'react-router-dom';
 import Waypoint from 'react-waypoint';
 
@@ -28,6 +28,8 @@ import Waypoint from 'react-waypoint';
 //
 // This problem might be present in any other place where next/prevChapterUrl is used
 
+// FIXME: (at least in dev) there seems to be some lag when the URL changes
+
 const styles = {
   page: {
     width: '100%',
@@ -44,6 +46,7 @@ const styles = {
 
 type Props = {
   classes: Object, // styles
+  urlPrefix: string,
   mangaId: number,
   pageCount: number,
   chapter: ChapterType,
@@ -60,11 +63,27 @@ class WebtoonReader extends Component<Props, State> {
     pagesInView: [],
   };
 
-  // TODO: make this into it's own component
-  //       maybe even make it customizable to whatever params you want to use
-  componentDidUpdate(prevProps) {
-    if (this.props.match.params.chapterId !== prevProps.match.params.chapterId) {
+  componentDidUpdate(prevProps, prevState) {
+    const {
+      urlPrefix, mangaId, chapter, match, history,
+    } = this.props;
+
+    const { pagesInView } = this.state;
+    const { pagesInView: prevPagesInView } = prevState;
+
+    // Scroll to top when the chapter changes
+    // TODO: make this custom scroll-to-top into it's own component
+    //       maybe even make it customizable to whatever params you want to use
+    if (match.params.chapterId !== prevProps.match.params.chapterId) {
       window.scrollTo(0, 0);
+    }
+
+    // Update the URL to reflect what page the user is currently looking at
+    const lastPage = pagesInView[pagesInView.length - 1];
+    const prevLastPage = prevPagesInView[prevPagesInView.length - 1];
+
+    if (lastPage !== prevLastPage) {
+      history.replace(urlPrefix + Client.page(mangaId, chapter.id, lastPage));
     }
   }
 
