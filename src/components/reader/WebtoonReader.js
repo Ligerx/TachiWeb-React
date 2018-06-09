@@ -9,8 +9,18 @@ import ImageWithLoader from 'components/reader/ImageWithLoader';
 import type { ChapterType } from 'types';
 import { Server } from 'api';
 import { Link, withRouter } from 'react-router-dom';
+import Waypoint from 'react-waypoint';
 
-// Might have to do custom <ScrollToTop /> behavior specifically for this reader
+// Waypoints that wrap around components require special code
+// However, it automatically works with normal elements like <div>
+// So I'm wrapping <ImageWithLoader> with <div>
+// https://github.com/brigade/react-waypoint#children
+
+// There's no built in way to get information on what element fired Waypoint onEnter/onLeave
+// need to use anonymous functions to work around this
+// https://github.com/brigade/react-waypoint/issues/160
+
+// TODO: Might have to do custom <ScrollToTop /> behavior specifically for this reader
 
 // FIXME: Next/prev chapter buttons broken if that chapter doesn't exist
 // react router won't take 'javascript:void(0)'.
@@ -41,7 +51,15 @@ type Props = {
   prevChapterUrl: string,
 };
 
-class WebtoonReader extends Component<Props> {
+type State = {
+  pagesInView: Array<number>, // make sure to always keep this sorted
+};
+
+class WebtoonReader extends Component<Props, State> {
+  state = {
+    pagesInView: [],
+  };
+
   // TODO: make this into it's own component
   //       maybe even make it customizable to whatever params you want to use
   componentDidUpdate(prevProps) {
@@ -49,6 +67,24 @@ class WebtoonReader extends Component<Props> {
       window.scrollTo(0, 0);
     }
   }
+
+  pageOnEnter = (page) => {
+    this.setState((prevState) => {
+      const pagesCopy = prevState.pagesInView.slice();
+      pagesCopy.push(page);
+
+      return { pagesInView: pagesCopy.sort() };
+    });
+  };
+
+  pageOnLeave = (page) => {
+    this.setState((prevState) => {
+      const { pagesInView } = prevState;
+      return {
+        pagesInView: pagesInView.filter(pageInView => pageInView !== page),
+      };
+    });
+  };
 
   render() {
     const {
@@ -60,9 +96,16 @@ class WebtoonReader extends Component<Props> {
     return (
       <React.Fragment>
         <ResponsiveGrid spacing={0} className={classes.topOffset}>
-          {sources.map(source => (
+          {sources.map((source, index) => (
             <Grid item xs={12} key={source}>
-              <ImageWithLoader src={source} className={classes.page} />
+              <Waypoint
+                onEnter={() => this.pageOnEnter(index)}
+                onLeave={() => this.pageOnLeave(index)}
+              >
+                <div> {/* Refer to notes on Waypoint above for why this <div> is necessary */}
+                  <ImageWithLoader src={source} className={classes.page} />
+                </div>
+              </Waypoint>
             </Grid>
           ))}
 
