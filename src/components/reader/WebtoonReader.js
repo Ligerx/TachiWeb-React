@@ -8,7 +8,8 @@ import Icon from '@material-ui/core/Icon';
 import ImageWithLoader from 'components/reader/ImageWithLoader';
 import type { ChapterType } from 'types';
 import { Server, Client } from 'api';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import Link from 'components/Link';
 import Waypoint from 'react-waypoint';
 
 // Waypoints that wrap around components require special code

@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PageSlider from 'components/PageSlider';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
-import { Link } from 'react-router-dom';
+import Link from 'components/Link';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';

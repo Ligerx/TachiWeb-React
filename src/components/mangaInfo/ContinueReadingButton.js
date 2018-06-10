@@ -4,7 +4,7 @@ import type { ChapterType } from 'types';
 import { Client } from 'api';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
-import { Link } from 'react-router-dom';
+import Link from 'components/Link';
 
 // The chapters list passed into this component should NOT be sorted or filtered.
 // It iterates through the chapters array based on the array's natural order.

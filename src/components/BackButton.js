@@ -2,7 +2,7 @@
 import React from 'react';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
-import { Link } from 'react-router-dom';
+import Link from 'components/Link';
 
 type Props = { onBackClick: string | Function };
 

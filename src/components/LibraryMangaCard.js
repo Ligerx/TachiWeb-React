@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Badge from '@material-ui/core/Badge';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import MangaCard from 'components/MangaCard';
-import { Link } from 'react-router-dom';
+import Link from 'components/Link';
 import { Server, Client } from 'api';
 import type { MangaType } from 'types';
 

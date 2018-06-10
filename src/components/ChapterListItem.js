@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import Link from 'components/Link';
 import type { ChapterType, MangaType } from 'types';
 
 // TODO: add additional actions such as mark as read/unread.

@@ -6,7 +6,7 @@ import ButtonBase from '@material-ui/core/ButtonBase';
 import MangaCard from 'components/MangaCard';
 import type { MangaType } from 'types';
 import { Server, Client } from 'api';
-import { Link } from 'react-router-dom';
+import Link from 'components/Link';
 
 // * fullWidth
 // While the grid item is full width, it's children aren't.
