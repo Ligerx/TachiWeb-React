@@ -18,6 +18,7 @@ const UPDATE_SUCCESS = 'chapters/UPDATE_SUCCESS';
 const UPDATE_FAILURE = 'chapters/UPDATE_FAILURE';
 export const UPDATE_CHAPTERS = 'chapters/UPDATE';
 
+const UPDATE_READING_STATUS_NO_CHANGE = 'chapters/UPDATE_READING_STATUS_NO_CHANGE';
 const UPDATE_READING_STATUS_REQUEST = 'chapters/UPDATE_READING_STATUS_REQUEST';
 const UPDATE_READING_STATUS_SUCCESS = 'chapters/UPDATE_READING_STATUS_SUCCESS';
 const UPDATE_READING_STATUS_FAILURE = 'chapters/UPDATE_READING_STATUS_FAILURE';
@@ -122,20 +123,27 @@ export function updateChapters(mangaId: number) {
 // NOTE: This is only to update one chapter object's read + last_page_read
 export function updateReadingStatus(
   mangaId: number,
-  chapter: ChapterType,
-  pageCount: number,
+  chapterId: number,
   readPage: number,
 ) {
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
     // Handle checking if no update needs to happen. Escape early if so.
-    // NOTE: Returning null should work, but idk if redux-thunk
-    //       wants me to return a dispatch instead.
-    if (chapter.read || readPage <= chapter.last_page_read) {
-      return null;
+    const { chapters, pageCounts } = getState();
+    const chapter = chapters[mangaId].find(ch => ch.id === chapterId);
+
+    if (!chapter || chapter.read || readPage <= chapter.last_page_read) {
+      return dispatch({
+        type: UPDATE_READING_STATUS_NO_CHANGE,
+        meta: {
+          readPage, lastPageRead: chapter.last_page_read, isRead: chapter.read,
+        },
+      });
     }
 
-    dispatch({ type: UPDATE_READING_STATUS_REQUEST });
+    const pageCount = pageCounts[chapter.id];
     const didReadLastPage = readPage === pageCount - 1;
+
+    dispatch({ type: UPDATE_READING_STATUS_REQUEST, meta: { readPage, didReadLastPage } });
 
     return fetch(Server.updateReadingStatus(mangaId, chapter.id, readPage, didReadLastPage))
       .then(handleHTMLError)

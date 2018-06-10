@@ -1,7 +1,7 @@
 // @flow
 import { connect } from 'react-redux';
 import { fetchMangaInfo } from 'redux-ducks/mangaInfos';
-import { fetchChapters, updateReadingStatus } from 'redux-ducks/chapters';
+import { fetchChapters } from 'redux-ducks/chapters';
 import { fetchPageCount } from 'redux-ducks/pageCounts';
 import Reader from 'pages/Reader';
 import type { MangaType, ChapterType } from 'types';
@@ -21,7 +21,7 @@ type StateToProps = {
 
 const mapStateToProps = (state, ownProps): StateToProps => {
   const { mangaInfos, chapters, pageCounts } = state;
-  const { mangaId, chapterId } = ownProps.match.params;
+  const { mangaId, chapterId, page } = ownProps.match.params;
   const { urlPrefix } = ownProps;
 
   return {
@@ -31,7 +31,7 @@ const mapStateToProps = (state, ownProps): StateToProps => {
     chapterId: parseInt(chapterId, 10),
     pageCounts,
     pageCount: pageCounts[chapterId] || 0,
-    page: parseInt(ownProps.match.params.page, 10),
+    page: parseInt(page, 10),
     prevChapterId: getPrevChapterId(chapters[mangaId], chapterId),
     nextChapterId: getNextChapterId(chapters[mangaId], chapterId),
     urlPrefix: urlPrefix || '',
@@ -42,7 +42,6 @@ type DispatchToProps = {
   fetchMangaInfo: Function,
   fetchChapters: Function,
   fetchPageCount: Function,
-  updateReadingStatus: Function,
 };
 
 const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
@@ -52,8 +51,6 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
     fetchMangaInfo: () => dispatch(fetchMangaInfo(mangaId)),
     fetchChapters: () => dispatch(fetchChapters(mangaId)),
     fetchPageCount: chapterId => dispatch(fetchPageCount(mangaId, chapterId)),
-    updateReadingStatus: (chapter, pageCount, readPage) =>
-      dispatch(updateReadingStatus(mangaId, chapter, pageCount, readPage)),
   };
 };
 

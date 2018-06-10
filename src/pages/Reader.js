@@ -13,6 +13,7 @@ import type { ReaderContainerProps } from 'containers/ReaderContainer';
 import type { ChapterType, MangaType } from 'types';
 import SinglePageReader from 'components/reader/SinglePageReader';
 import WebtoonReader from 'components/reader/WebtoonReader';
+import ReadingStatusUpdaterContainer from 'containers/ReadingStatusUpdaterContainer';
 
 // NOTE: prepending urlPrefix to all links in this component so I can accomodate
 //       Library and Catalogue Readers. This is sort of hacky, but it works for now.
@@ -107,8 +108,6 @@ class Reader extends Component<Props> {
       }
     }
   };
-
-  // updateReadingStatus(chapter, pageCount, page + 1);
 
   prevPageUrl = (): ?string => {
     const {
@@ -233,6 +232,8 @@ class Reader extends Component<Props> {
           prevChapterUrl={this.prevChapterUrl()}
         />
         */}
+
+        <ReadingStatusUpdaterContainer />
 
       </React.Fragment>
     );
