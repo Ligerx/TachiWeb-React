@@ -181,8 +181,6 @@ class Reader extends Component<Props> {
       return <FullScreenLoading />;
     }
 
-    const imageSource = Server.image(mangaInfo.id, chapterId, page);
-
     return (
       <React.Fragment>
 
@@ -191,7 +189,7 @@ class Reader extends Component<Props> {
           chapterNum={chapter.chapter_number}
           pageCount={pageCount}
           mangaId={mangaInfo.id}
-          urlPrefix={this.props.urlPrefix}
+          backUrl={urlPrefix + Client.manga(mangaInfo.id)}
         >
           <IconButton component={Link} to={this.prevChapterUrl()} disabled={!prevChapterId}>
             <Icon>skip_previous</Icon>
@@ -210,7 +208,7 @@ class Reader extends Component<Props> {
 
         {/*
         <SinglePageReader
-          imageSource={imageSource}
+          imageSource={Server.image(mangaInfo.id, chapterId, page)}
           onNextPageClick={this.handleNextPageClick}
           onPrevPageClick={this.handlePrevPageClick}
         />

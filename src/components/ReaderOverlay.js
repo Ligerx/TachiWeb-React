@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
-import { Client } from 'api';
 import { withStyles } from '@material-ui/core/styles';
 
 // TODO: using two toolbars currently, but it might be too big. Consider changing/customizing later.
@@ -35,18 +34,16 @@ type Props = {
   classes: Object,
   title: string,
   chapterNum: number,
-  mangaId: number,
+  backUrl: string,
   children?: React.Node,
-
-  urlPrefix: string, // kind of a hack
 };
 
 const ReaderOverlay = ({
-  title, chapterNum, mangaId, classes, children, urlPrefix,
+  title, chapterNum, classes, children, backUrl,
 }: Props) => (
   <AppBar position="static" color="default" className={classes.overlay}>
     <Toolbar>
-      <IconButton component={Link} to={urlPrefix + Client.manga(mangaId)}>
+      <IconButton component={Link} to={backUrl}>
         <Icon>arrow_back</Icon>
       </IconButton>
       <Typography variant="title" style={{ flex: 1 }}>
