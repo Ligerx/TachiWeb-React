@@ -34,7 +34,6 @@ import Link from 'components/Link';
 const styles = {
   page: {
     width: '100%',
-    cursor: 'pointer', // to indicate clickable
     marginBottom: 80,
   },
   navButtonsParent: {
@@ -70,9 +69,9 @@ class SinglePageReader extends Component<Props> {
     const { nextPageUrl, prevPageUrl } = this.props;
 
     // TODO: is this the expected direction the arrows should take you?
-    if (event.keyCode === LEFT_ARROW) {
+    if (event.keyCode === LEFT_ARROW && prevPageUrl) {
       this.props.history.push(prevPageUrl);
-    } else if (event.keyCode === RIGHT_ARROW) {
+    } else if (event.keyCode === RIGHT_ARROW && nextPageUrl) {
       this.props.history.push(nextPageUrl);
     }
   };
@@ -88,10 +87,12 @@ class SinglePageReader extends Component<Props> {
 
         <ResponsiveGrid className={classes.topOffset}>
           <Grid item xs={12}>
-            <ImageWithLoader
-              src={imageSource}
-              className={classes.page}
-            />
+            <Link to={nextPageUrl}>
+              <ImageWithLoader
+                src={imageSource}
+                className={classes.page}
+              />
+            </Link>
           </Grid>
 
           <Grid item xs={12} className={classes.navButtonsParent}>
