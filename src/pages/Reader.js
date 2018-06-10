@@ -108,53 +108,64 @@ class Reader extends Component<Props> {
     }
   };
 
-  handlePrevPageClick = () => {
+  // updateReadingStatus(chapter, pageCount, page + 1);
+
+  prevPageUrl = (): ?string => {
     const {
       mangaInfo, chapterId, page, prevChapterId, pageCounts, urlPrefix,
     } = this.props;
 
-    if (!mangaInfo) return;
+    if (!mangaInfo) return null;
 
     if (page > 0) {
-      this.props.history.push(urlPrefix + Client.page(mangaInfo.id, chapterId, page - 1));
+      return urlPrefix + Client.page(mangaInfo.id, chapterId, page - 1);
     } else if (page === 0 && prevChapterId) {
-      // If on the first page, go to the previous chapter's last page
+      // If on the first page, link to the previous chapter's last page (if info available)
       const prevPageCount: ?number = pageCounts[prevChapterId];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
-      this.props.history.push(urlPrefix + Client.page(mangaInfo.id, prevChapterId, lastPage));
+      return urlPrefix + Client.page(mangaInfo.id, prevChapterId, lastPage);
     }
+    return null;
   };
 
-  handleNextPageClick = () => {
+  nextPageUrl = (): ?string => {
     const {
-      mangaInfo, chapter, chapterId, pageCount, page, nextChapterId, updateReadingStatus, urlPrefix,
+      mangaInfo, chapterId, pageCount, page, nextChapterId, urlPrefix,
     } = this.props;
 
-    if (!mangaInfo) return;
+    if (!mangaInfo) return null;
 
     if (page < pageCount - 1) {
-      updateReadingStatus(chapter, pageCount, page + 1);
-      this.props.history.push(urlPrefix + Client.page(mangaInfo.id, chapterId, page + 1));
+      return urlPrefix + Client.page(mangaInfo.id, chapterId, page + 1);
     } else if (page === pageCount - 1 && nextChapterId) {
-      this.props.history.push(urlPrefix + Client.page(mangaInfo.id, nextChapterId, 0));
+      return urlPrefix + Client.page(mangaInfo.id, nextChapterId, 0);
     }
+    return null;
   };
 
-  prevChapterUrl = () => {
+  prevChapterUrl = (): ?string => {
     // Links to the previous chapter's last page read
     const {
       mangaInfo, prevChapterId, chapters, urlPrefix,
     } = this.props;
-    return urlPrefix + changeChapterUrl(mangaInfo, prevChapterId, chapters);
+
+    const prevUrl = changeChapterUrl(mangaInfo, prevChapterId, chapters);
+
+    if (!prevUrl) return null;
+    return urlPrefix + prevUrl;
   };
 
-  nextChapterUrl = () => {
+  nextChapterUrl = (): ?string => {
     // Links to the next chapter's last page read
     const {
       mangaInfo, nextChapterId, chapters, urlPrefix,
     } = this.props;
-    return urlPrefix + changeChapterUrl(mangaInfo, nextChapterId, chapters);
+
+    const nextUrl = changeChapterUrl(mangaInfo, nextChapterId, chapters);
+
+    if (!nextUrl) return null;
+    return urlPrefix + nextUrl;
   };
 
   handleJumpToPage = (newPage: number) => {
@@ -206,13 +217,12 @@ class Reader extends Component<Props> {
           </IconButton>
         </ReaderOverlay>
 
-        {/*
         <SinglePageReader
           imageSource={Server.image(mangaInfo.id, chapterId, page)}
-          onNextPageClick={this.handleNextPageClick}
-          onPrevPageClick={this.handlePrevPageClick}
+          nextPageUrl={this.nextPageUrl()}
+          prevPageUrl={this.prevPageUrl()}
         />
-        */}
+        {/*
 
         <WebtoonReader
           urlPrefix={urlPrefix}
@@ -222,6 +232,7 @@ class Reader extends Component<Props> {
           nextChapterUrl={this.nextChapterUrl()}
           prevChapterUrl={this.prevChapterUrl()}
         />
+        */}
 
       </React.Fragment>
     );
@@ -233,12 +244,8 @@ function changeChapterUrl(
   mangaInfo: ?MangaType,
   newChapterId: ?number,
   chapters: Array<ChapterType>,
-): string {
-  if (!mangaInfo || !newChapterId) {
-    // react-router Link does not take null, so use this to create a no-op link
-    // This link should not actually be clickable in the first place
-    return 'javascript:void(0)'; // eslint-disable-line no-script-url
-  }
+): ?string {
+  if (!mangaInfo || !newChapterId) return null;
 
   const newChapter: ?ChapterType = findChapter(chapters, newChapterId);
   let goToPage = newChapter ? newChapter.last_page_read : 0;

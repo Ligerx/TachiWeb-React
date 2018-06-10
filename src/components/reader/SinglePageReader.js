@@ -7,6 +7,8 @@ import ScrollToTop from 'components/ScrollToTop';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import ImageWithLoader from 'components/reader/ImageWithLoader';
+import { withRouter } from 'react-router-dom';
+import Link from 'components/Link';
 
 // TODO: disable next / prev page buttons if there is no page?
 
@@ -48,8 +50,8 @@ const styles = {
 type Props = {
   classes: Object, // styles
   imageSource: string,
-  onNextPageClick: Function,
-  onPrevPageClick: Function,
+  nextPageUrl: ?string,
+  prevPageUrl: ?string,
 };
 
 class SinglePageReader extends Component<Props> {
@@ -65,17 +67,19 @@ class SinglePageReader extends Component<Props> {
     const LEFT_ARROW = 37;
     const RIGHT_ARROW = 39;
 
+    const { nextPageUrl, prevPageUrl } = this.props;
+
     // TODO: is this the expected direction the arrows should take you?
     if (event.keyCode === LEFT_ARROW) {
-      this.props.onPrevPageClick();
+      this.props.history.push(prevPageUrl);
     } else if (event.keyCode === RIGHT_ARROW) {
-      this.props.onNextPageClick();
+      this.props.history.push(nextPageUrl);
     }
   };
 
   render() {
     const {
-      classes, imageSource, onNextPageClick, onPrevPageClick,
+      classes, imageSource, nextPageUrl, prevPageUrl,
     } = this.props;
 
     return (
@@ -86,17 +90,16 @@ class SinglePageReader extends Component<Props> {
           <Grid item xs={12}>
             <ImageWithLoader
               src={imageSource}
-              onClick={onNextPageClick}
               className={classes.page}
             />
           </Grid>
 
           <Grid item xs={12} className={classes.navButtonsParent}>
-            <Button onClick={onPrevPageClick}>
+            <Button component={Link} to={prevPageUrl} disabled={!prevPageUrl}>
               <Icon>navigate_before</Icon>
               Previous Page
             </Button>
-            <Button onClick={onNextPageClick}>
+            <Button component={Link} to={nextPageUrl} disabled={!nextPageUrl}>
               Next Page
               <Icon>navigate_next</Icon>
             </Button>
@@ -107,4 +110,4 @@ class SinglePageReader extends Component<Props> {
   }
 }
 
-export default withStyles(styles)(SinglePageReader);
+export default withRouter(withStyles(styles)(SinglePageReader));
