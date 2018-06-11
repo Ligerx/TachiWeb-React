@@ -46,7 +46,7 @@ class ImagePreloader extends Component<Props> {
       if (page + i < pageCount) {
         // Load pages from this chapter
         image.src = Server.image(mangaId, chapterId, page + i);
-      } else {
+      } else if (nextChapterId) {
         // Load pages from next chapter
         // NOTE: Not bothering to check next chapter's pageCount. Doubt this will be a problem.
         /* eslint-disable no-mixed-operators */
