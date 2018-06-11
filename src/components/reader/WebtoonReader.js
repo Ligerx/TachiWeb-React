@@ -23,12 +23,6 @@ import Waypoint from 'react-waypoint';
 
 // TODO: Might have to do custom <ScrollToTop /> behavior specifically for this reader
 
-// FIXME: Next/prev chapter buttons broken if that chapter doesn't exist
-// react router won't take 'javascript:void(0)'.
-// I believe there are also issues with giving Link to={null}
-//
-// This problem might be present in any other place where next/prevChapterUrl is used
-
 // FIXME: (at least in dev) there seems to be some lag when the URL changes
 
 const styles = {
@@ -38,6 +32,7 @@ const styles = {
   navButtonsParent: {
     display: 'flex',
     justifyContent: 'center',
+    marginTop: 40,
     marginBottom: 40,
   },
   topOffset: {
@@ -80,7 +75,9 @@ class WebtoonReader extends Component<Props, State> {
     }
 
     // Update the URL to reflect what page the user is currently looking at
-    const lastPage = pagesInView[pagesInView.length - 1];
+    // NOTE: It seems that if you rapidly scroll, page becomes undefined and breaks rc-slider
+    //       Falling back on lastPage = 0 fixes this and doesn't seem to cause any issues.
+    const lastPage = pagesInView[pagesInView.length - 1] || 0;
     const prevLastPage = prevPagesInView[prevPagesInView.length - 1];
 
     if (lastPage !== prevLastPage) {
@@ -134,11 +131,11 @@ class WebtoonReader extends Component<Props, State> {
           ))}
 
           <Grid item xs={12} className={classes.navButtonsParent}>
-            <Button component={Link} to={prevChapterUrl}>
+            <Button component={Link} to={prevChapterUrl} disabled={!prevChapterUrl}>
               <Icon>navigate_before</Icon>
               Previous Chapter
             </Button>
-            <Button component={Link} to={nextChapterUrl}>
+            <Button component={Link} to={nextChapterUrl} disabled={!nextChapterUrl}>
               Next Chapter
               <Icon>navigate_next</Icon>
             </Button>
