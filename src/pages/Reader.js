@@ -199,11 +199,12 @@ class Reader extends Component<Props> {
 
         <SinglePageReader
           imageSource={Server.image(mangaInfo.id, chapterId, page)}
+          alt={`${chapter.name} - Page ${page + 1}`}
           nextPageUrl={this.nextPageUrl()}
           prevPageUrl={this.prevPageUrl()}
         />
-        {/*
 
+        {/*
         <WebtoonReader
           urlPrefix={urlPrefix}
           mangaId={mangaInfo.id}

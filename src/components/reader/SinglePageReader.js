@@ -45,6 +45,7 @@ const styles = {
 type Props = {
   classes: Object, // styles
   imageSource: string,
+  alt: string,
   nextPageUrl: ?string,
   prevPageUrl: ?string,
 };
@@ -74,7 +75,7 @@ class SinglePageReader extends Component<Props> {
 
   render() {
     const {
-      classes, imageSource, nextPageUrl, prevPageUrl,
+      classes, imageSource, alt, nextPageUrl, prevPageUrl,
     } = this.props;
 
     return (
@@ -87,6 +88,7 @@ class SinglePageReader extends Component<Props> {
               <ImageWithLoader
                 src={imageSource}
                 className={classes.page}
+                alt={alt}
               />
             </Link>
           </Grid>

@@ -30,6 +30,7 @@ const styles = {
 type Props = {
   classes: Object, // injected styles (for this component)
   src: string,
+  alt: string,
   notLoadedHeight?: number | string, // any valid height
   // extra props will be passed to <img>
 };
@@ -79,7 +80,7 @@ class ImageWithLoader extends Component<Props, State> {
 
   render() {
     const {
-      classes, src, notLoadedHeight, ...otherProps
+      classes, src, alt, notLoadedHeight, ...otherProps
     } = this.props;
     const { status, retries } = this.state;
 
@@ -96,6 +97,7 @@ class ImageWithLoader extends Component<Props, State> {
           onLoad={this.handleImageLoad}
           onError={this.handleImageError}
           src={src}
+          alt={alt}
           style={imgStyles}
           key={`${src}-${retries}`}
         />

@@ -123,7 +123,11 @@ class WebtoonReader extends Component<Props, State> {
                 onLeave={() => this.pageOnLeave(index)}
               >
                 <div> {/* Refer to notes on Waypoint above for why this <div> is necessary */}
-                  <ImageWithLoader src={source} className={classes.page} />
+                  <ImageWithLoader
+                    src={source}
+                    className={classes.page}
+                    alt={`${chapter.name} - Page ${index + 1}`}
+                  />
                 </div>
               </Waypoint>
             </Grid>
