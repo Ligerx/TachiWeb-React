@@ -10,7 +10,6 @@ import ImageWithLoader from 'components/reader/ImageWithLoader';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
 
-// TODO: disable next / prev page buttons if there is no page?
 
 // TODO: add some spacing around the nav buttons
 // TODO: evenly space them?
@@ -18,12 +17,9 @@ import Link from 'components/Link';
 // TODO: add instructions on how to use reader
 //       e.g. keyboard actions, clicking on the image
 
-// TODO: add a way to go back? I'm thinking esc key would be good.
+// TODO: add a way to go back via keyboard? I'm thinking esc key would be good.
 
 // TODO: what's a good maxWidth for the image?
-
-// TODO: It could be cool to return the user to the MangaInfo page if they click next page
-//       and there are no more chapters/pages
 
 // Left and right arrow key press will change the page
 //

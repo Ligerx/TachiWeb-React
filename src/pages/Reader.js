@@ -3,10 +3,6 @@ import React, { Component } from 'react';
 import { Server, Client } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
 import { withStyles } from '@material-ui/core/styles';
-import PageSlider from 'components/PageSlider';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import Link from 'components/Link';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';
@@ -29,10 +25,6 @@ import ReadingStatusUpdaterContainer from 'containers/ReadingStatusUpdaterContai
 // TODO: preload pages from the next chapter
 
 // TODO: allow keyboard commands for reading
-
-// TODO: might need to update read status if you press next page while on the last page of a chapter
-//       Possible scenario, you skip to the last page via the slider.
-//       When you press next to go to the next chapter, your reading status has not been changed.
 
 // https://tylermcginnis.com/react-router-programmatically-navigate/
 
@@ -168,6 +160,8 @@ class Reader extends Component<Props> {
   };
 
   handleJumpToPage = (newPage: number) => {
+    // FIXME: how does this work with WebtoonReader?
+    //        also .push() vs .replace() for SinglePage vs Webtoon Readers
     const { mangaInfo, chapterId, urlPrefix } = this.props;
 
     if (!mangaInfo) return;
@@ -183,8 +177,6 @@ class Reader extends Component<Props> {
       chapterId,
       pageCount,
       page,
-      prevChapterId,
-      nextChapterId,
     } = this.props;
 
     if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
@@ -198,23 +190,12 @@ class Reader extends Component<Props> {
           title={mangaInfo.title}
           chapterNum={chapter.chapter_number}
           pageCount={pageCount}
-          mangaId={mangaInfo.id}
+          page={page}
           backUrl={urlPrefix + Client.manga(mangaInfo.id)}
-        >
-          <IconButton component={Link} to={this.prevChapterUrl()} disabled={!prevChapterId}>
-            <Icon>skip_previous</Icon>
-          </IconButton>
-
-          <PageSlider
-            pageCount={pageCount}
-            page={page}
-            onJumpToPage={this.handleJumpToPage}
-          />
-
-          <IconButton component={Link} to={this.nextChapterUrl()} disabled={!nextChapterId}>
-            <Icon>skip_next</Icon>
-          </IconButton>
-        </ReaderOverlay>
+          prevChapterUrl={this.prevChapterUrl()}
+          nextChapterUrl={this.nextChapterUrl()}
+          onJumpToPage={this.handleJumpToPage}
+        />
 
         <SinglePageReader
           imageSource={Server.image(mangaInfo.id, chapterId, page)}

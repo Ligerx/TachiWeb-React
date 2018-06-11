@@ -7,6 +7,7 @@ import Link from 'components/Link';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
+import PageSlider from 'components/PageSlider';
 
 // TODO: using two toolbars currently, but it might be too big. Consider changing/customizing later.
 
@@ -31,33 +32,54 @@ const styles = {
 };
 
 type Props = {
-  classes: Object,
+  classes: Object, // injected styles
   title: string,
   chapterNum: number,
+  pageCount: number,
+  page: number,
   backUrl: string,
-  children?: React.Node,
+  prevChapterUrl: ?string,
+  nextChapterUrl: ?string,
+  onJumpToPage: Function,
 };
 
 const ReaderOverlay = ({
-  title, chapterNum, classes, children, backUrl,
+  classes,
+  title,
+  chapterNum,
+  pageCount,
+  page,
+  backUrl,
+  prevChapterUrl,
+  nextChapterUrl,
+  onJumpToPage,
 }: Props) => (
   <AppBar position="static" color="default" className={classes.overlay}>
     <Toolbar>
       <IconButton component={Link} to={backUrl}>
         <Icon>arrow_back</Icon>
       </IconButton>
+
       <Typography variant="title" style={{ flex: 1 }}>
         {title}
       </Typography>
+
       <Typography variant="subheading"> Chapter {chapterNumFormatter(chapterNum)}</Typography>
     </Toolbar>
-    {children && <Toolbar>{children}</Toolbar>}
+
+    <Toolbar>
+      <IconButton component={Link} to={prevChapterUrl} disabled={!prevChapterUrl}>
+        <Icon>skip_previous</Icon>
+      </IconButton>
+
+      <PageSlider pageCount={pageCount} page={page} onJumpToPage={onJumpToPage} />
+
+      <IconButton component={Link} to={nextChapterUrl} disabled={!nextChapterUrl}>
+        <Icon>skip_next</Icon>
+      </IconButton>
+    </Toolbar>
   </AppBar>
 );
-
-ReaderOverlay.defaultProps = {
-  children: null,
-};
 
 // Helper Function
 function chapterNumFormatter(chapterNum: number): string | number {
