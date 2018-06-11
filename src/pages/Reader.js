@@ -10,6 +10,7 @@ import type { ChapterType, MangaType } from 'types';
 import SinglePageReader from 'components/reader/SinglePageReader';
 import WebtoonReader from 'components/reader/WebtoonReader';
 import ReadingStatusUpdaterContainer from 'containers/ReadingStatusUpdaterContainer';
+import ImagePreloaderContainer from 'containers/ImagePreloaderContainer';
 
 // NOTE: prepending urlPrefix to all links in this component so I can accomodate
 //       Library and Catalogue Readers. This is sort of hacky, but it works for now.
@@ -53,16 +54,8 @@ class Reader extends Component<Props> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { page, chapterId } = this.props;
-
-    const pageChanged = page !== prevProps.page;
+    const { chapterId } = this.props;
     const chapterChanged = chapterId !== prevProps.chapterId;
-
-    // Preload more images when page or chapter changes.
-    // Should also fire once on page load.
-    if (pageChanged || chapterChanged) {
-      this.preloadImages();
-    }
 
     // Always have the adjacent chapters' page counts loaded
     if (chapterChanged) {
@@ -80,25 +73,6 @@ class Reader extends Component<Props> {
     chapters.forEach((thisChapterId) => {
       fetchPageCount(thisChapterId);
     });
-  };
-
-  preloadImages = () => {
-    // https://www.photo-mark.com/notes/image-preloading/
-    // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-    const {
-      mangaInfo, chapterId, pageCount, page,
-    } = this.props;
-    const numPreload = 3; // Currently preloading 3 images ahead
-
-    if (!mangaInfo) return;
-
-    for (let i = 1; i <= numPreload; i += 1) {
-      if (page + i < pageCount) {
-        // Chrome would only preload if a new image object was used every time
-        const image = new Image();
-        image.src = Server.image(mangaInfo.id, chapterId, page + i);
-      }
-    }
   };
 
   prevPageUrl = (): ?string => {
@@ -216,6 +190,7 @@ class Reader extends Component<Props> {
         */}
 
         <ReadingStatusUpdaterContainer />
+        <ImagePreloaderContainer />
 
       </React.Fragment>
     );
