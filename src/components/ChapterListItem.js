@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import Link from 'components/Link';
 import type { ChapterType, MangaType } from 'types';
+import { chapterNumPrettyPrint } from 'components/utils';
 
 // TODO: add additional actions such as mark as read/unread.
 // TODO: align the bottom row text? It's a little off horizontally right now.
@@ -31,7 +32,8 @@ const ChapterListItem = ({
   const dimIfRead: Function = (read: boolean): String => classNames({ [classes.read]: read });
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
   const chapterName: string =
-    mangaInfo.flags.DISPLAY_MODE === 'NAME' ? chapter.name : `Chapter ${chapter.chapter_number}`;
+    mangaInfo.flags.DISPLAY_MODE === 'NAME'
+      ? chapter.name : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 
   return (
     <ListItem button divider component={Link} to={chapterUrl(mangaInfo, chapter.id, goToPage)}>
