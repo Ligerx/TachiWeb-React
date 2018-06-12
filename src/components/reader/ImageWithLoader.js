@@ -19,10 +19,6 @@ import { withStyles } from '@material-ui/core/styles';
 //      It instead shows the image error placeholder as if it failed.
 //      I'm guessing React is confused that it's image (in cache) changed, but the src/key didn't.
 
-// TODO: In WebtoonReader, I'm passing in src=null sometimes.
-//       It doesn't seem to be throwing any errors?
-//       Regardless I might want to rework this a little bit just to make src explicitly nullable.
-
 const styles = {
   verticallyCenter: {
     display: 'flex',
@@ -33,11 +29,10 @@ const styles = {
 
 type Props = {
   classes: Object, // injected styles (for this component)
-  src: string,
+  src: ?string, // if src == null, <img> will not render
   alt: string,
   notLoadedHeight?: number | string, // any valid height
-  // extra props will be passed to <img>
-};
+}; // extra props will be passed to <img>
 
 type State = {
   status: 'LOADING' | 'LOADED' | 'FAILED',
@@ -70,16 +65,19 @@ class ImageWithLoader extends Component<Props, State> {
   handleImageError = () => this.setState({ status: 'FAILED' });
 
   handleRetryClick = () => {
-    // https://stackoverflow.com/a/23160210
+    const { src } = this.props;
+    if (!src) return;
+
+    // https://stackoverflow.com/questions/23160107/javascript-how-to-retry-loading-an-image-without-appending-query-string
     this.setState(prevState => ({
       status: 'LOADING',
       retries: prevState.retries + 1,
     }));
 
     const img = new Image();
-    img.onload = () => this.setState({ status: 'LOADED' });
-    img.onerror = () => this.setState({ status: 'FAILED' });
-    img.src = this.props.src;
+    img.onload = this.handleImageLoad;
+    img.onerror = this.handleImageError;
+    img.src = src;
   };
 
   render() {
@@ -96,15 +94,17 @@ class ImageWithLoader extends Component<Props, State> {
 
     return (
       <React.Fragment>
-        <img
-          {...otherProps}
-          onLoad={this.handleImageLoad}
-          onError={this.handleImageError}
-          src={src}
-          alt={alt}
-          style={imgStyles}
-          key={`${src}-${retries}`}
-        />
+        {src && (
+          <img
+            {...otherProps}
+            onLoad={this.handleImageLoad}
+            onError={this.handleImageError}
+            src={src}
+            alt={alt}
+            style={imgStyles}
+            key={`${src}-${retries}`}
+          />
+        )}
 
         {status === 'LOADING' && (
           <div className={classes.verticallyCenter} style={{ height: notLoadedHeight }}>
