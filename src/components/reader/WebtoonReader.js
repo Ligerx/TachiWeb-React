@@ -175,6 +175,7 @@ function createImageSrcArray(mangaId, chapter, pageCount) {
 
 function addMorePagesToLoad(numPagesLoadAhead, pageCount, pagesInView, oldArray) {
   const lastPage = pagesInView[pagesInView.length - 1];
+  if (!lastPage) return oldArray; // pages can sometimes be empty if scrolling too fast
 
   const newPages = [...pagesInView]; // also includes the current pages just to be safe
   for (let i = 1; i <= numPagesLoadAhead; i += 1) {
