@@ -81,11 +81,12 @@ class WebtoonReader extends Component<Props, State> {
 
     // Update the URL to reflect what page the user is currently looking at
     // NOTE: It seems that if you rapidly scroll, page becomes undefined and breaks rc-slider
-    //       Falling back on lastPage = 0 fixes this and doesn't seem to cause any issues.
-    const lastPage = pagesInView[pagesInView.length - 1] || 0;
+    //       Also, on hot-reload or debug mode reload, lastPage is undefined.
+    //       ^ would cause an infinite loop when I wasn't checking if lastpage != null
+    const lastPage = pagesInView[pagesInView.length - 1];
     const prevLastPage = prevPagesInView[prevPagesInView.length - 1];
 
-    if (lastPage !== prevLastPage) {
+    if (lastPage != null && lastPage !== prevLastPage) {
       history.replace(urlPrefix + Client.page(mangaId, chapter.id, lastPage));
     }
   }
