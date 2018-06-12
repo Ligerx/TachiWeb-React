@@ -19,6 +19,10 @@ import { withStyles } from '@material-ui/core/styles';
 //      It instead shows the image error placeholder as if it failed.
 //      I'm guessing React is confused that it's image (in cache) changed, but the src/key didn't.
 
+// TODO: In WebtoonReader, I'm passing in src=null sometimes.
+//       It doesn't seem to be throwing any errors?
+//       Regardless I might want to rework this a little bit just to make src explicitly nullable.
+
 const styles = {
   verticallyCenter: {
     display: 'flex',

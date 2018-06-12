@@ -52,11 +52,13 @@ type Props = {
 
 type State = {
   pagesInView: Array<number>, // make sure to always keep this sorted
+  pagesToLoad: Array<number>,
 };
 
 class WebtoonReader extends Component<Props, State> {
   state = {
     pagesInView: [],
+    pagesToLoad: [],
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -72,6 +74,9 @@ class WebtoonReader extends Component<Props, State> {
     //       maybe even make it customizable to whatever params you want to use
     if (match.params.chapterId !== prevProps.match.params.chapterId) {
       window.scrollTo(0, 0);
+
+      // Also reset the pages to load
+      this.setState({ pagesToLoad: [] });
     }
 
     // Update the URL to reflect what page the user is currently looking at
@@ -86,11 +91,23 @@ class WebtoonReader extends Component<Props, State> {
   }
 
   pageOnEnter = (page) => {
+    const numPagesLoadAhead = 3;
+    const { pageCount } = this.props;
+
     this.setState((prevState) => {
+      // Update pagesInView
       const pagesCopy = prevState.pagesInView.slice();
       pagesCopy.push(page);
+      const newPagesInView = pagesCopy.sort();
 
-      return { pagesInView: pagesCopy.sort() };
+      // Add more images that can start loading
+      const newPagesToLoad =
+        addMorePagesToLoad(numPagesLoadAhead, pageCount, newPagesInView, prevState.pagesToLoad);
+
+      return {
+        pagesInView: newPagesInView,
+        pagesToLoad: newPagesToLoad,
+      };
     });
   };
 
@@ -107,6 +124,7 @@ class WebtoonReader extends Component<Props, State> {
     const {
       classes, mangaId, chapter, pageCount, nextChapterUrl, prevChapterUrl,
     } = this.props;
+    const { pagesToLoad } = this.state;
 
     const sources = createImageSrcArray(mangaId, chapter, pageCount);
 
@@ -121,7 +139,7 @@ class WebtoonReader extends Component<Props, State> {
               >
                 <div> {/* Refer to notes on Waypoint above for why this <div> is necessary */}
                   <ImageWithLoader
-                    src={source}
+                    src={pagesToLoad.includes(index) ? source : null}
                     className={classes.page}
                     alt={`${chapter.name} - Page ${index + 1}`}
                   />
@@ -153,6 +171,22 @@ function createImageSrcArray(mangaId, chapter, pageCount) {
     sources.push(Server.image(mangaId, chapter.id, page));
   }
   return sources;
+}
+
+function addMorePagesToLoad(numPagesLoadAhead, pageCount, pagesInView, oldArray) {
+  const lastPage = pagesInView[pagesInView.length - 1];
+
+  const newPages = [...pagesInView]; // also includes the current pages just to be safe
+  for (let i = 1; i <= numPagesLoadAhead; i += 1) {
+    if (lastPage + i < pageCount) {
+      newPages.push(lastPage + i);
+    }
+  }
+
+  const arrayCopy = oldArray.slice();
+  arrayCopy.push(...newPages);
+
+  return [...new Set(arrayCopy)]; // unique values only
 }
 
 export default withRouter(withStyles(styles)(WebtoonReader));
