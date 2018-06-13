@@ -28,6 +28,12 @@ import Waypoint from 'react-waypoint';
 // From my basic testing (looking at the console Network tab), this doesn't seem to be the case.
 // Only 1 request is being sent per image.
 
+// When you chance chapter, the chapterId in the URL changes.
+// This triggers the next page to render, THEN componentDidUpdate() runs.
+// I'm using each image's source URL as a key to determine if it should start loading.
+// I was previously just using the page #, but all the images were rendering
+// before componentDidUpdate() could clear pagesToLoad.
+
 // TODO: Might have to do custom <ScrollToTop /> behavior specifically for this reader
 
 // FIXME: (at least in dev) there seems to be some lag when the URL changes
@@ -35,18 +41,6 @@ import Waypoint from 'react-waypoint';
 //
 //        I believe these are related to the component updated on URL change
 //        Should be fixable using shouldComponentUpdate()
-
-// FIXME: when you change chapters, the URL changes, then the render method runs again,
-//        THEN componentDidUpdate() runs.
-//        The problem is that the next chapter's images will already have loaded based on
-//        the previous state.pagesToLoad before we have a chance to clear the array.
-//
-//        I considered using an onClick to intercept the next/prev chapter button click,
-//        but chapter can also change when pressing the Overlap chapter skip buttons
-//
-//        The next best alternative I can think of is to store the actual image URL in
-//        state.pagesToLoad. With this, all pages are unique, so chapter changes won't matter.
-//        In fact, I don't even have to clear the array between chapter changes (if I don't want to)
 
 const styles = {
   page: {
@@ -71,11 +65,15 @@ type Props = {
   chapter: ChapterType,
   nextChapterUrl: string,
   prevChapterUrl: string,
+
+  // React router props
+  match: Object,
+  history: Object,
 };
 
 type State = {
   pagesInView: Array<number>, // make sure to always keep this sorted
-  pagesToLoad: Array<number>,
+  pagesToLoad: Array<string>, // urls for the image, acts as a unique key
 };
 
 class WebtoonReader extends Component<Props, State> {
@@ -99,7 +97,9 @@ class WebtoonReader extends Component<Props, State> {
       window.scrollTo(0, 0);
 
       // Also reset state
+      /* eslint-disable react/no-did-update-set-state */
       this.setState({ pagesInView: [], pagesToLoad: [] });
+      /* eslint-enable react/no-did-update-set-state */
     }
 
     // Update the URL to reflect what page the user is currently looking at
@@ -115,8 +115,8 @@ class WebtoonReader extends Component<Props, State> {
   }
 
   pageOnEnter = (page) => {
-    const numPagesLoadAhead = 3;
-    const { pageCount } = this.props;
+    const numLoadAhead = 3;
+    const { mangaId, chapter, pageCount } = this.props;
 
     this.setState((prevState) => {
       // Update pagesInView
@@ -125,8 +125,14 @@ class WebtoonReader extends Component<Props, State> {
       const newPagesInView = pagesCopy.sort();
 
       // Add more images that can start loading
-      const newPagesToLoad =
-        addMorePagesToLoad(numPagesLoadAhead, pageCount, newPagesInView, prevState.pagesToLoad);
+      const newPagesToLoad = addMorePagesToLoad(
+        mangaId,
+        chapter.id,
+        numLoadAhead,
+        pageCount,
+        newPagesInView,
+        prevState.pagesToLoad,
+      );
 
       return {
         pagesInView: newPagesInView,
@@ -150,7 +156,7 @@ class WebtoonReader extends Component<Props, State> {
     } = this.props;
     const { pagesToLoad } = this.state;
 
-    const sources = createImageSrcArray(mangaId, chapter, pageCount);
+    const sources = createImageSrcArray(mangaId, chapter.id, pageCount);
 
     return (
       <React.Fragment>
@@ -163,7 +169,7 @@ class WebtoonReader extends Component<Props, State> {
               >
                 <div> {/* Refer to notes on Waypoint above for why this <div> is necessary */}
                   <ImageWithLoader
-                    src={pagesToLoad.includes(index) ? source : null}
+                    src={pagesToLoad.includes(source) ? source : null}
                     className={classes.page}
                     alt={`${chapter.name} - Page ${index + 1}`}
                   />
@@ -189,22 +195,23 @@ class WebtoonReader extends Component<Props, State> {
 }
 
 // Helper functions
-function createImageSrcArray(mangaId, chapter, pageCount) {
+function createImageSrcArray(mangaId, chapterId, pageCount) {
   const sources = [];
   for (let page = 0; page < pageCount; page += 1) {
-    sources.push(Server.image(mangaId, chapter.id, page));
+    sources.push(Server.image(mangaId, chapterId, page));
   }
   return sources;
 }
 
-function addMorePagesToLoad(numPagesLoadAhead, pageCount, pagesInView, oldArray) {
-  const lastPage = pagesInView[pagesInView.length - 1];
-  if (!lastPage) return oldArray; // pages can sometimes be empty if scrolling too fast
+// Adds the next img sources to load to the current array of img sources to load
+function addMorePagesToLoad(mangaId, chapterId, numLoadAhead, pageCount, pagesInView, oldArray) {
+  if (!pagesInView.length) return oldArray; // pages can sometimes be empty if scrolling too fast
 
-  const newPages = [...pagesInView]; // also includes the current pages just to be safe
-  for (let i = 1; i <= numPagesLoadAhead; i += 1) {
-    if (lastPage + i < pageCount) {
-      newPages.push(lastPage + i);
+  const newPages = [];
+  for (let i = 0; i < numLoadAhead + pagesInView.length; i += 1) {
+    // includes the current pages just to be safe
+    if (pagesInView[0] + i < pageCount) {
+      newPages.push(Server.image(mangaId, chapterId, pagesInView[0] + i));
     }
   }
 
