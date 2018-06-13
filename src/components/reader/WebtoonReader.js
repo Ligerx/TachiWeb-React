@@ -21,9 +21,20 @@ import Waypoint from 'react-waypoint';
 // need to use anonymous functions to work around this
 // https://github.com/brigade/react-waypoint/issues/160
 
+// I'm using pagesToLoad to lazy load so I don't request every page from the server at once.
+// It's currently using the same number of pages to load ahead as ImagePreloader.
+// I'm not sure if both components requesting images at the same time is causing inefficiencies.
+//
+// From my basic testing (looking at the console Network tab), this doesn't seem to be the case.
+// Only 1 request is being sent per image.
+
 // TODO: Might have to do custom <ScrollToTop /> behavior specifically for this reader
 
 // FIXME: (at least in dev) there seems to be some lag when the URL changes
+//        Also, a possibly related minor issue where spinners will reset when page changes
+//
+//        I believe these are related to the component updated on URL change
+//        Should be fixable using shouldComponentUpdate()
 
 const styles = {
   page: {
@@ -75,8 +86,8 @@ class WebtoonReader extends Component<Props, State> {
     if (match.params.chapterId !== prevProps.match.params.chapterId) {
       window.scrollTo(0, 0);
 
-      // Also reset the pages to load
-      this.setState({ pagesToLoad: [] });
+      // Also reset state
+      this.setState({ pagesInView: [], pagesToLoad: [] });
     }
 
     // Update the URL to reflect what page the user is currently looking at
