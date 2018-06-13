@@ -36,6 +36,18 @@ import Waypoint from 'react-waypoint';
 //        I believe these are related to the component updated on URL change
 //        Should be fixable using shouldComponentUpdate()
 
+// FIXME: when you change chapters, the URL changes, then the render method runs again,
+//        THEN componentDidUpdate() runs.
+//        The problem is that the next chapter's images will already have loaded based on
+//        the previous state.pagesToLoad before we have a chance to clear the array.
+//
+//        I considered using an onClick to intercept the next/prev chapter button click,
+//        but chapter can also change when pressing the Overlap chapter skip buttons
+//
+//        The next best alternative I can think of is to store the actual image URL in
+//        state.pagesToLoad. With this, all pages are unique, so chapter changes won't matter.
+//        In fact, I don't even have to clear the array between chapter changes (if I don't want to)
+
 const styles = {
   page: {
     width: '100%',
