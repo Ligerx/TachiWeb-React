@@ -47,16 +47,8 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
     updateChapters().then(() => updateMangaInfo());
   };
 
-  chapterUrl = (mangaInfo: MangaType, chapterId: number, goToPage: number) => {
-    const { urlPrefix } = this.props;
-
-    if (mangaInfo) {
-      return urlPrefix + Client.page(mangaInfo.id, chapterId, goToPage);
-    }
-    // react-router Link does not take null, so use this to create a no-op link
-    // This link should not actually be clickable in the first place
-    return 'javascript:void(0);'; // eslint-disable-line no-script-url
-  };
+  chapterUrl = (mangaInfo: MangaType, chapterId: number, goToPage: number) =>
+    this.props.urlPrefix + Client.page(mangaInfo.id, chapterId, goToPage);
 
   render() {
     const {
