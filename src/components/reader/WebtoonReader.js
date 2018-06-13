@@ -82,6 +82,8 @@ class WebtoonReader extends Component<Props, State> {
     pagesToLoad: [],
   };
 
+  // NOTE: not currently to check if the mangaId in the URL changed
+  //       don't think this is a problem
   componentDidUpdate(prevProps, prevState) {
     const {
       urlPrefix, mangaId, chapter, match, history,
@@ -93,13 +95,21 @@ class WebtoonReader extends Component<Props, State> {
     // Scroll to top when the chapter changes
     // TODO: make this custom scroll-to-top into it's own component
     //       maybe even make it customizable to whatever params you want to use
-    if (match.params.chapterId !== prevProps.match.params.chapterId) {
+    const chapterChanged = match.params.chapterId !== prevProps.match.params.chapterId;
+    if (chapterChanged) {
       window.scrollTo(0, 0);
 
       // Also reset state
       /* eslint-disable react/no-did-update-set-state */
       this.setState({ pagesInView: [], pagesToLoad: [] });
       /* eslint-enable react/no-did-update-set-state */
+    }
+
+    // If the url changes to a page outside of view, jump to it
+    // FIXME: will this cause problems with the logic below it (changing history based on url?)
+    const pageNotInView = !pagesInView.includes(parseInt(match.params.page, 10));
+    if (pageNotInView && !chapterChanged) {
+      this.handlePageJump(match.params.page);
     }
 
     // Update the URL to reflect what page the user is currently looking at
@@ -109,10 +119,15 @@ class WebtoonReader extends Component<Props, State> {
     const lastPage = pagesInView[pagesInView.length - 1];
     const prevLastPage = prevPagesInView[prevPagesInView.length - 1];
 
-    if (lastPage != null && lastPage !== prevLastPage) {
-      history.replace(urlPrefix + Client.page(mangaId, chapter.id, lastPage));
-    }
+    // if (lastPage != null && lastPage !== prevLastPage) {
+    //   history.replace(urlPrefix + Client.page(mangaId, chapter.id, lastPage));
+    // }
   }
+
+  handlePageJump = (pageId: string) => {
+    const page = document.getElementById(pageId);
+    if (page) window.scrollTo(0, page.offsetTop);
+  };
 
   pageOnEnter = (page) => {
     const numLoadAhead = 3;
@@ -162,7 +177,7 @@ class WebtoonReader extends Component<Props, State> {
       <React.Fragment>
         <ResponsiveGrid spacing={0} className={classes.topOffset}>
           {sources.map((source, index) => (
-            <Grid item xs={12} key={source}>
+            <Grid item xs={12} key={source} id={index}>
               <Waypoint
                 onEnter={() => this.pageOnEnter(index)}
                 onLeave={() => this.pageOnLeave(index)}
