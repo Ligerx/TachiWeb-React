@@ -8,6 +8,7 @@
     "lodash": "^4.17.10",
     "moment": "^2.22.1",
     "prop-types": "^15.6.1",
+    "query-string": "^6.1.0",
     "rc-slider": "^8.6.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
