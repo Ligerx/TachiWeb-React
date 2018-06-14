@@ -139,7 +139,10 @@ class Reader extends Component<Props> {
     const { mangaInfo, chapterId, urlPrefix } = this.props;
 
     if (!mangaInfo) return;
-    this.props.history.push(urlPrefix + Client.page(mangaInfo.id, chapterId, newPage - 1));
+
+    // Add query param so Webtoon reader knows the difference between changing vs jumping pages
+    const jumpToParam = '?jumpTo=true';
+    this.props.history.push(urlPrefix + Client.page(mangaInfo.id, chapterId, newPage - 1) + jumpToParam);
   };
 
   render() {

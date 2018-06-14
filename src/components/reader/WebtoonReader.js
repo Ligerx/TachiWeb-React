@@ -11,6 +11,7 @@ import { Server, Client } from 'api';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
 import Waypoint from 'react-waypoint';
+import queryString from 'query-string';
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>
@@ -42,6 +43,17 @@ import Waypoint from 'react-waypoint';
 //        I believe these are related to the component updated on URL change
 //        Should be fixable using shouldComponentUpdate()
 
+// FIXME: weird bug that I happens like 10% of the time
+//        When you jump to a page, it instead shows an adjacent image...
+//        Really not sure why that's happening.
+
+// TODO: jump to page on componentDidMount()
+//
+//       since we position new pages to the bottom of the viewport, you can see pages above
+//       and it'll load those images. This loads more content and pushes the position of your
+//       image lower than it was originally.
+//       Figure out a clean way to adjust for the changing image heights when they load.
+
 const styles = {
   page: {
     width: '100%',
@@ -69,6 +81,7 @@ type Props = {
   // React router props
   match: Object,
   history: Object,
+  location: Object,
 };
 
 type State = {
@@ -82,11 +95,22 @@ class WebtoonReader extends Component<Props, State> {
     pagesToLoad: [],
   };
 
+  componentDidMount() {
+    window.scrollTo(0, 0);
+
+    const { match } = this.props;
+
+    // If you're directly loading a specific page number, jump to it
+    if (match.params.page !== '0') {
+      this.handlePageJump(match.params.page);
+    }
+  }
+
   // NOTE: not currently to check if the mangaId in the URL changed
   //       don't think this is a problem
   componentDidUpdate(prevProps, prevState) {
     const {
-      urlPrefix, mangaId, chapter, match, history,
+      urlPrefix, mangaId, chapter, match, history, location,
     } = this.props;
 
     const { pagesInView } = this.state;
@@ -105,10 +129,11 @@ class WebtoonReader extends Component<Props, State> {
       /* eslint-enable react/no-did-update-set-state */
     }
 
-    // If the url changes to a page outside of view, jump to it
-    // FIXME: will this cause problems with the logic below it (changing history based on url?)
-    const pageNotInView = !pagesInView.includes(parseInt(match.params.page, 10));
-    if (pageNotInView && !chapterChanged) {
+    // If the url contains the query param '?jumpTo=true' then jump to that page
+    const queryParams = queryString.parse(location.search);
+    const shouldJumpToPage = queryParams.jumpTo === 'true';
+
+    if (!chapterChanged && shouldJumpToPage) {
       this.handlePageJump(match.params.page);
     }
 
@@ -119,14 +144,37 @@ class WebtoonReader extends Component<Props, State> {
     const lastPage = pagesInView[pagesInView.length - 1];
     const prevLastPage = prevPagesInView[prevPagesInView.length - 1];
 
-    // if (lastPage != null && lastPage !== prevLastPage) {
-    //   history.replace(urlPrefix + Client.page(mangaId, chapter.id, lastPage));
-    // }
+    if (lastPage != null && lastPage !== prevLastPage && !shouldJumpToPage) {
+      history.replace(urlPrefix + Client.page(mangaId, chapter.id, lastPage));
+    }
   }
 
   handlePageJump = (pageId: string) => {
+    const { history, location } = this.props;
+
     const page = document.getElementById(pageId);
-    if (page) window.scrollTo(0, page.offsetTop);
+    const height = page.scrollHeight;
+    const vh = window.innerHeight;
+
+    if (!page) return;
+
+    // To keep consistent with the URL corresponding to the bottom most visible page
+    // Keep the page you jump to as the bottom page, whether it's larger or smaller than the vh
+    if (height >= vh) {
+      // For large images, jump to the top
+      window.scrollTo(0, page.offsetTop);
+    } else {
+      // For smaller images, align the bottom with the bottom of the viewport
+      // scrollTo a negative number seems to be fine
+      const extraOffset = vh - height;
+      window.scrollTo(0, page.offsetTop - extraOffset);
+    }
+
+    // Clear the '?jumpTo=true' query param from the URL if it exists
+    // NOTE: This is how I got around prior issues with jumping to pages in componentDidUpdate()
+    if (location.search) {
+      history.replace(location.pathname);
+    }
   };
 
   pageOnEnter = (page) => {
