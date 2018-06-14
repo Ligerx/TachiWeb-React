@@ -4,6 +4,8 @@ import { withRouter } from 'react-router-dom';
 
 // https://reacttraining.com/react-router/web/guides/scroll-restoration
 
+// TODO: do I need to also reset scroll on componentDidMount()?
+
 type Props = {
   location: Object, // props injected by react-router
   children?: React.Node,
