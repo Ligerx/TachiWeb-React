@@ -13,6 +13,7 @@
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-dropzone": "^4.2.10",
+    "react-helmet": "^5.2.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
