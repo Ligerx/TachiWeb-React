@@ -4,6 +4,7 @@ import MangaInfo from 'components/MangaInfo';
 import type { MangaInfoContainerProps } from 'containers/MangaInfoContainer';
 import type { MangaType } from 'types';
 import { Client } from 'api';
+import { Helmet } from 'react-helmet';
 
 // Honestly couldn't come up with a different name to differentiate it from MangaInfo component
 // I might rename the other files in the /pages folder to include _Page at the end. I dunno...
@@ -60,17 +61,25 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
       setFlag,
     } = this.props;
 
+    const title = mangaInfo ? mangaInfo.title : 'Loading...';
+
     return (
-      <MangaInfo
-        mangaInfo={mangaInfo}
-        chapters={chapters}
-        initialTabValue={defaultTab}
-        onBackClick={backUrl}
-        onRefreshClick={this.handleRefreshClick}
-        isLoading={fetchOrRefreshIsLoading}
-        chapterUrl={this.chapterUrl}
-        setFlag={setFlag}
-      />
+      <React.Fragment>
+        <Helmet>
+          <title>{title} - TachiWeb</title>
+        </Helmet>
+
+        <MangaInfo
+          mangaInfo={mangaInfo}
+          chapters={chapters}
+          initialTabValue={defaultTab}
+          onBackClick={backUrl}
+          onRefreshClick={this.handleRefreshClick}
+          isLoading={fetchOrRefreshIsLoading}
+          chapterUrl={this.chapterUrl}
+          setFlag={setFlag}
+        />
+      </React.Fragment>
     );
   }
 }

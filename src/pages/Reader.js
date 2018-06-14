@@ -11,6 +11,8 @@ import SinglePageReader from 'components/reader/SinglePageReader';
 import WebtoonReader from 'components/reader/WebtoonReader';
 import ReadingStatusUpdaterContainer from 'containers/ReadingStatusUpdaterContainer';
 import ImagePreloaderContainer from 'containers/ImagePreloaderContainer';
+import { Helmet } from 'react-helmet';
+import { chapterNumPrettyPrint } from 'components/utils';
 
 // NOTE: prepending urlPrefix to all links in this component so I can accomodate
 //       Library and Catalogue Readers. This is sort of hacky, but it works for now.
@@ -162,6 +164,12 @@ class Reader extends Component<Props> {
 
     return (
       <React.Fragment>
+        <Helmet>
+          <title>
+            {`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(chapter.chapter_number)}, Pg. ${page + 1}`}
+            - TachiWeb
+          </title>
+        </Helmet>
 
         <ReaderOverlay
           title={mangaInfo.title}

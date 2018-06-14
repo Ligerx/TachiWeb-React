@@ -13,6 +13,7 @@ import type { FilterAnyType } from 'types/filters';
 import type { CatalogueContainerProps } from 'containers/CatalogueContainer';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import { Helmet } from 'react-helmet';
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 // TODO: actually split all of this up into components...
@@ -126,6 +127,10 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
 
     return (
       <React.Fragment>
+        <Helmet>
+          <title>Catalogue - TachiWeb</title>
+        </Helmet>
+
         <CatalogueHeader
           sourceId={sourceId}
           sources={sources}

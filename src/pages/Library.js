@@ -6,6 +6,7 @@ import LibraryMangaCard from 'components/LibraryMangaCard';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import type { LibraryContainerProps } from 'containers/LibraryContainer';
 import SortFilterLibraryHOC from 'components/library/SortFilterLibraryHOC';
+import { Helmet } from 'react-helmet';
 
 // TODO: sort/filter mangaLibrary
 
@@ -55,6 +56,10 @@ class Library extends Component<LibraryContainerProps, State> {
 
     return (
       <React.Fragment>
+        <Helmet>
+          <title>Library - TachiWeb</title>
+        </Helmet>
+
         <LibraryHeader
           searchQuery={searchQuery}
           flags={flags}
