@@ -24,18 +24,16 @@ import queryString from 'query-string';
 
 // I'm using pagesToLoad to lazy load so I don't request every page from the server at once.
 // It's currently using the same number of pages to load ahead as ImagePreloader.
-// I'm not sure if both components requesting images at the same time is causing inefficiencies.
-//
-// From my basic testing (looking at the console Network tab), this doesn't seem to be the case.
-// Only 1 request is being sent per image.
+// From my basic testing (looking at the console Network tab), they don't seem to be interfering.
 
-// When you chance chapter, the chapterId in the URL changes.
+// When you change chapter, the chapterId in the URL changes.
 // This triggers the next page to render, THEN componentDidUpdate() runs.
 // I'm using each image's source URL as a key to determine if it should start loading.
 // I was previously just using the page #, but all the images were rendering
 // before componentDidUpdate() could clear pagesToLoad.
 
-// TODO: Might have to do custom <ScrollToTop /> behavior specifically for this reader
+// TODO: Might want to do custom <ScrollToTop /> behavior specifically for this reader
+//       or create a custom scroll-to-top component that's customizable with whatever params passed
 
 // FIXME: (at least in dev) there seems to be some lag when the URL changes
 //        Also, a possibly related minor issue where spinners will reset when page changes
@@ -47,12 +45,15 @@ import queryString from 'query-string';
 //        When you jump to a page, it instead shows an adjacent image...
 //        Really not sure why that's happening.
 
-// TODO: jump to page on componentDidMount()
+// FIXME: since we position new pages to the bottom of the viewport, you can see pages above
+//        and it'll load those images. This loads more content and pushes the position of your
+//        image lower than it was originally.
 //
-//       since we position new pages to the bottom of the viewport, you can see pages above
-//       and it'll load those images. This loads more content and pushes the position of your
-//       image lower than it was originally.
-//       Figure out a clean way to adjust for the changing image heights when they load.
+//        At the time of writing this, I felt like it's too much effort for a small benefit,
+//        so I'm not working on this yet.
+
+// TODO: have some sort of interaction where you go to the next chapter if you keep scrolling down
+//       sort of similar to the idea of keyboard interactions, don't rely on mouse clicks
 
 const styles = {
   page: {
@@ -106,8 +107,7 @@ class WebtoonReader extends Component<Props, State> {
     }
   }
 
-  // NOTE: not currently to check if the mangaId in the URL changed
-  //       don't think this is a problem
+  // NOTE: not checking if the mangaId in the URL changed. Don't think this is a problem
   componentDidUpdate(prevProps, prevState) {
     const {
       urlPrefix, mangaId, chapter, match, history, location,
@@ -117,8 +117,6 @@ class WebtoonReader extends Component<Props, State> {
     const { pagesInView: prevPagesInView } = prevState;
 
     // Scroll to top when the chapter changes
-    // TODO: make this custom scroll-to-top into it's own component
-    //       maybe even make it customizable to whatever params you want to use
     const chapterChanged = match.params.chapterId !== prevProps.match.params.chapterId;
     if (chapterChanged) {
       window.scrollTo(0, 0);
@@ -138,7 +136,7 @@ class WebtoonReader extends Component<Props, State> {
     }
 
     // Update the URL to reflect what page the user is currently looking at
-    // NOTE: It seems that if you rapidly scroll, page becomes undefined and breaks rc-slider
+    // NOTE: It seems that if you rapidly scroll, page becomes undefined.
     //       Also, on hot-reload or debug mode reload, lastPage is undefined.
     //       ^ would cause an infinite loop when I wasn't checking if lastpage != null
     const lastPage = pagesInView[pagesInView.length - 1];
@@ -153,20 +151,19 @@ class WebtoonReader extends Component<Props, State> {
     const { history, location } = this.props;
 
     const page = document.getElementById(pageId);
-    const height = page.scrollHeight;
     const vh = window.innerHeight;
 
     if (!page) return;
 
     // To keep consistent with the URL corresponding to the bottom most visible page
     // Keep the page you jump to as the bottom page, whether it's larger or smaller than the vh
-    if (height >= vh) {
+    if (page.scrollHeight >= vh) {
       // For large images, jump to the top
       window.scrollTo(0, page.offsetTop);
     } else {
       // For smaller images, align the bottom with the bottom of the viewport
       // scrollTo a negative number seems to be fine
-      const extraOffset = vh - height;
+      const extraOffset = vh - page.scrollHeight;
       window.scrollTo(0, page.offsetTop - extraOffset);
     }
 
