@@ -10,7 +10,6 @@ import ImageWithLoader from 'components/reader/ImageWithLoader';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
 
-
 // TODO: add some spacing around the nav buttons
 // TODO: evenly space them?
 

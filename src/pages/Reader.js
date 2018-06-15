@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { Server, Client } from 'api';
 import ReaderOverlay from 'components/ReaderOverlay';
-import { withStyles } from '@material-ui/core/styles';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';
@@ -17,31 +16,10 @@ import { chapterNumPrettyPrint } from 'components/utils';
 // NOTE: prepending urlPrefix to all links in this component so I can accomodate
 //       Library and Catalogue Readers. This is sort of hacky, but it works for now.
 
-// TODO: If I want an <img alt="...">, I need mangaInfo, which I don't have right now.
-
-// TODO: eventually create a preloading component?
-//       similar to this - https://github.com/mcarlucci/react-precache-img
-// TODO: research if it's possible to cache too many images? If so, how do you clear old images?
-// TODO: FIXME: Browser doesn't seem to be pulling images from cache.
-// Not sure if that's a backend header problem, browser problem, or a local development problem
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
-// TODO: preload pages from the next chapter
-
-// TODO: allow keyboard commands for reading
-
-// https://tylermcginnis.com/react-router-programmatically-navigate/
 
 // https://www.javascriptstuff.com/detect-image-load/
-
-const styles = {
-  // Need to set the backgroundImage url as well
-  mangaImage: {
-    height: '100%',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center center',
-    backgroundSize: 'contain',
-  },
-};
+// https://tylermcginnis.com/react-router-programmatically-navigate/
 
 type Props = ReaderContainerProps & {
   classes: Object, // Classes is the injected styles
@@ -232,4 +210,4 @@ function findChapter(chapters: Array<ChapterType>, chapterId: number): ?ChapterT
   return chapters.find(chapter => chapter.id === chapterId);
 }
 
-export default withStyles(styles)(Reader);
+export default Reader;
