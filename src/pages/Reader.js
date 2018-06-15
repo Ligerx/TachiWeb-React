@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Server, Client } from 'api';
-import ReaderOverlay from 'components/ReaderOverlay';
+import ReaderOverlay from 'components/reader/ReaderOverlay';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';

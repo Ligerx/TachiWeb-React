@@ -3,9 +3,9 @@ import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import MoreButton from 'components/MoreButton';
+import LibraryMore from 'components/library/LibraryMore';
 import RefreshButton from 'components/RefreshButton';
-import SearchButton from 'components/SearchButton';
+import LibrarySearch from 'components/library/LibrarySearch';
 import MenuDrawer from 'components/MenuDrawer';
 import LibraryFilter from 'components/library/LibraryFilter';
 import LibrarySort from 'components/library/LibrarySort';
@@ -34,7 +34,7 @@ const LibraryHeader = ({
         Library
       </Typography>
 
-      <SearchButton searchQuery={searchQuery} onSearchChange={onSearchChange} />
+      <LibrarySearch searchQuery={searchQuery} onSearchChange={onSearchChange} />
 
       <RefreshButton onClick={onRefreshClick} />
 
@@ -47,7 +47,7 @@ const LibraryHeader = ({
 
       <LibrarySort flags={flags} onChange={handleSortChange(setLibraryFlag)} />
 
-      <MoreButton />
+      <LibraryMore />
     </Toolbar>
   </AppBar>
 );

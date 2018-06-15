@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import MangaInfo from 'components/MangaInfo';
+import MangaInfo from 'components/mangaInfo/MangaInfo';
 import type { MangaInfoContainerProps } from 'containers/MangaInfoContainer';
 import type { MangaType } from 'types';
 import { Client } from 'api';

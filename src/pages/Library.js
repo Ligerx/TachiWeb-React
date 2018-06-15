@@ -1,8 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-import LibraryHeader from 'components/LibraryHeader';
+import LibraryHeader from 'components/library/LibraryHeader';
 import MangaGrid from 'components/MangaGrid';
-import LibraryMangaCard from 'components/LibraryMangaCard';
+import LibraryMangaCard from 'components/library/LibraryMangaCard';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import type { LibraryContainerProps } from 'containers/LibraryContainer';
 import SortFilterLibraryHOC from 'components/library/SortFilterLibraryHOC';

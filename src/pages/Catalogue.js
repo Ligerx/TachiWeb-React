@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import debounce from 'lodash/debounce';
 import MangaGrid from 'components/MangaGrid';
-import CatalogueMangaCard from 'components/CatalogueMangaCard';
+import CatalogueMangaCard from 'components/catalogue/CatalogueMangaCard';
 import Waypoint from 'react-waypoint';
 import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
 import ResponsiveGrid from 'components/ResponsiveGrid';
-import CatalogueHeader from 'components/CatalogueHeader';
+import CatalogueHeader from 'components/catalogue/CatalogueHeader';
 import CenteredLoading from 'components/loading/CenteredLoading';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import type { FilterAnyType } from 'types/filters';

@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
-import MangaInfoHeader from 'components/MangaInfoHeader';
-import MangaInfoDetails from 'components/MangaInfoDetails';
+import MangaInfoHeader from 'components/mangaInfo/MangaInfoHeader';
+import MangaInfoDetails from 'components/mangaInfo/MangaInfoDetails';
 import SortFilterChaptersHOC from 'components/mangaInfo/SortFilterChaptersHOC';
-import MangaInfoChapters from 'components/MangaInfoChapters';
+import MangaInfoChapters from 'components/mangaInfo/MangaInfoChapters';
 import type { MangaType, ChapterType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';

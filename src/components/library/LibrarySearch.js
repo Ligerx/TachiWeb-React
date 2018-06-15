@@ -14,7 +14,7 @@ type Props = { searchQuery: string, onSearchChange: Function };
 
 type State = { searchVisible: boolean };
 
-class SearchButton extends Component<Props, State> {
+class LibrarySearch extends Component<Props, State> {
   constructor() {
     super();
     this.state = { searchVisible: false };
@@ -95,4 +95,4 @@ class SearchButton extends Component<Props, State> {
   }
 }
 
-export default SearchButton;
+export default LibrarySearch;

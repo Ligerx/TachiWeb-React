@@ -11,7 +11,7 @@ type State = {
   editing: boolean,
 };
 
-class MoreButton extends Component<{}, State> {
+class LibraryMore extends Component<{}, State> {
   state = {
     anchorEl: null,
     editing: false,
@@ -62,4 +62,4 @@ class MoreButton extends Component<{}, State> {
   }
 }
 
-export default MoreButton;
+export default LibraryMore;
