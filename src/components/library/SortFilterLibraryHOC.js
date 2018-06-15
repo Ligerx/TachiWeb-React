@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import type { MangaType, LibraryFlagsType } from 'types';
 
 // TODO: Consider using a fuzzy search package for the search filter
 
@@ -23,6 +24,8 @@ const sortFuncs = unread => ({
     return stringComparison(a.title, b.title);
   },
   TOTAL_CHAPTERS: (a, b) => {
+    if (a.chapters == null || b.chapters == null) return 0;
+
     if (a.chapters !== b.chapters) {
       return a.chapters - b.chapters;
     }
@@ -61,10 +64,21 @@ const completedFilterFuncs = {
 const searchFilterFunc = searchQuery => mangaInfo =>
   mangaInfo.title.toUpperCase().includes(searchQuery.toUpperCase());
 
+type InputProps = {
+  mangaLibrary: Array<MangaType>,
+  flags: LibraryFlagsType,
+  searchQuery: string,
+  unread: { [mangaId: number]: number },
+};
+
+type OutputProps = {
+  mangaLibrary: Array<MangaType>,
+};
+
 /* eslint-disable react/prefer-stateless-function */
 // Having a named class allows it to show up in react dev tools
-const SortFilterLibraryHOC = (WrappedComponent: React.Node) =>
-  class withSortedFilteredLibrary extends React.Component {
+function SortFilterLibraryHOC(WrappedComponent: React.ComponentType<OutputProps>): React.ComponentType<InputProps> {
+  return class withSortedFilteredLibrary extends React.Component<InputProps> {
     render() {
       const {
         mangaLibrary, flags, searchQuery, unread, ...otherProps
@@ -75,7 +89,7 @@ const SortFilterLibraryHOC = (WrappedComponent: React.Node) =>
       } = flags;
 
       let sortedFilteredLibrary = mangaLibrary
-        .slice() // clone array
+        .slice() // clone array // $FlowFixMe - SORT_TYPE.LAST_READ, LAST_UPDATED not implemented
         .sort(sortFuncs(unread)[SORT_TYPE])
         .filter(readFilterFuncs(unread)[READ_FILTER])
         .filter(downloadedFilterFuncs[DOWNLOADED_FILTER])
@@ -89,5 +103,6 @@ const SortFilterLibraryHOC = (WrappedComponent: React.Node) =>
       return <WrappedComponent {...otherProps} mangaLibrary={sortedFilteredLibrary} />;
     }
   };
+}
 
 export default SortFilterLibraryHOC;

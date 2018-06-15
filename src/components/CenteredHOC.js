@@ -1,10 +1,14 @@
 // @flow
 import * as React from 'react';
 
+type Props = {
+  className?: string, // optional
+};
+
 /* eslint-disable react/prefer-stateless-function */
 // Having a named class allows it to show up in react dev tools
-const CenteredHOC = (WrappedComponent: React.Node) =>
-  class withCenteredHOC extends React.Component<{ className?: string }> {
+function CenteredHOC(WrappedComponent: React.ComponentType<Props>): React.ComponentType<Props> {
+  return class withCenteredHOC extends React.Component<Props> {
     static defaultProps = {
       className: null,
     };
@@ -25,5 +29,6 @@ const CenteredHOC = (WrappedComponent: React.Node) =>
       );
     }
   };
+}
 
 export default CenteredHOC;
