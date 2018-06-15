@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import MangaCard from 'components/MangaCard';
 import Grid from '@material-ui/core/Grid';
-import BackgroundImage from 'components/BackgroundImage';
+import BackgroundImage from 'components/mangaInfo/BackgroundImage';
 import { withStyles } from '@material-ui/core/styles';
 import type { MangaType } from 'types';
 import classNames from 'classnames';
