@@ -26,8 +26,10 @@ const breakpoints = {
 
 type Props = {
   children: React.Node,
-  spacing?: number,
-  maxWidth?: number | 'xs' | 'sm' | 'md' | 'lg' | 'xl',
+
+  // Optional props
+  spacing: number,
+  maxWidth: number | 'xs' | 'sm' | 'md' | 'lg' | 'xl',
 }; // other props get passed to the inner grid
 
 const ResponsiveGrid = ({

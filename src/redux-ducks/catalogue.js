@@ -71,11 +71,6 @@ export default function catalogueReducer(state: State = initialState, action = {
       };
     }
 
-    case ADD_PAGE_NO_NEXT_PAGE: {
-      console.error('No next page to fetch. Should not be reaching here');
-      return state;
-    }
-
     case UPDATE_SEARCH_QUERY:
       return { ...state, searchQuery: action.searchQuery };
 
@@ -147,6 +142,7 @@ export function fetchNextCataloguePage() {
     const nextPage = page + 1;
 
     if (!hasNextPage) {
+      // Failsafe - don't actually call this function if there is no next page
       return dispatch({ type: ADD_PAGE_NO_NEXT_PAGE });
     }
     if (sourceId == null) {

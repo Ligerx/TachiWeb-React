@@ -40,7 +40,8 @@ class MangaInfoMore extends React.Component<Props, State> {
     sortTypeOpen: false,
   };
 
-  handleClick = (event) => {
+  handleClick = (event: SyntheticEvent<>) => {
+    // $FlowFixMe - ignore flow warning below
     this.setState({ anchorEl: event.currentTarget });
   };
 

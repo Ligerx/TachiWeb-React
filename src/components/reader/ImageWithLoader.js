@@ -49,6 +49,7 @@ class ImageWithLoader extends Component<Props, State> {
     retries: 0,
   };
 
+  /* eslint-disable react/no-did-update-set-state */
   componentDidUpdate(prevProps: Props) {
     // Changing the img src doesn't trigger any event to update
     // status so you have to do it manually.

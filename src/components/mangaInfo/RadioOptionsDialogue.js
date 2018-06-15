@@ -39,7 +39,9 @@ class RadioOptionsDialogue extends Component<Props, State> {
 
   handleEntering = () => {
     this.setState({ value: this.props.value }); // reset state on open
-    this.radioGroup.focus();
+    if (this.radioGroup) {
+      this.radioGroup.focus();
+    }
   };
 
   handleCancel = () => {

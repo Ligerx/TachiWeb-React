@@ -11,6 +11,12 @@ import Dropzone from 'react-dropzone';
 // About the [accept="application/json,.json"]
 // https://stackoverflow.com/questions/46663063/inputs-accept-attribute-doesnt-recognise-application-json
 
+// React dropzone docs
+// https://github.com/react-dropzone/react-dropzone
+
+// using 'rejectedFiles' array to show if invalid files were passed
+/* eslint-disable react/no-unused-state */
+
 type Props = {
   onClickRestore: Function,
 };
@@ -27,7 +33,7 @@ class RestoreCard extends Component<Props, State> {
     rejectedFiles: [],
   };
 
-  handleDrop = (acceptedFiles, rejectedFiles) => {
+  handleDrop = (acceptedFiles: Array<File>, rejectedFiles: Array<File>) => {
     if (acceptedFiles.length) {
       this.setState({ acceptedFiles, rejectedFiles: [] });
     } else if (rejectedFiles.length) {
@@ -35,10 +41,9 @@ class RestoreCard extends Component<Props, State> {
     }
   };
 
-  // if dropzone is given a children of type function, it will call it and inject the below params
-  dropzoneContent = ({
-    isDragActive, isDragReject, acceptedFiles, rejectedFiles,
-  }) => {
+  // If dropzone's child node is a function, it will inject params
+  // refer to dropzone docs for more details
+  dropzoneContent = ({ isDragReject, acceptedFiles, rejectedFiles }: Object) => {
     if (isDragReject) {
       return 'Only JSON backup files are accepted';
     } else if (rejectedFiles.length) {

@@ -47,14 +47,22 @@ type Props = {
   alt: string,
   nextPageUrl: ?string,
   prevPageUrl: ?string,
+
+  // react router props
+  history: {
+    push: Function,
+  },
 };
 
 class SinglePageReader extends Component<Props> {
   componentDidMount() {
+    // flow doesn't play nice with document.addEventListener() or removeEventListener()
+    // $FlowFixMe
     document.addEventListener('keydown', this.handleArrowKeyDown);
   }
 
   componentWillUnmount() {
+    // $FlowFixMe
     document.removeEventListener('keydown', this.handleArrowKeyDown);
   }
 
