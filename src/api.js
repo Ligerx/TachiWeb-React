@@ -77,12 +77,15 @@ export const Server = {
   },
 
   backupDownload() {
-    // FIXME: Because dev backend server is on a different port than this project,
-    // I couldn't get this file to download via a relative path
+    // React is running on port 3000, server is running on port 4567
+    // React was intercepting the relative URL in dev
     //
-    // Using an absolute path will work in dev, but I need to fix this for the production version
+    // Using an absolute path for dev, relative path for production
     //
     // Don't use react router Link component, just use a normal <a href="..." download>
+    if (process.env.NODE_ENV === 'production') {
+      return '/api/backup?force-download=true';
+    }
     return 'http://localhost:4567/api/backup?force-download=true';
   },
 
