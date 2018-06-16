@@ -16,8 +16,11 @@ import { withStyles } from '@material-ui/core/styles';
 import { Helmet } from 'react-helmet';
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
-// TODO: actually split all of this up into components...
-// TODO: maybe add text saying that there are no more pages to load?
+
+// FIXME: If you type something into the search bar,
+//        then delete everything, searching breaks (no results)
+
+// TODO: If you update search, then change it back to it's original value, don't search again?
 
 const styles = {
   loading: {
