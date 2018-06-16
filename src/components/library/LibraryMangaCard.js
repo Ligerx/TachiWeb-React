@@ -8,22 +8,24 @@ import MangaCard from 'components/MangaCard';
 import Link from 'components/Link';
 import { Server, Client } from 'api';
 import type { MangaType } from 'types';
+import classNames from 'classnames';
 
 // TODO: Currently passing in the entire unread object, not just the corresponding number
 //       ^ Would have to rework the component tree a big to make that happen.
 
-// * fullWidth
-// While the grid item is full width, it's children aren't.
-// Need to apply width 100% multiple levels down to make things stretch correctly.
-// * invisibleBadge
-// Implemented hiding the badge when there's no unread manga via CSS.
-// TODO: ? This is possibly harder to understand, so maybe refactor it in the future.
 const styles = {
   fullWidth: {
+    // While the grid item is full width, it's children aren't.
+    // Need to apply width 100% multiple levels down to make things stretch correctly.
     width: '100%',
   },
   invisibleBadge: {
+    // Hide the badge via CSS when there's no unread manga
     visibility: 'hidden',
+  },
+  badge: {
+    top: -8,
+    right: -8, // Fixes badge overflowing on the x-axis
   },
 };
 
@@ -33,21 +35,27 @@ type Props = {
   unread: { [mangaId: number]: number },
 };
 
-const LibraryMangaCard = ({ classes, manga, unread }: Props) => (
-  <Grid item xs={6} sm={3}>
-    <Badge
-      badgeContent={unread[manga.id] || 0}
-      color="primary"
-      className={classes.fullWidth}
-      classes={{
-        badge: unread[manga.id] > 0 ? null : classes.invisibleBadge,
-      }}
-    >
-      <ButtonBase className={classes.fullWidth} component={Link} to={Client.manga(manga.id)}>
-        <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
-      </ButtonBase>
-    </Badge>
-  </Grid>
-);
+const LibraryMangaCard = ({ classes, manga, unread }: Props) => {
+  const badgeClass = classNames(
+    classes.badge,
+    // make badge invisible when this manga's unread count is 0 (or == null)
+    { [classes.invisibleBadge]: !unread[manga.id] },
+  );
+
+  return (
+    <Grid item xs={6} sm={3}>
+      <Badge
+        badgeContent={unread[manga.id] || 0}
+        color="primary"
+        className={classes.fullWidth}
+        classes={{ badge: badgeClass }}
+      >
+        <ButtonBase className={classes.fullWidth} component={Link} to={Client.manga(manga.id)}>
+          <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
+        </ButtonBase>
+      </Badge>
+    </Grid>
+  );
+};
 
 export default withStyles(styles)(LibraryMangaCard);
