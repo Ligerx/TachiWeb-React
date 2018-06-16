@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import type { ChapterType } from 'types';
-import { Client } from 'api';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Link from 'components/Link';
@@ -19,16 +18,18 @@ import { chapterNumPrettyPrint } from 'components/utils';
 type Props = {
   chapters: Array<ChapterType>,
   mangaId: number,
-  // otherProps passed to Button
-};
+  chapterUrl: Function,
+}; // otherProps passed to Button
 
-const ContinueReadingButton = ({ chapters, mangaId, ...otherProps }: Props) => {
+const ContinueReadingButton = ({
+  chapters, mangaId, chapterUrl, ...otherProps
+}: Props) => {
   if (!chapters.length) return null;
 
   const firstUnreadChapter = findFirstUnreadChapter(chapters);
 
   if (firstUnreadChapter) {
-    const pageUrl = Client.page(mangaId, firstUnreadChapter.id, firstUnreadChapter.last_page_read);
+    const pageUrl = chapterUrl(mangaId, firstUnreadChapter.id, firstUnreadChapter.last_page_read);
     return (
       <Button variant="contained" color="primary" component={Link} to={pageUrl} {...otherProps}>
         <Icon>play_arrow</Icon>

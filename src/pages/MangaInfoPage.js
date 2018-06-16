@@ -48,8 +48,8 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
     updateChapters().then(() => updateMangaInfo());
   };
 
-  chapterUrl = (mangaInfo: MangaType, chapterId: number, goToPage: number) =>
-    this.props.urlPrefix + Client.page(mangaInfo.id, chapterId, goToPage);
+  chapterUrl = (mangaId: number, chapterId: number, goToPage: number) =>
+    this.props.urlPrefix + Client.page(mangaId, chapterId, goToPage);
 
   render() {
     const {

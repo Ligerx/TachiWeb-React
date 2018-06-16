@@ -33,10 +33,11 @@ const ChapterListItem = ({
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
   const chapterName: string =
     mangaInfo.flags.DISPLAY_MODE === 'NAME'
-      ? chapter.name : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
+      ? chapter.name
+      : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 
   return (
-    <ListItem button divider component={Link} to={chapterUrl(mangaInfo, chapter.id, goToPage)}>
+    <ListItem button divider component={Link} to={chapterUrl(mangaInfo.id, chapter.id, goToPage)}>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="subheading" className={dimIfRead(chapter.read)}>

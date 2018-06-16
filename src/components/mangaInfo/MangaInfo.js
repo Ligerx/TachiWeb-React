@@ -67,6 +67,7 @@ class MangaInfo extends React.Component<Props, State> {
             <CenteredContinueReadingButton
               chapters={chapters}
               mangaId={mangaInfo.id}
+              chapterUrl={chapterUrl}
               style={{ marginBottom: 24 }}
             />
 
