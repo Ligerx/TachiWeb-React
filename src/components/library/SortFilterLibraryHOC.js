@@ -71,7 +71,7 @@ type InputProps = {
   unread: { [mangaId: number]: number },
 };
 
-type OutputProps = {
+type OutputProps = {} & {
   mangaLibrary: Array<MangaType>,
 };
 

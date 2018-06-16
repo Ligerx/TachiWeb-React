@@ -7,6 +7,7 @@ import FullScreenLoading from 'components/loading/FullScreenLoading';
 import type { LibraryContainerProps } from 'containers/LibraryContainer';
 import SortFilterLibraryHOC from 'components/library/SortFilterLibraryHOC';
 import { Helmet } from 'react-helmet';
+import { CircularProgress } from '@material-ui/core';
 
 // TODO: sort/filter mangaLibrary
 

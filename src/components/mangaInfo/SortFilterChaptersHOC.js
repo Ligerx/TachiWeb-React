@@ -20,19 +20,15 @@ const downloadedFilterFuncs = {
   NOT_DOWNLOADED: chapter => chapter.download_status === 'NOT_DOWNLOADED', // unused
 };
 
-type InputProps = {
+type Props = {
   mangaInfo: MangaType,
   chapters: Array<ChapterType>,
 };
 
-type OutputProps = {
-
-};
-
 /* eslint-disable react/prefer-stateless-function */
 // Having a named class allows it to show up in react dev tools
-function SortFilterChaptersHOC(WrappedComponent: React.ComponentType<OutputProps>): React.ComponentType<InputProps> {
-  return class withSortedFilteredChapters extends React.Component<InputProps> {
+function SortFilterChaptersHOC(WrappedComponent: React.ComponentType<Props>): React.ComponentType<Props> {
+  return class withSortedFilteredChapters extends React.Component<Props> {
     render() {
       const { mangaInfo, chapters, ...otherProps } = this.props;
       const {

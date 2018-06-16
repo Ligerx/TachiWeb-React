@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import CenteredHOC from 'components/CenteredHOC';
 
 type Props = {
-  className?: string, // parent passing a styled className
+  className: ?string, // optional - parent passing a styled className
 }; // otherProps will be passed to CircularProgress
 
 const CenteredLoading = ({ className, ...otherProps }: Props) => {
