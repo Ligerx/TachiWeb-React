@@ -5,6 +5,7 @@ import { Client } from 'api';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Link from 'components/Link';
+import { chapterNumPrettyPrint } from 'components/utils';
 
 // The chapters list passed into this component should NOT be sorted or filtered.
 // It iterates through the chapters array based on the array's natural order.
@@ -31,7 +32,7 @@ const ContinueReadingButton = ({ chapters, mangaId, ...otherProps }: Props) => {
     return (
       <Button variant="contained" color="primary" component={Link} to={pageUrl} {...otherProps}>
         <Icon>play_arrow</Icon>
-        Continue Reading Ch. {firstUnreadChapter.chapter_number}
+        Continue Reading Ch. {chapterNumPrettyPrint(firstUnreadChapter.chapter_number)}
       </Button>
     );
   }
