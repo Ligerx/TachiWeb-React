@@ -215,11 +215,6 @@ type Param = Array<{ id: number, unread: number }>;
 type Return = { [mangaId: number]: number };
 
 function transformUnread(unreadArray: Param): Return {
-  // FIXME: server currently returns {"success":true} when Library is empty
-  //        instead of {"success":true,"content":[]}
-  //        Remove this redundant check once this is fixed
-  if (unreadArray == null) return {};
-
   const newUnread = {};
   unreadArray.forEach((unreadObj) => {
     newUnread[unreadObj.id] = unreadObj.unread;

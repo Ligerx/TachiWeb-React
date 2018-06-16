@@ -4,7 +4,7 @@ export const Server = {
   },
 
   libraryUnread() {
-    return '/api/library?jw=$.success&jw=$.content.*.unread&jw=$.content.*.id';
+    return '/api/library?jw=$.success&jw=$.content.*.unread&jw=$.content.*.id&jw=$.content';
   },
 
   mangaInfo(mangaId) {
