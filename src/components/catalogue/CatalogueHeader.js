@@ -3,13 +3,24 @@ import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import MenuDrawer from 'components/MenuDrawer';
-import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import type { SourceType } from 'types';
+import Input from '@material-ui/core/Input';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = {
+  catalogueSelect: {
+    paddingLeft: 8,
+  },
+  searchInput: {
+    flex: 1, // fill remaining width
+    marginLeft: 16,
+  },
+};
 
 type Props = {
+  classes: Object, // injected styles
   sourceId: ?number,
   sources: Array<SourceType>,
   searchQuery: string,
@@ -18,42 +29,46 @@ type Props = {
 };
 
 const CatalogueHeader = ({
+  classes,
   sourceId,
   sources,
   searchQuery,
   onSourceChange,
   onSearchChange,
 }: Props) => {
-  const sourcesExist: boolean = sources && sources.length > 0;
+  const sourcesExist = sources && sources.length > 0 && sourceId != null;
+  const sourceIndex = sources.findIndex(source => source.id === sourceId);
 
   return (
     <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
       <Toolbar>
         <MenuDrawer />
 
-        {sourcesExist &&
-          sourceId != null && (
-            <form onSubmit={e => e.preventDefault()}>
-              <FormControl>
-                <Select value={findSourceIndex(sources, sourceId)} onChange={onSourceChange}>
-                  {sources.map((source, index) => (
-                    <MenuItem value={index} key={source.id}>
-                      {source.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+        {sourcesExist && (
+          <React.Fragment>
+            <Select
+              value={sourceIndex}
+              onChange={onSourceChange}
+              classes={{ select: classes.catalogueSelect }}
+            >
+              {sources.map((source, index) => (
+                <MenuItem value={index} key={source.id}>
+                  {source.name}
+                </MenuItem>
+              ))}
+            </Select>
 
-              <TextField label="Search" value={searchQuery} onChange={onSearchChange} />
-            </form>
-          )}
+            <Input
+              className={classes.searchInput}
+              placeholder="Search"
+              value={searchQuery}
+              onChange={onSearchChange}
+            />
+          </React.Fragment>
+        )}
       </Toolbar>
     </AppBar>
   );
 };
 
-function findSourceIndex(sources, sourceId) {
-  return sources.findIndex(source => source.id === sourceId);
-}
-
-export default CatalogueHeader;
+export default withStyles(styles)(CatalogueHeader);
