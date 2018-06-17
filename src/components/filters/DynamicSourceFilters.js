@@ -79,7 +79,8 @@ class DynamicSourceFilters extends Component<Props, State> {
         </Button>
 
         <Drawer anchor="right" open={this.state.drawerOpen} onClose={this.toggleDrawer(false)}>
-          <div tabIndex={0} role="button">
+          {/* without this div, FilterGroup components screw up, not sure why though */}
+          <div>
             <FilterActions onResetClick={onResetClick} onSearchClick={this.handleSearchClick} />
             {filters.length && (
               <FormGroup className={classes.filters}>
