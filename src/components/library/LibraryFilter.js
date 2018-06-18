@@ -9,7 +9,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import type { LibraryFlagsType } from 'types';
 
-// FIXME: Refer to MangaInfoFilter for more details
+// NOTE: Refer to MangaInfoFilter for more details, components are extremely similar
+
+// TODO: can I create a generic component since they are so similar?
 
 type Props = {
   flags: LibraryFlagsType,
@@ -33,19 +35,22 @@ class LibraryFilter extends Component<Props, State> {
     this.setState({ anchorEl: null });
   };
 
-  handleUnreadClick = () => {
+  handleUnreadClick = (e: SyntheticEvent<>) => {
+    e.preventDefault();
     const { flags, onReadFilterChange } = this.props;
     const newReadFlag = flags.READ_FILTER === 'ALL' ? 'UNREAD' : 'ALL';
     onReadFilterChange(newReadFlag);
   };
 
-  handleDownloadedClick = () => {
+  handleDownloadedClick = (e: SyntheticEvent<>) => {
+    e.preventDefault();
     const { flags, onDownloadedFilterChange } = this.props;
     const newDownloadedFlag = flags.DOWNLOADED_FILTER === 'ALL' ? 'DOWNLOADED' : 'ALL';
     onDownloadedFilterChange(newDownloadedFlag);
   };
 
-  handleCompletedClick = () => {
+  handleCompletedClick = (e: SyntheticEvent<>) => {
+    e.preventDefault();
     const { flags, onCompletedFilterChange } = this.props;
     const newCompletedFlag = flags.COMPLETED_FILTER === 'ALL' ? 'COMPLETED' : 'ALL';
     onCompletedFilterChange(newCompletedFlag);
@@ -71,26 +76,23 @@ class LibraryFilter extends Component<Props, State> {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem>
+          <MenuItem onClick={this.handleDownloadedClick}>
             <FormControlLabel
               label="Downloaded"
-              onChange={this.handleDownloadedClick}
               control={<Checkbox checked={flags.DOWNLOADED_FILTER === 'DOWNLOADED'} />}
             />
           </MenuItem>
 
-          <MenuItem>
+          <MenuItem onClick={this.handleUnreadClick}>
             <FormControlLabel
               label="Unread"
-              onChange={this.handleUnreadClick}
               control={<Checkbox checked={flags.READ_FILTER === 'UNREAD'} />}
             />
           </MenuItem>
 
-          <MenuItem>
+          <MenuItem onClick={this.handleCompletedClick}>
             <FormControlLabel
               label="Completed"
-              onChange={this.handleCompletedClick}
               control={<Checkbox checked={flags.COMPLETED_FILTER === 'COMPLETED'} />}
             />
           </MenuItem>
