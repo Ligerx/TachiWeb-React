@@ -33,7 +33,7 @@ class BackupRestore extends Component<Props> {
           </Toolbar>
         </AppBar>
 
-        <ResponsiveGrid>
+        <ResponsiveGrid maxWidth="xs">
           <Grid item xs={12}>
             <BackupCard />
           </Grid>
