@@ -17,11 +17,11 @@ import Grid from '@material-ui/core/Grid';
 // Based on material-ui's grid breakpoints (max val, not min val)
 // https://material-ui.com/customization/default-theme/#default-theme
 const breakpoints = {
-  xs: 599,
-  sm: 959,
-  md: 1279,
-  lg: 1919,
-  xl: 1920,
+  xs: 600 - 1,
+  sm: 960 - 1,
+  md: 1280 - 1,
+  lg: 1920 - 1,
+  xl: 1920, // TODO: not sure what to do with xl size
 };
 
 type Props = {
