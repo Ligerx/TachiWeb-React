@@ -9,16 +9,13 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import type { FlagsType } from 'types';
 
-// NOTE: A disabled FormControlLabel will not fire it's Checkbox onChange event
-//       So I don't need to check if READ_FILTER === UNREAD in handleReadClick() for example
+// A disabled FormControlLabel will not fire it's Checkbox onChange event.
+// So I don't need to check if READ_FILTER === UNREAD in handleReadClick() for example.
 
-// FIXME: The entire MenuItem is clickable, but only the checkbox and label call onChange on click.
-//   MenuItem doesn't have an onChange prop, so maybe the solution is to make the label full width?
-//
-//   I tried using MenuItem onClick instead, but clicking on FormControlLabel was causing it to
-//   fire twice for some reason.
-//
-//   Also, apply same fixes to LibraryFilter
+// Placing the click events on MenuItem component so that the entire
+// element is clickable, not just the checkbox + label.
+// However, the click would propagate to the FormControlLabel and trigger a double event,
+// effectively undoing the click. I'm using event.preventDefault() to avoid this.
 
 type Props = {
   flags: FlagsType,
@@ -50,19 +47,22 @@ class MangaInfoFilter extends Component<Props, State> {
     this.setState({ anchorEl: null });
   };
 
-  handleReadClick = () => {
+  handleReadClick = (e: SyntheticEvent<>) => {
+    e.preventDefault();
     const { flags, onReadFilterChange } = this.props;
     const newReadFlag = flags.READ_FILTER === 'ALL' ? 'READ' : 'ALL';
     onReadFilterChange(newReadFlag);
   };
 
-  handleUnreadClick = () => {
+  handleUnreadClick = (e: SyntheticEvent<>) => {
+    e.preventDefault();
     const { flags, onReadFilterChange } = this.props;
     const newReadFlag = flags.READ_FILTER === 'ALL' ? 'UNREAD' : 'ALL';
     onReadFilterChange(newReadFlag);
   };
 
-  handleDownloadedClick = () => {
+  handleDownloadedClick = (e: SyntheticEvent<>) => {
+    e.preventDefault();
     const { flags, onDownloadedFilterChange } = this.props;
     const newDownloadedFlag = flags.DOWNLOADED_FILTER === 'ALL' ? 'DOWNLOADED' : 'ALL';
     onDownloadedFilterChange(newDownloadedFlag);
@@ -91,42 +91,38 @@ class MangaInfoFilter extends Component<Props, State> {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem>
+          <MenuItem onClick={this.handleReadClick}>
             <FormControlLabel
               label="Read"
-              onChange={this.handleReadClick}
               control={<Checkbox checked={flags.READ_FILTER === 'READ'} />}
               disabled={readIsDisabled}
             />
           </MenuItem>
 
-          <MenuItem>
+          <MenuItem onClick={this.handleUnreadClick}>
             <FormControlLabel
               label="Unread"
-              onChange={this.handleUnreadClick}
               control={<Checkbox checked={flags.READ_FILTER === 'UNREAD'} />}
               disabled={unreadIsDisabled}
             />
           </MenuItem>
 
-          <MenuItem>
+          <MenuItem onClick={this.handleDownloadedClick}>
             <FormControlLabel
               label="Downloaded"
-              onChange={this.handleDownloadedClick}
               control={<Checkbox checked={flags.DOWNLOADED_FILTER === 'DOWNLOADED'} />}
             />
           </MenuItem>
 
-          {/* TODO: bookmarked. Relies on a newer version of the backend I think? */}
-          <MenuItem>
+          {/* TODO: Bookmarked information is not currently stored by the server */}
+          {/*
+          <MenuItem onClick={null}>
             <FormControlLabel
               label="Bookmarked"
-              onChange={null}
               control={<Checkbox checked={false} />}
-              disabled
-              style={{ textDecoration: 'line-through' }}
             />
           </MenuItem>
+          */}
 
           <MenuItem onClick={this.handleRemoveFilters}>Remove Filters</MenuItem>
         </Menu>
