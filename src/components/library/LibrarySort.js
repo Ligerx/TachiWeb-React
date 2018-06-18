@@ -6,8 +6,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import type { LibraryFlagsType } from 'types';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 
 const sorts = [
   { flagState: 'ALPHABETICALLY', description: 'Alphabetically' },
@@ -17,7 +17,14 @@ const sorts = [
   // others not implemented yet
 ];
 
+const styles = {
+  icon: {
+    marginRight: 8,
+  },
+};
+
 type Props = {
+  classes: Object, // injected styles
   flags: LibraryFlagsType,
   onChange: Function,
 };
@@ -43,7 +50,7 @@ class LibrarySort extends Component<Props, State> {
   };
 
   render() {
-    const { flags } = this.props;
+    const { classes, flags } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -63,11 +70,13 @@ class LibrarySort extends Component<Props, State> {
           onClose={this.handleClose}
         >
           {sorts.map(sort => (
-            <MenuItem key={sort.flagState}>
-              <ButtonBase onClick={this.handleSortChange(sort.flagState)}>
-                <Icon>{iconValue(flags.SORT_TYPE, flags.SORT_DIRECTION, sort.flagState)}</Icon>
+            <MenuItem key={sort.flagState} onClick={this.handleSortChange(sort.flagState)}>
+              <React.Fragment>
+                <Icon className={classes.icon}>
+                  {iconValue(flags.SORT_TYPE, flags.SORT_DIRECTION, sort.flagState)}
+                </Icon>
                 <Typography>{sort.description}</Typography>
-              </ButtonBase>
+              </React.Fragment>
             </MenuItem>
           ))}
         </Menu>
@@ -84,4 +93,4 @@ function iconValue(currentFlag: string, sortDirection: string, thisFlag: string)
   return '';
 }
 
-export default LibrarySort;
+export default withStyles(styles)(LibrarySort);
