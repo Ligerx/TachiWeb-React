@@ -11,7 +11,7 @@ import { Server, Client } from 'api';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
 import Waypoint from 'react-waypoint';
-import queryString from 'query-string';
+import queryString from 'query-string-es5';
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>
