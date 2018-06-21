@@ -21,7 +21,7 @@ export const FETCH_UNREAD = 'library/FETCH_UNREAD';
 
 export const ADD_TO_FAVORITES = 'library/ADD_TO_FAVORITES';
 export const REMOVE_FROM_FAVORITES = 'library/REMOVE_FROM_FAVORITES';
-export const DECREMENT_UNREAD = 'library/DECREMENT_UNREAD';
+export const ADJUST_UNREAD = 'library/ADJUST_UNREAD';
 
 const UPLOAD_RESTORE_REQUEST = 'library/UPLOAD_RESTORE_REQUEST';
 const UPLOAD_RESTORE_SUCCESS = 'library/UPLOAD_RESTORE_SUCCESS';
@@ -95,14 +95,15 @@ export default function libraryReducer(
         mangaIds: newMangaIds,
       };
     }
-    case DECREMENT_UNREAD: {
+
+    case ADJUST_UNREAD: {
       const { unread } = state;
-      const { mangaId } = action;
+      const { mangaId, difference } = action; // difference should be 1 or -1
       return {
         ...state,
         unread: {
           ...unread,
-          [mangaId]: unread[mangaId] - 1,
+          [mangaId]: unread[mangaId] + difference,
         },
       };
     }

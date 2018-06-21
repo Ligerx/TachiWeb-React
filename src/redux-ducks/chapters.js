@@ -1,7 +1,7 @@
 // @flow
 import { Server } from 'api';
 import type { ChapterType } from 'types';
-import { DECREMENT_UNREAD } from './library';
+import { ADJUST_UNREAD } from './library';
 import { handleHTMLError } from './utils';
 
 // ================================================================================
@@ -22,6 +22,10 @@ const UPDATE_READING_STATUS_NO_CHANGE = 'chapters/UPDATE_READING_STATUS_NO_CHANG
 const UPDATE_READING_STATUS_REQUEST = 'chapters/UPDATE_READING_STATUS_REQUEST';
 const UPDATE_READING_STATUS_SUCCESS = 'chapters/UPDATE_READING_STATUS_SUCCESS';
 const UPDATE_READING_STATUS_FAILURE = 'chapters/UPDATE_READING_STATUS_FAILURE';
+
+const TOGGLE_READ_REQUEST = 'chapters/TOGGLE_READ_REQUEST';
+const TOGGLE_READ_SUCCESS = 'chapters/TOGGLE_READ_SUCCESS';
+const TOGGLE_READ_FAILURE = 'chapters/TOGGLE_READ_FAILURE';
 
 // ================================================================================
 // Reducers
@@ -48,7 +52,15 @@ export default function chaptersReducer(state: State = {}, action = {}) {
       } = action;
       return {
         ...state,
-        [mangaId]: changeChapterObjReadState(state[mangaId], chapterId, readPage, didReadLastPage),
+        [mangaId]: changeChapterObjReadState(state[mangaId], chapterId, didReadLastPage, readPage),
+      };
+    }
+
+    case TOGGLE_READ_SUCCESS: {
+      const { mangaId, chapterId, read } = action;
+      return {
+        ...state,
+        [mangaId]: changeChapterObjReadState(state[mangaId], chapterId, read),
       };
     }
 
@@ -151,7 +163,7 @@ export function updateReadingStatus(
         () => {
           if (didReadLastPage) {
             // Update library unread that there's one less unread chapter
-            dispatch({ type: DECREMENT_UNREAD, mangaId });
+            dispatch({ type: ADJUST_UNREAD, mangaId, difference: -1 });
           }
 
           return dispatch({
@@ -172,10 +184,40 @@ export function updateReadingStatus(
   };
 }
 
+// TODO: Update this function (and maybe updateReadingStatus()) to new api version
+export function toggleRead(mangaId: number, chapterId: number, read: boolean) {
+  return (dispatch: Function) => {
+    dispatch({ type: TOGGLE_READ_REQUEST, meta: { mangaId, chapterId, read } });
+
+    return fetch(Server.updateReadingStatus(mangaId, chapterId, 0, read))
+      .then(handleHTMLError)
+      .then(
+        () => {
+          // Update cached library unread chapter count
+          const difference = read ? -1 : 1;
+          dispatch({ type: ADJUST_UNREAD, mangaId, difference });
+
+          return dispatch({
+            type: TOGGLE_READ_SUCCESS,
+            mangaId,
+            chapterId,
+            read,
+          });
+        },
+        error =>
+          dispatch({
+            type: TOGGLE_READ_FAILURE,
+            errorMessage: `Failed to mark chapter as ${read ? 'read' : 'unread'}`,
+            meta: { error },
+          }),
+      );
+  };
+}
+
 // ================================================================================
 // Helper Functions
 // ================================================================================
-function changeChapterObjReadState(chapters, chapterId, readPage, didReadLastPage) {
+function changeChapterObjReadState(chapters, chapterId, didReadLastPage, readPage = 0) {
   const chapterIndex = chapters.findIndex(chapter => chapter.id === chapterId);
   const chapter = chapters[chapterIndex];
 
