@@ -50,7 +50,11 @@ const LibraryMangaCard = ({ classes, manga, unread }: Props) => {
         className={classes.fullWidth}
         classes={{ badge: badgeClass }}
       >
-        <ButtonBase className={classes.fullWidth} component={Link} to={Client.manga(manga.id)}>
+        <ButtonBase
+          className={classes.fullWidth}
+          component={Link}
+          to={`/library${Client.manga(manga.id)}`}
+        >
           <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
         </ButtonBase>
       </Badge>

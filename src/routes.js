@@ -18,9 +18,10 @@ const Router = () => (
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={LibraryContainer} />
-        <Route path="/library" component={LibraryContainer} />
-        <Route path="/backup_restore" component={BackupRestore} />
 
+        <Route exact path="/backup_restore" component={BackupRestore} />
+
+        <Route exact path="/catalogue" component={CatalogueContainer} />
         <Route
           path="/catalogue/:mangaId/:chapterId/:page"
           render={props => <ReaderContainer {...props} urlPrefix="/catalogue" />}
@@ -37,13 +38,20 @@ const Router = () => (
           )}
         />
 
-        <Route path="/catalogue" component={CatalogueContainer} />
-
-        <Route path="/:mangaId/:chapterId/:page" component={ReaderContainer} />
+        <Route exact path="/library" component={LibraryContainer} />
         <Route
-          path="/:mangaId"
+          path="/library/:mangaId/:chapterId/:page"
+          render={props => <ReaderContainer {...props} urlPrefix="/library" />}
+        />
+        <Route
+          path="/library/:mangaId"
           render={props => (
-            <MangaInfoContainer {...props} backUrl={Client.library()} defaultTab={1} />
+            <MangaInfoContainer
+              {...props}
+              backUrl={Client.library()}
+              defaultTab={1}
+              urlPrefix="/library"
+            />
           )}
         />
       </Switch>
