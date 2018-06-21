@@ -29,26 +29,23 @@ type Props = {
   render: Function,
 };
 
-class SortFilterChapters extends React.Component<Props> {
-  render() {
-    const { mangaInfoFlags, chapters, render } = this.props;
-    const {
-      SORT_TYPE, READ_FILTER, DOWNLOADED_FILTER, SORT_DIRECTION,
-    } = mangaInfoFlags;
+const SortFilterChapters = ({ mangaInfoFlags, chapters, render }: Props) => {
+  const {
+    SORT_TYPE, READ_FILTER, DOWNLOADED_FILTER, SORT_DIRECTION,
+  } = mangaInfoFlags;
 
-    let sortedFilteredChapters = chapters
-      .slice() // clone array
-      .sort(sortFuncs[SORT_TYPE])
-      .filter(readFilterFuncs[READ_FILTER])
-      .filter(downloadedFilterFuncs[DOWNLOADED_FILTER]);
+  let sortedFilteredChapters = chapters
+    .slice() // clone array
+    .sort(sortFuncs[SORT_TYPE])
+    .filter(readFilterFuncs[READ_FILTER])
+    .filter(downloadedFilterFuncs[DOWNLOADED_FILTER]);
 
-    // The manga chapters naturally come in ascending order
-    if (SORT_DIRECTION === 'DESCENDING') {
-      sortedFilteredChapters = sortedFilteredChapters.reverse();
-    }
-
-    return <React.Fragment>{render(sortedFilteredChapters)}</React.Fragment>;
+  // The manga chapters naturally come in ascending order
+  if (SORT_DIRECTION === 'DESCENDING') {
+    sortedFilteredChapters = sortedFilteredChapters.reverse();
   }
-}
+
+  return <React.Fragment>{render(sortedFilteredChapters)}</React.Fragment>;
+};
 
 export default SortFilterChapters;

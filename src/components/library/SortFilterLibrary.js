@@ -75,34 +75,30 @@ type Props = {
   render: Function,
 };
 
-class SortFilterLibrary extends React.Component<Props> {
-  render() {
-    const {
-      mangaLibrary, libraryFlags, searchQuery, unread, render,
-    } = this.props;
+const SortFilterLibrary = ({
+  mangaLibrary, libraryFlags, searchQuery, unread, render,
+}: Props) => {
+  const {
+    SORT_TYPE,
+    READ_FILTER,
+    DOWNLOADED_FILTER,
+    COMPLETED_FILTER,
+    SORT_DIRECTION,
+  } = libraryFlags;
 
-    const {
-      SORT_TYPE,
-      READ_FILTER,
-      DOWNLOADED_FILTER,
-      COMPLETED_FILTER,
-      SORT_DIRECTION,
-    } = libraryFlags;
+  let sortedFilteredLibrary = mangaLibrary
+    .slice() // clone array // $FlowFixMe - SORT_TYPE.LAST_READ, LAST_UPDATED not implemented
+    .sort(sortFuncs(unread)[SORT_TYPE])
+    .filter(readFilterFuncs(unread)[READ_FILTER])
+    .filter(downloadedFilterFuncs[DOWNLOADED_FILTER])
+    .filter(completedFilterFuncs[COMPLETED_FILTER])
+    .filter(searchFilterFunc(searchQuery));
 
-    let sortedFilteredLibrary = mangaLibrary
-      .slice() // clone array // $FlowFixMe - SORT_TYPE.LAST_READ, LAST_UPDATED not implemented
-      .sort(sortFuncs(unread)[SORT_TYPE])
-      .filter(readFilterFuncs(unread)[READ_FILTER])
-      .filter(downloadedFilterFuncs[DOWNLOADED_FILTER])
-      .filter(completedFilterFuncs[COMPLETED_FILTER])
-      .filter(searchFilterFunc(searchQuery));
-
-    if (SORT_DIRECTION === 'DESCENDING') {
-      sortedFilteredLibrary = sortedFilteredLibrary.reverse();
-    }
-
-    return <React.Fragment>{render(sortedFilteredLibrary)}</React.Fragment>;
+  if (SORT_DIRECTION === 'DESCENDING') {
+    sortedFilteredLibrary = sortedFilteredLibrary.reverse();
   }
-}
+
+  return <React.Fragment>{render(sortedFilteredLibrary)}</React.Fragment>;
+};
 
 export default SortFilterLibrary;
