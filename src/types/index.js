@@ -1,5 +1,5 @@
 // @flow
-export type FlagsType = {
+export type MangaInfoFlagsType = {
   DISPLAY_MODE: 'NAME' | 'NUMBER',
   READ_FILTER: 'READ' | 'UNREAD' | 'ALL',
   SORT_DIRECTION: 'ASCENDING' | 'DESCENDING',
@@ -20,7 +20,7 @@ export type MangaType = {
   source: string,
   url: string,
   downloaded: boolean,
-  flags: FlagsType,
+  flags: MangaInfoFlagsType,
 
   chapters: ?number,
   unread: ?number,

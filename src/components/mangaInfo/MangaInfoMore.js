@@ -4,7 +4,7 @@ import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import type { FlagsType } from 'types';
+import type { MangaInfoFlagsType } from 'types';
 import Tooltip from '@material-ui/core/Tooltip';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -22,7 +22,7 @@ const sortingModes = [
 
 type Props = {
   sourceUrl: string,
-  flags: FlagsType,
+  flags: MangaInfoFlagsType,
   onDisplayModeChange: Function,
   onSortTypeChange: Function,
 };

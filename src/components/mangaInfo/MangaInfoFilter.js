@@ -7,7 +7,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import type { FlagsType } from 'types';
+import type { MangaInfoFlagsType } from 'types';
 
 // A disabled FormControlLabel will not fire it's Checkbox onChange event.
 // So I don't need to check if READ_FILTER === UNREAD in handleReadClick() for example.
@@ -18,7 +18,7 @@ import type { FlagsType } from 'types';
 // effectively undoing the click. I'm using event.preventDefault() to avoid this.
 
 type Props = {
-  flags: FlagsType,
+  flags: MangaInfoFlagsType,
   onReadFilterChange: Function,
   onDownloadedFilterChange: Function,
 };
