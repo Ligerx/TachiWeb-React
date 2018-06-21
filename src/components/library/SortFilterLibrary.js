@@ -64,45 +64,45 @@ const completedFilterFuncs = {
 const searchFilterFunc = searchQuery => mangaInfo =>
   mangaInfo.title.toUpperCase().includes(searchQuery.toUpperCase());
 
-type InputProps = {
+type Props = {
   mangaLibrary: Array<MangaType>,
-  flags: LibraryFlagsType,
+  libraryFlags: LibraryFlagsType,
   searchQuery: string,
   unread: { [mangaId: number]: number },
+
+  // render props func
+  // https://reactjs.org/docs/render-props.html
+  render: Function,
 };
 
-type OutputProps = {} & {
-  mangaLibrary: Array<MangaType>,
-};
+class SortFilterLibrary extends React.Component<Props> {
+  render() {
+    const {
+      mangaLibrary, libraryFlags, searchQuery, unread, render,
+    } = this.props;
 
-/* eslint-disable react/prefer-stateless-function */
-// Having a named class allows it to show up in react dev tools
-function SortFilterLibraryHOC(WrappedComponent: React.ComponentType<OutputProps>): React.ComponentType<InputProps> {
-  return class withSortedFilteredLibrary extends React.Component<InputProps> {
-    render() {
-      const {
-        mangaLibrary, flags, searchQuery, unread, ...otherProps
-      } = this.props;
+    const {
+      SORT_TYPE,
+      READ_FILTER,
+      DOWNLOADED_FILTER,
+      COMPLETED_FILTER,
+      SORT_DIRECTION,
+    } = libraryFlags;
 
-      const {
-        SORT_TYPE, READ_FILTER, DOWNLOADED_FILTER, COMPLETED_FILTER, SORT_DIRECTION,
-      } = flags;
+    let sortedFilteredLibrary = mangaLibrary
+      .slice() // clone array // $FlowFixMe - SORT_TYPE.LAST_READ, LAST_UPDATED not implemented
+      .sort(sortFuncs(unread)[SORT_TYPE])
+      .filter(readFilterFuncs(unread)[READ_FILTER])
+      .filter(downloadedFilterFuncs[DOWNLOADED_FILTER])
+      .filter(completedFilterFuncs[COMPLETED_FILTER])
+      .filter(searchFilterFunc(searchQuery));
 
-      let sortedFilteredLibrary = mangaLibrary
-        .slice() // clone array // $FlowFixMe - SORT_TYPE.LAST_READ, LAST_UPDATED not implemented
-        .sort(sortFuncs(unread)[SORT_TYPE])
-        .filter(readFilterFuncs(unread)[READ_FILTER])
-        .filter(downloadedFilterFuncs[DOWNLOADED_FILTER])
-        .filter(completedFilterFuncs[COMPLETED_FILTER])
-        .filter(searchFilterFunc(searchQuery));
-
-      if (SORT_DIRECTION === 'DESCENDING') {
-        sortedFilteredLibrary = sortedFilteredLibrary.reverse();
-      }
-
-      return <WrappedComponent {...otherProps} mangaLibrary={sortedFilteredLibrary} />;
+    if (SORT_DIRECTION === 'DESCENDING') {
+      sortedFilteredLibrary = sortedFilteredLibrary.reverse();
     }
-  };
+
+    return <React.Fragment>{render(sortedFilteredLibrary)}</React.Fragment>;
+  }
 }
 
-export default SortFilterLibraryHOC;
+export default SortFilterLibrary;

@@ -5,7 +5,7 @@ import MangaGrid from 'components/MangaGrid';
 import LibraryMangaCard from 'components/library/LibraryMangaCard';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import type { LibraryContainerProps } from 'containers/LibraryContainer';
-import SortFilterLibraryHOC from 'components/library/SortFilterLibraryHOC';
+import SortFilterLibrary from 'components/library/SortFilterLibrary';
 import { Helmet } from 'react-helmet';
 
 // TODO: sort/filter mangaLibrary
@@ -52,8 +52,6 @@ class Library extends Component<LibraryContainerProps, State> {
     } = this.props;
     const { searchQuery } = this.state;
 
-    const SortFilterLibrary = SortFilterLibraryHOC(MangaGrid);
-
     return (
       <React.Fragment>
         <Helmet>
@@ -70,10 +68,15 @@ class Library extends Component<LibraryContainerProps, State> {
 
         <SortFilterLibrary
           mangaLibrary={mangaLibrary}
-          flags={flags}
+          libraryFlags={flags}
           searchQuery={searchQuery}
           unread={unread}
-          cardComponent={<LibraryMangaCard unread={unread} />}
+          render={sortedFilteredLibrary => (
+            <MangaGrid
+              mangaLibrary={sortedFilteredLibrary}
+              cardComponent={<LibraryMangaCard unread={unread} />}
+            />
+          )}
         />
 
         {(libraryIsLoading || chaptersAreUpdating) && <FullScreenLoading />}

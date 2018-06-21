@@ -29,8 +29,6 @@ type Props = {
   render: Function,
 };
 
-/* eslint-disable react/prefer-stateless-function */
-// Having a named class allows it to show up in react dev tools
 class SortFilterChapters extends React.Component<Props> {
   render() {
     const { mangaInfoFlags, chapters, render } = this.props;
