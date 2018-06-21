@@ -27,6 +27,7 @@ const styles = () => ({
     alignItems: 'flex-end',
   },
   date: { flex: 1 },
+  lastReadPage: { color: 'rgba(0, 0, 0, 0.87)' },
 });
 
 type Props = {
@@ -68,7 +69,12 @@ const ChapterListItem = ({
             {Moment(chapter.date).format('L')}
           </Typography>
 
-          <Typography>{chapterText(chapter.read, chapter.last_page_read)}</Typography>
+          <Typography
+            variant="caption"
+            className={classes.lastReadPage}
+          >
+            {chapterText(chapter.read, chapter.last_page_read)}
+          </Typography>
         </div>
       </div>
 
