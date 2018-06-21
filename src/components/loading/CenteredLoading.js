@@ -1,16 +1,17 @@
 // @flow
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import CenteredHOC from 'components/CenteredHOC';
+import CenterHorizontally from 'components/CenterHorizontally';
 
 type Props = {
-  className: ?string, // optional - parent passing a styled className
-}; // otherProps will be passed to CircularProgress
-
-const CenteredLoading = ({ className, ...otherProps }: Props) => {
-  const CenteredCircularProgress = CenteredHOC(CircularProgress);
-  return <CenteredCircularProgress className={className} {...otherProps} />;
+  className: ?string, // optional
 };
+
+const CenteredLoading = ({ className }: Props) => (
+  <CenterHorizontally className={className}>
+    <CircularProgress />
+  </CenterHorizontally>
+);
 
 CenteredLoading.defaultProps = { className: null };
 

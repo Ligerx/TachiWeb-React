@@ -8,7 +8,7 @@ import type { MangaType, ChapterType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 import ContinueReadingButton from 'components/mangaInfo/ContinueReadingButton';
-import CenteredHOC from 'components/CenteredHOC';
+import CenterHorizontally from 'components/CenterHorizontally';
 
 type Props = {
   mangaInfo: ?MangaType,
@@ -54,16 +54,16 @@ class MangaInfo extends React.Component<Props, State> {
           </MangaInfoDetails>
         );
       } else if (tabValue === 1) {
-        const CenteredContinueReadingButton = CenteredHOC(ContinueReadingButton);
-
         return (
           <React.Fragment>
-            <CenteredContinueReadingButton
-              chapters={chapters}
-              mangaId={mangaInfo.id}
-              chapterUrl={chapterUrl}
-              style={{ marginBottom: 24 }}
-            />
+            <CenterHorizontally>
+              <ContinueReadingButton
+                chapters={chapters}
+                mangaId={mangaInfo.id}
+                chapterUrl={chapterUrl}
+                style={{ marginBottom: 24 }}
+              />
+            </CenterHorizontally>
 
             <SortFilterChapters
               mangaInfoFlags={mangaInfo.flags}
