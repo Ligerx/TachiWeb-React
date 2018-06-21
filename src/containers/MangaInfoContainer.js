@@ -10,6 +10,7 @@ import {
 import {
   fetchChapters,
   updateChapters,
+  toggleRead,
   FETCH_CHAPTERS,
   UPDATE_CHAPTERS,
 } from 'redux-ducks/chapters';
@@ -58,6 +59,7 @@ type DispatchToProps = {
   updateChapters: Function,
   updateMangaInfo: Function,
   setFlag: Function,
+  toggleRead: Function,
 };
 
 const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
@@ -69,6 +71,7 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
     updateChapters: () => dispatch(updateChapters(mangaId)),
     updateMangaInfo: () => dispatch(updateMangaInfo(mangaId)),
     setFlag: (flag, state) => dispatch(setFlag(mangaId, flag, state)),
+    toggleRead: (chapterId, read) => dispatch(toggleRead(mangaId, chapterId, read)),
   };
 };
 

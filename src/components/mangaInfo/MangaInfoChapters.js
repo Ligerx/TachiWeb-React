@@ -27,10 +27,11 @@ type Props = {
   mangaInfo: MangaType,
   chapters: Array<ChapterType>,
   chapterUrl: Function,
+  toggleRead: Function,
 };
 
 const MangaInfoChapters = ({
-  classes, mangaInfo, chapters, chapterUrl,
+  classes, mangaInfo, chapters, chapterUrl, toggleRead,
 }: Props) => (
   <ResponsiveGrid maxWidth="xs">
     <Grid item xs={12}>
@@ -42,6 +43,7 @@ const MangaInfoChapters = ({
               mangaInfo={mangaInfo}
               chapter={chapter}
               chapterUrl={chapterUrl}
+              toggleRead={toggleRead}
             />
           ))}
         </List>

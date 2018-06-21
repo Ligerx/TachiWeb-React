@@ -18,6 +18,7 @@ type Props = {
   onRefreshClick: Function,
   isLoading: boolean,
   setFlag: Function,
+  toggleRead: Function,
 
   chapterUrl: Function,
 };
@@ -25,12 +26,6 @@ type Props = {
 type State = {
   tabValue: number,
 };
-
-// FEATURES TODO:
-// mark as read
-// mark as unread
-// download
-// delete
 
 class MangaInfo extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -47,7 +42,7 @@ class MangaInfo extends React.Component<Props, State> {
 
   tabContent = (): React.Node => {
     const { tabValue } = this.state;
-    const { mangaInfo, chapters, chapterUrl } = this.props;
+    const { mangaInfo, chapters, chapterUrl, toggleRead } = this.props;
 
     const numChapters: number = chapters ? chapters.length : 0;
 
@@ -75,6 +70,7 @@ class MangaInfo extends React.Component<Props, State> {
               mangaInfo={mangaInfo}
               chapters={chapters}
               chapterUrl={chapterUrl}
+              toggleRead={toggleRead}
             />
           </React.Fragment>
         );

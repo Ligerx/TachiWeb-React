@@ -59,6 +59,7 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
       backUrl,
       defaultTab,
       setFlag,
+      toggleRead,
     } = this.props;
 
     const title = mangaInfo ? mangaInfo.title : 'Loading...';
@@ -78,6 +79,7 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
           isLoading={fetchOrRefreshIsLoading}
           chapterUrl={this.chapterUrl}
           setFlag={setFlag}
+          toggleRead={toggleRead}
         />
       </React.Fragment>
     );

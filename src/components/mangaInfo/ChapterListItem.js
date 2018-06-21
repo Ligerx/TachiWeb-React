@@ -2,21 +2,31 @@
 import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import Moment from 'moment';
-import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import Link from 'components/Link';
 import type { ChapterType, MangaType } from 'types';
 import { chapterNumPrettyPrint } from 'components/utils';
-
-// TODO: add additional actions such as mark as read/unread.
-// TODO: align the bottom row text? It's a little off horizontally right now.
+import ChapterMenu from 'components/mangaInfo/ChapterMenu';
 
 const styles = () => ({
   read: {
     color: '#AAA',
   },
+  listItem: {
+    paddingRight: 8, // decrease padding (default 24)
+  },
+  chapterInfo: {
+    flex: 1,
+    marginRight: 8,
+  },
+  extraInfo: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  date: { flex: 1 },
 });
 
 type Props = {
@@ -24,12 +34,13 @@ type Props = {
   mangaInfo: MangaType,
   chapter: ChapterType,
   chapterUrl: Function,
+  toggleRead: Function,
 };
 
 const ChapterListItem = ({
-  classes, mangaInfo, chapter, chapterUrl,
+  classes, mangaInfo, chapter, chapterUrl, toggleRead,
 }: Props) => {
-  const dimIfRead: Function = (read: boolean): String => classNames({ [classes.read]: read });
+  const dimIfRead: Function = (read: boolean): ?String => (read ? classes.read : null);
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
   const chapterName: string =
     mangaInfo.flags.DISPLAY_MODE === 'NAME'
@@ -37,22 +48,31 @@ const ChapterListItem = ({
       : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 
   return (
-    <ListItem button divider component={Link} to={chapterUrl(mangaInfo.id, chapter.id, goToPage)}>
-      <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="subheading" className={dimIfRead(chapter.read)}>
-            {chapterName}
-          </Typography>
-        </Grid>
-        <Grid item style={{ flex: 1 }}>
-          <Typography variant="caption" className={dimIfRead(chapter.read)}>
+    <ListItem
+      button
+      divider
+      component={Link}
+      to={chapterUrl(mangaInfo.id, chapter.id, goToPage)}
+      className={classes.listItem}
+    >
+      <div className={classes.chapterInfo}>
+        <Typography variant="subheading" className={dimIfRead(chapter.read)}>
+          {chapterName}
+        </Typography>
+
+        <div className={classes.extraInfo}>
+          <Typography
+            variant="caption"
+            className={classNames(classes.date, dimIfRead(chapter.read))}
+          >
             {Moment(chapter.date).format('L')}
           </Typography>
-        </Grid>
-        <Grid item>
+
           <Typography>{chapterText(chapter.read, chapter.last_page_read)}</Typography>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
+
+      <ChapterMenu chapter={chapter} toggleRead={toggleRead} />
     </ListItem>
   );
 };
