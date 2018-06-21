@@ -2,7 +2,7 @@
 import * as React from 'react';
 import MangaInfoHeader from 'components/mangaInfo/MangaInfoHeader';
 import MangaInfoDetails from 'components/mangaInfo/MangaInfoDetails';
-import SortFilterChaptersHOC from 'components/mangaInfo/SortFilterChaptersHOC';
+import SortFilterChapters from 'components/mangaInfo/SortFilterChapters';
 import MangaInfoChapters from 'components/mangaInfo/MangaInfoChapters';
 import type { MangaType, ChapterType } from 'types';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
@@ -55,7 +55,6 @@ class MangaInfo extends React.Component<Props, State> {
         );
       } else if (tabValue === 1) {
         const CenteredContinueReadingButton = CenteredHOC(ContinueReadingButton);
-        const SortFilterMangaInfoChapters = SortFilterChaptersHOC(MangaInfoChapters);
 
         return (
           <React.Fragment>
@@ -66,11 +65,17 @@ class MangaInfo extends React.Component<Props, State> {
               style={{ marginBottom: 24 }}
             />
 
-            <SortFilterMangaInfoChapters
-              mangaInfo={mangaInfo}
+            <SortFilterChapters
+              mangaInfoFlags={mangaInfo.flags}
               chapters={chapters}
-              chapterUrl={chapterUrl}
-              toggleRead={toggleRead}
+              render={sortedFilteredChapters => (
+                <MangaInfoChapters
+                  mangaInfo={mangaInfo}
+                  chapters={sortedFilteredChapters}
+                  chapterUrl={chapterUrl}
+                  toggleRead={toggleRead}
+                />
+              )}
             />
           </React.Fragment>
         );
