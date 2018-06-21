@@ -31,7 +31,12 @@ ReactDOM.render(
   </React.Fragment>,
   document.getElementById('root'),
 );
-registerServiceWorker();
+
+// Disabled the included service workers from CRA. It was making the front end catch requests
+// that were supposed to go to the api.
+// Not sure if I'll want to enable them again in the future or not.
+// You have to eject to get a lot more customization.
+// registerServiceWorker();
 
 // React hot reloading
 if (module.hot) {
