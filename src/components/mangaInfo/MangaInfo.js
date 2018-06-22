@@ -65,10 +65,8 @@ class MangaInfo extends React.Component<Props, State> {
               />
             </CenterHorizontally>
 
-            <SortFilterChapters
-              mangaInfoFlags={mangaInfo.flags}
-              chapters={chapters}
-              render={sortedFilteredChapters => (
+            <SortFilterChapters mangaInfoFlags={mangaInfo.flags} chapters={chapters}>
+              {sortedFilteredChapters => (
                 <MangaInfoChapters
                   mangaInfo={mangaInfo}
                   chapters={sortedFilteredChapters}
@@ -76,7 +74,7 @@ class MangaInfo extends React.Component<Props, State> {
                   toggleRead={toggleRead}
                 />
               )}
-            />
+            </SortFilterChapters>
           </React.Fragment>
         );
       }

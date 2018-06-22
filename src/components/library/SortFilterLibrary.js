@@ -72,11 +72,15 @@ type Props = {
 
   // render props func
   // https://reactjs.org/docs/render-props.html
-  render: Function,
+  children: Function,
 };
 
 const SortFilterLibrary = ({
-  mangaLibrary, libraryFlags, searchQuery, unread, render,
+  mangaLibrary,
+  libraryFlags,
+  searchQuery,
+  unread,
+  children,
 }: Props) => {
   const {
     SORT_TYPE,
@@ -98,7 +102,7 @@ const SortFilterLibrary = ({
     sortedFilteredLibrary = sortedFilteredLibrary.reverse();
   }
 
-  return <React.Fragment>{render(sortedFilteredLibrary)}</React.Fragment>;
+  return <React.Fragment>{children(sortedFilteredLibrary)}</React.Fragment>;
 };
 
 export default SortFilterLibrary;

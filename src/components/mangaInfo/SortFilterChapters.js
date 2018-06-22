@@ -26,10 +26,10 @@ type Props = {
 
   // render props func
   // https://reactjs.org/docs/render-props.html
-  render: Function,
+  children: Function,
 };
 
-const SortFilterChapters = ({ mangaInfoFlags, chapters, render }: Props) => {
+const SortFilterChapters = ({ mangaInfoFlags, chapters, children }: Props) => {
   const {
     SORT_TYPE, READ_FILTER, DOWNLOADED_FILTER, SORT_DIRECTION,
   } = mangaInfoFlags;
@@ -45,7 +45,7 @@ const SortFilterChapters = ({ mangaInfoFlags, chapters, render }: Props) => {
     sortedFilteredChapters = sortedFilteredChapters.reverse();
   }
 
-  return <React.Fragment>{render(sortedFilteredChapters)}</React.Fragment>;
+  return <React.Fragment>{children(sortedFilteredChapters)}</React.Fragment>;
 };
 
 export default SortFilterChapters;

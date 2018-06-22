@@ -71,13 +71,14 @@ class Library extends Component<LibraryContainerProps, State> {
           libraryFlags={flags}
           searchQuery={searchQuery}
           unread={unread}
-          render={sortedFilteredLibrary => (
+        >
+          {sortedFilteredLibrary => (
             <MangaGrid
               mangaLibrary={sortedFilteredLibrary}
               cardComponent={<LibraryMangaCard unread={unread} />}
             />
           )}
-        />
+        </SortFilterLibrary>
 
         {(libraryIsLoading || chaptersAreUpdating) && <FullScreenLoading />}
       </React.Fragment>
