@@ -117,6 +117,13 @@ export default function libraryReducer(
         },
       };
 
+    case UPLOAD_RESTORE_SUCCESS:
+      return {
+        ...state,
+        libraryLoaded: false, // force library refresh
+        reloadUnread: true,
+      };
+
     default:
       return state;
   }
