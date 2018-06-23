@@ -1,14 +1,27 @@
 // @flow
-import React, { Component } from 'react';
-import MangaInfo from 'components/mangaInfo/MangaInfo';
+import * as React from 'react';
 import type { MangaInfoContainerProps } from 'containers/MangaInfoContainer';
 import type { MangaType } from 'types';
 import { Helmet } from 'react-helmet';
+import MangaInfoHeader from 'components/mangaInfo/MangaInfoHeader';
+import MangaInfoDetails from 'components/mangaInfo/MangaInfoDetails';
+import SortFilterChapters from 'components/mangaInfo/SortFilterChapters';
+import MangaInfoChapters from 'components/mangaInfo/MangaInfoChapters';
+import FullScreenLoading from 'components/loading/FullScreenLoading';
+import FavoriteFABContainer from 'containers/FavoriteFABContainer';
+import ContinueReadingButton from 'components/mangaInfo/ContinueReadingButton';
+import CenterHorizontally from 'components/CenterHorizontally';
 
 // Honestly couldn't come up with a different name to differentiate it from MangaInfo component
 // I might rename the other files in the /pages folder to include _Page at the end. I dunno...
 
-class MangaInfoPage extends Component<MangaInfoContainerProps> {
+type State = { tabValue: number };
+
+class MangaInfoPage extends React.Component<MangaInfoContainerProps, State> {
+  state = {
+    tabValue: this.props.defaultTab,
+  };
+
   componentDidMount() {
     const {
       fetchMangaInfo, fetchChapters, updateMangaInfo, updateChapters,
@@ -39,6 +52,10 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
       });
   }
 
+  handleChangeTab = (event: SyntheticEvent<>, newValue: number) => {
+    this.setState({ tabValue: newValue });
+  };
+
   handleRefreshClick = () => {
     const { updateChapters, updateMangaInfo } = this.props;
 
@@ -47,15 +64,54 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
     updateChapters().then(() => updateMangaInfo());
   };
 
+
+  tabContent = (): React.Node => {
+    const { tabValue } = this.state;
+    const { mangaInfo, chapters, toggleRead } = this.props;
+
+    const numChapters: number = chapters ? chapters.length : 0;
+
+    if (mangaInfo) {
+      if (tabValue === 0) {
+        return (
+          <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters}>
+            <FavoriteFABContainer mangaId={mangaInfo.id} />
+          </MangaInfoDetails>
+        );
+      } else if (tabValue === 1) {
+        return (
+          <React.Fragment>
+            <CenterHorizontally>
+              <ContinueReadingButton
+                chapters={chapters}
+                mangaId={mangaInfo.id}
+                style={{ marginBottom: 24 }}
+              />
+            </CenterHorizontally>
+
+            <SortFilterChapters mangaInfoFlags={mangaInfo.flags} chapters={chapters}>
+              {sortedFilteredChapters => (
+                <MangaInfoChapters
+                  mangaInfo={mangaInfo}
+                  chapters={sortedFilteredChapters}
+                  toggleRead={toggleRead}
+                />
+              )}
+            </SortFilterChapters>
+          </React.Fragment>
+        );
+      }
+    }
+    return null;
+  };
+
   render() {
+    const { tabValue } = this.state;
     const {
       mangaInfo,
-      chapters,
       fetchOrRefreshIsLoading,
       backUrl,
-      defaultTab,
       setFlag,
-      toggleRead,
     } = this.props;
 
     const title = mangaInfo ? mangaInfo.title : 'Loading...';
@@ -66,16 +122,17 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
           <title>{title} - TachiWeb</title>
         </Helmet>
 
-        <MangaInfo
+        <MangaInfoHeader
           mangaInfo={mangaInfo}
-          chapters={chapters}
-          initialTabValue={defaultTab}
+          tabValue={tabValue}
+          handleChangeTab={this.handleChangeTab}
           onBackClick={backUrl}
           onRefreshClick={this.handleRefreshClick}
-          isLoading={fetchOrRefreshIsLoading}
           setFlag={setFlag}
-          toggleRead={toggleRead}
         />
+        {this.tabContent()}
+
+        {fetchOrRefreshIsLoading && <FullScreenLoading />}
       </React.Fragment>
     );
   }
