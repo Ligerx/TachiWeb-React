@@ -5,12 +5,8 @@ import type { MangaType } from 'types';
 import { Helmet } from 'react-helmet';
 import MangaInfoHeader from 'components/mangaInfo/MangaInfoHeader';
 import MangaInfoDetails from 'components/mangaInfo/MangaInfoDetails';
-import SortFilterChapters from 'components/mangaInfo/SortFilterChapters';
-import MangaInfoChapters from 'components/mangaInfo/MangaInfoChapters';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
-import FavoriteFABContainer from 'containers/FavoriteFABContainer';
-import ContinueReadingButton from 'components/mangaInfo/ContinueReadingButton';
-import CenterHorizontally from 'components/CenterHorizontally';
+import MangaInfoChapters from 'components/mangaInfo/MangaInfoChapters';
 
 type State = { tabValue: number };
 
@@ -67,36 +63,12 @@ class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
 
     const numChapters: number = chapters ? chapters.length : 0;
 
-    if (mangaInfo) {
-      if (tabValue === 0) {
-        return (
-          <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters}>
-            <FavoriteFABContainer mangaId={mangaInfo.id} />
-          </MangaInfoDetails>
-        );
-      } else if (tabValue === 1) {
-        return (
-          <React.Fragment>
-            <CenterHorizontally>
-              <ContinueReadingButton
-                chapters={chapters}
-                mangaId={mangaInfo.id}
-                style={{ marginBottom: 24 }}
-              />
-            </CenterHorizontally>
-
-            <SortFilterChapters mangaInfoFlags={mangaInfo.flags} chapters={chapters}>
-              {sortedFilteredChapters => (
-                <MangaInfoChapters
-                  mangaInfo={mangaInfo}
-                  chapters={sortedFilteredChapters}
-                  toggleRead={toggleRead}
-                />
-              )}
-            </SortFilterChapters>
-          </React.Fragment>
-        );
-      }
+    if (mangaInfo && tabValue === 0) {
+      return <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters} />;
+    } else if (mangaInfo && tabValue === 1) {
+      return (
+        <MangaInfoChapters chapters={chapters} mangaInfo={mangaInfo} toggleRead={toggleRead} />
+      );
     }
     return null;
   };

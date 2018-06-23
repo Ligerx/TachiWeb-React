@@ -10,6 +10,7 @@ import type { MangaType } from 'types';
 import classNames from 'classnames';
 import { Server } from 'api';
 import upperFirst from 'lodash/upperFirst';
+import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
@@ -29,12 +30,9 @@ type Props = {
   classes: Object,
   mangaInfo: MangaType,
   numChapters: number,
-  children?: React.Node,
 };
 
-const MangaInfoDetails = ({
-  classes, mangaInfo, numChapters, children,
-}: Props) => {
+const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
   const coverUrl: string = Server.cover(mangaInfo.id);
 
   return (
@@ -52,7 +50,7 @@ const MangaInfoDetails = ({
             {detailsElements(mangaInfo)}
           </Grid>
 
-          {children}
+          <FavoriteFABContainer mangaId={mangaInfo.id} />
         </ResponsiveGrid>
       </BackgroundImage>
 
@@ -69,13 +67,7 @@ MangaInfoDetails.defaultProps = {
 
 // Helper functions
 function detailsElements(mangaInfo: MangaType): React.Node {
-  const fieldNames = [
-    'status',
-    'source',
-    'author',
-    'genres',
-    'categories',
-  ];
+  const fieldNames = ['status', 'source', 'author', 'genres', 'categories'];
 
   return fieldNames.map((fieldName) => {
     const value = mangaInfo[fieldName];
@@ -90,7 +82,7 @@ function detailsElements(mangaInfo: MangaType): React.Node {
 type DetailComponentProps = {
   fieldName: string,
   value: string | Array<string> | number,
-}
+};
 
 const DetailComponent = ({ fieldName, value }: DetailComponentProps): React.Node => (
   <Typography>
