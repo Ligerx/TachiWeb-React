@@ -38,7 +38,7 @@ const SET_FLAG_NO_CHANGE = 'library/SET_FLAG_NO_CHANGE';
 // ================================================================================
 type State = {
   +mangaIds: $ReadOnlyArray<number>,
-  +libraryLoaded: boolean,
+  +reloadLibrary: boolean,
   +unread: { +[mangaId: number]: number },
   +reloadUnread: boolean,
   +flags: LibraryFlagsType,
@@ -47,7 +47,7 @@ type State = {
 export default function libraryReducer(
   state: State = {
     mangaIds: [], // array of mangaIds that point that data loaded in mangaInfos reducer
-    libraryLoaded: false, // Library should be loaded once on first visit
+    reloadLibrary: true, // Library should be loaded once on first visit
     unread: {}, // { mangaId: int }
     reloadUnread: true, // should refresh unread for library if something new is added
     flags: {
@@ -65,7 +65,7 @@ export default function libraryReducer(
       return {
         ...state,
         mangaIds: action.mangaIds,
-        libraryLoaded: true,
+        reloadLibrary: false,
       };
 
     case FETCH_LIBRARY_CACHE:
@@ -120,7 +120,7 @@ export default function libraryReducer(
     case UPLOAD_RESTORE_SUCCESS:
       return {
         ...state,
-        libraryLoaded: false, // force library refresh
+        reloadLibrary: true,
         reloadUnread: true,
       };
 
@@ -136,7 +136,7 @@ type Options = { ignoreCache?: boolean };
 export function fetchLibrary({ ignoreCache = false }: Options = {}) {
   return (dispatch: Function, getState: Function) => {
     // Return cached mangaLibrary if it's been loaded before
-    if (!ignoreCache && getState().library.libraryLoaded) {
+    if (!ignoreCache && !getState().library.reloadLibrary) {
       return dispatch({ type: FETCH_LIBRARY_CACHE });
     }
 

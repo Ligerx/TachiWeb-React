@@ -89,7 +89,7 @@ type Obj = { ignoreCache?: boolean };
 export function fetchMangaInfo(mangaId: number, { ignoreCache = false }: Obj = {}) {
   return (dispatch: Function, getState: Function) => {
     // Return cached mangaInfo if already loaded
-    if (!ignoreCache && getState().library.libraryLoaded) {
+    if (!ignoreCache && !getState().library.reloadLibrary) {
       return Promise.resolve().then(dispatch({ type: FETCH_MANGA_CACHE }));
     }
 
