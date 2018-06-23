@@ -14,7 +14,7 @@ import {
   FETCH_CHAPTERS,
   UPDATE_CHAPTERS,
 } from 'redux-ducks/chapters';
-import MangaInfoPage from 'pages/MangaInfoPage';
+import MangaInfo from 'pages/MangaInfo';
 import { createLoadingSelector } from 'redux-ducks/loading';
 import type { MangaType, ChapterType } from 'types';
 
@@ -72,4 +72,4 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
 };
 
 export type MangaInfoContainerProps = StateToProps & DispatchToProps;
-export default connect(mapStateToProps, mapDispatchToProps)(MangaInfoPage);
+export default connect(mapStateToProps, mapDispatchToProps)(MangaInfo);

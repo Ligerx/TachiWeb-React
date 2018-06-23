@@ -12,12 +12,9 @@ import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 import ContinueReadingButton from 'components/mangaInfo/ContinueReadingButton';
 import CenterHorizontally from 'components/CenterHorizontally';
 
-// Honestly couldn't come up with a different name to differentiate it from MangaInfo component
-// I might rename the other files in the /pages folder to include _Page at the end. I dunno...
-
 type State = { tabValue: number };
 
-class MangaInfoPage extends React.Component<MangaInfoContainerProps, State> {
+class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
   state = {
     tabValue: this.props.defaultTab,
   };
@@ -63,7 +60,6 @@ class MangaInfoPage extends React.Component<MangaInfoContainerProps, State> {
     // So run updateMangaInfo after chapters
     updateChapters().then(() => updateMangaInfo());
   };
-
 
   tabContent = (): React.Node => {
     const { tabValue } = this.state;
@@ -157,4 +153,4 @@ function possiblyMissingInfo(manga: MangaType): boolean {
   return numMissing >= 3;
 }
 
-export default MangaInfoPage;
+export default MangaInfo;
