@@ -153,11 +153,14 @@ export function updateReadingStatus(
     }
 
     const pageCount = pageCounts[chapter.id];
-    const didReadLastPage = readPage === pageCount - 1;
+    const didReadLastPage: ?boolean = readPage === pageCount - 1 ? true : null;
+
+    const updateReadingStatusUrl =
+      Server.updateReadingStatus(mangaId, chapter.id, readPage, didReadLastPage);
 
     dispatch({ type: UPDATE_READING_STATUS_REQUEST, meta: { readPage, didReadLastPage } });
 
-    return fetch(Server.updateReadingStatus(mangaId, chapter.id, readPage, didReadLastPage))
+    return fetch(updateReadingStatusUrl)
       .then(handleHTMLError)
       .then(
         () => {

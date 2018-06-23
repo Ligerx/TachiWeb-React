@@ -65,13 +65,13 @@ export const Server = {
     return `/api/get_filters/${sourceId}`;
   },
 
-  updateReadingStatus(mangaId, chapterId, readPage, readLastPage) {
+  updateReadingStatus(mangaId, chapterId, readPage, readLastPage?: boolean) {
     // No edge case checking here. Handle that in the caller.
     // e.g. not updating because you're reading a previously read page
     let url = `/api/reading_status/${mangaId}/${chapterId}?lp=${readPage}`;
 
-    if (readLastPage) {
-      url += '&read=true';
+    if (readLastPage != null) {
+      url += `&read=${readLastPage.toString()}`;
     }
     return url;
   },
