@@ -8,7 +8,6 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Router from './routes';
 import './index.css';
-import registerServiceWorker from './registerServiceWorker';
 import rootReducer from './redux-ducks';
 
 // Redux
@@ -36,6 +35,8 @@ ReactDOM.render(
 // that were supposed to go to the api.
 // Not sure if I'll want to enable them again in the future or not.
 // You have to eject to get a lot more customization.
+//
+// import registerServiceWorker from './registerServiceWorker';
 // registerServiceWorker();
 
 // React hot reloading
