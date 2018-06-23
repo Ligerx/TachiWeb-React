@@ -42,6 +42,8 @@ class ChapterListItem extends Component<Props, State> {
 
     const { chapter, toggleRead } = this.props;
     toggleRead(chapter.id, read);
+
+    this.setState({ anchorEl: null });
   };
 
   render() {
