@@ -170,7 +170,6 @@ class Reader extends Component<Props> {
         */}
 
         <WebtoonReader
-          urlPrefix={urlPrefix}
           mangaId={mangaInfo.id}
           pageCount={pageCount}
           chapter={chapter}

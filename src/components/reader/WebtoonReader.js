@@ -12,6 +12,7 @@ import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
 import Waypoint from 'react-waypoint';
 import queryString from 'query-string-es5';
+import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>
@@ -31,6 +32,8 @@ import queryString from 'query-string-es5';
 // I'm using each image's source URL as a key to determine if it should start loading.
 // I was previously just using the page #, but all the images were rendering
 // before componentDidUpdate() could clear pagesToLoad.
+
+// Using UrlPrefixConsumer to get the urlPrefix needed to build urls
 
 // TODO: Might want to do custom <ScrollToTop /> behavior specifically for this reader
 //       or create a custom scroll-to-top component that's customizable with whatever params passed
@@ -281,4 +284,10 @@ function addMorePagesToLoad(mangaId, chapterId, numLoadAhead, pageCount, pagesIn
   return [...new Set(arrayCopy)]; // unique values only
 }
 
-export default withRouter(withStyles(styles)(WebtoonReader));
+const WebtoonReaderWithContext = props => (
+  <UrlPrefixConsumer>
+    {urlPrefix => <WebtoonReader {...props} urlPrefix={urlPrefix} />}
+  </UrlPrefixConsumer>
+);
+
+export default withRouter(withStyles(styles)(WebtoonReaderWithContext));

@@ -7,11 +7,49 @@ import ReaderContainer from 'containers/ReaderContainer';
 import CatalogueContainer from 'containers/CatalogueContainer';
 import ErrorNotificationsContainer from 'containers/ErrorNotificationsContainer';
 import BackupRestore from 'pages/BackupRestore';
+import { UrlPrefixProvider } from 'components/UrlPrefixContext';
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
 // FIXME: Including ErrorNotificationsContainer here because I have to
 //        Not idea, refactor out an App component or something.
+
+// match.path is the url prefix. i.e. '/library' '/catalogue'
+const MangaRouter = ({ match }) => {
+  let backUrl = '';
+  let defaultTab = 0;
+
+  if (match.path === Client.library()) {
+    backUrl = Client.library();
+    defaultTab = 1;
+  } else if (match.path === Client.catalogue()) {
+    backUrl = Client.catalogue();
+    defaultTab = 0;
+  }
+
+  return (
+    <UrlPrefixProvider value={match.path}>
+      <Switch>
+        <Route
+          path={`${match.path}/:mangaId/:chapterId/:page`}
+          render={props => <ReaderContainer {...props} urlPrefix={match.path} />}
+        />
+
+        <Route
+          path={`${match.path}/:mangaId`}
+          render={props => (
+            <MangaInfoContainer
+              {...props}
+              backUrl={backUrl}
+              defaultTab={defaultTab}
+              urlPrefix={match.path}
+            />
+          )}
+        />
+      </Switch>
+    </UrlPrefixProvider>
+  );
+};
 
 const Router = () => (
   <React.Fragment>
@@ -19,41 +57,13 @@ const Router = () => (
       <Switch>
         <Route exact path="/" component={LibraryContainer} />
 
-        <Route exact path="/backup_restore" component={BackupRestore} />
-
         <Route exact path="/catalogue" component={CatalogueContainer} />
-        <Route
-          path="/catalogue/:mangaId/:chapterId/:page"
-          render={props => <ReaderContainer {...props} urlPrefix="/catalogue" />}
-        />
-        <Route
-          path="/catalogue/:mangaId"
-          render={props => (
-            <MangaInfoContainer
-              {...props}
-              backUrl={Client.catalogue()}
-              defaultTab={0}
-              urlPrefix="/catalogue"
-            />
-          )}
-        />
+        <Route path="/catalogue" component={MangaRouter} />
 
         <Route exact path="/library" component={LibraryContainer} />
-        <Route
-          path="/library/:mangaId/:chapterId/:page"
-          render={props => <ReaderContainer {...props} urlPrefix="/library" />}
-        />
-        <Route
-          path="/library/:mangaId"
-          render={props => (
-            <MangaInfoContainer
-              {...props}
-              backUrl={Client.library()}
-              defaultTab={1}
-              urlPrefix="/library"
-            />
-          )}
-        />
+        <Route path="/library" component={MangaRouter} />
+
+        <Route exact path="/backup_restore" component={BackupRestore} />
       </Switch>
     </BrowserRouter>
 
