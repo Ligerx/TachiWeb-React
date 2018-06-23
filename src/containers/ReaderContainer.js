@@ -12,17 +12,15 @@ type StateToProps = {
   chapter: ?ChapterType,
   chapterId: number, // never null because it's pulled from the URL
   pageCounts: { [chapterId: number]: number },
-  pageCount: number, // TODO: is this correct?
+  pageCount: number,
   page: number, // never null because it's pulled from the URL
   prevChapterId: ?number,
   nextChapterId: ?number,
-  urlPrefix: string, // prepend to all urls in Reader (bit of a hack)
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
   const { mangaInfos, chapters, pageCounts } = state;
   const { mangaId, chapterId, page } = ownProps.match.params;
-  const { urlPrefix } = ownProps;
 
   return {
     mangaInfo: mangaInfos[mangaId],
@@ -34,7 +32,6 @@ const mapStateToProps = (state, ownProps): StateToProps => {
     page: parseInt(page, 10),
     prevChapterId: getPrevChapterId(chapters[mangaId], chapterId),
     nextChapterId: getNextChapterId(chapters[mangaId], chapterId),
-    urlPrefix: urlPrefix || '',
   };
 };
 

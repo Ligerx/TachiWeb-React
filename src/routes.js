@@ -15,7 +15,8 @@ import { UrlPrefixProvider } from 'components/UrlPrefixContext';
 //        Not idea, refactor out an App component or something.
 
 // match.path is the url prefix. i.e. '/library' '/catalogue'
-const MangaRouter = ({ match }) => {
+type MangaRouterProps = { match: Object }; // react router prop
+const MangaRouter = ({ match }: MangaRouterProps) => {
   let backUrl = '';
   let defaultTab = 0;
 
@@ -30,20 +31,12 @@ const MangaRouter = ({ match }) => {
   return (
     <UrlPrefixProvider value={match.path}>
       <Switch>
-        <Route
-          path={`${match.path}/:mangaId/:chapterId/:page`}
-          render={props => <ReaderContainer {...props} urlPrefix={match.path} />}
-        />
+        <Route path={`${match.path}/:mangaId/:chapterId/:page`} component={ReaderContainer} />
 
         <Route
           path={`${match.path}/:mangaId`}
           render={props => (
-            <MangaInfoContainer
-              {...props}
-              backUrl={backUrl}
-              defaultTab={defaultTab}
-              urlPrefix={match.path}
-            />
+            <MangaInfoContainer {...props} backUrl={backUrl} defaultTab={defaultTab} />
           )}
         />
       </Switch>

@@ -33,8 +33,6 @@ import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
 // I was previously just using the page #, but all the images were rendering
 // before componentDidUpdate() could clear pagesToLoad.
 
-// Using UrlPrefixConsumer to get the urlPrefix needed to build urls
-
 // TODO: Might want to do custom <ScrollToTop /> behavior specifically for this reader
 //       or create a custom scroll-to-top component that's customizable with whatever params passed
 
@@ -75,7 +73,6 @@ const styles = {
 
 type Props = {
   classes: Object, // styles
-  urlPrefix: string,
   mangaId: number,
   pageCount: number,
   chapter: ChapterType,
@@ -86,6 +83,9 @@ type Props = {
   match: Object,
   history: Object,
   location: Object,
+
+  // UrlPrefixConsumer prop
+  urlPrefix: string,
 };
 
 type State = {
@@ -146,7 +146,7 @@ class WebtoonReader extends Component<Props, State> {
     const prevLastPage = prevPagesInView[prevPagesInView.length - 1];
 
     if (lastPage != null && lastPage !== prevLastPage && !shouldJumpToPage) {
-      history.replace(urlPrefix + Client.page(mangaId, chapter.id, lastPage));
+      history.replace(Client.page(urlPrefix, mangaId, chapter.id, lastPage));
     }
   }
 
@@ -284,6 +284,7 @@ function addMorePagesToLoad(mangaId, chapterId, numLoadAhead, pageCount, pagesIn
   return [...new Set(arrayCopy)]; // unique values only
 }
 
+// Using UrlPrefixConsumer to get the urlPrefix needed to build urls
 const WebtoonReaderWithContext = props => (
   <UrlPrefixConsumer>
     {urlPrefix => <WebtoonReader {...props} urlPrefix={urlPrefix} />}

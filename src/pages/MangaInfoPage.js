@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import MangaInfo from 'components/mangaInfo/MangaInfo';
 import type { MangaInfoContainerProps } from 'containers/MangaInfoContainer';
 import type { MangaType } from 'types';
-import { Client } from 'api';
 import { Helmet } from 'react-helmet';
 
 // Honestly couldn't come up with a different name to differentiate it from MangaInfo component
@@ -48,9 +47,6 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
     updateChapters().then(() => updateMangaInfo());
   };
 
-  chapterUrl = (mangaId: number, chapterId: number, goToPage: number) =>
-    this.props.urlPrefix + Client.page(mangaId, chapterId, goToPage);
-
   render() {
     const {
       mangaInfo,
@@ -77,7 +73,6 @@ class MangaInfoPage extends Component<MangaInfoContainerProps> {
           onBackClick={backUrl}
           onRefreshClick={this.handleRefreshClick}
           isLoading={fetchOrRefreshIsLoading}
-          chapterUrl={this.chapterUrl}
           setFlag={setFlag}
           toggleRead={toggleRead}
         />

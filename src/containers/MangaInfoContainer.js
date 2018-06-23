@@ -33,9 +33,6 @@ type StateToProps = {
   // below props should be passed in by router
   backUrl: string,
   defaultTab: number,
-
-  // sort of a hack that needs to get passed REALLY deep to ChapterListItem
-  urlPrefix: string,
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
@@ -49,7 +46,6 @@ const mapStateToProps = (state, ownProps): StateToProps => {
 
     backUrl: ownProps.backUrl,
     defaultTab: ownProps.defaultTab,
-    urlPrefix: ownProps.urlPrefix || '',
   };
 };
 

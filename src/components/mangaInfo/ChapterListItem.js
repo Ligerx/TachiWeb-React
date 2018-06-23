@@ -9,6 +9,8 @@ import Link from 'components/Link';
 import type { ChapterType, MangaType } from 'types';
 import { chapterNumPrettyPrint } from 'components/utils';
 import ChapterMenu from 'components/mangaInfo/ChapterMenu';
+import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
+import { Client } from 'api';
 
 const styles = () => ({
   read: {
@@ -34,12 +36,11 @@ type Props = {
   classes: Object,
   mangaInfo: MangaType,
   chapter: ChapterType,
-  chapterUrl: Function,
   toggleRead: Function,
 };
 
 const ChapterListItem = ({
-  classes, mangaInfo, chapter, chapterUrl, toggleRead,
+  classes, mangaInfo, chapter, toggleRead,
 }: Props) => {
   const dimIfRead: Function = (read: boolean): ?String => (read ? classes.read : null);
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
@@ -49,37 +50,41 @@ const ChapterListItem = ({
       : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 
   return (
-    <ListItem
-      button
-      divider
-      component={Link}
-      to={chapterUrl(mangaInfo.id, chapter.id, goToPage)}
-      className={classes.listItem}
-    >
-      <div className={classes.chapterInfo}>
-        <Typography variant="subheading" className={dimIfRead(chapter.read)}>
-          {chapterName}
-        </Typography>
+    <UrlPrefixConsumer>
+      { urlPrefix => (
+        <ListItem
+          button
+          divider
+          component={Link}
+          to={Client.page(urlPrefix, mangaInfo.id, chapter.id, goToPage)}
+          className={classes.listItem}
+        >
+          <div className={classes.chapterInfo}>
+            <Typography variant="subheading" className={dimIfRead(chapter.read)}>
+              {chapterName}
+            </Typography>
 
-        <div className={classes.extraInfo}>
-          <Typography
-            variant="caption"
-            className={classNames(classes.date, dimIfRead(chapter.read))}
-          >
-            {Moment(chapter.date).format('L')}
-          </Typography>
+            <div className={classes.extraInfo}>
+              <Typography
+                variant="caption"
+                className={classNames(classes.date, dimIfRead(chapter.read))}
+              >
+                {Moment(chapter.date).format('L')}
+              </Typography>
 
-          <Typography
-            variant="caption"
-            className={classes.lastReadPage}
-          >
-            {chapterText(chapter.read, chapter.last_page_read)}
-          </Typography>
-        </div>
-      </div>
+              <Typography
+                variant="caption"
+                className={classes.lastReadPage}
+              >
+                {chapterText(chapter.read, chapter.last_page_read)}
+              </Typography>
+            </div>
+          </div>
 
-      <ChapterMenu chapter={chapter} toggleRead={toggleRead} />
-    </ListItem>
+          <ChapterMenu chapter={chapter} toggleRead={toggleRead} />
+        </ListItem>
+      )}
+    </UrlPrefixConsumer>
   );
 };
 

@@ -19,8 +19,6 @@ type Props = {
   isLoading: boolean,
   setFlag: Function,
   toggleRead: Function,
-
-  chapterUrl: Function,
 };
 
 type State = {
@@ -42,7 +40,7 @@ class MangaInfo extends React.Component<Props, State> {
 
   tabContent = (): React.Node => {
     const { tabValue } = this.state;
-    const { mangaInfo, chapters, chapterUrl, toggleRead } = this.props;
+    const { mangaInfo, chapters, toggleRead } = this.props;
 
     const numChapters: number = chapters ? chapters.length : 0;
 
@@ -60,7 +58,6 @@ class MangaInfo extends React.Component<Props, State> {
               <ContinueReadingButton
                 chapters={chapters}
                 mangaId={mangaInfo.id}
-                chapterUrl={chapterUrl}
                 style={{ marginBottom: 24 }}
               />
             </CenterHorizontally>
@@ -70,7 +67,6 @@ class MangaInfo extends React.Component<Props, State> {
                 <MangaInfoChapters
                   mangaInfo={mangaInfo}
                   chapters={sortedFilteredChapters}
-                  chapterUrl={chapterUrl}
                   toggleRead={toggleRead}
                 />
               )}

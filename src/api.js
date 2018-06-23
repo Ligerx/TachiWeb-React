@@ -98,6 +98,8 @@ export const Server = {
   },
 };
 
+// urlPrefix used to go differentiate between '/library/...' and '/catalogue/...'
+// ^ it should come with a '/' in the beginning
 export const Client = {
   library() {
     return '/library';
@@ -107,17 +109,13 @@ export const Client = {
     return '/catalogue';
   },
 
-  manga(mangaId) {
-    return `/${mangaId}`;
+  manga(urlPrefix, mangaId) {
+    return `${urlPrefix}/${mangaId}`;
   },
 
-  catalogueManga(mangaId) {
-    return `/catalogue/${mangaId}`;
-  },
-
-  page(mangaId, chapterId, page) {
+  page(urlPrefix, mangaId, chapterId, page) {
     // URL of the manga page on the client
-    return `/${mangaId}/${chapterId}/${page}`;
+    return `${urlPrefix}/${mangaId}/${chapterId}/${page}`;
   },
 
   backupRestore() {

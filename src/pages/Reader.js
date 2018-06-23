@@ -12,9 +12,7 @@ import ReadingStatusUpdaterContainer from 'containers/ReadingStatusUpdaterContai
 import ImagePreloaderContainer from 'containers/ImagePreloaderContainer';
 import { Helmet } from 'react-helmet';
 import { chapterNumPrettyPrint } from 'components/utils';
-
-// NOTE: prepending urlPrefix to all links in this component so I can accomodate
-//       Library and Catalogue Readers. This is sort of hacky, but it works for now.
+import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
@@ -23,7 +21,8 @@ import { chapterNumPrettyPrint } from 'components/utils';
 
 type Props = ReaderContainerProps & {
   classes: Object, // Classes is the injected styles
-  history: { push: Function }, // Below are react-router props
+  history: { push: Function }, // react-router props
+  urlPrefix: string, // UrlPrefixConsumer prop
 };
 
 class Reader extends Component<Props> {
@@ -63,13 +62,13 @@ class Reader extends Component<Props> {
     if (!mangaInfo) return null;
 
     if (page > 0) {
-      return urlPrefix + Client.page(mangaInfo.id, chapterId, page - 1);
+      return Client.page(urlPrefix, mangaInfo.id, chapterId, page - 1);
     } else if (page === 0 && prevChapterId) {
       // If on the first page, link to the previous chapter's last page (if info available)
       const prevPageCount: ?number = pageCounts[prevChapterId];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
-      return urlPrefix + Client.page(mangaInfo.id, prevChapterId, lastPage);
+      return Client.page(urlPrefix, mangaInfo.id, prevChapterId, lastPage);
     }
     return null;
   };
@@ -82,9 +81,9 @@ class Reader extends Component<Props> {
     if (!mangaInfo) return null;
 
     if (page < pageCount - 1) {
-      return urlPrefix + Client.page(mangaInfo.id, chapterId, page + 1);
+      return Client.page(urlPrefix, mangaInfo.id, chapterId, page + 1);
     } else if (page === pageCount - 1 && nextChapterId) {
-      return urlPrefix + Client.page(mangaInfo.id, nextChapterId, 0);
+      return Client.page(urlPrefix, mangaInfo.id, nextChapterId, 0);
     }
     return null;
   };
@@ -95,10 +94,10 @@ class Reader extends Component<Props> {
       mangaInfo, prevChapterId, chapters, urlPrefix,
     } = this.props;
 
-    const prevUrl = changeChapterUrl(mangaInfo, prevChapterId, chapters);
+    const prevUrl = changeChapterUrl(urlPrefix, mangaInfo, prevChapterId, chapters);
 
     if (!prevUrl) return null;
-    return urlPrefix + prevUrl;
+    return prevUrl;
   };
 
   nextChapterUrl = (): ?string => {
@@ -107,10 +106,10 @@ class Reader extends Component<Props> {
       mangaInfo, nextChapterId, chapters, urlPrefix,
     } = this.props;
 
-    const nextUrl = changeChapterUrl(mangaInfo, nextChapterId, chapters);
+    const nextUrl = changeChapterUrl(urlPrefix, mangaInfo, nextChapterId, chapters);
 
     if (!nextUrl) return null;
-    return urlPrefix + nextUrl;
+    return nextUrl;
   };
 
   handleJumpToPage = (newPage: number) => {
@@ -122,7 +121,7 @@ class Reader extends Component<Props> {
 
     // Add query param so Webtoon reader knows the difference between changing vs jumping pages
     const jumpToParam = '?jumpTo=true';
-    this.props.history.push(urlPrefix + Client.page(mangaInfo.id, chapterId, newPage - 1) + jumpToParam);
+    this.props.history.push(Client.page(urlPrefix, mangaInfo.id, chapterId, newPage - 1) + jumpToParam);
   };
 
   render() {
@@ -154,7 +153,7 @@ class Reader extends Component<Props> {
           chapterNum={chapter.chapter_number}
           pageCount={pageCount}
           page={page}
-          backUrl={urlPrefix + Client.manga(mangaInfo.id)}
+          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
           prevChapterUrl={this.prevChapterUrl()}
           nextChapterUrl={this.nextChapterUrl()}
           onJumpToPage={this.handleJumpToPage}
@@ -187,6 +186,7 @@ class Reader extends Component<Props> {
 
 // Helper methods
 function changeChapterUrl(
+  urlPrefix: string,
   mangaInfo: ?MangaType,
   newChapterId: ?number,
   chapters: Array<ChapterType>,
@@ -200,7 +200,7 @@ function changeChapterUrl(
     goToPage = 0;
   }
 
-  return Client.page(mangaInfo.id, newChapterId, goToPage);
+  return Client.page(urlPrefix, mangaInfo.id, newChapterId, goToPage);
 }
 
 function findChapter(chapters: Array<ChapterType>, chapterId: number): ?ChapterType {
@@ -209,4 +209,8 @@ function findChapter(chapters: Array<ChapterType>, chapterId: number): ?ChapterT
   return chapters.find(chapter => chapter.id === chapterId);
 }
 
-export default Reader;
+export default (props: Object) => (
+  <UrlPrefixConsumer>
+    {urlPrefix => <Reader {...props} urlPrefix={urlPrefix} />}
+  </UrlPrefixConsumer>
+);

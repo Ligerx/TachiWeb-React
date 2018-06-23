@@ -27,7 +27,11 @@ type Props = {
 
 const CatalogueMangaCard = ({ classes, manga }: Props) => (
   <Grid item xs={6} sm={3} className={manga.favorite ? classes.isFavorited : null}>
-    <ButtonBase className={classes.fullWidth} component={Link} to={Client.catalogueManga(manga.id)}>
+    <ButtonBase
+      className={classes.fullWidth}
+      component={Link}
+      to={Client.manga('/catalogue', manga.id)}
+    >
       <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
     </ButtonBase>
   </Grid>
