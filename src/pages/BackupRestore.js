@@ -5,7 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import MenuDrawer from 'components/MenuDrawer';
 import ResponsiveGrid from 'components/ResponsiveGrid';
-import { Grid } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 import BackupCard from 'components/backup-restore/BackupCard';
 import RestoreCardContainer from 'containers/RestoreCardContainer';
 import { Helmet } from 'react-helmet';
