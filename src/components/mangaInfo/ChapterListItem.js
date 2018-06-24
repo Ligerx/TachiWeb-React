@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
-import Moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
@@ -11,6 +10,7 @@ import { chapterNumPrettyPrint } from 'components/utils';
 import ChapterMenu from 'components/mangaInfo/ChapterMenu';
 import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
 import { Client } from 'api';
+import dateFnsFormat from 'date-fns/format';
 
 const styles = () => ({
   read: {
@@ -69,7 +69,7 @@ const ChapterListItem = ({
                 variant="caption"
                 className={classNames(classes.date, dimIfRead(chapter.read))}
               >
-                {Moment(chapter.date).format('L')}
+                {dateFnsFormat(chapter.date, 'MM/DD/YYYY')}
               </Typography>
 
               <Typography
