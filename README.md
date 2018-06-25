@@ -6,6 +6,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 I'm using VSCode with ESLint, Flow, and Prettier. Search for these in the VSCode extensions panel.
 
+I also use [React DevTools](https://github.com/facebook/react-devtools) and [Redux DevTools](https://extension.remotedev.io) browser extensions, which are very useful.
+
 ---
 
 Before starting the project, make sure you have a TachiWeb-Server running (on port 4567 for development).
