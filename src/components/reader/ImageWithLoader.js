@@ -41,7 +41,7 @@ type State = {
 
 class ImageWithLoader extends Component<Props, State> {
   static defaultProps = {
-    notLoadedHeight: '40vh',
+    notLoadedHeight: '100vh',
   };
 
   state = {
