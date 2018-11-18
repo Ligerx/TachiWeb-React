@@ -148,6 +148,7 @@ class Reader extends Component<Props> {
           </title>
         </Helmet>
 
+        {/*
         <ReaderOverlay
           title={mangaInfo.title}
           chapterNum={chapter.chapter_number}
@@ -158,16 +159,26 @@ class Reader extends Component<Props> {
           nextChapterUrl={this.nextChapterUrl()}
           onJumpToPage={this.handleJumpToPage}
         />
+        */}
 
-        {/*
         <SinglePageReader
+          title={mangaInfo.title}
+          chapterNum={chapter.chapter_number}
+          pageCount={pageCount}
+          page={page}
+          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
+          prevChapterUrl={this.prevChapterUrl()}
+          nextChapterUrl={this.nextChapterUrl()}
+          urlPrefix={urlPrefix}
+          mangaId={mangaInfo.id}
+          chapterId={chapterId}
           imageSource={Server.image(mangaInfo.id, chapterId, page)}
           alt={`${chapter.name} - Page ${page + 1}`}
           nextPageUrl={this.nextPageUrl()}
           prevPageUrl={this.prevPageUrl()}
         />
-        */}
 
+        {/*
         <WebtoonReader
           mangaId={mangaInfo.id}
           pageCount={pageCount}
@@ -175,7 +186,7 @@ class Reader extends Component<Props> {
           nextChapterUrl={this.nextChapterUrl()}
           prevChapterUrl={this.prevChapterUrl()}
         />
-
+        */}
         <ReadingStatusUpdaterContainer />
         <ImagePreloaderContainer />
 

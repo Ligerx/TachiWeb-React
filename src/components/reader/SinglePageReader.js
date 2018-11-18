@@ -9,6 +9,8 @@ import Icon from '@material-ui/core/Icon';
 import ImageWithLoader from 'components/reader/ImageWithLoader';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
+import ReaderOverlay from 'components/reader/ReaderOverlay';
+import { Client } from 'api';
 
 // TODO: add some spacing around the nav buttons
 // TODO: evenly space them?
@@ -43,6 +45,22 @@ const styles = {
 
 type Props = {
   classes: Object, // styles
+
+  // overlay props
+  title: string,
+  chapterNum: number,
+  pageCount: number,
+  page: number,
+  backUrl: string,
+  prevChapterUrl: ?string,
+  nextChapterUrl: ?string,
+
+  // overlap jump page props
+  urlPrefix: string,
+  mangaId: number,
+  chapterId: number,
+
+  // reader props
   imageSource: string,
   alt: string,
   nextPageUrl: ?string,
@@ -66,6 +84,11 @@ class SinglePageReader extends Component<Props> {
     document.removeEventListener('keydown', this.handleArrowKeyDown);
   }
 
+  handleJumpToPage = (newPage: number) => {
+    const { urlPrefix, mangaId, chapterId } = this.props;
+    this.props.history.push(Client.page(urlPrefix, mangaId, chapterId, newPage - 1));
+  };
+
   handleArrowKeyDown = (event: SyntheticKeyboardEvent<>) => {
     const LEFT_ARROW = 37;
     const RIGHT_ARROW = 39;
@@ -82,21 +105,39 @@ class SinglePageReader extends Component<Props> {
 
   render() {
     const {
-      classes, imageSource, alt, nextPageUrl, prevPageUrl,
+      classes,
+      title,
+      chapterNum,
+      pageCount,
+      page,
+      backUrl,
+      prevChapterUrl,
+      nextChapterUrl,
+      imageSource,
+      alt,
+      nextPageUrl,
+      prevPageUrl,
     } = this.props;
 
     return (
       <React.Fragment>
         <ScrollToTop />
 
+        <ReaderOverlay
+          title={title}
+          chapterNum={chapterNum}
+          pageCount={pageCount}
+          page={page}
+          backUrl={backUrl}
+          prevChapterUrl={prevChapterUrl}
+          nextChapterUrl={nextChapterUrl}
+          onJumpToPage={this.handleJumpToPage}
+        />
+
         <ResponsiveGrid className={classes.topOffset}>
           <Grid item xs={12}>
             <Link to={nextPageUrl}>
-              <ImageWithLoader
-                src={imageSource}
-                className={classes.page}
-                alt={alt}
-              />
+              <ImageWithLoader src={imageSource} className={classes.page} alt={alt} />
             </Link>
           </Grid>
 
