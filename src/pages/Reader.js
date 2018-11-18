@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import { Server, Client } from 'api';
-import ReaderOverlay from 'components/reader/ReaderOverlay';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';
@@ -112,18 +111,6 @@ class Reader extends Component<Props> {
     return nextUrl;
   };
 
-  handleJumpToPage = (newPage: number) => {
-    // FIXME: how does this work with WebtoonReader?
-    //        also .push() vs .replace() for SinglePage vs Webtoon Readers
-    const { mangaInfo, chapterId, urlPrefix } = this.props;
-
-    if (!mangaInfo) return;
-
-    // Add query param so Webtoon reader knows the difference between changing vs jumping pages
-    const jumpToParam = '?jumpTo=true';
-    this.props.history.push(Client.page(urlPrefix, mangaInfo.id, chapterId, newPage - 1) + jumpToParam);
-  };
-
   render() {
     const {
       urlPrefix,
@@ -149,18 +136,6 @@ class Reader extends Component<Props> {
         </Helmet>
 
         {/*
-        <ReaderOverlay
-          title={mangaInfo.title}
-          chapterNum={chapter.chapter_number}
-          pageCount={pageCount}
-          page={page}
-          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-          prevChapterUrl={this.prevChapterUrl()}
-          nextChapterUrl={this.nextChapterUrl()}
-          onJumpToPage={this.handleJumpToPage}
-        />
-        */}
-
         <SinglePageReader
           title={mangaInfo.title}
           chapterNum={chapter.chapter_number}
@@ -177,16 +152,20 @@ class Reader extends Component<Props> {
           nextPageUrl={this.nextPageUrl()}
           prevPageUrl={this.prevPageUrl()}
         />
+        */}
 
-        {/*
         <WebtoonReader
+          title={mangaInfo.title}
+          chapterNum={chapter.chapter_number}
+          page={page}
+          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
           mangaId={mangaInfo.id}
           pageCount={pageCount}
           chapter={chapter}
           nextChapterUrl={this.nextChapterUrl()}
           prevChapterUrl={this.prevChapterUrl()}
         />
-        */}
+
         <ReadingStatusUpdaterContainer />
         <ImagePreloaderContainer />
 

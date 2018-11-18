@@ -11,8 +11,8 @@ import { Server, Client } from 'api';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
 import Waypoint from 'react-waypoint';
-import queryString from 'query-string-es5';
 import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
+import ReaderOverlay from 'components/reader/ReaderOverlay';
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>
@@ -73,6 +73,14 @@ const styles = {
 
 type Props = {
   classes: Object, // styles
+
+  // overlay specific props
+  title: string,
+  chapterNum: number,
+  page: number,
+  backUrl: string,
+
+  // reader props
   mangaId: number,
   pageCount: number,
   chapter: ChapterType,
@@ -82,7 +90,6 @@ type Props = {
   // React router props
   match: Object,
   history: Object,
-  location: Object,
 
   // UrlPrefixConsumer prop
   urlPrefix: string,
@@ -91,70 +98,75 @@ type Props = {
 type State = {
   pagesInView: Array<number>, // make sure to always keep this sorted
   pagesToLoad: Array<string>, // urls for the image, acts as a unique key
+  isJumpingToPage: boolean, // using to prevent loading skipped images when jumping pages
 };
 
 class WebtoonReader extends Component<Props, State> {
   state = {
     pagesInView: [],
     pagesToLoad: [],
+    isJumpingToPage: false,
   };
 
   componentDidMount() {
-    window.scrollTo(0, 0);
-
     const { match } = this.props;
+    const page = parseInt(match.params.page, 10);
 
-    // If you're directly loading a specific page number, jump to it
-    if (match.params.page !== '0') {
-      this.handlePageJump(match.params.page);
+    if (page === 0) {
+      window.scrollTo(0, 0);
+    } else {
+      // If you're directly loading a specific page number, jump to it
+      // NOTE: scrolling finished before waypoints are instantiated, so no events are triggered
+      this.scrollToPage(parseInt(match.params.page, 10));
     }
   }
 
-  // NOTE: not checking if the mangaId in the URL changed. Don't think this is a problem
   componentDidUpdate(prevProps, prevState) {
-    const {
-      urlPrefix, mangaId, chapter, match, history, location,
-    } = this.props;
+    // NOTE: not checking if the mangaId in the URL changed. Don't think this is a problem
+    const { match } = this.props;
+    const chapterChanged = match.params.chapterId !== prevProps.match.params.chapterId;
 
+    if (chapterChanged) {
+      this.resetForNewChapter();
+    }
+
+    // When pagesInView state is changed, check if URL should be updated
+    this.updateUrlToCurrentPage(prevState);
+  }
+
+  resetForNewChapter = () => {
+    window.scrollTo(0, 0);
+    this.setState({ pagesInView: [], pagesToLoad: [] });
+  };
+
+  updateUrlToCurrentPage = (prevState) => {
+    // This is a helper function, call from componentDidUpdate()
+    //
+    // NOTE: It seems that if you rapidly scroll, page becomes undefined.
+    //       Also, on hot-reload or debug mode reload, lastPage is undefined.
+    //       This would cause an infinite loop when I wasn't checking if lastpage != null.
+    const {
+      urlPrefix, mangaId, chapter, history,
+    } = this.props;
     const { pagesInView } = this.state;
     const { pagesInView: prevPagesInView } = prevState;
 
-    // Scroll to top when the chapter changes
-    const chapterChanged = match.params.chapterId !== prevProps.match.params.chapterId;
-    if (chapterChanged) {
-      window.scrollTo(0, 0);
-
-      // Also reset state
-      /* eslint-disable react/no-did-update-set-state */
-      this.setState({ pagesInView: [], pagesToLoad: [] });
-      /* eslint-enable react/no-did-update-set-state */
-    }
-
-    // If the url contains the query param '?jumpTo=true' then jump to that page
-    const queryParams = queryString.parse(location.search);
-    const shouldJumpToPage = queryParams.jumpTo === 'true';
-
-    if (!chapterChanged && shouldJumpToPage) {
-      this.handlePageJump(match.params.page);
-    }
-
-    // Update the URL to reflect what page the user is currently looking at
-    // NOTE: It seems that if you rapidly scroll, page becomes undefined.
-    //       Also, on hot-reload or debug mode reload, lastPage is undefined.
-    //       ^ would cause an infinite loop when I wasn't checking if lastpage != null
     const lastPage = pagesInView[pagesInView.length - 1];
     const prevLastPage = prevPagesInView[prevPagesInView.length - 1];
 
-    if (lastPage != null && lastPage !== prevLastPage && !shouldJumpToPage) {
+    if (lastPage != null && lastPage !== prevLastPage) {
       history.replace(Client.page(urlPrefix, mangaId, chapter.id, lastPage));
     }
-  }
+  };
 
-  handlePageJump = (pageId: string) => {
-    const { history, location } = this.props;
+  scrollToPage = (pageNum: number) => {
+    // TODO: Consider making this function a non-react helper function
 
-    const page = document.getElementById(pageId);
+    // TODO: Consider removing the logic for images that don't fit the viewport
+    //       Not sure what the consequences of that are.
+
     const vh = window.innerHeight;
+    const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
 
     if (!page) return;
 
@@ -169,12 +181,11 @@ class WebtoonReader extends Component<Props, State> {
       const extraOffset = vh - page.scrollHeight;
       window.scrollTo(0, page.offsetTop - extraOffset);
     }
+  };
 
-    // Clear the '?jumpTo=true' query param from the URL if it exists
-    // NOTE: This is how I got around prior issues with jumping to pages in componentDidUpdate()
-    if (location.search) {
-      history.replace(location.pathname);
-    }
+  handleJumpToPage = (newPage: number) => {
+    this.setState({ isJumpingToPage: true });
+    this.scrollToPage(newPage); // TODO: might need to put this in setState callback function
   };
 
   pageOnEnter = (page) => {
@@ -187,15 +198,23 @@ class WebtoonReader extends Component<Props, State> {
       pagesCopy.push(page);
       const newPagesInView = pagesCopy.sort();
 
+      // TODO: somewhere below this comment I need to check isJumpingToPage and update it
+      //       this also needs to influence how newPagesToLoad is updated, when the target page is in view
+
       // Add more images that can start loading
-      const newPagesToLoad = addMorePagesToLoad(
-        mangaId,
-        chapter.id,
-        numLoadAhead,
-        pageCount,
-        newPagesInView,
-        prevState.pagesToLoad,
-      );
+      let newPagesToLoad;
+      if (prevState.isJumpingToPage) {
+        newPagesToLoad = prevState.pagesToLoad;
+      } else {
+        newPagesToLoad = addMorePagesToLoad(
+          mangaId,
+          chapter.id,
+          numLoadAhead,
+          pageCount,
+          newPagesInView,
+          prevState.pagesToLoad,
+        );
+      }
 
       return {
         pagesInView: newPagesInView,
@@ -215,7 +234,16 @@ class WebtoonReader extends Component<Props, State> {
 
   render() {
     const {
-      classes, mangaId, chapter, pageCount, nextChapterUrl, prevChapterUrl,
+      classes,
+      title,
+      chapterNum,
+      page,
+      backUrl,
+      mangaId,
+      chapter,
+      pageCount,
+      nextChapterUrl,
+      prevChapterUrl,
     } = this.props;
     const { pagesToLoad } = this.state;
 
@@ -223,6 +251,17 @@ class WebtoonReader extends Component<Props, State> {
 
     return (
       <React.Fragment>
+        <ReaderOverlay
+          title={title}
+          chapterNum={chapterNum}
+          pageCount={pageCount}
+          page={page}
+          backUrl={backUrl}
+          prevChapterUrl={prevChapterUrl}
+          nextChapterUrl={nextChapterUrl}
+          onJumpToPage={this.handleJumpToPage}
+        />
+
         <ResponsiveGrid spacing={0} className={classes.topOffset}>
           {sources.map((source, index) => (
             <Grid item xs={12} key={source} id={index}>
