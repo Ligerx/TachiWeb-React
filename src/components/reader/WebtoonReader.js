@@ -117,7 +117,7 @@ class WebtoonReader extends Component<Props, State> {
     } else {
       // If you're directly loading a specific page number, jump to it
       // NOTE: scrolling finished before waypoints are instantiated, so no events are triggered
-      this.scrollToPage(parseInt(match.params.page, 10));
+      scrollToPage(parseInt(match.params.page, 10));
     }
   }
 
@@ -159,37 +159,9 @@ class WebtoonReader extends Component<Props, State> {
     }
   };
 
-  scrollToPage = (pageNum: number) => {
-    // TODO: Consider making this function a non-react helper function
-
-    const vh = window.innerHeight;
-    const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
-
-    if (!page) return;
-
-    // To keep consistent with the URL corresponding to the bottom most visible page
-    // Keep the page you jump to as the bottom page, whether it's larger or smaller than the vh
-
-    // If an image's height is less than the vh, scrolling to it will cause the subsequent page
-    // to be the page-in-view (which will also update the URL)
-    // This will also make the ReaderOverlay current page jump to the next page
-    //
-    // However, this is intentional so that jumping to a page will load the target
-    // image and no image between the current and target page
-    if (page.scrollHeight >= vh) {
-      // For large images, jump to the top
-      window.scrollTo(0, page.offsetTop);
-    } else {
-      // For smaller images, align the bottom with the bottom of the viewport
-      // scrollTo a negative number seems to be fine
-      const extraOffset = vh - page.scrollHeight;
-      window.scrollTo(0, page.offsetTop - extraOffset);
-    }
-  };
-
   handleJumpToPage = (newPage: number) => {
     this.setState({ jumpingToPage: newPage });
-    this.scrollToPage(newPage); // TODO: might need to put this in setState callback function
+    scrollToPage(newPage); // TODO: might need to put this in setState callback function
   };
 
   pageOnEnter = (page) => {
@@ -336,6 +308,21 @@ function addMorePagesToLoad(mangaId, chapterId, numLoadAhead, pageCount, pagesIn
   arrayCopy.push(...newPages);
 
   return [...new Set(arrayCopy)]; // unique values only
+}
+
+function scrollToPage(pageNum: number) {
+  // If an image's height is less than the vh, scrolling to it will cause the subsequent page
+  // to be the page-in-view (which will also update the URL)
+  // This will also make the ReaderOverlay current page jump to the next page
+  //
+  // However, this is intentional so that jumping to a page be consistent and predictable.
+  // This guarantees that you will load the target image and no image before it
+  // (unless you hit the bottom of the page)
+
+  const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
+  if (!page) return;
+
+  window.scrollTo(0, page.offsetTop);
 }
 
 // Using UrlPrefixConsumer to get the urlPrefix needed to build urls
