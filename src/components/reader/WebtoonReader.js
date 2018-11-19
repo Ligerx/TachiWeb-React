@@ -98,14 +98,14 @@ type Props = {
 type State = {
   pagesInView: Array<number>, // make sure to always keep this sorted
   pagesToLoad: Array<string>, // urls for the image, acts as a unique key
-  isJumpingToPage: boolean, // using to prevent loading skipped images when jumping pages
+  isJumpingToPage: ?number, // using to prevent loading skipped images when jumping pages
 };
 
 class WebtoonReader extends Component<Props, State> {
   state = {
     pagesInView: [],
     pagesToLoad: [],
-    isJumpingToPage: false,
+    isJumpingToPage: null,
   };
 
   componentDidMount() {
@@ -162,9 +162,6 @@ class WebtoonReader extends Component<Props, State> {
   scrollToPage = (pageNum: number) => {
     // TODO: Consider making this function a non-react helper function
 
-    // TODO: Consider removing the logic for images that don't fit the viewport
-    //       Not sure what the consequences of that are.
-
     const vh = window.innerHeight;
     const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
 
@@ -184,7 +181,7 @@ class WebtoonReader extends Component<Props, State> {
   };
 
   handleJumpToPage = (newPage: number) => {
-    this.setState({ isJumpingToPage: true });
+    this.setState({ isJumpingToPage: newPage });
     this.scrollToPage(newPage); // TODO: might need to put this in setState callback function
   };
 
@@ -193,17 +190,22 @@ class WebtoonReader extends Component<Props, State> {
     const { mangaId, chapter, pageCount } = this.props;
 
     this.setState((prevState) => {
-      // Update pagesInView
-      const pagesCopy = prevState.pagesInView.slice();
-      pagesCopy.push(page);
-      const newPagesInView = pagesCopy.sort();
+      const newPagesInView = addAPageInView(prevState.pagesInView, page);
 
       // TODO: somewhere below this comment I need to check isJumpingToPage and update it
       //       this also needs to influence how newPagesToLoad is updated, when the target page is in view
 
+      // if the first page # in pagesInView = the target page, then we can start loading pages again
+      // OR if we've reached the bottom of the webpage, we can also just start loading
+      // Once either of these happens, I need to reset the target page value from state (probably set to null)
+      //
+      //       However, I need to keep in mind the current scrollToPage() behavior.
+
+      // if (isJumpingToPage !== null && )
+
       // Add more images that can start loading
       let newPagesToLoad;
-      if (prevState.isJumpingToPage) {
+      if (prevState.isJumpingToPage === null) {
         newPagesToLoad = prevState.pagesToLoad;
       } else {
         newPagesToLoad = addMorePagesToLoad(
@@ -303,6 +305,12 @@ function createImageSrcArray(mangaId, chapterId, pageCount) {
     sources.push(Server.image(mangaId, chapterId, page));
   }
   return sources;
+}
+
+function addAPageInView(oldPagesInView, newPage) {
+  const pagesCopy = oldPagesInView.slice();
+  pagesCopy.push(newPage);
+  return pagesCopy.sort();
 }
 
 // Adds the next img sources to load to the current array of img sources to load
