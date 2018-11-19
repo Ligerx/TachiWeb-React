@@ -98,14 +98,14 @@ type Props = {
 type State = {
   pagesInView: Array<number>, // make sure to always keep this sorted
   pagesToLoad: Array<string>, // urls for the image, acts as a unique key
-  isJumpingToPage: ?number, // using to prevent loading skipped images when jumping pages
+  jumpingToPage: ?number, // using to prevent loading skipped images when jumping pages
 };
 
 class WebtoonReader extends Component<Props, State> {
   state = {
     pagesInView: [],
     pagesToLoad: [],
-    isJumpingToPage: null,
+    jumpingToPage: null,
   };
 
   componentDidMount() {
@@ -169,6 +169,13 @@ class WebtoonReader extends Component<Props, State> {
 
     // To keep consistent with the URL corresponding to the bottom most visible page
     // Keep the page you jump to as the bottom page, whether it's larger or smaller than the vh
+
+    // If an image's height is less than the vh, scrolling to it will cause the subsequent page
+    // to be the page-in-view (which will also update the URL)
+    // This will also make the ReaderOverlay current page jump to the next page
+    //
+    // However, this is intentional so that jumping to a page will load the target
+    // image and no image between the current and target page
     if (page.scrollHeight >= vh) {
       // For large images, jump to the top
       window.scrollTo(0, page.offsetTop);
@@ -181,7 +188,7 @@ class WebtoonReader extends Component<Props, State> {
   };
 
   handleJumpToPage = (newPage: number) => {
-    this.setState({ isJumpingToPage: newPage });
+    this.setState({ jumpingToPage: newPage });
     this.scrollToPage(newPage); // TODO: might need to put this in setState callback function
   };
 
@@ -192,7 +199,7 @@ class WebtoonReader extends Component<Props, State> {
     this.setState((prevState) => {
       const newPagesInView = addAPageInView(prevState.pagesInView, page);
 
-      // TODO: somewhere below this comment I need to check isJumpingToPage and update it
+      // TODO: somewhere below this comment I need to check jumpingToPage and update it
       //       this also needs to influence how newPagesToLoad is updated, when the target page is in view
 
       // if the first page # in pagesInView = the target page, then we can start loading pages again
@@ -201,11 +208,11 @@ class WebtoonReader extends Component<Props, State> {
       //
       //       However, I need to keep in mind the current scrollToPage() behavior.
 
-      // if (isJumpingToPage !== null && )
+      // if (jumpingToPage !== null && )
 
       // Add more images that can start loading
       let newPagesToLoad;
-      if (prevState.isJumpingToPage === null) {
+      if (prevState.jumpingToPage === null) {
         newPagesToLoad = prevState.pagesToLoad;
       } else {
         newPagesToLoad = addMorePagesToLoad(
