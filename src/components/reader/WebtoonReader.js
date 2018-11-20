@@ -101,6 +101,8 @@ type State = {
   jumpingToPage: ?number, // using to prevent loading skipped images when jumping pages
 };
 
+const numLoadAhead = 3;
+
 class WebtoonReader extends Component<Props, State> {
   state = {
     pagesInView: [],
@@ -136,7 +138,7 @@ class WebtoonReader extends Component<Props, State> {
 
   resetForNewChapter = () => {
     window.scrollTo(0, 0);
-    this.setState({ pagesInView: [], pagesToLoad: [] });
+    this.setState({ pagesInView: [], pagesToLoad: [], jumpingToPage: null });
   };
 
   updateUrlToCurrentPage = (prevState) => {
@@ -164,37 +166,33 @@ class WebtoonReader extends Component<Props, State> {
     scrollToPage(newPage); // TODO: might need to put this in setState callback function
   };
 
-  pageOnEnter = (page) => {
-    const numLoadAhead = 3;
+  handlePageEnter = (page) => {
     const { mangaId, chapter, pageCount } = this.props;
 
     this.setState((prevState) => {
       const newPagesInView = addAPageInView(prevState.pagesInView, page);
+      const newPagesToLoad = addMorePagesToLoad(
+        mangaId,
+        chapter.id,
+        numLoadAhead,
+        pageCount,
+        newPagesInView,
+        prevState.pagesToLoad,
+      );
 
-      // TODO: somewhere below this comment I need to check jumpingToPage and update it
-      //       this also needs to influence how newPagesToLoad is updated, when the target page is in view
+      // This assumes that scrollToPage() always tries to put the target image at the top
+      // and that handleScrollToBottom() handles things when scrollToPage() can't do that
+      const isJumping = prevState.jumpingToPage !== null;
+      const targetPageIsOnTop = newPagesInView[0] === prevState.jumpingToPage;
 
-      // if the first page # in pagesInView = the target page, then we can start loading pages again
-      // OR if we've reached the bottom of the webpage, we can also just start loading
-      // Once either of these happens, I need to reset the target page value from state (probably set to null)
-      //
-      //       However, I need to keep in mind the current scrollToPage() behavior.
-
-      // if (jumpingToPage !== null && )
-
-      // Add more images that can start loading
-      let newPagesToLoad;
-      if (prevState.jumpingToPage === null) {
-        newPagesToLoad = prevState.pagesToLoad;
-      } else {
-        newPagesToLoad = addMorePagesToLoad(
-          mangaId,
-          chapter.id,
-          numLoadAhead,
-          pageCount,
-          newPagesInView,
-          prevState.pagesToLoad,
-        );
+      if (isJumping && !targetPageIsOnTop) {
+        return {};
+      } else if (isJumping && targetPageIsOnTop) {
+        return {
+          pagesInView: newPagesInView,
+          pagesToLoad: newPagesToLoad,
+          jumpingToPage: null,
+        };
       }
 
       return {
@@ -204,11 +202,32 @@ class WebtoonReader extends Component<Props, State> {
     });
   };
 
-  pageOnLeave = (page) => {
+  handlePageLeave = (page) => {
     this.setState((prevState) => {
       const { pagesInView } = prevState;
       return {
         pagesInView: pagesInView.filter(pageInView => pageInView !== page),
+      };
+    });
+  };
+
+  handleScrollToBottom = () => {
+    // Tells component to abort page jumping because it's hit the bottom of the page
+    const { mangaId, chapter, pageCount } = this.props;
+
+    this.setState((prevState) => {
+      const newPagesToLoad = addMorePagesToLoad(
+        mangaId,
+        chapter.id,
+        numLoadAhead,
+        pageCount,
+        prevState.pagesInView,
+        prevState.pagesToLoad,
+      );
+
+      return {
+        pagesToLoad: newPagesToLoad,
+        jumpingToPage: null,
       };
     });
   };
@@ -247,8 +266,8 @@ class WebtoonReader extends Component<Props, State> {
           {sources.map((source, index) => (
             <Grid item xs={12} key={source} id={index}>
               <Waypoint
-                onEnter={() => this.pageOnEnter(index)}
-                onLeave={() => this.pageOnLeave(index)}
+                onEnter={() => this.handlePageEnter(index)}
+                onLeave={() => this.handlePageLeave(index)}
               >
                 <div> {/* Refer to notes on Waypoint above for why this <div> is necessary */}
                   <ImageWithLoader
@@ -272,6 +291,8 @@ class WebtoonReader extends Component<Props, State> {
             </Button>
           </Grid>
         </ResponsiveGrid>
+
+        <Waypoint onEnter={this.handleScrollToBottom} />
       </React.Fragment>
     );
   }
