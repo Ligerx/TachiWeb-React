@@ -162,7 +162,7 @@ class WebtoonReader extends Component<Props, State> {
   };
 
   handleJumpToPage = (newPage: number) => {
-    this.setState({ jumpingToPage: newPage });
+    this.setState({ jumpingToPage: newPage - 1 });
     scrollToPage(newPage); // TODO: might need to put this in setState callback function
   };
 
@@ -343,7 +343,8 @@ function scrollToPage(pageNum: number) {
   const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
   if (!page) return;
 
-  window.scrollTo(0, page.offsetTop);
+  // Adding extra pixels to ensure the previous page isn't still in view. (browser quirk)
+  window.scrollTo(0, page.offsetTop + 1);
 }
 
 // Using UrlPrefixConsumer to get the urlPrefix needed to build urls
