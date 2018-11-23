@@ -25,6 +25,7 @@ const styles = {
 
 type Props = {
   classes: Object,
+
   pageCount: number,
   page: number,
   onJumpToPage: Function,
@@ -34,10 +35,11 @@ type State = {
   sliderValue: number,
 };
 
-// rc-slider is finicky. Use state.sliderValue as the value of the slider at all times
-// update it onChange, and use onAfterChange to fire any actual events
-//
-// TODO: use Material-UI slider component if/when it releases
+// Using state.sliderValue so slider can be dragged around (which updates the state onChange)
+// If you use props.page, the slider value can't be changed
+// Once the user releases the mouse, this fires the onAfterChange event
+
+// Input and output values should be 0 indexed, but will add 1 to the displayed values
 
 // FIXME: I added some CSS to index.css
 //        ReaderOverlay has a z-index, which is interfering with the tooltip.
@@ -45,23 +47,21 @@ type State = {
 
 class PageSlider extends Component<Props, State> {
   static getDerivedStateFromProps(nextProps) {
-    // Set the initial sliderValue to always reflect the page # in the URL
-    // 1 indexed for human readability
-    return { sliderValue: nextProps.page + 1 };
+    return { sliderValue: nextProps.page };
   }
 
-  state = {
-    sliderValue: 1,
-  };
+  state = { sliderValue: 0 };
 
   updateSliderValue = (value: number) => {
-    this.setState({ sliderValue: value });
+    this.setState({ sliderValue: value - 1 });
+  };
+
+  handleAfterChange = (value: number) => {
+    this.props.onJumpToPage(value - 1);
   };
 
   render() {
-    const {
-      pageCount, page, onJumpToPage, classes,
-    } = this.props;
+    const { classes, pageCount, page } = this.props;
     const { sliderValue } = this.state;
 
     return (
@@ -70,9 +70,9 @@ class PageSlider extends Component<Props, State> {
         <SliderWithTooltip
           min={1}
           max={pageCount}
-          value={sliderValue}
+          value={sliderValue + 1}
           onChange={this.updateSliderValue}
-          onAfterChange={onJumpToPage}
+          onAfterChange={this.handleAfterChange}
           tipFormatter={value => `Page ${value}`}
         />
         <Typography className={classes.rightText}>{pageCount}</Typography>
