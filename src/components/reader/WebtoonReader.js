@@ -43,9 +43,11 @@ import ReaderOverlay from 'components/reader/ReaderOverlay';
 // TODO: have some sort of interaction where you go to the next chapter if you keep scrolling down
 //       sort of similar to the idea of keyboard interactions, don't rely on mouse clicks
 
-// TODO: make the slider return the correct number so I don't have to subtract 1 here
-//       need to check that this behavior also works with single page reader
-
+// TODO: make the image transition in size, hopefully that'll make page loading less jumpy
+//       Unsure if there's any side effects of doing so
+//
+//       One alternative plan if this doesn't work well is to have the Image pass it's delta height
+//       and scroll around based on that. However, this seems a lot more tricky to get right.
 
 const styles = {
   page: {
@@ -153,11 +155,11 @@ class WebtoonReader extends Component<Props, State> {
   };
 
   handleJumpToPage = (newPage: number) => {
-    this.setState({ jumpingToPage: newPage - 1 });
+    this.setState({ jumpingToPage: newPage });
 
     // Thought I might need to put this in setState's callback function, but it
     // doesn't seem to be causing any problems like this
-    scrollToPage(newPage - 1);
+    scrollToPage(newPage);
   };
 
   handlePageEnter = (page) => {
