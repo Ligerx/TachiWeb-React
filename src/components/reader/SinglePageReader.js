@@ -86,7 +86,7 @@ class SinglePageReader extends Component<Props> {
 
   handleJumpToPage = (newPage: number) => {
     const { urlPrefix, mangaId, chapterId } = this.props;
-    this.props.history.push(Client.page(urlPrefix, mangaId, chapterId, newPage - 1));
+    this.props.history.push(Client.page(urlPrefix, mangaId, chapterId, newPage));
   };
 
   handleArrowKeyDown = (event: SyntheticKeyboardEvent<>) => {
