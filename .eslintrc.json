@@ -6,14 +6,17 @@
   },
   "parser": "babel-eslint",
   "extends": "airbnb",
-  "plugins": ["import", "flowtype"],
+  "plugins": ["flowtype"],
   "rules": {
     "import/extensions": [1, "never"],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "react/forbid-prop-types": 0,
     "no-use-before-define": ["error", { "functions": false }],
-    "jsx-a11y/anchor-is-valid": ["error", { "components": ["Link"], "specialLink": ["to"] }],
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      { "components": ["Link"], "specialLink": ["to"] }
+    ],
     "react/default-props-match-prop-types": "off",
 
     "flowtype/define-flow-type": 1,
