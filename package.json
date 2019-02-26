@@ -16,7 +16,7 @@
     "react-helmet": "^5.2.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4",
+    "react-scripts": "2.1.5",
     "react-waypoint": "^8.0.1",
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
@@ -43,5 +43,11 @@
     "prettier-eslint": "^8.8.1",
     "redux-devtools-extension": "^2.13.2"
   },
-  "proxy": "http://localhost:4567"
+  "proxy": "http://localhost:4567",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
