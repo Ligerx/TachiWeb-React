@@ -17,3 +17,7 @@ After cloning the project, run `npm install`
 To start the project, run `npm start`
 
 By default, you can access the project from **localhost:3000** in your browser
+
+---
+
+As of `create-react-app` and `react-scripts` 2.0, `eslint-config-airbnb`'s recommended instructions don't work. Currently using this workaround. [Link](https://github.com/facebook/create-react-app/issues/5247#issuecomment-439360498)
