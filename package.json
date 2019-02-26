@@ -32,7 +32,7 @@
     "flow": "flow"
   },
   "devDependencies": {
-    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-flowtype": "^2.47.1",
     "flow-bin": "^0.72.0",
     "redux-devtools-extension": "^2.13.2"
