@@ -35,7 +35,6 @@
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-flowtype": "^2.47.1",
     "flow-bin": "^0.72.0",
-    "prettier-eslint": "^8.8.1",
     "redux-devtools-extension": "^2.13.2"
   },
   "proxy": "http://localhost:4567",
