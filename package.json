@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-flowtype": "^2.47.1",
     "eslint-plugin-react-hooks": "^1.2.0",
     "flow-bin": "^0.93.0",

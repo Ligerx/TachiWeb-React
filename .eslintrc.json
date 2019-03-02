@@ -5,7 +5,7 @@
     "jest": true
   },
   "parser": "babel-eslint",
-  "extends": "airbnb",
+  "extends": ["airbnb", "prettier"],
   "plugins": ["flowtype", "react-hooks"],
   "rules": {
     "import/extensions": [1, "never"],
