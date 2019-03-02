@@ -1,11 +1,11 @@
 // @flow
-import React from 'react';
+import React, { useContext } from 'react';
 import type { ChapterType } from 'types';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Link from 'components/Link';
 import { chapterNumPrettyPrint } from 'components/utils';
-import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
+import UrlPrefixContext from 'components/UrlPrefixContext';
 import { Client } from 'api';
 
 // The chapters list passed into this component should NOT be sorted or filtered.
@@ -23,31 +23,29 @@ type Props = {
 }; // otherProps passed to Button
 
 const ContinueReadingButton = ({ chapters, mangaId, ...otherProps }: Props) => {
+  const urlPrefix = useContext(UrlPrefixContext);
+
   if (!chapters.length) return null;
 
   const firstUnreadChapter = findFirstUnreadChapter(chapters);
 
   if (firstUnreadChapter) {
     return (
-      <UrlPrefixConsumer>
-        {urlPrefix => (
-          <Button
-            {...otherProps}
-            variant="contained"
-            color="primary"
-            component={Link}
-            to={Client.page(
-              urlPrefix,
-              mangaId,
-              firstUnreadChapter.id,
-              firstUnreadChapter.last_page_read,
-            )}
-          >
-            <Icon>play_arrow</Icon>
-            Continue Reading Ch. {chapterNumPrettyPrint(firstUnreadChapter.chapter_number)}
-          </Button>
+      <Button
+        {...otherProps}
+        variant="contained"
+        color="primary"
+        component={Link}
+        to={Client.page(
+          urlPrefix,
+          mangaId,
+          firstUnreadChapter.id,
+          firstUnreadChapter.last_page_read,
         )}
-      </UrlPrefixConsumer>
+      >
+        <Icon>play_arrow</Icon>
+        Continue Reading Ch. {chapterNumPrettyPrint(firstUnreadChapter.chapter_number)}
+      </Button>
     );
   }
   return (

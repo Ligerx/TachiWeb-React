@@ -7,7 +7,7 @@ import ReaderContainer from 'containers/ReaderContainer';
 import CatalogueContainer from 'containers/CatalogueContainer';
 import ErrorNotificationsContainer from 'containers/ErrorNotificationsContainer';
 import BackupRestore from 'pages/BackupRestore';
-import { UrlPrefixProvider } from 'components/UrlPrefixContext';
+import UrlPrefixContext from 'components/UrlPrefixContext';
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
@@ -29,7 +29,7 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
   }
 
   return (
-    <UrlPrefixProvider value={match.path}>
+    <UrlPrefixContext.Provider value={match.path}>
       <Switch>
         <Route path={`${match.path}/:mangaId/:chapterId/:page`} component={ReaderContainer} />
 
@@ -40,7 +40,7 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
           )}
         />
       </Switch>
-    </UrlPrefixProvider>
+    </UrlPrefixContext.Provider>
   );
 };
 
