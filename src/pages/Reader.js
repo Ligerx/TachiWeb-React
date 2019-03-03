@@ -135,7 +135,7 @@ class Reader extends Component<Props> {
           </title>
         </Helmet>
 
-        {/**/}
+        {/*
         <SinglePageReader
           title={mangaInfo.title}
           chapterNum={chapter.chapter_number}
@@ -152,8 +152,8 @@ class Reader extends Component<Props> {
           nextPageUrl={this.nextPageUrl()}
           prevPageUrl={this.prevPageUrl()}
         />
+        */}
         {/**/}
-        {/*
         <WebtoonReader
           title={mangaInfo.title}
           chapterNum={chapter.chapter_number}
@@ -166,7 +166,7 @@ class Reader extends Component<Props> {
           nextChapterUrl={this.nextChapterUrl()}
           prevChapterUrl={this.prevChapterUrl()}
         />
-        */}
+        {/**/}
 
         <ReadingStatusUpdaterContainer />
         <ImagePreloaderContainer />

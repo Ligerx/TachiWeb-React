@@ -1,9 +1,9 @@
 // @flow
-import React, { Component } from 'react';
-import Typography from '@material-ui/core/Typography';
-import 'rc-slider/assets/index.css';
-import Slider, { createSliderWithTooltip } from 'rc-slider';
-import { withStyles } from '@material-ui/core/styles';
+import React, { Component } from "react";
+import Typography from "@material-ui/core/Typography";
+import "rc-slider/assets/index.css";
+import Slider, { createSliderWithTooltip } from "rc-slider";
+import { withStyles } from "@material-ui/core/styles";
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
 
@@ -12,15 +12,15 @@ const marginSlider = 24;
 const marginButton = 8;
 const styles = {
   leftText: {
-    whiteSpace: 'pre',
+    whiteSpace: "pre",
     marginLeft: marginButton,
-    marginRight: marginSlider,
+    marginRight: marginSlider
   },
   rightText: {
-    whiteSpace: 'pre',
+    whiteSpace: "pre",
     marginLeft: marginSlider,
-    marginRight: marginButton,
-  },
+    marginRight: marginButton
+  }
 };
 
 type Props = {
@@ -28,11 +28,11 @@ type Props = {
 
   pageCount: number,
   page: number,
-  onJumpToPage: Function,
+  onJumpToPage: Function
 };
 
 type State = {
-  sliderValue: number,
+  sliderValue: number
 };
 
 // Using state.sliderValue so slider can be dragged around (which updates the state onChange)
@@ -46,18 +46,28 @@ type State = {
 //        Ideally, this CSS wouldn't be necessary
 
 class PageSlider extends Component<Props, State> {
-  static getDerivedStateFromProps(nextProps) {
-    return { sliderValue: nextProps.page };
+  state = { sliderValue: 0 };
+
+  componentDidMount() {
+    const { page } = this.props;
+    this.setState({ sliderValue: page });
   }
 
-  state = { sliderValue: 0 };
+  componentDidUpdate(prevProps) {
+    const { page } = this.props;
+    if (page !== prevProps.page) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ sliderValue: page });
+    }
+  }
 
   updateSliderValue = (value: number) => {
     this.setState({ sliderValue: value - 1 });
   };
 
   handleAfterChange = (value: number) => {
-    this.props.onJumpToPage(value - 1);
+    const { onJumpToPage } = this.props;
+    onJumpToPage(value - 1);
   };
 
   render() {
@@ -66,7 +76,9 @@ class PageSlider extends Component<Props, State> {
 
     return (
       <React.Fragment>
-        <Typography className={classes.leftText}>{`Page ${page + 1}`}</Typography>
+        <Typography className={classes.leftText}>
+          {`Page ${page + 1}`}
+        </Typography>
         <SliderWithTooltip
           min={1}
           max={pageCount}
