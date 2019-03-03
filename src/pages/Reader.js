@@ -11,7 +11,7 @@ import ReadingStatusUpdaterContainer from 'containers/ReadingStatusUpdaterContai
 import ImagePreloaderContainer from 'containers/ImagePreloaderContainer';
 import { Helmet } from 'react-helmet';
 import { chapterNumPrettyPrint } from 'components/utils';
-import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
+import UrlPrefixContext from 'components/UrlPrefixContext';
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
@@ -135,7 +135,7 @@ class Reader extends Component<Props> {
           </title>
         </Helmet>
 
-        {/*
+        {/**/}
         <SinglePageReader
           title={mangaInfo.title}
           chapterNum={chapter.chapter_number}
@@ -152,19 +152,21 @@ class Reader extends Component<Props> {
           nextPageUrl={this.nextPageUrl()}
           prevPageUrl={this.prevPageUrl()}
         />
-        */}
-
+        {/**/}
+        {/*
         <WebtoonReader
           title={mangaInfo.title}
           chapterNum={chapter.chapter_number}
           page={page}
           backUrl={Client.manga(urlPrefix, mangaInfo.id)}
+          urlPrefix={urlPrefix}
           mangaId={mangaInfo.id}
           pageCount={pageCount}
           chapter={chapter}
           nextChapterUrl={this.nextChapterUrl()}
           prevChapterUrl={this.prevChapterUrl()}
         />
+        */}
 
         <ReadingStatusUpdaterContainer />
         <ImagePreloaderContainer />
@@ -200,7 +202,7 @@ function findChapter(chapters: Array<ChapterType>, chapterId: number): ?ChapterT
 }
 
 export default (props: Object) => (
-  <UrlPrefixConsumer>
+  <UrlPrefixContext.Consumer>
     {urlPrefix => <Reader {...props} urlPrefix={urlPrefix} />}
-  </UrlPrefixConsumer>
+  </UrlPrefixContext.Consumer>
 );

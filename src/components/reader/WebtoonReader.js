@@ -12,7 +12,6 @@ import { Server, Client } from 'api';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
 import Waypoint from 'react-waypoint';
-import { UrlPrefixConsumer } from 'components/UrlPrefixContext';
 import ReaderOverlay from 'components/reader/ReaderOverlay';
 
 // Waypoints that wrap around components require special code
@@ -72,6 +71,7 @@ type Props = {
   chapterNum: number,
   page: number,
   backUrl: string,
+  urlPrefix: string,
 
   // reader props
   mangaId: number,
@@ -83,9 +83,6 @@ type Props = {
   // React router props
   match: Object,
   history: Object,
-
-  // UrlPrefixConsumer prop
-  urlPrefix: string,
 };
 
 type State = {
@@ -319,11 +316,4 @@ function scrollToPage(pageNum: number) {
   window.scrollTo(0, page.offsetTop + 1);
 }
 
-// Using UrlPrefixConsumer to get the urlPrefix needed to build urls
-const WebtoonReaderWithContext = props => (
-  <UrlPrefixConsumer>
-    {urlPrefix => <WebtoonReader {...props} urlPrefix={urlPrefix} />}
-  </UrlPrefixConsumer>
-);
-
-export default withRouter(withStyles(styles)(WebtoonReaderWithContext));
+export default withRouter(withStyles(styles)(WebtoonReader));
