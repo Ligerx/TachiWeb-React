@@ -1,14 +1,20 @@
 {
-  // Format a file on save. A formatter must be available, the file must not be auto-saved, and editor must not be shutting down.
-  "editor.formatOnSave": true,
-  // Enable/disable default JavaScript formatter (For Prettier)
-  "javascript.format.enable": false,
-  // Use 'prettier-eslint' instead of 'prettier'. Other settings will only be fallbacks in case they could not be inferred from eslint rules.
-  "prettier.eslintIntegration": true,
   "files.associations": {
     "*.js": "javascriptreact"
   },
-  // Disable this while using flow in vscode
+  // Disable VSCode's built-in javascript formatter
+  "javascript.format.enable": false,
+
+  // ESLint + Prettier setup guide - https://www.youtube.com/watch?v=bfyI9yl3qfE
+  "editor.formatOnSave": true,
+  "[javascriptreact]": {
+    "editor.formatOnSave": false
+  },
+  "prettier.disableLanguages": ["javascriptreact"],
+  "eslint.autoFixOnSave": true,
+  "eslint.alwaysShowStatus": true,
+
+  // Disable built-in VSCode validations because it doesn't understand Flow
   "javascript.validate.enable": false,
   "flow.useNPMPackagedFlow": true,
   "flow.runOnAllFiles": true

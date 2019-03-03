@@ -5,8 +5,13 @@
     "jest": true
   },
   "parser": "babel-eslint",
-  "extends": ["prettier", "airbnb"],
-  "plugins": ["flowtype", "react-hooks"],
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "prettier/react",
+    "prettier/flowtype"
+  ],
+  "plugins": ["prettier", "flowtype", "react-hooks"],
   "rules": {
     "import/extensions": [1, "never"],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
@@ -22,7 +27,8 @@
     "flowtype/define-flow-type": 1,
     "flowtype/use-flow-type": 1,
 
-    "react-hooks/rules-of-hooks": "error"
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "settings": {
     "import/resolver": {
