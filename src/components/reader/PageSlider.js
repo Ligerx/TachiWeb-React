@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import "rc-slider/assets/index.css";
 import Slider, { createSliderWithTooltip } from "rc-slider";
@@ -31,11 +31,7 @@ type Props = {
   onJumpToPage: Function
 };
 
-type State = {
-  sliderValue: number
-};
-
-// Using state.sliderValue so slider can be dragged around (which updates the state onChange)
+// Using sliderValue state so slider can be dragged around (which updates the state onChange)
 // If you use props.page, the slider value can't be changed
 // Once the user releases the mouse, this fires the onAfterChange event
 
@@ -45,52 +41,30 @@ type State = {
 //        ReaderOverlay has a z-index, which is interfering with the tooltip.
 //        Ideally, this CSS wouldn't be necessary
 
-class PageSlider extends Component<Props, State> {
-  state = { sliderValue: 0 };
+// FIXME: Not sure if it's due to PageSlider, WebtoonReader, or Reader. But jumping pages
+//        with the slider seems slow. And going FORWARD makes the url go through every
+//        page individually. It doesn't seem to be breaking WebtoonReader pagesToLoad[] though.
 
-  componentDidMount() {
-    const { page } = this.props;
-    this.setState({ sliderValue: page });
-  }
+const PageSlider = ({ classes, pageCount, page, onJumpToPage }: Props) => {
+  const [sliderValue, setSliderValue] = useState(page);
+  useEffect(() => {
+    setSliderValue(page);
+  }, [page]);
 
-  componentDidUpdate(prevProps) {
-    const { page } = this.props;
-    if (page !== prevProps.page) {
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ sliderValue: page });
-    }
-  }
-
-  updateSliderValue = (value: number) => {
-    this.setState({ sliderValue: value - 1 });
-  };
-
-  handleAfterChange = (value: number) => {
-    const { onJumpToPage } = this.props;
-    onJumpToPage(value - 1);
-  };
-
-  render() {
-    const { classes, pageCount, page } = this.props;
-    const { sliderValue } = this.state;
-
-    return (
-      <React.Fragment>
-        <Typography className={classes.leftText}>
-          {`Page ${page + 1}`}
-        </Typography>
-        <SliderWithTooltip
-          min={1}
-          max={pageCount}
-          value={sliderValue + 1}
-          onChange={this.updateSliderValue}
-          onAfterChange={this.handleAfterChange}
-          tipFormatter={value => `Page ${value}`}
-        />
-        <Typography className={classes.rightText}>{pageCount}</Typography>
-      </React.Fragment>
-    );
-  }
-}
+  return (
+    <React.Fragment>
+      <Typography className={classes.leftText}>{`Page ${page + 1}`}</Typography>
+      <SliderWithTooltip
+        min={1}
+        max={pageCount}
+        value={sliderValue + 1}
+        onChange={(value: number) => setSliderValue(value - 1)}
+        onAfterChange={(value: number) => onJumpToPage(value - 1)}
+        tipFormatter={value => `Page ${value}`}
+      />
+      <Typography className={classes.rightText}>{pageCount}</Typography>
+    </React.Fragment>
+  );
+};
 
 export default withStyles(styles)(PageSlider);
