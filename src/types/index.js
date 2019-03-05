@@ -1,10 +1,10 @@
 // @flow
 export type MangaInfoFlagsType = {
-  DISPLAY_MODE: 'NAME' | 'NUMBER',
-  READ_FILTER: 'READ' | 'UNREAD' | 'ALL',
-  SORT_DIRECTION: 'ASCENDING' | 'DESCENDING',
-  SORT_TYPE: 'SOURCE' | 'NUMBER',
-  DOWNLOADED_FILTER: 'DOWNLOADED' | 'NOT_DOWNLOADED' | 'ALL',
+  DISPLAY_MODE: "NAME" | "NUMBER",
+  READ_FILTER: "READ" | "UNREAD" | "ALL",
+  SORT_DIRECTION: "ASCENDING" | "DESCENDING",
+  SORT_TYPE: "SOURCE" | "NUMBER",
+  DOWNLOADED_FILTER: "DOWNLOADED" | "NOT_DOWNLOADED" | "ALL"
 };
 
 export type MangaType = {
@@ -29,7 +29,7 @@ export type MangaType = {
   thumbnail_url: ?string,
   genres: ?string,
   categories: ?Array<string>,
-  status: ?string,
+  status: ?string
 };
 
 export type ChapterType = {
@@ -40,7 +40,7 @@ export type ChapterType = {
   chapter_number: number,
   download_status: string,
   id: number,
-  last_page_read: number,
+  last_page_read: number
 };
 
 export type SourceType = {
@@ -49,22 +49,37 @@ export type SourceType = {
   id: number,
   lang: {
     name: string,
-    display_name: string,
-  },
+    display_name: string
+  }
 };
 
-// TODO: I'm inventing my own library flags. Update to match and integrate with the server
-//       when that eventually gets implemented into the backend.
+// ALPHA = alphabetically
+// TOTAL = total chapters
 export type LibraryFlagsType = {
-  +DOWNLOADED_FILTER: 'DOWNLOADED' | 'ALL',
-  +READ_FILTER: 'UNREAD' | 'ALL',
-  +COMPLETED_FILTER: 'COMPLETED' | 'ALL',
-  +SORT_TYPE:
-    | 'ALPHABETICALLY'
-    | 'LAST_READ'
-    | 'LAST_UPDATED'
-    | 'UNREAD'
-    | 'TOTAL_CHAPTERS'
-    | 'SOURCE',
-  +SORT_DIRECTION: 'ASCENDING' | 'DESCENDING',
+  filters: [
+    {
+      type: "DOWNLOADED",
+      status: "ANY" | "INCLUDE" | "EXCLUDE"
+    },
+    {
+      type: "UNREAD",
+      status: "ANY" | "INCLUDE" | "EXCLUDE"
+    },
+    {
+      type: "COMPLETED",
+      status: "ANY" | "INCLUDE" | "EXCLUDE"
+    }
+  ],
+  sort: {
+    type:
+      | "ALPHA"
+      | "LAST_READ"
+      | "LAST_UPDATED"
+      | "UNREAD"
+      | "TOTAL"
+      | "SOURCE",
+    direction: "ASCENDING" | "DESCENDING"
+  },
+  display: "GRID" | "LIST",
+  show_download_badges: boolean
 };
