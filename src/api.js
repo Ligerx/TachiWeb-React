@@ -95,6 +95,12 @@ export const Server = {
 
   setMangaFlag(mangaId: number, flag: string, state: string) {
     return `/api/set_flag/${mangaId}/${flag}/${state}`;
+  },
+
+  libraryFlags() {
+    // Accepts a GET or POST request
+    // Follows the LibraryFlagsType format
+    return "/api/v2/library/flags";
   }
 };
 
