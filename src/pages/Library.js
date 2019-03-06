@@ -1,14 +1,12 @@
 // @flow
-import React, { Component } from 'react';
-import LibraryHeader from 'components/library/LibraryHeader';
-import MangaGrid from 'components/MangaGrid';
-import LibraryMangaCard from 'components/library/LibraryMangaCard';
-import FullScreenLoading from 'components/loading/FullScreenLoading';
-import type { LibraryContainerProps } from 'containers/LibraryContainer';
-import SortFilterLibrary from 'components/library/SortFilterLibrary';
-import { Helmet } from 'react-helmet';
-
-// TODO: sort/filter mangaLibrary
+import React, { Component } from "react";
+import LibraryHeader from "components/library/LibraryHeader";
+import MangaGrid from "components/MangaGrid";
+import LibraryMangaCard from "components/library/LibraryMangaCard";
+import FullScreenLoading from "components/loading/FullScreenLoading";
+import type { LibraryContainerProps } from "containers/LibraryContainer";
+import { Helmet } from "react-helmet";
+import filterSortLibrary from "components/library/libraryUtils";
 
 // TODO: no feedback of success/errors after clicking the library update button
 
@@ -21,21 +19,28 @@ import { Helmet } from 'react-helmet';
 type State = { searchQuery: string };
 
 class Library extends Component<LibraryContainerProps, State> {
-  state = { searchQuery: '' };
+  state = { searchQuery: "" };
 
   componentDidMount() {
-    this.props.fetchLibrary();
-    this.props.fetchUnread();
+    const { fetchLibrary, fetchUnread, fetchLibraryFlags } = this.props;
+    fetchLibrary();
+    fetchUnread();
+    fetchLibraryFlags();
   }
 
   handleRefreshClick = () => {
     const {
-      mangaLibrary, updateChapters, fetchLibrary, fetchUnread,
+      mangaLibrary,
+      updateChapters,
+      fetchLibrary,
+      fetchUnread
     } = this.props;
 
     // Create an array of promise functions
     // Since calling updateChapters runs the function, create an intermediate function
-    const updateChapterPromises = mangaLibrary.map(mangaInfo => () => updateChapters(mangaInfo.id));
+    const updateChapterPromises = mangaLibrary.map(mangaInfo => () =>
+      updateChapters(mangaInfo.id)
+    );
 
     serialPromiseChain(updateChapterPromises)
       .then(() => fetchLibrary({ ignoreCache: true }))
@@ -48,9 +53,22 @@ class Library extends Component<LibraryContainerProps, State> {
 
   render() {
     const {
-      mangaLibrary, unread, flags, setLibraryFlag, libraryIsLoading, chaptersAreUpdating,
+      mangaLibrary,
+      unread,
+      flags,
+      setLibraryFlag,
+      libraryIsLoading,
+      chaptersAreUpdating
     } = this.props;
+
     const { searchQuery } = this.state;
+
+    const sortedFilteredLibrary = filterSortLibrary(
+      mangaLibrary,
+      flags,
+      unread,
+      searchQuery
+    );
 
     return (
       <React.Fragment>
@@ -66,19 +84,10 @@ class Library extends Component<LibraryContainerProps, State> {
           setLibraryFlag={setLibraryFlag}
         />
 
-        <SortFilterLibrary
-          mangaLibrary={mangaLibrary}
-          libraryFlags={flags}
-          searchQuery={searchQuery}
-          unread={unread}
-        >
-          {sortedFilteredLibrary => (
-            <MangaGrid
-              mangaLibrary={sortedFilteredLibrary}
-              cardComponent={<LibraryMangaCard unread={unread} />}
-            />
-          )}
-        </SortFilterLibrary>
+        <MangaGrid
+          mangaLibrary={sortedFilteredLibrary}
+          cardComponent={<LibraryMangaCard unread={unread} />}
+        />
 
         {(libraryIsLoading || chaptersAreUpdating) && <FullScreenLoading />}
       </React.Fragment>
@@ -91,7 +100,7 @@ class Library extends Component<LibraryContainerProps, State> {
 function serialPromiseChain(promiseArray) {
   return promiseArray.reduce(
     (promiseChain, currentPromise) => promiseChain.then(() => currentPromise()),
-    Promise.resolve([]),
+    Promise.resolve([])
   );
 }
 
