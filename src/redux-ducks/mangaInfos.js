@@ -1,9 +1,9 @@
 // @flow
 
-import { Server } from 'api';
-import type { MangaType } from 'types';
-import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from './library';
-import { handleHTMLError } from './utils';
+import { Server } from "api";
+import type { MangaType } from "types";
+import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "./library";
+import { handleHTMLError } from "./utils";
 
 // NOTE: for clarity, this will be called mangaInfos (with an s)
 //       Info doesn't really have a plural, so I need to differentiate somehow
@@ -14,28 +14,28 @@ import { handleHTMLError } from './utils';
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_MANGA_REQUEST = 'mangaInfos/FETCH_REQUEST';
-const FETCH_MANGA_SUCCESS = 'mangaInfos/FETCH_SUCCESS';
-const FETCH_MANGA_FAILURE = 'mangaInfos/FETCH_FAILURE';
-const FETCH_MANGA_CACHE = 'mangaInfos/FETCH_CACHE';
-export const FETCH_MANGA = 'mangaInfos/FETCH';
+const FETCH_MANGA_REQUEST = "mangaInfos/FETCH_REQUEST";
+const FETCH_MANGA_SUCCESS = "mangaInfos/FETCH_SUCCESS";
+const FETCH_MANGA_FAILURE = "mangaInfos/FETCH_FAILURE";
+const FETCH_MANGA_CACHE = "mangaInfos/FETCH_CACHE";
+export const FETCH_MANGA = "mangaInfos/FETCH";
 
-const UPDATE_MANGA_REQUEST = 'mangaInfos/UPDATE_REQUEST';
-const UPDATE_MANGA_SUCCESS = 'mangaInfos/UPDATE_SUCCESS';
-const UPDATE_MANGA_FAILURE = 'mangaInfos/UPDATE_FAILURE';
-export const UPDATE_MANGA = 'mangaInfos/UPDATE';
+const UPDATE_MANGA_REQUEST = "mangaInfos/UPDATE_REQUEST";
+const UPDATE_MANGA_SUCCESS = "mangaInfos/UPDATE_SUCCESS";
+const UPDATE_MANGA_FAILURE = "mangaInfos/UPDATE_FAILURE";
+export const UPDATE_MANGA = "mangaInfos/UPDATE";
 
-const TOGGLE_FAVORITE_REQUEST = 'mangaInfos/TOGGLE_FAVORITE_REQUEST';
-const TOGGLE_FAVORITE_SUCCESS = 'mangaInfos/TOGGLE_FAVORITE_SUCCESS';
-const TOGGLE_FAVORITE_FAILURE = 'mangaInfos/TOGGLE_FAVORITE_FAILURE';
-export const TOGGLE_FAVORITE = 'mangaInfos/TOGGLE_FAVORITE';
+const TOGGLE_FAVORITE_REQUEST = "mangaInfos/TOGGLE_FAVORITE_REQUEST";
+const TOGGLE_FAVORITE_SUCCESS = "mangaInfos/TOGGLE_FAVORITE_SUCCESS";
+const TOGGLE_FAVORITE_FAILURE = "mangaInfos/TOGGLE_FAVORITE_FAILURE";
+export const TOGGLE_FAVORITE = "mangaInfos/TOGGLE_FAVORITE";
 
-export const ADD_MANGA = 'mangaInfos/ADD_MANGA';
+export const ADD_MANGA = "mangaInfos/ADD_MANGA";
 
-const SET_FLAG_REQUEST = 'mangaInfos/SET_FLAG_REQUEST';
-const SET_FLAG_SUCCESS = 'mangaInfos/SET_FLAG_SUCCESS';
-const SET_FLAG_FAILURE = 'mangaInfos/SET_FLAG_FAILURE';
-const SET_FLAG_NO_CHANGE = 'mangaInfos/SET_FLAG_NO_CHANGE';
+const SET_FLAG_REQUEST = "mangaInfos/SET_FLAG_REQUEST";
+const SET_FLAG_SUCCESS = "mangaInfos/SET_FLAG_SUCCESS";
+const SET_FLAG_FAILURE = "mangaInfos/SET_FLAG_FAILURE";
+const SET_FLAG_NO_CHANGE = "mangaInfos/SET_FLAG_NO_CHANGE";
 
 // ================================================================================
 // Reducers
@@ -61,8 +61,8 @@ export default function mangaInfosReducer(state: State = {}, action = {}) {
         ...state,
         [action.mangaId]: {
           ...state[action.mangaId],
-          favorite: action.newFavoriteState,
-        },
+          favorite: action.newFavoriteState
+        }
       };
 
     case SET_FLAG_REQUEST:
@@ -72,9 +72,9 @@ export default function mangaInfosReducer(state: State = {}, action = {}) {
           ...state[action.mangaId],
           flags: {
             ...state[action.mangaId].flags,
-            [action.flag]: action.state,
-          },
-        },
+            [action.flag]: action.state
+          }
+        }
       };
 
     default:
@@ -86,7 +86,10 @@ export default function mangaInfosReducer(state: State = {}, action = {}) {
 // Action Creators
 // ================================================================================
 type Obj = { ignoreCache?: boolean };
-export function fetchMangaInfo(mangaId: number, { ignoreCache = false }: Obj = {}) {
+export function fetchMangaInfo(
+  mangaId: number,
+  { ignoreCache = false }: Obj = {}
+) {
   return (dispatch: Function, getState: Function) => {
     // Return cached mangaInfo if already loaded
     if (!ignoreCache && !getState().library.reloadLibrary) {
@@ -98,13 +101,14 @@ export function fetchMangaInfo(mangaId: number, { ignoreCache = false }: Obj = {
     return fetch(Server.mangaInfo(mangaId))
       .then(handleHTMLError)
       .then(
-        json => dispatch({ type: FETCH_MANGA_SUCCESS, mangaInfo: json.content }),
+        json =>
+          dispatch({ type: FETCH_MANGA_SUCCESS, mangaInfo: json.content }),
         error =>
           dispatch({
             type: FETCH_MANGA_FAILURE,
             errorMessage: "Failed to get this manga's information",
-            meta: { error },
-          }),
+            meta: { error }
+          })
       );
   };
 }
@@ -116,7 +120,7 @@ export function updateMangaInfo(mangaId: number) {
     return fetch(Server.updateMangaInfo(mangaId))
       .then(handleHTMLError)
       .then(
-        (json) => {
+        json => {
           dispatch({ type: UPDATE_MANGA_SUCCESS, meta: { json } });
           return dispatch(fetchMangaInfo(mangaId, { ignoreCache: true }));
         },
@@ -124,15 +128,18 @@ export function updateMangaInfo(mangaId: number) {
           dispatch({
             type: UPDATE_MANGA_FAILURE,
             errorMessage: "Failed to update this manga's information",
-            meta: { error },
-          }),
+            meta: { error }
+          })
       );
   };
 }
 
 export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
   return (dispatch: Function) => {
-    dispatch({ type: TOGGLE_FAVORITE_REQUEST, meta: { mangaId, isCurrentlyFavorite } });
+    dispatch({
+      type: TOGGLE_FAVORITE_REQUEST,
+      meta: { mangaId, isCurrentlyFavorite }
+    });
 
     return fetch(Server.toggleFavorite(mangaId, isCurrentlyFavorite))
       .then(handleHTMLError)
@@ -143,7 +150,7 @@ export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
           dispatch({
             type: TOGGLE_FAVORITE_SUCCESS,
             mangaId,
-            newFavoriteState: !isCurrentlyFavorite,
+            newFavoriteState: !isCurrentlyFavorite
           });
 
           if (newFavoriteState) {
@@ -155,9 +162,9 @@ export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
           dispatch({
             type: TOGGLE_FAVORITE_FAILURE,
             errorMessage: isCurrentlyFavorite
-              ? 'Failed to unfavorite this manga'
-              : 'Failed to favorite this manga',
-          }),
+              ? "Failed to unfavorite this manga"
+              : "Failed to favorite this manga"
+          })
       );
   };
 }
@@ -167,21 +174,27 @@ export function setFlag(mangaId: number, flag: string, state: string) {
   // And failure should just pop up a message
   return (dispatch: Function, getState: Function) => {
     if (getState().mangaInfos[mangaId].flags[flag] === state) {
-      return dispatch({ type: SET_FLAG_NO_CHANGE, meta: { mangaId, flag, state } });
+      return dispatch({
+        type: SET_FLAG_NO_CHANGE,
+        meta: { mangaId, flag, state }
+      });
     }
 
     dispatch({
       type: SET_FLAG_REQUEST,
       mangaId,
       flag,
-      state,
+      state
     });
 
     // TODO: It's possible that the server might respond with
     //       { "success": false }, but I'm not checking that right now.
-    return fetch(Server.setFlag(mangaId, flag, state))
+    return fetch(Server.setMangaFlag(mangaId, flag, state))
       .then(handleHTMLError)
-      .then(() => dispatch({ type: SET_FLAG_SUCCESS }), () => dispatch({ type: SET_FLAG_FAILURE }));
+      .then(
+        () => dispatch({ type: SET_FLAG_SUCCESS }),
+        () => dispatch({ type: SET_FLAG_FAILURE })
+      );
   };
 }
 
@@ -190,7 +203,7 @@ export function setFlag(mangaId: number, flag: string, state: string) {
 // ================================================================================
 function mangaArrayToObject(mangaArray: Array<MangaType>): State {
   const mangaObject = {};
-  mangaArray.forEach((manga) => {
+  mangaArray.forEach(manga => {
     mangaObject[manga.id] = manga;
   });
   return mangaObject;

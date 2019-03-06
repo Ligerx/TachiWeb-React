@@ -1,10 +1,10 @@
 export const Server = {
   library() {
-    return '/api/library';
+    return "/api/library";
   },
 
   libraryUnread() {
-    return '/api/library?jw=$.success&jw=$.content.*.unread&jw=$.content.*.id&jw=$.content';
+    return "/api/library?jw=$.success&jw=$.content.*.unread&jw=$.content.*.id&jw=$.content";
   },
 
   mangaInfo(mangaId) {
@@ -50,13 +50,13 @@ export const Server = {
     //   "query": string, empty string, or null,
     //   "filters": big-complicated-array or null
     // }
-    return '/api/catalogue';
+    return "/api/catalogue";
   },
 
   sources(enabled = true) {
-    let url = '/api/sources';
+    let url = "/api/sources";
     if (enabled) {
-      url += '?enabled=true';
+      url += "?enabled=true";
     }
     return url;
   },
@@ -83,30 +83,30 @@ export const Server = {
     // Using an absolute path for dev, relative path for production
     //
     // Don't use react router Link component, just use a normal <a href="..." download>
-    if (process.env.NODE_ENV === 'production') {
-      return '/api/backup?force-download=true';
+    if (process.env.NODE_ENV === "production") {
+      return "/api/backup?force-download=true";
     }
-    return 'http://localhost:4567/api/backup?force-download=true';
+    return "http://localhost:4567/api/backup?force-download=true";
   },
 
   restoreUpload() {
-    return '/api/restore_file';
+    return "/api/restore_file";
   },
 
-  setFlag(mangaId: number, flag: string, state: string) {
+  setMangaFlag(mangaId: number, flag: string, state: string) {
     return `/api/set_flag/${mangaId}/${flag}/${state}`;
-  },
+  }
 };
 
 // urlPrefix used to go differentiate between '/library/...' and '/catalogue/...'
 // ^ it should come with a '/' in the beginning
 export const Client = {
   library() {
-    return '/library';
+    return "/library";
   },
 
   catalogue() {
-    return '/catalogue';
+    return "/catalogue";
   },
 
   manga(urlPrefix, mangaId) {
@@ -119,6 +119,6 @@ export const Client = {
   },
 
   backupRestore() {
-    return '/backup_restore';
-  },
+    return "/backup_restore";
+  }
 };
