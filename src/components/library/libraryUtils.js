@@ -1,13 +1,12 @@
 // @flow
-import * as React from 'react';
-import type { MangaType, LibraryFlagsType } from 'types';
+import type { MangaType, LibraryFlagsType } from "types";
 
 // TODO: Consider using a fuzzy search package for the search filter
 
 // NOTE: localeCompare is for string comparison
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare
 function stringComparison(a: string, b: string) {
-  return a.localeCompare(b, 'en', { sensitivity: 'base' }); // case insensitive
+  return a.localeCompare(b, "en", { sensitivity: "base" }); // case insensitive
 }
 
 // NOTE: sortFuncs.UNREAD and readFilterFuncs require the # of unread chapters for a manga
@@ -36,7 +35,7 @@ const sortFuncs = unread => ({
       return stringComparison(a.source, b.source);
     }
     return stringComparison(a.title, b.title);
-  },
+  }
 
   // TODO: I don't think I have or can easily get the data needed for these sorts
   // LAST_READ: ,
@@ -45,12 +44,12 @@ const sortFuncs = unread => ({
 
 const readFilterFuncs = unread => ({
   ALL: () => true,
-  UNREAD: mangaInfo => unread[mangaInfo.id], // 0 (or null/undefined) will be false
+  UNREAD: mangaInfo => unread[mangaInfo.id] // 0 (or null/undefined) will be false
 });
 
 const downloadedFilterFuncs = {
   ALL: () => true,
-  DOWNLOADED: mangaInfo => mangaInfo.downloaded,
+  DOWNLOADED: mangaInfo => mangaInfo.downloaded
 };
 
 const completedFilterFuncs = {
@@ -58,51 +57,55 @@ const completedFilterFuncs = {
 
   // could COMPLETED be a different variation?
   // e.g. lowercase or uppercase
-  COMPLETED: mangaInfo => mangaInfo.status === 'Completed',
+  COMPLETED: mangaInfo => mangaInfo.status === "Completed"
 };
 
 const searchFilterFunc = searchQuery => mangaInfo =>
   mangaInfo.title.toUpperCase().includes(searchQuery.toUpperCase());
 
-type Props = {
+function sortLibrary(
   mangaLibrary: Array<MangaType>,
   libraryFlags: LibraryFlagsType,
-  searchQuery: string,
+  unread: { [mangaId: number]: number }
+) {
+  const { SORT_TYPE, SORT_DIRECTION } = libraryFlags;
+  let sortedLibrary = mangaLibrary
+    .slice() // clone array
+    .sort(sortFuncs(unread)[SORT_TYPE]);
+
+  if (SORT_DIRECTION === "DESCENDING") {
+    sortedLibrary = sortedLibrary.reverse();
+  }
+
+  return sortedLibrary;
+}
+
+function filterLibrary(
+  mangaLibrary: Array<MangaType>,
+  libraryFlags: LibraryFlagsType,
   unread: { [mangaId: number]: number },
-
-  // render props func
-  // https://reactjs.org/docs/render-props.html
-  children: Function,
-};
-
-const SortFilterLibrary = ({
-  mangaLibrary,
-  libraryFlags,
-  searchQuery,
-  unread,
-  children,
-}: Props) => {
-  const {
-    SORT_TYPE,
-    READ_FILTER,
-    DOWNLOADED_FILTER,
-    COMPLETED_FILTER,
-    SORT_DIRECTION,
-  } = libraryFlags;
-
-  let sortedFilteredLibrary = mangaLibrary
-    .slice() // clone array // $FlowFixMe - SORT_TYPE.LAST_READ, LAST_UPDATED not implemented
-    .sort(sortFuncs(unread)[SORT_TYPE])
+  searchQuery: string
+) {
+  const { READ_FILTER, DOWNLOADED_FILTER, COMPLETED_FILTER } = libraryFlags;
+  return mangaLibrary
+    .slice() // clone array
     .filter(readFilterFuncs(unread)[READ_FILTER])
     .filter(downloadedFilterFuncs[DOWNLOADED_FILTER])
     .filter(completedFilterFuncs[COMPLETED_FILTER])
     .filter(searchFilterFunc(searchQuery));
+}
 
-  if (SORT_DIRECTION === 'DESCENDING') {
-    sortedFilteredLibrary = sortedFilteredLibrary.reverse();
-  }
-
-  return <React.Fragment>{children(sortedFilteredLibrary)}</React.Fragment>;
-};
-
-export default SortFilterLibrary;
+export default function filterSortLibrary(
+  mangaLibrary: Array<MangaType>,
+  libraryFlags: LibraryFlagsType,
+  unread: { [mangaId: number]: number },
+  searchQuery: string
+) {
+  const filteredLibrary = filterLibrary(
+    mangaLibrary,
+    libraryFlags,
+    unread,
+    searchQuery
+  );
+  return sortLibrary(filteredLibrary, libraryFlags, unread);
+}
