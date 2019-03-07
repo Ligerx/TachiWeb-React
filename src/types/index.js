@@ -53,33 +53,42 @@ export type SourceType = {
   }
 };
 
+export type LibraryFlagsFiltersType = [
+  {
+    type: "DOWNLOADED",
+    status: "ANY" | "INCLUDE" | "EXCLUDE"
+  },
+  {
+    type: "UNREAD",
+    status: "ANY" | "INCLUDE" | "EXCLUDE"
+  },
+  {
+    type: "COMPLETED",
+    status: "ANY" | "INCLUDE" | "EXCLUDE"
+  }
+];
+
 // ALPHA = alphabetically
 // TOTAL = total chapters
-export type LibraryFlagsType = {
-  filters: [
-    {
-      type: "DOWNLOADED",
-      status: "ANY" | "INCLUDE" | "EXCLUDE"
-    },
-    {
-      type: "UNREAD",
-      status: "ANY" | "INCLUDE" | "EXCLUDE"
-    },
-    {
-      type: "COMPLETED",
-      status: "ANY" | "INCLUDE" | "EXCLUDE"
-    }
-  ],
-  sort: {
-    type:
-      | "ALPHA"
-      | "LAST_READ"
-      | "LAST_UPDATED"
-      | "UNREAD"
-      | "TOTAL"
-      | "SOURCE",
-    direction: "ASCENDING" | "DESCENDING"
-  },
-  display: "GRID" | "LIST",
-  show_download_badges: boolean
+export type LibraryFlagsSortType = {
+  type: "ALPHA" | "LAST_READ" | "LAST_UPDATED" | "UNREAD" | "TOTAL" | "SOURCE",
+  direction: "ASCENDING" | "DESCENDING"
 };
+
+export type LibraryFlagsDisplayType = "GRID" | "LIST";
+
+export type LibraryFlagsDLBadgesType = boolean;
+
+export type LibraryFlagsType = {
+  filters: LibraryFlagsFiltersType,
+  sort: LibraryFlagsSortType,
+  display: LibraryFlagsDisplayType,
+  show_download_badges: LibraryFlagsDLBadgesType
+};
+
+// Creating this so that you can type the different possible values in the library flags object
+export type LibraryFlagsPossibleValueTypes =
+  | LibraryFlagsFiltersType
+  | LibraryFlagsSortType
+  | LibraryFlagsDisplayType
+  | LibraryFlagsDLBadgesType;

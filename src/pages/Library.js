@@ -63,7 +63,7 @@ class Library extends Component<LibraryContainerProps, State> {
 
     const { searchQuery } = this.state;
 
-    const sortedFilteredLibrary = filterSortLibrary(
+    const filteredSortedLibrary = filterSortLibrary(
       mangaLibrary,
       flags,
       unread,
@@ -85,7 +85,7 @@ class Library extends Component<LibraryContainerProps, State> {
         />
 
         <MangaGrid
-          mangaLibrary={sortedFilteredLibrary}
+          mangaLibrary={filteredSortedLibrary}
           cardComponent={<LibraryMangaCard unread={unread} />}
         />
 

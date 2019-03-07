@@ -1,6 +1,6 @@
 // @flow
 import { Server } from "api";
-import type { LibraryFlagsType } from "types";
+import type { LibraryFlagsType, LibraryFlagsPossibleValueTypes } from "types";
 import { ADD_MANGA } from "./mangaInfos";
 import { handleHTMLError, transformToMangaIdsArray } from "./utils";
 
@@ -148,7 +148,7 @@ export default function libraryReducer(
         ...state,
         flags: {
           ...state.flags,
-          [action.flag]: action.state
+          [action.flag]: action.value
         }
       };
 
@@ -258,10 +258,13 @@ export function fetchLibraryFlags() {
   };
 }
 
-export function setLibraryFlag(flag: string, state: string) {
+export function setLibraryFlag(
+  flag: string,
+  value: LibraryFlagsPossibleValueTypes
+) {
   // Updating the store without waiting for the server to reply
   return (dispatch: Function, getState: Function) => {
-    dispatch({ type: SET_FLAG_REQUEST, flag, state });
+    dispatch({ type: SET_FLAG_REQUEST, flag, value });
 
     return fetch(Server.libraryFlags(), {
       method: "POST",

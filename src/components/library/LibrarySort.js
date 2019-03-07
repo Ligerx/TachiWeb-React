@@ -1,39 +1,39 @@
 // @flow
-import React, { Component } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import Tooltip from '@material-ui/core/Tooltip';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import type { LibraryFlagsType } from 'types';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import React, { Component } from "react";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
+import Tooltip from "@material-ui/core/Tooltip";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import type { LibraryFlagsType } from "types";
+import Typography from "@material-ui/core/Typography";
+import { withStyles } from "@material-ui/core/styles";
 
 const sorts = [
-  { flagState: 'ALPHABETICALLY', description: 'Alphabetically' },
-  { flagState: 'UNREAD', description: 'Unread' },
-  { flagState: 'TOTAL_CHAPTERS', description: 'Total chapters' },
-  { flagState: 'SOURCE', description: 'Source' },
-  // others not implemented yet
+  { flagState: "ALPHA", description: "Alphabetically" },
+  // "LAST_READ" and "LAST_UPDATED" not yet implemented
+  { flagState: "UNREAD", description: "Unread" },
+  { flagState: "TOTAL", description: "Total chapters" },
+  { flagState: "SOURCE", description: "Source" }
 ];
 
 const styles = {
   icon: {
-    marginRight: 8,
-  },
+    marginRight: 8
+  }
 };
 
 type Props = {
   classes: Object, // injected styles
   flags: LibraryFlagsType,
-  onChange: Function,
+  setLibraryFlag: Function
 };
 
 type State = { anchorEl: ?HTMLElement };
 
 class LibrarySort extends Component<Props, State> {
   state = {
-    anchorEl: null,
+    anchorEl: null
   };
 
   handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
@@ -44,9 +44,21 @@ class LibrarySort extends Component<Props, State> {
     this.setState({ anchorEl: null });
   };
 
-  handleSortChange = (newFlag: string) => () => {
-    const { flags, onChange } = this.props;
-    onChange(flags.SORT_TYPE, flags.SORT_DIRECTION, newFlag);
+  handleSortChange = (sortType: string) => () => {
+    const { flags, setLibraryFlag } = this.props;
+
+    const newSortObj = { ...flags.sort }; // not a deep clone but I thnk it works immutably
+
+    if (flags.sort.type === sortType) {
+      const newDirection =
+        flags.sort.direction === "ASCENDING" ? "DESCENDING" : "ASCENDING";
+      newSortObj.direction = newDirection;
+    } else {
+      newSortObj.type = sortType;
+      newSortObj.direction = "ASCENDING";
+    }
+
+    return setLibraryFlag("sort", newSortObj);
   };
 
   render() {
@@ -64,16 +76,23 @@ class LibrarySort extends Component<Props, State> {
         {/* getContentAnchorEl must be null to make anchorOrigin work */}
         <Menu
           anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           getContentAnchorEl={null}
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
           {sorts.map(sort => (
-            <MenuItem key={sort.flagState} onClick={this.handleSortChange(sort.flagState)}>
+            <MenuItem
+              key={sort.flagState}
+              onClick={this.handleSortChange(sort.flagState)}
+            >
               <React.Fragment>
                 <Icon className={classes.icon}>
-                  {iconValue(flags.SORT_TYPE, flags.SORT_DIRECTION, sort.flagState)}
+                  {iconValue(
+                    flags.sort.type,
+                    flags.sort.direction,
+                    sort.flagState
+                  )}
                 </Icon>
                 <Typography>{sort.description}</Typography>
               </React.Fragment>
@@ -86,11 +105,15 @@ class LibrarySort extends Component<Props, State> {
 }
 
 // Helper methods
-function iconValue(currentFlag: string, sortDirection: string, thisFlag: string): string {
+function iconValue(
+  currentFlag: string,
+  sortDirection: string,
+  thisFlag: string
+): string {
   if (currentFlag === thisFlag) {
-    return sortDirection === 'ASCENDING' ? 'arrow_upward' : 'arrow_downward';
+    return sortDirection === "ASCENDING" ? "arrow_upward" : "arrow_downward";
   }
-  return '';
+  return "";
 }
 
 export default withStyles(styles)(LibrarySort);

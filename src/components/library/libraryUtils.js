@@ -1,5 +1,10 @@
 // @flow
-import type { MangaType, LibraryFlagsType } from "types";
+import type {
+  MangaType,
+  LibraryFlagsType,
+  LibraryFlagsSortType,
+  LibraryFlagsFiltersType
+} from "types";
 
 // TODO: Consider using a fuzzy search package for the search filter
 
@@ -15,14 +20,14 @@ function stringComparison(a: string, b: string) {
 
 // If whatever sort comparison is equal, fallback on ordering by title
 const sortFuncs = unread => ({
-  ALPHABETICALLY: (a, b) => stringComparison(a.title, b.title),
+  ALPHA: (a, b) => stringComparison(a.title, b.title),
   UNREAD: (a, b) => {
     if (unread[a.id] !== unread[b.id]) {
       return unread[a.id] - unread[b.id];
     }
     return stringComparison(a.title, b.title);
   },
-  TOTAL_CHAPTERS: (a, b) => {
+  TOTAL: (a, b) => {
     if (a.chapters == null || b.chapters == null) return 0;
 
     if (a.chapters !== b.chapters) {
@@ -42,22 +47,22 @@ const sortFuncs = unread => ({
   // LAST_UPDATED: ,
 });
 
+// Not using the EXCLUDE option for these filters
 const readFilterFuncs = unread => ({
-  ALL: () => true,
-  UNREAD: mangaInfo => unread[mangaInfo.id] // 0 (or null/undefined) will be false
+  ANY: () => true,
+  INCLUDE: mangaInfo => unread[mangaInfo.id] // 0 (or null/undefined) will be false
 });
 
 const downloadedFilterFuncs = {
-  ALL: () => true,
-  DOWNLOADED: mangaInfo => mangaInfo.downloaded
+  ANY: () => true,
+  INCLUDE: mangaInfo => mangaInfo.downloaded
 };
 
 const completedFilterFuncs = {
-  ALL: () => true,
+  ANY: () => true,
 
-  // could COMPLETED be a different variation?
-  // e.g. lowercase or uppercase
-  COMPLETED: mangaInfo => mangaInfo.status === "Completed"
+  // is "Completed" always formatted exactly like this?
+  INCLUDE: mangaInfo => mangaInfo.status === "Completed"
 };
 
 const searchFilterFunc = searchQuery => mangaInfo =>
@@ -65,15 +70,15 @@ const searchFilterFunc = searchQuery => mangaInfo =>
 
 function sortLibrary(
   mangaLibrary: Array<MangaType>,
-  libraryFlags: LibraryFlagsType,
+  sortFlags: LibraryFlagsSortType,
   unread: { [mangaId: number]: number }
 ) {
-  const { SORT_TYPE, SORT_DIRECTION } = libraryFlags;
-  let sortedLibrary = mangaLibrary
+  const { type, direction } = sortFlags;
+  let sortedLibrary: Array<MangaType> = mangaLibrary
     .slice() // clone array
-    .sort(sortFuncs(unread)[SORT_TYPE]);
+    .sort(sortFuncs(unread)[type]);
 
-  if (SORT_DIRECTION === "DESCENDING") {
+  if (direction === "DESCENDING") {
     sortedLibrary = sortedLibrary.reverse();
   }
 
@@ -82,16 +87,16 @@ function sortLibrary(
 
 function filterLibrary(
   mangaLibrary: Array<MangaType>,
-  libraryFlags: LibraryFlagsType,
+  filterFlags: LibraryFlagsFiltersType,
   unread: { [mangaId: number]: number },
   searchQuery: string
 ) {
-  const { READ_FILTER, DOWNLOADED_FILTER, COMPLETED_FILTER } = libraryFlags;
+  const [downloadedFilter, unreadFilter, completedFilter] = filterFlags;
   return mangaLibrary
     .slice() // clone array
-    .filter(readFilterFuncs(unread)[READ_FILTER])
-    .filter(downloadedFilterFuncs[DOWNLOADED_FILTER])
-    .filter(completedFilterFuncs[COMPLETED_FILTER])
+    .filter(readFilterFuncs(unread)[unreadFilter.status])
+    .filter(downloadedFilterFuncs[downloadedFilter.status])
+    .filter(completedFilterFuncs[completedFilter.status])
     .filter(searchFilterFunc(searchQuery));
 }
 
@@ -103,9 +108,9 @@ export default function filterSortLibrary(
 ) {
   const filteredLibrary = filterLibrary(
     mangaLibrary,
-    libraryFlags,
+    libraryFlags.filters,
     unread,
     searchQuery
   );
-  return sortLibrary(filteredLibrary, libraryFlags, unread);
+  return sortLibrary(filteredLibrary, libraryFlags.sort, unread);
 }

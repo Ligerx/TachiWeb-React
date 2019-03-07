@@ -1,13 +1,13 @@
 // @flow
-import React, { Component } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import Tooltip from '@material-ui/core/Tooltip';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import type { LibraryFlagsType } from 'types';
+import React, { Component } from "react";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
+import Tooltip from "@material-ui/core/Tooltip";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import type { LibraryFlagsType } from "types";
 
 // NOTE: Refer to MangaInfoFilter for more details, components are extremely similar
 
@@ -15,16 +15,14 @@ import type { LibraryFlagsType } from 'types';
 
 type Props = {
   flags: LibraryFlagsType,
-  onReadFilterChange: Function,
-  onDownloadedFilterChange: Function,
-  onCompletedFilterChange: Function,
+  setLibraryFlag: Function
 };
 
 type State = { anchorEl: ?HTMLElement };
 
 class LibraryFilter extends Component<Props, State> {
   state = {
-    anchorEl: null,
+    anchorEl: null
   };
 
   handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
@@ -35,30 +33,23 @@ class LibraryFilter extends Component<Props, State> {
     this.setState({ anchorEl: null });
   };
 
-  handleUnreadClick = (e: SyntheticEvent<>) => {
+  handleFilterClick = (type: string) => (e: SyntheticEvent<>) => {
     e.preventDefault();
-    const { flags, onReadFilterChange } = this.props;
-    const newReadFlag = flags.READ_FILTER === 'ALL' ? 'UNREAD' : 'ALL';
-    onReadFilterChange(newReadFlag);
-  };
+    const { flags, setLibraryFlag } = this.props;
 
-  handleDownloadedClick = (e: SyntheticEvent<>) => {
-    e.preventDefault();
-    const { flags, onDownloadedFilterChange } = this.props;
-    const newDownloadedFlag = flags.DOWNLOADED_FILTER === 'ALL' ? 'DOWNLOADED' : 'ALL';
-    onDownloadedFilterChange(newDownloadedFlag);
-  };
+    const newFiltersArray = flags.filters.slice();
+    const index = flags.filters.findIndex(filter => filter.type === type);
+    newFiltersArray[index].status =
+      newFiltersArray[index].status === "ANY" ? "INCLUDE" : "ANY";
 
-  handleCompletedClick = (e: SyntheticEvent<>) => {
-    e.preventDefault();
-    const { flags, onCompletedFilterChange } = this.props;
-    const newCompletedFlag = flags.COMPLETED_FILTER === 'ALL' ? 'COMPLETED' : 'ALL';
-    onCompletedFilterChange(newCompletedFlag);
+    return setLibraryFlag("filters", newFiltersArray);
   };
 
   render() {
     const { flags } = this.props;
     const { anchorEl } = this.state;
+
+    const [downloadedFilter, unreadFilter, completedFilter] = flags.filters;
 
     return (
       <React.Fragment>
@@ -71,29 +62,33 @@ class LibraryFilter extends Component<Props, State> {
         {/* getContentAnchorEl must be null to make anchorOrigin work */}
         <Menu
           anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           getContentAnchorEl={null}
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleDownloadedClick}>
+          <MenuItem onClick={this.handleFilterClick("DOWNLOADED")}>
             <FormControlLabel
               label="Downloaded"
-              control={<Checkbox checked={flags.DOWNLOADED_FILTER === 'DOWNLOADED'} />}
+              control={
+                <Checkbox checked={downloadedFilter.status === "INCLUDE"} />
+              }
             />
           </MenuItem>
 
-          <MenuItem onClick={this.handleUnreadClick}>
+          <MenuItem onClick={this.handleFilterClick("UNREAD")}>
             <FormControlLabel
               label="Unread"
-              control={<Checkbox checked={flags.READ_FILTER === 'UNREAD'} />}
+              control={<Checkbox checked={unreadFilter.status === "INCLUDE"} />}
             />
           </MenuItem>
 
-          <MenuItem onClick={this.handleCompletedClick}>
+          <MenuItem onClick={this.handleFilterClick("COMPLETED")}>
             <FormControlLabel
               label="Completed"
-              control={<Checkbox checked={flags.COMPLETED_FILTER === 'COMPLETED'} />}
+              control={
+                <Checkbox checked={completedFilter.status === "INCLUDE"} />
+              }
             />
           </MenuItem>
         </Menu>
