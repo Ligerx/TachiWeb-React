@@ -1,16 +1,15 @@
 // @flow
-import React, { Component } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import Tooltip from '@material-ui/core/Tooltip';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import type { MangaInfoFlagsType } from 'types';
+import React, { Component } from "react";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
+import Tooltip from "@material-ui/core/Tooltip";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import type { MangaInfoFlagsType } from "types";
 
-// A disabled FormControlLabel will not fire it's Checkbox onChange event.
-// So I don't need to check if READ_FILTER === UNREAD in handleReadClick() for example.
+// A disabled MenuItem will not fire it's onClick event.
 
 // Placing the click events on MenuItem component so that the entire
 // element is clickable, not just the checkbox + label.
@@ -20,14 +19,14 @@ import type { MangaInfoFlagsType } from 'types';
 type Props = {
   flags: MangaInfoFlagsType,
   onReadFilterChange: Function,
-  onDownloadedFilterChange: Function,
+  onDownloadedFilterChange: Function
 };
 
 type State = { anchorEl: ?HTMLElement };
 
 class MangaInfoFilter extends Component<Props, State> {
   state = {
-    anchorEl: null,
+    anchorEl: null
   };
 
   handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
@@ -37,8 +36,8 @@ class MangaInfoFilter extends Component<Props, State> {
   handleRemoveFilters = () => {
     const { onReadFilterChange, onDownloadedFilterChange } = this.props;
 
-    onReadFilterChange('ALL');
-    onDownloadedFilterChange('ALL');
+    onReadFilterChange("ALL");
+    onDownloadedFilterChange("ALL");
 
     this.setState({ anchorEl: null }); // Also close the menu
   };
@@ -50,21 +49,22 @@ class MangaInfoFilter extends Component<Props, State> {
   handleReadClick = (e: SyntheticEvent<>) => {
     e.preventDefault();
     const { flags, onReadFilterChange } = this.props;
-    const newReadFlag = flags.READ_FILTER === 'ALL' ? 'READ' : 'ALL';
+    const newReadFlag = flags.READ_FILTER === "ALL" ? "READ" : "ALL";
     onReadFilterChange(newReadFlag);
   };
 
   handleUnreadClick = (e: SyntheticEvent<>) => {
     e.preventDefault();
     const { flags, onReadFilterChange } = this.props;
-    const newReadFlag = flags.READ_FILTER === 'ALL' ? 'UNREAD' : 'ALL';
+    const newReadFlag = flags.READ_FILTER === "ALL" ? "UNREAD" : "ALL";
     onReadFilterChange(newReadFlag);
   };
 
   handleDownloadedClick = (e: SyntheticEvent<>) => {
     e.preventDefault();
     const { flags, onDownloadedFilterChange } = this.props;
-    const newDownloadedFlag = flags.DOWNLOADED_FILTER === 'ALL' ? 'DOWNLOADED' : 'ALL';
+    const newDownloadedFlag =
+      flags.DOWNLOADED_FILTER === "ALL" ? "DOWNLOADED" : "ALL";
     onDownloadedFilterChange(newDownloadedFlag);
   };
 
@@ -72,8 +72,8 @@ class MangaInfoFilter extends Component<Props, State> {
     const { flags } = this.props;
     const { anchorEl } = this.state;
 
-    const readIsDisabled = flags.READ_FILTER === 'UNREAD';
-    const unreadIsDisabled = flags.READ_FILTER === 'READ';
+    const readIsDisabled = flags.READ_FILTER === "UNREAD";
+    const unreadIsDisabled = flags.READ_FILTER === "READ";
 
     return (
       <React.Fragment>
@@ -86,31 +86,34 @@ class MangaInfoFilter extends Component<Props, State> {
         {/* getContentAnchorEl must be null to make anchorOrigin work */}
         <Menu
           anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           getContentAnchorEl={null}
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleReadClick}>
+          <MenuItem onClick={this.handleReadClick} disabled={readIsDisabled}>
             <FormControlLabel
               label="Read"
-              control={<Checkbox checked={flags.READ_FILTER === 'READ'} />}
-              disabled={readIsDisabled}
+              control={<Checkbox checked={flags.READ_FILTER === "READ"} />}
             />
           </MenuItem>
 
-          <MenuItem onClick={this.handleUnreadClick}>
+          <MenuItem
+            onClick={this.handleUnreadClick}
+            disabled={unreadIsDisabled}
+          >
             <FormControlLabel
               label="Unread"
-              control={<Checkbox checked={flags.READ_FILTER === 'UNREAD'} />}
-              disabled={unreadIsDisabled}
+              control={<Checkbox checked={flags.READ_FILTER === "UNREAD"} />}
             />
           </MenuItem>
 
           <MenuItem onClick={this.handleDownloadedClick}>
             <FormControlLabel
               label="Downloaded"
-              control={<Checkbox checked={flags.DOWNLOADED_FILTER === 'DOWNLOADED'} />}
+              control={
+                <Checkbox checked={flags.DOWNLOADED_FILTER === "DOWNLOADED"} />
+              }
             />
           </MenuItem>
 
