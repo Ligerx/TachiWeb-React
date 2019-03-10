@@ -1,18 +1,18 @@
 // @flow
-import React from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Link from 'components/Link';
-import { Client } from 'api';
+import React from "react";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import { withStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import Link from "components/Link";
+import { Client } from "api";
 
 // Set the width of the menu
 const styles = {
   list: {
-    width: 250,
-  },
+    width: 250
+  }
 };
 
 type Props = { classes: Object };
@@ -30,6 +30,9 @@ const MenuList = ({ classes }: Props) => (
       </ListItem>
       <ListItem button component={Link} to={Client.catalogue()}>
         <ListItemText primary="Catalogue" />
+      </ListItem>
+      <ListItem button component={Link} to={Client.extensions()}>
+        <ListItemText primary="Extensions" />
       </ListItem>
       <ListItem button>
         <ListItemText primary="Downloads" />

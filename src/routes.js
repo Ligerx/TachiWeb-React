@@ -1,13 +1,14 @@
-import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { Client } from 'api';
-import LibraryContainer from 'containers/LibraryContainer';
-import MangaInfoContainer from 'containers/MangaInfoContainer';
-import ReaderContainer from 'containers/ReaderContainer';
-import CatalogueContainer from 'containers/CatalogueContainer';
-import ErrorNotificationsContainer from 'containers/ErrorNotificationsContainer';
-import BackupRestore from 'pages/BackupRestore';
-import UrlPrefixContext from 'components/UrlPrefixContext';
+import React from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Client } from "api";
+import LibraryContainer from "containers/LibraryContainer";
+import MangaInfoContainer from "containers/MangaInfoContainer";
+import ReaderContainer from "containers/ReaderContainer";
+import CatalogueContainer from "containers/CatalogueContainer";
+import ExtensionsContainer from "containers/ExtensionsContainer";
+import BackupRestore from "pages/BackupRestore";
+import ErrorNotificationsContainer from "containers/ErrorNotificationsContainer";
+import UrlPrefixContext from "components/UrlPrefixContext";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
@@ -17,7 +18,7 @@ import UrlPrefixContext from 'components/UrlPrefixContext';
 // match.path is the url prefix. i.e. '/library' '/catalogue'
 type MangaRouterProps = { match: Object }; // react router prop
 const MangaRouter = ({ match }: MangaRouterProps) => {
-  let backUrl = '';
+  let backUrl = "";
   let defaultTab = 0;
 
   if (match.path === Client.library()) {
@@ -31,12 +32,19 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
   return (
     <UrlPrefixContext.Provider value={match.path}>
       <Switch>
-        <Route path={`${match.path}/:mangaId/:chapterId/:page`} component={ReaderContainer} />
+        <Route
+          path={`${match.path}/:mangaId/:chapterId/:page`}
+          component={ReaderContainer}
+        />
 
         <Route
           path={`${match.path}/:mangaId`}
           render={props => (
-            <MangaInfoContainer {...props} backUrl={backUrl} defaultTab={defaultTab} />
+            <MangaInfoContainer
+              {...props}
+              backUrl={backUrl}
+              defaultTab={defaultTab}
+            />
           )}
         />
       </Switch>
@@ -55,6 +63,8 @@ const Router = () => (
 
         <Route exact path="/library" component={LibraryContainer} />
         <Route path="/library" component={MangaRouter} />
+
+        <Route exact path="/extensions" component={ExtensionsContainer} />
 
         <Route exact path="/backup_restore" component={BackupRestore} />
       </Switch>

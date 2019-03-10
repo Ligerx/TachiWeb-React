@@ -101,6 +101,14 @@ export const Server = {
     // Accepts a GET or POST request
     // Follows the LibraryFlagsType format
     return "/api/v2/library/flags";
+  },
+
+  extensions() {
+    return "/api/v2/extensions";
+  },
+
+  extensionIcon(packageName: string) {
+    return `/api/v2/extensions/${packageName}/icon`;
   }
 };
 
@@ -126,5 +134,9 @@ export const Client = {
 
   backupRestore() {
     return "/backup_restore";
+  },
+
+  extensions() {
+    return "/extensions";
   }
 };

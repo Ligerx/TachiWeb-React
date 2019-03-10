@@ -1,14 +1,15 @@
 // @flow
-import { combineReducers } from 'redux';
-import loading from './loading';
-import error from './error';
-import library from './library';
-import chapters from './chapters';
-import pageCounts from './pageCounts';
-import sources from './sources';
-import catalogue from './catalogue';
-import filters from './filters';
-import mangaInfos from './mangaInfos';
+import { combineReducers } from "redux";
+import loading from "./loading";
+import error from "./error";
+import library from "./library";
+import chapters from "./chapters";
+import pageCounts from "./pageCounts";
+import sources from "./sources";
+import catalogue from "./catalogue";
+import filters from "./filters";
+import mangaInfos from "./mangaInfos";
+import extensions from "./extensions";
 
 export default combineReducers({
   loading,
@@ -20,6 +21,7 @@ export default combineReducers({
   catalogue,
   filters,
   mangaInfos,
+  extensions
 });
 
 // NOTE: some Thunks (asynchronous calls) may escape early
