@@ -92,3 +92,20 @@ export type LibraryFlagsPossibleValueTypes =
   | LibraryFlagsSortType
   | LibraryFlagsDisplayType
   | LibraryFlagsDLBadgesType;
+
+export type ExtensionType = {
+  pkg_name: string,
+  name: string,
+  status: "AVAILABLE" | "INSTALLED" | "UNTRUSTED",
+  // string of a version number. Eg. "1.2.6"
+  version_name: string,
+  // Computer-readable version code of extension. Eg. 6
+  version_code: number,
+  // Only present when extension status is UNTRUSTED. Used to trust the extension.
+  signature_hash: ?string,
+  // ISO 639-1 format, or "all" if the extension includes multiple languages.
+  lang: string,
+  // List of all source IDs included in the extension. Only present when the extension is INSTALLED.
+  sources: ?Array<string>,
+  has_update: ?boolean
+};
