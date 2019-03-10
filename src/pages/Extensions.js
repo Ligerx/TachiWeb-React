@@ -14,6 +14,7 @@ import { withStyles } from "@material-ui/core/styles";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Button from "@material-ui/core/Button";
+import ISO6391 from "iso-639-1";
 
 const styles = () => ({
   avatar: { borderRadius: 0 },
@@ -46,7 +47,9 @@ const Extensions = ({
                   />
                   <ListItemText
                     primary={extension.name}
-                    secondary={`${extension.lang} - ${extension.version_name}`}
+                    secondary={`${langPrettyPrint(extension.lang)} - v${
+                      extension.version_name
+                    }`}
                   />
                   <ListItemSecondaryAction className={classes.secondary}>
                     <Button
@@ -71,6 +74,11 @@ const Extensions = ({
 // Helper functions
 function buttonVariant(has_update: ?boolean) {
   return has_update ? "contained" : "outlined";
+}
+
+function langPrettyPrint(lang: string) {
+  if (lang === "all") return "All";
+  return ISO6391.getName(lang);
 }
 
 export default withStyles(styles)(Extensions);
