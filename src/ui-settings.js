@@ -45,11 +45,11 @@ const UI_SETTINGS: SchemaType = [
                     /*{
                       "id": "vertical",
                       "label": "Vertical"
-                    },
+                    },*/
                     {
                       "id": "webtoon",
                       "label": "Webtoon"
-                    }*/
+                    }
                 ]
             },
             {
