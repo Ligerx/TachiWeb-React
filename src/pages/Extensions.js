@@ -7,14 +7,13 @@ import ResponsiveGrid from "components/ResponsiveGrid";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Avatar from "@material-ui/core/Avatar";
-import { Server } from "api";
 import { withStyles } from "@material-ui/core/styles";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import Button from "@material-ui/core/Button";
-import ISO6391 from "iso-639-1";
+import ExtensionListItem from "components/extensions/ExtensionListItem";
+import Typography from "@material-ui/core/Typography";
+
+// Currently, the buttons that appear do not completely match Tachiyomi's buttons.
+// Partially because I'm missing extension preferences,
+// but also because I don't think it's worth the effort to implement.
 
 const styles = () => ({
   avatar: { borderRadius: 0 },
@@ -22,7 +21,6 @@ const styles = () => ({
 });
 
 const Extensions = ({
-  classes,
   extensions,
   extensionsIsLoading,
   fetchExtensions
@@ -31,35 +29,47 @@ const Extensions = ({
     fetchExtensions();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const installedExtensions = extensions.filter(
+    extension => extension.status === "INSTALLED"
+  );
+
+  const notInstalledExtensions = extensions.filter(
+    extension => extension.status !== "INSTALLED"
+  );
+
   return (
     <React.Fragment>
       <Helmet title="Extensions - TachiWeb" />
 
       <ResponsiveGrid maxWidth="xs">
         <Grid item xs={12}>
+          <Typography variant="headline" gutterBottom>
+            Installed ({installedExtensions.length})
+          </Typography>
           <Paper>
             <List>
-              {extensions.map(extension => (
-                <ListItem divider key={extension.pkg_name}>
-                  <Avatar
-                    className={classes.avatar}
-                    src={Server.extensionIcon(extension.pkg_name)}
-                  />
-                  <ListItemText
-                    primary={extension.name}
-                    secondary={`${langPrettyPrint(extension.lang)} - v${
-                      extension.version_name
-                    }`}
-                  />
-                  <ListItemSecondaryAction className={classes.secondary}>
-                    <Button
-                      variant={buttonVariant(extension.has_update)}
-                      color="primary"
-                    >
-                      Install
-                    </Button>
-                  </ListItemSecondaryAction>
-                </ListItem>
+              {installedExtensions.map(extension => (
+                <ExtensionListItem
+                  key={extension.pkg_name}
+                  extension={extension}
+                />
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Typography variant="headline" gutterBottom>
+            Available ({notInstalledExtensions.length})
+          </Typography>
+
+          <Paper>
+            <List>
+              {notInstalledExtensions.map(extension => (
+                <ExtensionListItem
+                  key={extension.pkg_name}
+                  extension={extension}
+                />
               ))}
             </List>
           </Paper>
@@ -70,15 +80,5 @@ const Extensions = ({
     </React.Fragment>
   );
 };
-
-// Helper functions
-function buttonVariant(has_update: ?boolean) {
-  return has_update ? "contained" : "outlined";
-}
-
-function langPrettyPrint(lang: string) {
-  if (lang === "all") return "All";
-  return ISO6391.getName(lang);
-}
 
 export default withStyles(styles)(Extensions);
