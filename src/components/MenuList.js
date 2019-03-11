@@ -3,10 +3,10 @@ import React from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Link from 'components/Link';
-import { Client } from 'api';
+import {Client} from 'api';
 
 // Set the width of the menu
 const styles = {
@@ -34,7 +34,7 @@ const MenuList = ({ classes }: Props) => (
       <ListItem button>
         <ListItemText primary="Downloads" />
       </ListItem>
-      <ListItem button>
+      <ListItem button component={Link} to={Client.settings()}>
         <ListItemText primary="Settings" />
       </ListItem>
       <ListItem button component={Link} to={Client.backupRestore()}>
