@@ -1,6 +1,6 @@
 import React from 'react';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
-import {Client} from 'api';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Client } from 'api';
 import LibraryContainer from 'containers/LibraryContainer';
 import MangaInfoContainer from 'containers/MangaInfoContainer';
 import ReaderContainer from 'containers/ReaderContainer';
@@ -9,7 +9,7 @@ import ErrorNotificationsContainer from 'containers/ErrorNotificationsContainer'
 import BackupRestore from 'pages/BackupRestore';
 import UrlPrefixContext from 'components/UrlPrefixContext';
 import SettingsContainer from "containers/SettingsContainer";
-import {SETTING_INDEX} from "./pages/Settings";
+import { SETTING_INDEX } from "pages/Settings";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
@@ -60,7 +60,10 @@ const Router = () => (
 
         <Route exact path="/backup_restore" component={BackupRestore} />
 
-        <Route path={`/settings/:${SETTING_INDEX}*`} component={SettingsContainer}/>
+        <Route
+          path={`/settings/:${SETTING_INDEX}*`}
+          component={SettingsContainer}
+        />
       </Switch>
     </BrowserRouter>
 

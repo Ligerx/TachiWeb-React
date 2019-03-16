@@ -1,4 +1,7 @@
-import {Configuration as TWApiConfiguration, DefaultApi as TWApi} from "@tachiweb/api-client";
+import {
+  Configuration as TWApiConfiguration,
+  DefaultApi as TWApi
+} from "@tachiweb/api-client";
 
 export const Server = {
   library() {
@@ -107,16 +110,19 @@ export const Server = {
 
   // v3 API client
   api() {
-    return new TWApi(new TWApiConfiguration({
-      /**
-       * This must be an empty string since API urls are built like so: ${basePath}${path}
-       * where path = '/api/v3/something...'
-       *
-       * An empty string causes the built API url to look like this: '/api/v3/something...' which will allow us to call
-       * the correct server
-       */
-      basePath: ''
-    }), fetch)
+    return new TWApi(
+      new TWApiConfiguration({
+        /**
+         * This must be an empty string since API urls are built like so: ${basePath}${path}
+         * where path = '/api/v3/something...'
+         *
+         * An empty string causes the built API url to look like this: '/api/v3/something...' which will allow us to call
+         * the correct server
+         */
+        basePath: ""
+      }),
+      fetch
+    );
   }
 };
 
@@ -141,7 +147,7 @@ export const Client = {
   },
 
   settings(settingIndexes: Array<number> = []) {
-    return '/settings/' + settingIndexes.join('/');
+    return `/settings/${settingIndexes.join("/")}`;
   },
 
   backupRestore() {

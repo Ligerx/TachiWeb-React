@@ -1,5 +1,5 @@
 // @flow
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import loading from './loading';
 import error from './error';
 import library from './library';
@@ -21,7 +21,7 @@ export default combineReducers({
   catalogue,
   filters,
   mangaInfos,
-    settings,
+  settings
 });
 
 // NOTE: some Thunks (asynchronous calls) may escape early
