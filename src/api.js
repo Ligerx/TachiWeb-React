@@ -110,16 +110,10 @@ export const Server = {
 
   // v3 API client
   api() {
+    const { protocol, host } = window.location;
     return new TWApi(
       new TWApiConfiguration({
-        /**
-         * This must be an empty string since API urls are built like so: ${basePath}${path}
-         * where path = '/api/v3/something...'
-         *
-         * An empty string causes the built API url to look like this: '/api/v3/something...' which will allow us to call
-         * the correct server
-         */
-        basePath: ""
+        basePath: `${protocol}//${host}`
       }),
       fetch
     );
