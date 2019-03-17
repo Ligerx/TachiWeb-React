@@ -23,6 +23,8 @@ const ExtensionButton = ({
   onUninstallClick,
   onInstallClick
 }: ExtensionButtonProps) => {
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
   if (status === "INSTALLED" && has_update) {
     return (
       <Button variant="contained" color="primary" onClick={onUpdateClick}>
@@ -33,9 +35,17 @@ const ExtensionButton = ({
 
   if (status === "INSTALLED") {
     return (
-      <Button variant="outlined" onClick={onUninstallClick}>
-        Uninstall
-      </Button>
+      <React.Fragment>
+        <Button variant="outlined" onClick={setDialogOpen(true)}>
+          Uninstall
+        </Button>
+
+        <UninstallConfirmationDialog
+          isOpen={isDialogOpen}
+          onClose={() => setDialogOpen(false)}
+          onUninstall={onUninstallClick}
+        />
+      </React.Fragment>
     );
   }
 
@@ -49,17 +59,17 @@ const ExtensionButton = ({
   // return "Untrusted";
 };
 
-const UninstallConfirmationDialog = () => {
-  const [isOpen, setOpen] = useState(false);
+type DialogProps = { isOpen: boolean, onClose: Function, onUninstall: Function };
 
+const UninstallConfirmationDialog = ({ isOpen, onClose, onUninstall }: DialogProps) => {
   return (
-    <Dialog open={isOpen} onClose={setOpen(false)}>
+    <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Uninstall Extension?</DialogTitle>
       <DialogActions>
-        <Button onClick={setOpen(false)} color="primary">
+        <Button onClick={onClose} color="primary">
           Go Back
         </Button>
-        <Button onClick={this.handleClose} color="primary" autoFocus>
+        <Button onClick={onUninstall} color="primary" autoFocus>
           Delete
         </Button>
       </DialogActions>

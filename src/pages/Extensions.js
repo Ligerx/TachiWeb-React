@@ -78,7 +78,15 @@ const Extensions = ({
                 <ExtensionListItem
                   key={extension.pkg_name}
                   extension={extension}
-                />
+                >
+                  <ExtensionButton
+                    status={extension.status}
+                    has_update={extension.has_update}
+                    onUpdateClick={null}
+                    onUninstallClick={null}
+                    onInstallClick={null}
+                  />
+                </ExtensionListItem>
               ))}
             </List>
           </Paper>
