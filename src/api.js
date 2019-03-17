@@ -1,3 +1,8 @@
+import {
+  Configuration as TWApiConfiguration,
+  DefaultApi as TWApi
+} from "@tachiweb/api-client";
+
 export const Server = {
   library() {
     return "/api/library";
@@ -101,6 +106,17 @@ export const Server = {
     // Accepts a GET or POST request
     // Follows the LibraryFlagsType format
     return "/api/v2/library/flags";
+  },
+
+  // v3 API client
+  api() {
+    const { protocol, host } = window.location;
+    return new TWApi(
+      new TWApiConfiguration({
+        basePath: `${protocol}//${host}`
+      }),
+      fetch
+    );
   }
 };
 
@@ -122,6 +138,10 @@ export const Client = {
   page(urlPrefix, mangaId, chapterId, page) {
     // URL of the manga page on the client
     return `${urlPrefix}/${mangaId}/${chapterId}/${page}`;
+  },
+
+  settings(settingIndexes: Array<number> = []) {
+    return `/settings/${settingIndexes.join("/")}`;
   },
 
   backupRestore() {
