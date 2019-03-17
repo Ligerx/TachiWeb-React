@@ -9,6 +9,8 @@ import ExtensionsContainer from "containers/ExtensionsContainer";
 import BackupRestore from "pages/BackupRestore";
 import ErrorNotificationsContainer from "containers/ErrorNotificationsContainer";
 import UrlPrefixContext from "components/UrlPrefixContext";
+import SettingsContainer from "containers/SettingsContainer";
+import { SETTING_INDEX } from "pages/Settings";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
@@ -67,6 +69,11 @@ const Router = () => (
         <Route exact path="/extensions" component={ExtensionsContainer} />
 
         <Route exact path="/backup_restore" component={BackupRestore} />
+
+        <Route
+          path={`/settings/:${SETTING_INDEX}*`}
+          component={SettingsContainer}
+        />
       </Switch>
     </BrowserRouter>
 

@@ -10,6 +10,7 @@ import catalogue from "./catalogue";
 import filters from "./filters";
 import mangaInfos from "./mangaInfos";
 import extensions from "./extensions";
+import settings from './settings';
 
 export default combineReducers({
   loading,
@@ -21,7 +22,8 @@ export default combineReducers({
   catalogue,
   filters,
   mangaInfos,
-  extensions
+  extensions,
+  settings
 });
 
 // NOTE: some Thunks (asynchronous calls) may escape early

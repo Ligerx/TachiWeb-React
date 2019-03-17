@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tachiweb/api-client": "1.0.0-alpha.72",
     "@material-ui/core": "^1.2.0",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
