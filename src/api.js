@@ -125,6 +125,11 @@ export const Server = {
     return `/api/v2/extensions/${packageName}/install`;
   },
 
+  reloadExtensions() {
+    // Accepts POST request
+    return "/api/v2/extensions/reload-available";
+  },
+
   // v3 API client
   api() {
     const { protocol, host } = window.location;

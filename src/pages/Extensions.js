@@ -11,6 +11,10 @@ import { withStyles } from "@material-ui/core/styles";
 import ExtensionListItem from "components/extensions/ExtensionListItem";
 import Typography from "@material-ui/core/Typography";
 import ExtensionButton from "components/extensions/ExtensionButton";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import MenuDrawer from "components/MenuDrawer";
+import RefreshButton from "components/RefreshButton";
 
 // Currently, the buttons that appear do not completely match Tachiyomi's buttons.
 // Partially because I'm missing extension preferences,
@@ -26,7 +30,8 @@ const Extensions = ({
   extensionsIsLoading,
   fetchExtensions,
   installExtension,
-  uninstallExtension
+  uninstallExtension,
+  reloadExtensions
 }: ExtensionsContainerProps & { classes: Object }) => {
   useEffect(() => {
     fetchExtensions();
@@ -43,6 +48,18 @@ const Extensions = ({
   return (
     <React.Fragment>
       <Helmet title="Extensions - TachiWeb" />
+
+      <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+        <Toolbar>
+          <MenuDrawer />
+
+          <Typography variant="title" style={{ flex: 1 }}>
+            Extensions
+          </Typography>
+
+          <RefreshButton onClick={() => reloadExtensions()} />
+        </Toolbar>
+      </AppBar>
 
       <ResponsiveGrid maxWidth="xs">
         {installedExtensions.length > 0 && (

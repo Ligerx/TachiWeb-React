@@ -21,6 +21,11 @@ const UNINSTALL_REQUEST = `${UNINSTALL_EXTENSION}_REQUEST`;
 const UNINSTALL_SUCCESS = `${UNINSTALL_EXTENSION}_SUCCESS`;
 const UNINSTALL_FAILURE = `${UNINSTALL_EXTENSION}_FAILURE`;
 
+export const RELOAD_EXTENSIONS = "extensions/RELOAD";
+const RELOAD_REQUEST = `${RELOAD_EXTENSIONS}_REQUEST`;
+const RELOAD_SUCCESS = `${RELOAD_EXTENSIONS}_SUCCESS`;
+const RELOAD_FAILURE = `${RELOAD_EXTENSIONS}_FAILURE`;
+
 // ================================================================================
 // Reducers
 // ================================================================================
@@ -119,6 +124,31 @@ export function uninstallExtension(packageName: string) {
       dispatch({
         type: UNINSTALL_FAILURE,
         errorMessage: "Failed to uninstall this extension.",
+        meta: { error }
+      });
+    }
+  };
+}
+
+export function reloadExtensions() {
+  return async (dispatch: Function) => {
+    dispatch({ type: RELOAD_REQUEST });
+
+    try {
+      const response = await fetch(Server.reloadExtensions(), {
+        method: "POST"
+      });
+
+      const json = await response.json();
+      if (!json.success) throw new Error("success = false in returned JSON");
+
+      dispatch({ type: RELOAD_SUCCESS });
+
+      dispatch(fetchExtensions()); // then fetch all extension data again
+    } catch (error) {
+      dispatch({
+        type: RELOAD_FAILURE,
+        errorMessage: "Failed to reload extensions.",
         meta: { error }
       });
     }
