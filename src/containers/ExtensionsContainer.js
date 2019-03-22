@@ -1,11 +1,19 @@
 // @flow
 import { connect } from "react-redux";
-import { fetchExtensions, FETCH_EXTENSIONS } from "redux-ducks/extensions";
+import {
+  fetchExtensions,
+  installExtension,
+  FETCH_EXTENSIONS,
+  INSTALL_EXTENSION
+} from "redux-ducks/extensions";
 import { createLoadingSelector } from "redux-ducks/loading";
 import Extensions from "pages/Extensions";
 import type { ExtensionType } from "types";
 
-const extensionsIsLoading: Function = createLoadingSelector([FETCH_EXTENSIONS]);
+const extensionsIsLoading: Function = createLoadingSelector([
+  FETCH_EXTENSIONS,
+  INSTALL_EXTENSION
+]);
 
 type StateToProps = {
   extensions: Array<ExtensionType>,
@@ -20,11 +28,13 @@ const mapStateToProps = (state): StateToProps => ({
 });
 
 type DispatchToProps = {
-  fetchExtensions: Function
+  fetchExtensions: Function,
+  installExtension: Function
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
-  fetchExtensions: () => dispatch(fetchExtensions())
+  fetchExtensions: () => dispatch(fetchExtensions()),
+  installExtension: packageName => dispatch(installExtension(packageName))
 });
 
 export type ExtensionsContainerProps = StateToProps & DispatchToProps;

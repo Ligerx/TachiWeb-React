@@ -116,6 +116,10 @@ export const Server = {
     return `/api/v2/extensions/${packageName}/icon`;
   },
 
+  installExtension(packageName: string) {
+    return `/api/v2/extensions/${packageName}/install`;
+  },
+
   // v3 API client
   api() {
     const { protocol, host } = window.location;

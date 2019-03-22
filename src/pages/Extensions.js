@@ -24,7 +24,8 @@ const styles = () => ({
 const Extensions = ({
   extensions,
   extensionsIsLoading,
-  fetchExtensions
+  fetchExtensions,
+  installExtension
 }: ExtensionsContainerProps & { classes: Object }) => {
   useEffect(() => {
     fetchExtensions();
@@ -43,54 +44,64 @@ const Extensions = ({
       <Helmet title="Extensions - TachiWeb" />
 
       <ResponsiveGrid maxWidth="xs">
-        <Grid item xs={12}>
-          <Typography variant="headline" gutterBottom>
-            Installed ({installedExtensions.length})
-          </Typography>
-          <Paper>
-            <List>
-              {installedExtensions.map(extension => (
-                <ExtensionListItem
-                  key={extension.pkg_name}
-                  extension={extension}
-                >
-                  <ExtensionButton
-                    status={extension.status}
-                    has_update={extension.has_update}
-                    onUpdateClick={null}
-                    onUninstallClick={null}
-                    onInstallClick={null}
-                  />
-                </ExtensionListItem>
-              ))}
-            </List>
-          </Paper>
-        </Grid>
+        {installedExtensions.length > 0 && (
+          <Grid item xs={12}>
+            <Typography variant="headline" gutterBottom>
+              Installed ({installedExtensions.length})
+            </Typography>
+            <Paper>
+              <List>
+                {installedExtensions.map(extension => (
+                  <ExtensionListItem
+                    key={extension.pkg_name}
+                    extension={extension}
+                  >
+                    <ExtensionButton
+                      status={extension.status}
+                      has_update={extension.has_update}
+                      name={extension.name}
+                      onUpdateClick={() => {}}
+                      onUninstallClick={() => {}}
+                      onInstallClick={() =>
+                        installExtension(extension.pkg_name)
+                      }
+                    />
+                  </ExtensionListItem>
+                ))}
+              </List>
+            </Paper>
+          </Grid>
+        )}
 
-        <Grid item xs={12}>
-          <Typography variant="headline" gutterBottom>
-            Available ({notInstalledExtensions.length})
-          </Typography>
+        {notInstalledExtensions.length > 0 && (
+          <Grid item xs={12}>
+            <Typography variant="headline" gutterBottom>
+              Available ({notInstalledExtensions.length})
+            </Typography>
 
-          <Paper>
-            <List>
-              {notInstalledExtensions.map(extension => (
-                <ExtensionListItem
-                  key={extension.pkg_name}
-                  extension={extension}
-                >
-                  <ExtensionButton
-                    status={extension.status}
-                    has_update={extension.has_update}
-                    onUpdateClick={null}
-                    onUninstallClick={null}
-                    onInstallClick={null}
-                  />
-                </ExtensionListItem>
-              ))}
-            </List>
-          </Paper>
-        </Grid>
+            <Paper>
+              <List>
+                {notInstalledExtensions.map(extension => (
+                  <ExtensionListItem
+                    key={extension.pkg_name}
+                    extension={extension}
+                  >
+                    <ExtensionButton
+                      status={extension.status}
+                      has_update={extension.has_update}
+                      name={extension.name}
+                      onUpdateClick={() => {}}
+                      onUninstallClick={() => {}}
+                      onInstallClick={() =>
+                        installExtension(extension.pkg_name)
+                      }
+                    />
+                  </ExtensionListItem>
+                ))}
+              </List>
+            </Paper>
+          </Grid>
+        )}
       </ResponsiveGrid>
 
       {extensionsIsLoading && <FullScreenLoading />}
