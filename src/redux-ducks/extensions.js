@@ -76,6 +76,7 @@ export function fetchExtensions() {
   };
 }
 
+// Running install on an already installed extension will update it
 export function installExtension(packageName: string) {
   return async (dispatch: Function) => {
     dispatch({ type: INSTALL_REQUEST, meta: { packageName } });

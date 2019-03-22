@@ -24,8 +24,8 @@ const ExtensionButton = ({
   has_update,
   name,
   onUpdateClick,
-  onUninstallClick,
-  onInstallClick
+  onInstallClick,
+  onUninstallClick
 }: ExtensionButtonProps) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
 

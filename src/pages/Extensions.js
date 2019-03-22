@@ -61,12 +61,12 @@ const Extensions = ({
                       status={extension.status}
                       has_update={extension.has_update}
                       name={extension.name}
-                      onUpdateClick={() => {}}
-                      onUninstallClick={() =>
-                        uninstallExtension(extension.pkg_name)
-                      }
+                      onUpdateClick={() => installExtension(extension.pkg_name)}
                       onInstallClick={() =>
                         installExtension(extension.pkg_name)
+                      }
+                      onUninstallClick={() =>
+                        uninstallExtension(extension.pkg_name)
                       }
                     />
                   </ExtensionListItem>
@@ -93,12 +93,12 @@ const Extensions = ({
                       status={extension.status}
                       has_update={extension.has_update}
                       name={extension.name}
-                      onUpdateClick={() => {}}
-                      onUninstallClick={() =>
-                        uninstallExtension(extension.pkg_name)
-                      }
+                      onUpdateClick={() => installExtension(extension.pkg_name)}
                       onInstallClick={() =>
                         installExtension(extension.pkg_name)
+                      }
+                      onUninstallClick={() =>
+                        uninstallExtension(extension.pkg_name)
                       }
                     />
                   </ExtensionListItem>
