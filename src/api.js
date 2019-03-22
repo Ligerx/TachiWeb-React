@@ -112,6 +112,11 @@ export const Server = {
     return "/api/v2/extensions";
   },
 
+  extension(packageName: string) {
+    // Accepts GET and DELETE
+    return `/api/v2/extensions/${packageName}`;
+  },
+
   extensionIcon(packageName: string) {
     return `/api/v2/extensions/${packageName}/icon`;
   },

@@ -16,6 +16,11 @@ const INSTALL_REQUEST = `${INSTALL_EXTENSION}_REQUEST`;
 const INSTALL_SUCCESS = `${INSTALL_EXTENSION}_SUCCESS`;
 const INSTALL_FAILURE = `${INSTALL_EXTENSION}_FAILURE`;
 
+export const UNINSTALL_EXTENSION = "extensions/UNINSTALL";
+const UNINSTALL_REQUEST = `${UNINSTALL_EXTENSION}_REQUEST`;
+const UNINSTALL_SUCCESS = `${UNINSTALL_EXTENSION}_SUCCESS`;
+const UNINSTALL_FAILURE = `${UNINSTALL_EXTENSION}_FAILURE`;
+
 // ================================================================================
 // Reducers
 // ================================================================================
@@ -37,6 +42,14 @@ export default function extensionsReducer(state: State = [], action = {}) {
         return extension;
       }): State);
     }
+
+    case UNINSTALL_SUCCESS:
+      return (state.map(extension => {
+        if (action.packageName === extension.pkg_name) {
+          return { ...extension, status: "AVAILABLE" };
+        }
+        return extension;
+      }): State);
 
     default:
       return state;
@@ -82,6 +95,29 @@ export function installExtension(packageName: string) {
       dispatch({
         type: INSTALL_FAILURE,
         errorMessage: "Failed to install this extension.",
+        meta: { error }
+      });
+    }
+  };
+}
+
+export function uninstallExtension(packageName: string) {
+  return async (dispatch: Function) => {
+    dispatch({ type: UNINSTALL_REQUEST, meta: { packageName } });
+
+    try {
+      const response = await fetch(Server.extension(packageName), {
+        method: "DELETE"
+      });
+
+      const json = await response.json();
+      if (!json.success) throw new Error("success = false in returned JSON");
+
+      dispatch({ type: UNINSTALL_SUCCESS, packageName });
+    } catch (error) {
+      dispatch({
+        type: UNINSTALL_FAILURE,
+        errorMessage: "Failed to uninstall this extension.",
         meta: { error }
       });
     }

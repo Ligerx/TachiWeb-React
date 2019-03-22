@@ -25,7 +25,8 @@ const Extensions = ({
   extensions,
   extensionsIsLoading,
   fetchExtensions,
-  installExtension
+  installExtension,
+  uninstallExtension
 }: ExtensionsContainerProps & { classes: Object }) => {
   useEffect(() => {
     fetchExtensions();
@@ -61,7 +62,9 @@ const Extensions = ({
                       has_update={extension.has_update}
                       name={extension.name}
                       onUpdateClick={() => {}}
-                      onUninstallClick={() => {}}
+                      onUninstallClick={() =>
+                        uninstallExtension(extension.pkg_name)
+                      }
                       onInstallClick={() =>
                         installExtension(extension.pkg_name)
                       }
@@ -91,7 +94,9 @@ const Extensions = ({
                       has_update={extension.has_update}
                       name={extension.name}
                       onUpdateClick={() => {}}
-                      onUninstallClick={() => {}}
+                      onUninstallClick={() =>
+                        uninstallExtension(extension.pkg_name)
+                      }
                       onInstallClick={() =>
                         installExtension(extension.pkg_name)
                       }

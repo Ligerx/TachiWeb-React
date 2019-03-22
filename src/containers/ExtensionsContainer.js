@@ -3,8 +3,10 @@ import { connect } from "react-redux";
 import {
   fetchExtensions,
   installExtension,
+  uninstallExtension,
   FETCH_EXTENSIONS,
-  INSTALL_EXTENSION
+  INSTALL_EXTENSION,
+  UNINSTALL_EXTENSION
 } from "redux-ducks/extensions";
 import { createLoadingSelector } from "redux-ducks/loading";
 import Extensions from "pages/Extensions";
@@ -12,7 +14,8 @@ import type { ExtensionType } from "types";
 
 const extensionsIsLoading: Function = createLoadingSelector([
   FETCH_EXTENSIONS,
-  INSTALL_EXTENSION
+  INSTALL_EXTENSION,
+  UNINSTALL_EXTENSION
 ]);
 
 type StateToProps = {
@@ -29,12 +32,14 @@ const mapStateToProps = (state): StateToProps => ({
 
 type DispatchToProps = {
   fetchExtensions: Function,
-  installExtension: Function
+  installExtension: Function,
+  uninstallExtension: Function
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchExtensions: () => dispatch(fetchExtensions()),
-  installExtension: packageName => dispatch(installExtension(packageName))
+  installExtension: packageName => dispatch(installExtension(packageName)),
+  uninstallExtension: packageName => dispatch(uninstallExtension(packageName))
 });
 
 export type ExtensionsContainerProps = StateToProps & DispatchToProps;
