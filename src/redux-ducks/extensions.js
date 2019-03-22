@@ -6,15 +6,15 @@ import { handleHTMLError } from "./utils";
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_REQUEST = "extensions/FETCH_REQUEST";
-const FETCH_SUCCESS = "extensions/FETCH_SUCCESS";
-const FETCH_FAILURE = "extensions/FETCH_FAILURE";
 export const FETCH_EXTENSIONS = "extensions/FETCH";
+const FETCH_REQUEST = `${FETCH_EXTENSIONS}_REQUEST`;
+const FETCH_SUCCESS = `${FETCH_EXTENSIONS}_SUCCESS`;
+const FETCH_FAILURE = `${FETCH_EXTENSIONS}_FAILURE`;
 
-const INSTALL_REQUEST = "extensions/INSTALL_REQUEST";
-const INSTALL_SUCCESS = "extensions/INSTALL_SUCCESS";
-const INSTALL_FAILURE = "extensions/INSTALL_FAILURE";
 export const INSTALL_EXTENSION = "extensions/INSTALL";
+const INSTALL_REQUEST = `${INSTALL_EXTENSION}_REQUEST`;
+const INSTALL_SUCCESS = `${INSTALL_EXTENSION}_SUCCESS`;
+const INSTALL_FAILURE = `${INSTALL_EXTENSION}_FAILURE`;
 
 // ================================================================================
 // Reducers
