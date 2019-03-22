@@ -7,7 +7,7 @@ import { handleHTMLError, transformToMangaIdsArray } from "./utils";
 // ================================================================================
 // Actions
 // ================================================================================
-const RESET_STATE = "catalogue/RESET_STATE";
+export const RESET_STATE = "catalogue/RESET_STATE";
 
 const FETCH_CATALOGUE_REQUEST = "catalogue/FETCH_REQUEST";
 const FETCH_CATALOGUE_SUCCESS = "catalogue/FETCH_SUCCESS";

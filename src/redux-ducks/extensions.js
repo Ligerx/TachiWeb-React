@@ -1,7 +1,7 @@
 // @flow
 import { Server } from "api";
 import type { ExtensionType } from "types";
-import { handleHTMLError } from "./utils";
+import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
 
 // ================================================================================
 // Actions
@@ -65,19 +65,23 @@ export default function extensionsReducer(state: State = [], action = {}) {
 // Action Creators
 // ================================================================================
 export function fetchExtensions() {
-  return (dispatch: Function) => {
+  return async (dispatch: Function) => {
     dispatch({ type: FETCH_REQUEST });
-    return fetch(Server.extensions())
-      .then(handleHTMLError)
-      .then(
-        json => dispatch({ type: FETCH_SUCCESS, extensions: json.data }),
-        error =>
-          dispatch({
-            type: FETCH_FAILURE,
-            errorMessage: "Failed to load extensions",
-            meta: { error }
-          })
-      );
+
+    try {
+      const response = await fetch(Server.extensions());
+
+      const json = await response.json();
+      if (!json.success) throw new Error("success = false in returned JSON");
+
+      dispatch({ type: FETCH_SUCCESS, extensions: json.data });
+    } catch (error) {
+      dispatch({
+        type: FETCH_FAILURE,
+        errorMessage: "Failed to load extensions.",
+        meta: { error }
+      });
+    }
   };
 }
 
@@ -97,6 +101,7 @@ export function installExtension(packageName: string) {
       const extension: ExtensionType = json.data[0];
 
       dispatch({ type: INSTALL_SUCCESS, extension });
+      dispatch({ type: RESET_CATALOGUE_STATE });
     } catch (error) {
       dispatch({
         type: INSTALL_FAILURE,
@@ -120,6 +125,7 @@ export function uninstallExtension(packageName: string) {
       if (!json.success) throw new Error("success = false in returned JSON");
 
       dispatch({ type: UNINSTALL_SUCCESS, packageName });
+      dispatch({ type: RESET_CATALOGUE_STATE });
     } catch (error) {
       dispatch({
         type: UNINSTALL_FAILURE,
@@ -144,7 +150,10 @@ export function reloadExtensions() {
 
       dispatch({ type: RELOAD_SUCCESS });
 
-      dispatch(fetchExtensions()); // then fetch all extension data again
+      // fetch all extensions again because this call does not return the updated data
+      await dispatch(fetchExtensions());
+
+      dispatch({ type: RESET_CATALOGUE_STATE });
     } catch (error) {
       dispatch({
         type: RELOAD_FAILURE,
