@@ -274,7 +274,7 @@ export function setLibraryFlag(
       .then(handleHTMLError)
       .then(
         () => dispatch({ type: SET_FLAG_SUCCESS }),
-        () => dispatch({ SET_FLAG_FAILURE })
+        () => dispatch({ type: SET_FLAG_FAILURE })
       );
   };
 }
