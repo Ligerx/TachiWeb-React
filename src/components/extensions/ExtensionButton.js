@@ -5,12 +5,15 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 
 // Component that currently is only used nested inside ExtensionListItem
 
 type ExtensionButtonProps = {
   status: string,
   has_update: ?boolean,
+  name: string,
   onUpdateClick: Function,
   onUninstallClick: Function,
   onInstallClick: Function
@@ -19,6 +22,7 @@ type ExtensionButtonProps = {
 const ExtensionButton = ({
   status,
   has_update,
+  name,
   onUpdateClick,
   onUninstallClick,
   onInstallClick
@@ -36,11 +40,12 @@ const ExtensionButton = ({
   if (status === "INSTALLED") {
     return (
       <React.Fragment>
-        <Button variant="outlined" onClick={setDialogOpen(true)}>
+        <Button variant="outlined" onClick={() => setDialogOpen(true)}>
           Uninstall
         </Button>
 
         <UninstallConfirmationDialog
+          name={name}
           isOpen={isDialogOpen}
           onClose={() => setDialogOpen(false)}
           onUninstall={onUninstallClick}
@@ -59,18 +64,35 @@ const ExtensionButton = ({
   // return "Untrusted";
 };
 
-type DialogProps = { isOpen: boolean, onClose: Function, onUninstall: Function };
+type DialogProps = {
+  name: string,
+  isOpen: boolean,
+  onClose: Function,
+  onUninstall: Function
+};
 
-const UninstallConfirmationDialog = ({ isOpen, onClose, onUninstall }: DialogProps) => {
+const UninstallConfirmationDialog = ({
+  name,
+  isOpen,
+  onClose,
+  onUninstall
+}: DialogProps) => {
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Uninstall Extension?</DialogTitle>
+      <DialogTitle>Uninstall Extension - {name}</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          Manga that rely on this extension will not be deleted. However, you
+          will not be able to read these manga until the extension is
+          reinstalled.
+        </DialogContentText>
+      </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Go Back
         </Button>
         <Button onClick={onUninstall} color="primary" autoFocus>
-          Delete
+          Uninstall
         </Button>
       </DialogActions>
     </Dialog>
