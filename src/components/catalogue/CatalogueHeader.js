@@ -1,31 +1,31 @@
 // @flow
-import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import MenuDrawer from 'components/MenuDrawer';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import type { SourceType } from 'types';
-import Input from '@material-ui/core/Input';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import MenuDrawer from "components/MenuDrawer";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import type { SourceType } from "types";
+import Input from "@material-ui/core/Input";
+import { withStyles } from "@material-ui/core/styles";
 
 const styles = {
   catalogueSelect: {
-    paddingLeft: 8,
+    paddingLeft: 8
   },
   searchInput: {
     flex: 1, // fill remaining width
-    marginLeft: 16,
-  },
+    marginLeft: 16
+  }
 };
 
 type Props = {
   classes: Object, // injected styles
-  sourceId: ?number,
+  sourceId: ?string,
   sources: Array<SourceType>,
   searchQuery: string,
   onSourceChange: Function,
-  onSearchChange: Function,
+  onSearchChange: Function
 };
 
 const CatalogueHeader = ({
@@ -34,7 +34,7 @@ const CatalogueHeader = ({
   sources,
   searchQuery,
   onSourceChange,
-  onSearchChange,
+  onSearchChange
 }: Props) => {
   const sourcesExist = sources && sources.length > 0 && sourceId != null;
   const sourceIndex = sources.findIndex(source => source.id === sourceId);

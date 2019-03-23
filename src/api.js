@@ -50,7 +50,7 @@ export const Server = {
   catalogue() {
     // NOTE: This should be a POST request with the following body params
     // {
-    //   "sourceId": number,
+    //   "sourceId": string,
     //   "page": number,
     //   "query": string, empty string, or null,
     //   "filters": big-complicated-array or null
