@@ -28,7 +28,7 @@ const CHANGE_SOURCEID = "catalogue/CHANGE_SOURCEID";
 // Reducers
 // ================================================================================
 type State = {
-  +sourceId: ?number,
+  +sourceId: ?string,
   +mangaIds: $ReadOnlyArray<number>,
   +page: number,
   +hasNextPage: boolean,
@@ -224,7 +224,7 @@ export function changeSourceId(newSourceId: number) {
 // ================================================================================
 function cataloguePostParameters(
   page: number,
-  sourceId: number,
+  sourceId: string,
   query: string,
   filters: ?Array<FilterAnyType>
 ): Object {

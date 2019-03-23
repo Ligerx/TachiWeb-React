@@ -46,7 +46,7 @@ export type ChapterType = {
 export type SourceType = {
   name: string,
   supports_latest: boolean,
-  id: number,
+  id: string,
   lang: {
     name: string,
     display_name: string

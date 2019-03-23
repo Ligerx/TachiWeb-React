@@ -1,18 +1,18 @@
 // @flow
-import { Server } from 'api';
-import type { FilterAnyType } from 'types/filters';
-import { handleHTMLError } from './utils';
+import { Server } from "api";
+import type { FilterAnyType } from "types/filters";
+import { handleHTMLError } from "./utils";
 
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_REQUEST = 'filters/FETCH_REQUEST';
-const FETCH_SUCCESS = 'filters/FETCH_SUCCESS';
-const FETCH_FAILURE = 'filters/FETCH_FAILURE';
+const FETCH_REQUEST = "filters/FETCH_REQUEST";
+const FETCH_SUCCESS = "filters/FETCH_SUCCESS";
+const FETCH_FAILURE = "filters/FETCH_FAILURE";
 
-const RESET_FILTERS = 'filters/RESET_FILTERS';
-const UPDATE_LAST_USED_FILTERS = 'filters/UPDATE_LAST_USED_FILTERS';
-const UPDATE_CURRENT_FILTERS = 'filters/UPDATE_CURRENT_FILTERS';
+const RESET_FILTERS = "filters/RESET_FILTERS";
+const UPDATE_LAST_USED_FILTERS = "filters/UPDATE_LAST_USED_FILTERS";
+const UPDATE_CURRENT_FILTERS = "filters/UPDATE_CURRENT_FILTERS";
 
 // ================================================================================
 // Reducers
@@ -23,14 +23,17 @@ type State = {
 
   // having this in the redux store is going to create a ton of actions being logged
   // the benefit is that any un-searched changes will remain when you leave and return to catalogue
-  +currentFilters: $ReadOnlyArray<FilterAnyType>, // stores changes that haven't been submitted yet
+  +currentFilters: $ReadOnlyArray<FilterAnyType> // stores changes that haven't been submitted yet
 };
 const initialState: State = {
   initialFilters: [],
   lastUsedFilters: [],
-  currentFilters: [],
+  currentFilters: []
 };
-export default function filtersReducer(state: State = initialState, action = {}) {
+export default function filtersReducer(
+  state: State = initialState,
+  action = {}
+) {
   switch (action.type) {
     case FETCH_REQUEST:
       return initialState;
@@ -39,7 +42,7 @@ export default function filtersReducer(state: State = initialState, action = {})
       return {
         initialFilters: action.filters,
         lastUsedFilters: action.filters,
-        currentFilters: action.filters,
+        currentFilters: action.filters
       };
 
     case RESET_FILTERS:
@@ -63,14 +66,14 @@ export default function filtersReducer(state: State = initialState, action = {})
 // ================================================================================
 export function fetchFilters() {
   return (dispatch: Function, getState: Function) => {
-    const { sourceId }: { sourceId: ?number } = getState().catalogue;
+    const { sourceId }: { sourceId: ?string } = getState().catalogue;
     dispatch({ type: FETCH_REQUEST, meta: { sourceId } });
 
     if (sourceId == null) {
       return dispatch({
         type: FETCH_FAILURE,
-        errorMessage: 'Failed to get the filters.',
-        meta: 'fetchFilters() sourceId is null',
+        errorMessage: "Failed to get the filters.",
+        meta: "fetchFilters() sourceId is null"
       });
     }
 
@@ -81,9 +84,9 @@ export function fetchFilters() {
         error =>
           dispatch({
             type: FETCH_FAILURE,
-            errorMessage: 'Failed to get the filters for this source',
-            meta: { error },
-          }),
+            errorMessage: "Failed to get the filters for this source",
+            meta: { error }
+          })
       );
   };
 }
@@ -97,5 +100,6 @@ export function updateLastUsedFilters() {
 }
 
 export function updateCurrentFilters(filters: Array<FilterAnyType>) {
-  return (dispatch: Function) => dispatch({ type: UPDATE_CURRENT_FILTERS, filters });
+  return (dispatch: Function) =>
+    dispatch({ type: UPDATE_CURRENT_FILTERS, filters });
 }
