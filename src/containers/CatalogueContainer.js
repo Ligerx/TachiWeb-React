@@ -30,8 +30,9 @@ import {
 } from "redux-ducks/mangaInfos";
 import Catalogue from "pages/Catalogue";
 import { createLoadingSelector } from "redux-ducks/loading";
-import type { SourceType, ChapterType, MangaType } from "types";
+import type { SourceType, ChapterType } from "types";
 import type { FilterAnyType } from "types/filters";
+import type { Manga } from "@tachiweb/api-client";
 
 const sourcesAreLoading: Function = createLoadingSelector([FETCH_SOURCES]);
 const catalogueIsLoading: Function = createLoadingSelector([
@@ -53,7 +54,7 @@ type StateToProps = {
   sourceId: ?string,
 
   chaptersByMangaId: { [mangaId: number]: Array<ChapterType> },
-  mangaLibrary: Array<MangaType>,
+  mangaLibrary: Array<Manga>,
 
   initialFilters: Array<FilterAnyType>,
   lastUsedFilters: Array<FilterAnyType>,

@@ -1,37 +1,4 @@
 // @flow
-export type MangaInfoFlagsType = {
-  DISPLAY_MODE: "NAME" | "NUMBER",
-  READ_FILTER: "READ" | "UNREAD" | "ALL",
-  SORT_DIRECTION: "ASCENDING" | "DESCENDING",
-  SORT_TYPE: "SOURCE" | "NUMBER",
-  DOWNLOADED_FILTER: "DOWNLOADED" | "NOT_DOWNLOADED" | "ALL"
-};
-
-export type MangaType = {
-  // NOTE: Many non-required fields may be missing because the server needs time to
-  //       scrape the website, but returns a barebones object early anyway.
-
-  // Must be included
-  id: number,
-  favorite: boolean,
-  title: string,
-
-  // I believe these will always be incliuded
-  source: string,
-  url: string,
-  downloaded: boolean,
-  flags: MangaInfoFlagsType,
-
-  chapters: ?number,
-  unread: ?number,
-  author: ?string,
-  description: ?string,
-  thumbnail_url: ?string,
-  genres: ?string,
-  categories: ?Array<string>,
-  status: ?string
-};
-
 export type ChapterType = {
   date: number,
   source_order: number,

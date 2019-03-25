@@ -11,12 +11,13 @@ import {
 } from "redux-ducks/library";
 import Library from "pages/Library";
 import { createLoadingSelector } from "redux-ducks/loading";
-import type { MangaType, LibraryFlagsType } from "types";
+import type { LibraryFlagsType } from "types";
 import {
   updateChapters,
   UPDATE_CHAPTERS,
   FETCH_CHAPTERS
 } from "redux-ducks/chapters";
+import type { Manga } from "@tachiweb/api-client";
 
 const libraryIsLoading = createLoadingSelector([
   FETCH_LIBRARY,
@@ -29,7 +30,7 @@ const chaptersAreUpdating = createLoadingSelector([
 ]);
 
 type StateToProps = {
-  mangaLibrary: Array<MangaType>,
+  mangaLibrary: Array<Manga>,
   unread: { [mangaId: number]: number },
   libraryIsLoading: boolean,
   chaptersAreUpdating: boolean,
@@ -62,7 +63,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => ({
 });
 
 // Helper Functions
-function getMangaLibrary(mangaInfos, mangaIds): Array<MangaType> {
+function getMangaLibrary(mangaInfos, mangaIds): Array<Manga> {
   return mangaIds.map(mangaId => mangaInfos[mangaId]);
 }
 

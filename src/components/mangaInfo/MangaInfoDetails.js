@@ -6,11 +6,11 @@ import MangaCard from 'components/MangaCard';
 import Grid from '@material-ui/core/Grid';
 import BackgroundImage from 'components/mangaInfo/BackgroundImage';
 import { withStyles } from '@material-ui/core/styles';
-import type { MangaType } from 'types';
 import classNames from 'classnames';
 import { Server } from 'api';
 import upperFirst from 'lodash/upperFirst';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';
+import type { Manga } from "@tachiweb/api-client";
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
@@ -28,7 +28,7 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  mangaInfo: MangaType,
+  mangaInfo: Manga,
   numChapters: number,
 };
 
@@ -66,8 +66,9 @@ MangaInfoDetails.defaultProps = {
 };
 
 // Helper functions
-function detailsElements(mangaInfo: MangaType): React.Node {
-  const fieldNames = ['status', 'source', 'author', 'genres', 'categories'];
+function detailsElements(mangaInfo: Manga): React.Node {
+  // TODO sourceId and categories need to be pulled from their respective API calls
+  const fieldNames = ['status', "artist", 'author', 'genre'];
 
   return fieldNames.map((fieldName) => {
     const value = mangaInfo[fieldName];

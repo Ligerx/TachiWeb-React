@@ -4,7 +4,7 @@ import { Server, Client } from 'api';
 import FullScreenLoading from 'components/loading/FullScreenLoading';
 import compact from 'lodash/compact';
 import type { ReaderContainerProps } from 'containers/ReaderContainer';
-import type { ChapterType, MangaType } from 'types';
+import type { ChapterType } from 'types';
 import SinglePageReader from 'components/reader/SinglePageReader';
 import WebtoonReader from 'components/reader/WebtoonReader';
 import ReadingStatusUpdaterContainer from 'containers/ReadingStatusUpdaterContainer';
@@ -12,6 +12,7 @@ import ImagePreloaderContainer from 'containers/ImagePreloaderContainer';
 import { Helmet } from 'react-helmet';
 import { chapterNumPrettyPrint } from 'components/utils';
 import UrlPrefixContext from 'components/UrlPrefixContext';
+import type { Manga } from "@tachiweb/api-client";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
@@ -179,7 +180,7 @@ class Reader extends Component<Props> {
 // Helper methods
 function changeChapterUrl(
   urlPrefix: string,
-  mangaInfo: ?MangaType,
+  mangaInfo: ?Manga,
   newChapterId: ?number,
   chapters: Array<ChapterType>,
 ): ?string {

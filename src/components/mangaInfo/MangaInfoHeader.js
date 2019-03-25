@@ -1,27 +1,27 @@
 // @flow
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Icon from '@material-ui/core/Icon';
-import IconButton from '@material-ui/core/IconButton';
-import RefreshButton from 'components/RefreshButton';
-import MangaInfoTabs from 'components/mangaInfo/MangaInfoTabs';
-import type { MangaType } from 'types';
-import BackButton from 'components/BackButton';
-import MangaInfoMore from 'components/mangaInfo/MangaInfoMore';
-import Tooltip from '@material-ui/core/Tooltip';
-import MangaInfoFilter from 'components/mangaInfo/MangaInfoFilter';
+import React from "react";
+import Typography from "@material-ui/core/Typography";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Icon from "@material-ui/core/Icon";
+import IconButton from "@material-ui/core/IconButton";
+import RefreshButton from "components/RefreshButton";
+import MangaInfoTabs from "components/mangaInfo/MangaInfoTabs";
+import BackButton from "components/BackButton";
+import MangaInfoMore from "components/mangaInfo/MangaInfoMore";
+import Tooltip from "@material-ui/core/Tooltip";
+import MangaInfoFilter from "components/mangaInfo/MangaInfoFilter";
+import type { Manga } from "@tachiweb/api-client";
 
 // NOTE: empty href in IconButton will not render <a>
 
 type Props = {
-  mangaInfo: ?MangaType,
+  mangaInfo: ?Manga,
   tabValue: number,
   handleChangeTab: Function,
   onBackClick: string | Function,
   onRefreshClick: Function,
-  setFlag: Function,
+  setFlag: Function
 };
 
 const MangaInfoHeader = ({
@@ -30,7 +30,7 @@ const MangaInfoHeader = ({
   handleChangeTab,
   onBackClick,
   onRefreshClick,
-  setFlag,
+  setFlag
 }: Props) => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
@@ -70,26 +70,25 @@ const MangaInfoHeader = ({
 );
 
 function handleSortClick(setFlag, flags) {
-  return () => {
-    const newState = flags.SORT_DIRECTION === 'DESCENDING' ? 'ASCENDING' : 'DESCENDING';
-    setFlag('SORT_DIRECTION', newState);
-  };
+  return () =>
+    setFlag("sortDirection", flags.sortDirection === "DESC" ? "ASC" : "DESC");
 }
 
 function handleDisplayModeChange(setFlag) {
-  return newDisplayMode => setFlag('DISPLAY_MODE', newDisplayMode);
+  return newDisplayMode => setFlag("displayMode", newDisplayMode);
 }
 
 function handleSortTypeChange(setFlag) {
-  return newSortType => setFlag('SORT_TYPE', newSortType);
+  return newSortType => setFlag("sortType", newSortType);
 }
 
 function handleReadFilterChange(setFlag) {
-  return newReadFilter => setFlag('READ_FILTER', newReadFilter);
+  return newReadFilter => setFlag("readFilter", newReadFilter);
 }
 
 function handleDownloadedFilterChange(setFlag) {
-  return newDownloadedFilter => setFlag('DOWNLOADED_FILTER', newDownloadedFilter);
+  return newDownloadedFilter =>
+    setFlag("downloadedFilter", newDownloadedFilter);
 }
 
 export default MangaInfoHeader;

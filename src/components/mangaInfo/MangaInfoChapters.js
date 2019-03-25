@@ -3,12 +3,13 @@ import React from "react";
 import ContinueReadingButton from "components/mangaInfo/ContinueReadingButton";
 import CenterHorizontally from "components/CenterHorizontally";
 import MangaInfoChapterList from "components/mangaInfo/MangaInfoChapterList";
-import type { MangaType, ChapterType } from "types";
+import type { ChapterType } from "types";
 import filterSortChapters from "components/mangaInfo/chapterUtils";
+import type { Manga } from "@tachiweb/api-client";
 
 type Props = {
   chapters: Array<ChapterType>,
-  mangaInfo: MangaType,
+  mangaInfo: Manga,
   toggleRead: Function
 };
 

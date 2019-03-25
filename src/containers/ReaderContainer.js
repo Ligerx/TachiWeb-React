@@ -4,10 +4,11 @@ import { fetchMangaInfo } from 'redux-ducks/mangaInfos';
 import { fetchChapters } from 'redux-ducks/chapters';
 import { fetchPageCount } from 'redux-ducks/pageCounts';
 import Reader from 'pages/Reader';
-import type { MangaType, ChapterType } from 'types';
+import type { ChapterType } from 'types';
+import type { Manga } from "@tachiweb/api-client";
 
 type StateToProps = {
-  mangaInfo: ?MangaType,
+  mangaInfo: ?Manga,
   chapters: Array<ChapterType>,
   chapter: ?ChapterType,
   chapterId: number, // never null because it's pulled from the URL

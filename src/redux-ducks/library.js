@@ -2,7 +2,7 @@
 import { Server } from "api";
 import type { LibraryFlagsType, LibraryFlagsPossibleValueTypes } from "types";
 import { ADD_MANGA } from "./mangaInfos";
-import { handleHTMLError, transformToMangaIdsArray } from "./utils";
+import { handleHTMLError, transformToMangaIdsArray } from "./utils"; import type {LibraryManga} from "@tachiweb/api-client";
 
 // ================================================================================
 // Actions
@@ -82,7 +82,7 @@ const defaultState: State = {
 
 export default function libraryReducer(
   state: State = defaultState,
-  action = {}
+  action: Object = {}
 ) {
   switch (action.type) {
     case FETCH_LIBRARY_SUCCESS:
@@ -165,20 +165,24 @@ export function fetchLibrary({ ignoreCache = false }: Options = {}) {
   return (dispatch: Function, getState: Function) => {
     // Return cached mangaLibrary if it's been loaded before
     if (!ignoreCache && !getState().library.reloadLibrary) {
-      return dispatch({ type: FETCH_LIBRARY_CACHE });
+      return Promise.resolve().then(dispatch({ type: FETCH_LIBRARY_CACHE }));
     }
 
     dispatch({ type: FETCH_LIBRARY_REQUEST });
 
-    return fetch(Server.library())
-      .then(handleHTMLError)
+    return Server.api()
+      .getLibraryMangas(false)
       .then(
-        json => {
-          const { content } = json;
-          const mangaIds = transformToMangaIdsArray(content);
+        libraryMangas => {
+          const mangas = libraryMangas.map(manga => manga.manga);
+          const mangaIds = transformToMangaIdsArray(mangas);
 
-          dispatch({ type: ADD_MANGA, newManga: content });
+          dispatch({ type: ADD_MANGA, newManga: mangas });
           dispatch({ type: FETCH_LIBRARY_SUCCESS, mangaIds });
+          dispatch({
+            type: FETCH_UNREAD_SUCCESS,
+            unread: transformLibraryMangaUnread(libraryMangas)
+          });
         },
         error =>
           dispatch({
@@ -289,6 +293,16 @@ function transformUnread(unreadArray: Param): Return {
   const newUnread = {};
   unreadArray.forEach(unreadObj => {
     newUnread[unreadObj.id] = unreadObj.unread;
+  });
+  return newUnread;
+}
+
+function transformLibraryMangaUnread(
+  libraryMangas: Array<LibraryManga>
+): Return {
+  const newUnread = {};
+  libraryMangas.forEach(libraryManga => {
+    newUnread[libraryManga.manga.id] = libraryManga.totalUnread;
   });
   return newUnread;
 }

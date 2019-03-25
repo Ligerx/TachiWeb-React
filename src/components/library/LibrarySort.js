@@ -12,9 +12,10 @@ import { withStyles } from "@material-ui/core/styles";
 const sorts = [
   { flagState: "ALPHA", description: "Alphabetically" },
   // "LAST_READ" and "LAST_UPDATED" not yet implemented
-  { flagState: "UNREAD", description: "Unread" },
-  { flagState: "TOTAL", description: "Total chapters" },
-  { flagState: "SOURCE", description: "Source" }
+  { flagState: "LAST_UPDATED", description: "Last updated" },
+  { flagState: "UNREAD", description: "Unread" }
+  // { flagState: "TOTAL", description: "Total chapters" },
+  // { flagState: "SOURCE", description: "Source" }
 ];
 
 const styles = {

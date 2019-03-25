@@ -5,12 +5,13 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import Link from 'components/Link';
-import type { ChapterType, MangaType } from 'types';
+import type { ChapterType } from 'types';
 import { chapterNumPrettyPrint } from 'components/utils';
 import ChapterMenu from 'components/mangaInfo/ChapterMenu';
 import UrlPrefixContext from 'components/UrlPrefixContext';
 import { Client } from 'api';
 import dateFnsFormat from 'date-fns/format';
+import type { Manga } from "@tachiweb/api-client";
 
 const styles = () => ({
   read: {
@@ -34,7 +35,7 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  mangaInfo: MangaType,
+  mangaInfo: Manga,
   chapter: ChapterType,
   toggleRead: Function,
 };
@@ -47,7 +48,7 @@ const ChapterListItem = ({
   const dimIfRead: Function = (read: boolean): ?String => (read ? classes.read : null);
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
   const chapterName: string =
-    mangaInfo.flags.DISPLAY_MODE === 'NAME'
+    mangaInfo.flags.displayMode === 'NAME'
       ? chapter.name
       : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 

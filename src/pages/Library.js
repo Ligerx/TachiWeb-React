@@ -23,18 +23,14 @@ class Library extends Component<LibraryContainerProps, State> {
 
   componentDidMount() {
     const { fetchLibrary, fetchUnread, fetchLibraryFlags } = this.props;
-    fetchLibrary();
-    fetchUnread();
+    // Fetch unread after library as fetching the library may have
+    //   already loaded the unread
+    fetchLibrary().then(() => fetchUnread());
     fetchLibraryFlags();
   }
 
   handleRefreshClick = () => {
-    const {
-      mangaLibrary,
-      updateChapters,
-      fetchLibrary,
-      fetchUnread
-    } = this.props;
+    const { mangaLibrary, updateChapters, fetchLibrary } = this.props;
 
     // Create an array of promise functions
     // Since calling updateChapters runs the function, create an intermediate function
@@ -42,9 +38,11 @@ class Library extends Component<LibraryContainerProps, State> {
       updateChapters(mangaInfo.id)
     );
 
-    serialPromiseChain(updateChapterPromises)
-      .then(() => fetchLibrary({ ignoreCache: true }))
-      .then(() => fetchUnread({ ignoreCache: true }));
+    serialPromiseChain(updateChapterPromises).then(() =>
+      // Will always load the unread if ignoring the cache, so no need to call
+      //   fetchUnread
+      fetchLibrary({ ignoreCache: true })
+    );
   };
 
   handleSearchChange = (newSearchQuery: string) => {

@@ -6,7 +6,8 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import ChapterListItem from 'components/mangaInfo/ChapterListItem';
-import type { ChapterType, MangaType } from 'types';
+import type { ChapterType } from 'types';
+import type { Manga } from "@tachiweb/api-client";
 
 // TODO: I've made ResponsiveGrid maxWidth="xs". What happens when the chapter title is too long?
 
@@ -24,7 +25,7 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  mangaInfo: MangaType,
+  mangaInfo: Manga,
   chapters: Array<ChapterType>,
   toggleRead: Function,
 };

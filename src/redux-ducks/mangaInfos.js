@@ -1,9 +1,8 @@
 // @flow
 
 import { Server } from "api";
-import type { MangaType } from "types";
-import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "./library";
-import { handleHTMLError } from "./utils";
+import type { Manga } from "@tachiweb/api-client";
+import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "redux-ducks/library";
 
 // NOTE: for clarity, this will be called mangaInfos (with an s)
 //       Info doesn't really have a plural, so I need to differentiate somehow
@@ -40,9 +39,12 @@ const SET_FLAG_NO_CHANGE = "mangaInfos/SET_FLAG_NO_CHANGE";
 // ================================================================================
 // Reducers
 // ================================================================================
-type State = { +[mangaId: number]: MangaType };
+type State = { +[mangaId: number]: Manga };
 
-export default function mangaInfosReducer(state: State = {}, action = {}) {
+export default function mangaInfosReducer(
+  state: State = {},
+  action: Object = {}
+) {
   switch (action.type) {
     case ADD_MANGA:
       return { ...state, ...mangaArrayToObject(action.newManga) };
@@ -50,11 +52,9 @@ export default function mangaInfosReducer(state: State = {}, action = {}) {
     case FETCH_MANGA_CACHE:
       return state;
 
+    case UPDATE_MANGA_SUCCESS:
     case FETCH_MANGA_SUCCESS:
       return { ...state, [action.mangaInfo.id]: action.mangaInfo };
-
-    case UPDATE_MANGA_SUCCESS:
-      return state;
 
     case TOGGLE_FAVORITE_SUCCESS:
       return {
@@ -98,11 +98,10 @@ export function fetchMangaInfo(
 
     dispatch({ type: FETCH_MANGA_REQUEST, meta: { mangaId } });
 
-    return fetch(Server.mangaInfo(mangaId))
-      .then(handleHTMLError)
+    return Server.api()
+      .getManga(mangaId)
       .then(
-        json =>
-          dispatch({ type: FETCH_MANGA_SUCCESS, mangaInfo: json.content }),
+        manga => dispatch({ type: FETCH_MANGA_SUCCESS, mangaInfo: manga }),
         error =>
           dispatch({
             type: FETCH_MANGA_FAILURE,
@@ -117,13 +116,10 @@ export function updateMangaInfo(mangaId: number) {
   return (dispatch: Function) => {
     dispatch({ type: UPDATE_MANGA_REQUEST, meta: { mangaId } });
 
-    return fetch(Server.updateMangaInfo(mangaId))
-      .then(handleHTMLError)
+    return Server.api()
+      .updateMangaInfo(mangaId)
       .then(
-        json => {
-          dispatch({ type: UPDATE_MANGA_SUCCESS, meta: { json } });
-          return dispatch(fetchMangaInfo(mangaId, { ignoreCache: true }));
-        },
+        manga => dispatch({ type: UPDATE_MANGA_SUCCESS, mangaInfo: manga }),
         error =>
           dispatch({
             type: UPDATE_MANGA_FAILURE,
@@ -141,16 +137,15 @@ export function toggleFavorite(mangaId: number, isCurrentlyFavorite: boolean) {
       meta: { mangaId, isCurrentlyFavorite }
     });
 
-    return fetch(Server.toggleFavorite(mangaId, isCurrentlyFavorite))
-      .then(handleHTMLError)
+    // TODO Remove toString when https://github.com/OpenAPITools/openapi-generator/pull/2499 is merged
+    return Server.api()
+      .setMangaFavorited(mangaId, (!isCurrentlyFavorite).toString())
       .then(
-        () => {
-          const newFavoriteState = !isCurrentlyFavorite;
-
+        newFavoriteState => {
           dispatch({
             type: TOGGLE_FAVORITE_SUCCESS,
             mangaId,
-            newFavoriteState: !isCurrentlyFavorite
+            newFavoriteState
           });
 
           if (newFavoriteState) {
@@ -173,7 +168,9 @@ export function setFlag(mangaId: number, flag: string, state: string) {
   // I'm just updating the store without waiting for the server to reply
   // And failure should just pop up a message
   return (dispatch: Function, getState: Function) => {
-    if (getState().mangaInfos[mangaId].flags[flag] === state) {
+    // Copy old flags state to ensure
+    const oldFlags = getState().mangaInfos[mangaId].flags;
+    if (oldFlags[flag] === state) {
       return dispatch({
         type: SET_FLAG_NO_CHANGE,
         meta: { mangaId, flag, state }
@@ -187,10 +184,9 @@ export function setFlag(mangaId: number, flag: string, state: string) {
       state
     });
 
-    // TODO: It's possible that the server might respond with
-    //       { "success": false }, but I'm not checking that right now.
-    return fetch(Server.setMangaFlag(mangaId, flag, state))
-      .then(handleHTMLError)
+    // TODO: This request could fail, but I'm not checking that right now.
+    return Server.api()
+      .setMangaFlags(mangaId, { ...oldFlags, [flag]: state })
       .then(
         () => dispatch({ type: SET_FLAG_SUCCESS }),
         () => dispatch({ type: SET_FLAG_FAILURE })
@@ -201,7 +197,7 @@ export function setFlag(mangaId: number, flag: string, state: string) {
 // ================================================================================
 // Helper Functions
 // ================================================================================
-function mangaArrayToObject(mangaArray: Array<MangaType>): State {
+function mangaArrayToObject(mangaArray: Array<Manga>): State {
   const mangaObject = {};
   mangaArray.forEach(manga => {
     mangaObject[manga.id] = manga;

@@ -1,9 +1,8 @@
 // @flow
 import { Server } from "api";
-import type { FilterAnyType } from "types/filters";
+import type { CataloguePageRequest } from "@tachiweb/api-client";
 import { ADD_MANGA } from "./mangaInfos";
-import { handleHTMLError, transformToMangaIdsArray } from "./utils";
-
+import { transformToMangaIdsArray } from "./utils";
 // ================================================================================
 // Actions
 // ================================================================================
@@ -108,20 +107,18 @@ export function fetchCatalogue() {
 
     // Filters should be null if empty when requesting from the server
     const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
-    return fetch(
-      Server.catalogue(),
-      cataloguePostParameters(1, sourceId, searchQuery.trim(), filtersChecked)
-    )
-      .then(handleHTMLError)
+    return Server.api()
+      .getSourceCatalogue(
+        sourceId,
+        catalogueRequest(1, searchQuery.trim(), filtersChecked)
+      )
       .then(
-        json => {
-          const { content, has_next: hasNextPage } = json;
+        page => {
+          const { mangas, hasNextPage } = page;
 
-          // content is sometimes undefined. Difficult to reproduce bug from the server
-          const mangaArray = content || [];
-          const mangaIds = transformToMangaIdsArray(mangaArray);
+          const mangaIds = transformToMangaIdsArray(mangas);
 
-          dispatch({ type: ADD_MANGA, newManga: mangaArray });
+          dispatch({ type: ADD_MANGA, newManga: mangas });
           dispatch({
             type: FETCH_CATALOGUE_SUCCESS,
             mangaIds,
@@ -169,25 +166,18 @@ export function fetchNextCataloguePage() {
     });
 
     const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
-    return fetch(
-      Server.catalogue(),
-      cataloguePostParameters(
-        nextPage,
+    return Server.api()
+      .getSourceCatalogue(
         sourceId,
-        searchQuery.trim(),
-        filtersChecked
+        catalogueRequest(nextPage, searchQuery.trim(), filtersChecked)
       )
-    )
-      .then(handleHTMLError)
       .then(
-        json => {
-          const { content, has_next: hasNextPageUpdated } = json;
+        newPage => {
+          const { mangas, hasNextPage: hasNextPageUpdated } = newPage;
 
-          // content is sometimes undefined. Difficult to reproduce bug from the server
-          const mangaArray = content || [];
-          const mangaIds = transformToMangaIdsArray(mangaArray);
+          const mangaIds = transformToMangaIdsArray(mangas);
 
-          dispatch({ type: ADD_MANGA, newManga: mangaArray });
+          dispatch({ type: ADD_MANGA, newManga: mangas });
           dispatch({
             type: ADD_PAGE_SUCCESS,
             mangaIds,
@@ -222,24 +212,20 @@ export function changeSourceId(newSourceId: number) {
 // ================================================================================
 // Helper Functions
 // ================================================================================
-function cataloguePostParameters(
+function catalogueRequest(
   page: number,
-  sourceId: string,
-  query: string,
-  filters: ?Array<FilterAnyType>
-): Object {
-  return {
-    method: "POST",
-    body: JSON.stringify({
-      page,
-      sourceId,
-      query,
-      filters
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
+  query?: string,
+  filters?: Object
+): CataloguePageRequest {
+  const request: CataloguePageRequest = {
+    page,
+    query
   };
+
+  // filters field cannot exist in request if no filters (even null is not allowed)
+  if (filters != null) request.filters = JSON.stringify(filters);
+
+  return request;
 }
 
 function addUnique(oldArray, newArray) {
