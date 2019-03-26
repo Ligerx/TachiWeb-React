@@ -17,9 +17,6 @@ import { Helmet } from 'react-helmet';
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 
-// FIXME: If you type something into the search bar,
-//        then delete everything, searching breaks (no results)
-
 // TODO: If you update search, then change it back to it's original value, don't search again?
 
 const styles = {
@@ -36,7 +33,7 @@ const styles = {
 class Catalogue extends Component<CatalogueContainerProps & { classes: Object }> {
   componentDidMount() {
     const {
-      sources, sourceId, fetchSources, fetchCatalogue, fetchFilters, changeSourceId,
+      sourceId, fetchSources, fetchCatalogue, fetchFilters, changeSourceId,
     } = this.props;
 
     // https://github.com/babel/babel/issues/2141
@@ -44,13 +41,13 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
     const that = this;
 
     // Only reload on component mount if it's missing data
-    if (!sources.length || sourceId == null) {
-      fetchSources().then(() => {
-        changeSourceId(that.props.sources[0].id); // use the first available source
+    fetchSources().then(() => {
+      if (sourceId == null) {
+        changeSourceId(that.props.sortedSources[0].id); // use the first available source
         fetchCatalogue();
         fetchFilters();
-      });
-    }
+      }
+    });
 
     // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
     // Debouncing the search text
@@ -70,11 +67,15 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
     const {
-      sources, changeSourceId, resetCatalogue, fetchFilters, fetchCatalogue,
+      sortedSources,
+      changeSourceId,
+      resetCatalogue,
+      fetchFilters,
+      fetchCatalogue
     } = this.props;
 
     const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
-    const newSourceId = sources[newSourceIndex].id;
+    const newSourceId = sortedSources[newSourceIndex].id;
 
     resetCatalogue();
     changeSourceId(newSourceId);
@@ -117,7 +118,7 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
     const {
       classes,
       mangaLibrary,
-      sources,
+      sortedSources,
       sourcesAreLoading,
       catalogueIsLoading,
       currentFilters,
@@ -136,7 +137,7 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
 
         <CatalogueHeader
           sourceId={sourceId}
-          sources={sources}
+          sources={sortedSources}
           searchQuery={searchQuery}
           onSourceChange={this.handleSourceChange}
           onSearchChange={this.handleSearchChange}

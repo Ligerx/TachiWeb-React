@@ -17,7 +17,8 @@ import {
 import MangaInfo from "pages/MangaInfo";
 import { createLoadingSelector } from "redux-ducks/loading";
 import type { ChapterType } from "types";
-import type { Manga } from "@tachiweb/api-client";
+import type { Manga, Source } from "@tachiweb/api-client";
+import { fetchSources } from "redux-ducks/sources";
 
 const fetchOrRefreshIsLoading: Function = createLoadingSelector([
   FETCH_MANGA,
@@ -27,6 +28,7 @@ const fetchOrRefreshIsLoading: Function = createLoadingSelector([
 ]);
 
 type StateToProps = {
+  source: ?Source,
   mangaInfo: ?Manga,
   chapters: Array<ChapterType>,
   fetchOrRefreshIsLoading: boolean,
@@ -37,11 +39,14 @@ type StateToProps = {
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
-  const { mangaInfos, chapters } = state;
+  const { sources, mangaInfos, chapters } = state;
   const { mangaId } = ownProps.match.params;
 
+  const mangaInfo = mangaInfos[mangaId];
+
   return {
-    mangaInfo: mangaInfos[mangaId],
+    source: mangaInfo && sources[mangaInfo.sourceId],
+    mangaInfo,
     chapters: chapters[mangaId] || [],
     fetchOrRefreshIsLoading: fetchOrRefreshIsLoading(state),
 
@@ -53,6 +58,7 @@ const mapStateToProps = (state, ownProps): StateToProps => {
 type DispatchToProps = {
   fetchChapters: Function,
   fetchMangaInfo: Function,
+  fetchSources: Function,
   updateChapters: Function,
   updateMangaInfo: Function,
   setFlag: Function,
@@ -66,6 +72,7 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
     fetchChapters: () => dispatch(fetchChapters(mangaId)),
     fetchMangaInfo: (options = {}) =>
       dispatch(fetchMangaInfo(mangaId, options)),
+    fetchSources: () => dispatch(fetchSources()),
     updateChapters: () => dispatch(updateChapters(mangaId)),
     updateMangaInfo: () => dispatch(updateMangaInfo(mangaId)),
     setFlag: (flag, state) => dispatch(setFlag(mangaId, flag, state)),

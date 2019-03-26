@@ -30,3 +30,14 @@ export function handleHTMLError(res: Response): Promise<Object> {
 export function transformToMangaIdsArray(mangaArray: Array<Manga>): Array<number> {
   return mangaArray.map(manga => manga.id);
 }
+
+export function withDeletedKeys<K, V>(
+  obj: { [K]: V },
+  keys: Array<K>
+): { [K]: V } {
+  const copy = { ...obj };
+  keys.forEach(key => {
+    delete copy[key];
+  });
+  return copy;
+}

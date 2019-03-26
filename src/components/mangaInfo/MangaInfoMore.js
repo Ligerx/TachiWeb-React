@@ -97,7 +97,6 @@ class MangaInfoMore extends React.Component<Props, State> {
           <MenuItem onClick={this.handleSortTypeClick}>Sorting Mode</MenuItem>
           {/* <MenuItem>Download</MenuItem> */}
 
-          {/* FIXME Preprend source base url */}
           {sourceUrl != null ? (
             <MenuItem component="a" href={sourceUrl} target="_blank">
               <ListItemIcon style={{ marginRight: 0 }}>

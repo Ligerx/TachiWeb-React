@@ -5,9 +5,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import MenuDrawer from "components/MenuDrawer";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import type { SourceType } from "types";
 import Input from "@material-ui/core/Input";
 import { withStyles } from "@material-ui/core/styles";
+import type { Source } from "@tachiweb/api-client";
 
 const styles = {
   catalogueSelect: {
@@ -22,7 +22,7 @@ const styles = {
 type Props = {
   classes: Object, // injected styles
   sourceId: ?string,
-  sources: Array<SourceType>,
+  sources: Array<Source>,
   searchQuery: string,
   onSourceChange: Function,
   onSearchChange: Function

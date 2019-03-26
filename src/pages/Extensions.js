@@ -82,9 +82,7 @@ const Extensions = ({
                       onInstallClick={() =>
                         installExtension(extension.pkg_name)
                       }
-                      onUninstallClick={() =>
-                        uninstallExtension(extension.pkg_name)
-                      }
+                      onUninstallClick={() => uninstallExtension(extension)}
                     />
                   </ExtensionListItem>
                 ))}
@@ -114,9 +112,7 @@ const Extensions = ({
                       onInstallClick={() =>
                         installExtension(extension.pkg_name)
                       }
-                      onUninstallClick={() =>
-                        uninstallExtension(extension.pkg_name)
-                      }
+                      onUninstallClick={() => uninstallExtension(extension)}
                     />
                   </ExtensionListItem>
                 ))}

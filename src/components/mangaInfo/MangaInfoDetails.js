@@ -8,9 +8,9 @@ import BackgroundImage from 'components/mangaInfo/BackgroundImage';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { Server } from 'api';
-import upperFirst from 'lodash/upperFirst';
+import { capitalize, upperFirst } from 'lodash';
 import FavoriteFABContainer from 'containers/FavoriteFABContainer';
-import type { Manga } from "@tachiweb/api-client";
+import type { Manga, Source } from "@tachiweb/api-client";
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
@@ -28,11 +28,17 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
+  source: ?Source,
   mangaInfo: Manga,
   numChapters: number,
 };
 
-const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
+const MangaInfoDetails = ({
+  classes,
+  source,
+  mangaInfo,
+  numChapters
+}: Props) => {
   const coverUrl: string = Server.cover(mangaInfo.id);
 
   return (
@@ -48,6 +54,13 @@ const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
             </Typography>
             <DetailComponent fieldName="Chapters" value={numChapters} />
             {detailsElements(mangaInfo)}
+            <DetailComponent
+              fieldName="Status"
+              value={capitalize(mangaInfo.status)}
+            />
+            {source != null && (
+              <DetailComponent fieldName="Source" value={source.name} />
+            )}
           </Grid>
 
           <FavoriteFABContainer mangaId={mangaInfo.id} />
@@ -67,8 +80,7 @@ MangaInfoDetails.defaultProps = {
 
 // Helper functions
 function detailsElements(mangaInfo: Manga): React.Node {
-  // TODO sourceId and categories need to be pulled from their respective API calls
-  const fieldNames = ['status', "artist", 'author', 'genre'];
+  const fieldNames = ["author", "artist", "genre"];
 
   return fieldNames.map((fieldName) => {
     const value = mangaInfo[fieldName];

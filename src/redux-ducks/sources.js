@@ -1,25 +1,31 @@
 // @flow
-import { Server } from 'api';
-import type { SourceType } from 'types';
-import { handleHTMLError } from './utils';
+import { Server } from "api";
+import { isEmpty } from "lodash";
+import type { Source } from "@tachiweb/api-client";
+import { withDeletedKeys } from "./utils";
 
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_REQUEST = 'sources/FETCH_REQUEST';
-const FETCH_SUCCESS = 'sources/FETCH_SUCCESS';
-const FETCH_FAILURE = 'sources/FETCH_FAILURE';
-export const FETCH_SOURCES = 'sources/FETCH';
+const FETCH_REQUEST = "sources/FETCH_REQUEST";
+const FETCH_SUCCESS = "sources/FETCH_SUCCESS";
+const FETCH_FAILURE = "sources/FETCH_FAILURE";
+const FETCH_CACHE = "sources/FETCH_CACHE";
+export const FETCH_SOURCES = "sources/FETCH";
+
+export const REMOVE_SOURCES = "sources/REMOVE_SOURCES";
 
 // ================================================================================
 // Reducers
 // ================================================================================
-type State = $ReadOnlyArray<SourceType>;
+export type SourceMap = { [id: string]: Source };
 
-export default function sourcesReducer(state: State = [], action = {}) {
+export default function sourcesReducer(state: SourceMap = {}, action = {}) {
   switch (action.type) {
     case FETCH_SUCCESS:
-      return action.payload;
+      return sourceArrayToObject(action.payload);
+    case REMOVE_SOURCES:
+      return withDeletedKeys<string, Source>(state, action.sourceIds);
     default:
       return state;
   }
@@ -29,19 +35,33 @@ export default function sourcesReducer(state: State = [], action = {}) {
 // Action Creators
 // ================================================================================
 export function fetchSources() {
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
+    if (!isEmpty(getState().sources))
+      return Promise.resolve().then(dispatch({ type: FETCH_CACHE }));
+
     dispatch({ type: FETCH_REQUEST });
 
-    return fetch(Server.sources())
-      .then(handleHTMLError)
+    return Server.api()
+      .getSources()
       .then(
-        json => dispatch({ type: FETCH_SUCCESS, payload: json.content }),
+        sources => dispatch({ type: FETCH_SUCCESS, payload: sources }),
         error =>
           dispatch({
             type: FETCH_FAILURE,
-            errorMessage: 'Failed to load sources',
-            meta: { error },
-          }),
+            errorMessage: "Failed to load sources",
+            meta: { error }
+          })
       );
   };
+}
+
+// ================================================================================
+// Helper Functions
+// ================================================================================
+function sourceArrayToObject(sourceArray: Array<Source>): SourceMap {
+  const sourceObject = {};
+  sourceArray.forEach(source => {
+    sourceObject[source.id] = source;
+  });
+  return sourceObject;
 }

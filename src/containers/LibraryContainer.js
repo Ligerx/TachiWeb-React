@@ -18,6 +18,8 @@ import {
   FETCH_CHAPTERS
 } from "redux-ducks/chapters";
 import type { Manga } from "@tachiweb/api-client";
+import type { SourceMap } from "redux-ducks/sources";
+import { fetchSources } from "redux-ducks/sources";
 
 const libraryIsLoading = createLoadingSelector([
   FETCH_LIBRARY,
@@ -31,7 +33,11 @@ const chaptersAreUpdating = createLoadingSelector([
 
 type StateToProps = {
   mangaLibrary: Array<Manga>,
+  sources: SourceMap,
   unread: { [mangaId: number]: number },
+  downloaded: { [mangaId: number]: number },
+  totalChaptersSortIndexes: { [mangaId: number]: number },
+  lastReadSortIndexes: { [mangaId: number]: number },
   libraryIsLoading: boolean,
   chaptersAreUpdating: boolean,
   flags: LibraryFlagsType
@@ -40,7 +46,11 @@ type StateToProps = {
 const mapStateToProps = state =>
   ({
     mangaLibrary: getMangaLibrary(state.mangaInfos, state.library.mangaIds),
+    sources: state.sources,
     unread: state.library.unread,
+    downloaded: state.library.downloaded,
+    totalChaptersSortIndexes: state.library.totalChaptersSortIndexes,
+    lastReadSortIndexes: state.library.lastReadSortIndexes,
     flags: state.library.flags,
     libraryIsLoading: libraryIsLoading(state),
     chaptersAreUpdating: chaptersAreUpdating(state)
@@ -51,6 +61,7 @@ type DispatchToProps = {
   fetchUnread: Function,
   updateChapters: Function,
   fetchLibraryFlags: Function,
+  fetchSources: Function,
   setLibraryFlag: Function
 };
 
@@ -59,6 +70,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchUnread: options => dispatch(fetchUnread(options)),
   updateChapters: mangaId => dispatch(updateChapters(mangaId)),
   fetchLibraryFlags: () => dispatch(fetchLibraryFlags()),
+  fetchSources: () => dispatch(fetchSources()),
   setLibraryFlag: (flag, state) => dispatch(setLibraryFlag(flag, state))
 });
 

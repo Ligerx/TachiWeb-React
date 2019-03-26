@@ -5,6 +5,7 @@ import type {
   LibraryFlagsFiltersType
 } from "types";
 import type { Manga } from "@tachiweb/api-client";
+import type { SourceMap } from "redux-ducks/sources";
 
 // TODO: Consider using a fuzzy search package for the search filter
 
@@ -19,11 +20,23 @@ function stringComparison(a: string, b: string) {
 //       to them (even though sortFuncs only needs it for one type).
 
 // If whatever sort comparison is equal, fallback on ordering by title
-const sortFuncs = unread => ({
+const sortFuncs = (
+  totalMangaCount,
+  sources,
+  unread,
+  totalChaptersSortIndexes,
+  lastReadSortIndexes
+) => ({
   ALPHA: (a, b) => stringComparison(a.title, b.title),
-  UNREAD: (a, b) => {
-    if (unread[a.id] !== unread[b.id]) {
-      return unread[a.id] - unread[b.id];
+  LAST_READ: (a, b) => {
+    let aIndex = lastReadSortIndexes[a.id];
+    let bIndex = lastReadSortIndexes[b.id];
+    // Push manga that were never read to the back
+    if (aIndex == null) aIndex = totalMangaCount;
+    if (bIndex == null) bIndex = totalMangaCount;
+
+    if (aIndex !== bIndex) {
+      return aIndex - bIndex;
     }
     return stringComparison(a.title, b.title);
   },
@@ -32,28 +45,35 @@ const sortFuncs = unread => ({
       return a.lastUpdate - b.lastUpdate;
     }
     return stringComparison(a.title, b.title);
-  }
-  /*
-  TODO Blocking on fix to v3 library endpoint
-  TOTAL: (a, b) => {
-    if (a.chapters == null || b.chapters == null) return 0;
-
-    if (a.chapters !== b.chapters) {
-      return a.chapters - b.chapters;
+  },
+  UNREAD: (a, b) => {
+    if (unread[a.id] !== unread[b.id]) {
+      return unread[a.id] - unread[b.id];
     }
     return stringComparison(a.title, b.title);
   },
-  TODO Pass in the source name because although we have source id, we must sort
-       by source name
+  TOTAL: (a, b) => {
+    let aIndex = totalChaptersSortIndexes[a.id];
+    let bIndex = totalChaptersSortIndexes[b.id];
+    // Push manga that have 0 or unknown chapters to the front
+    if (aIndex == null) aIndex = 0;
+    if (bIndex == null) bIndex = 0;
+
+    if (aIndex !== bIndex) {
+      return aIndex - bIndex;
+    }
+    return stringComparison(a.title, b.title);
+  },
   SOURCE: (a, b) => {
-    if (a.source !== b.source) {
-      return stringComparison(a.source, b.source);
+    // Use source ID as source title if the source is not loaded
+    const aSource = sources[a.sourceId] || { name: a.sourceId };
+    const bSource = sources[b.sourceId] || { name: b.sourceId };
+
+    if (aSource !== bSource) {
+      return stringComparison(aSource.name, bSource.name);
     }
     return stringComparison(a.title, b.title);
   }
-  TODO Blocking on fix to v3 library endpoint
-  LAST_READ: ,
-  */
 });
 
 // Not using the EXCLUDE option for these filters
@@ -62,11 +82,10 @@ const readFilterFuncs = unread => ({
   INCLUDE: mangaInfo => unread[mangaInfo.id] // 0 (or null/undefined) will be false
 });
 
-/* TODO Blocking on fix to v3 endpoint
-const downloadedFilterFuncs = {
+const downloadedFilterFuncs = downloaded => ({
   ANY: () => true,
-  INCLUDE: mangaInfo => mangaInfo.downloaded
-}; */
+  INCLUDE: mangaInfo => downloaded[mangaInfo.id]
+});
 
 const completedFilterFuncs = {
   ANY: () => true,
@@ -80,12 +99,23 @@ const searchFilterFunc = searchQuery => mangaInfo =>
 function sortLibrary(
   mangaLibrary: Array<Manga>,
   sortFlags: LibraryFlagsSortType,
-  unread: { [mangaId: number]: number }
+  sources: SourceMap,
+  unread: { [mangaId: number]: number },
+  totalChaptersSortIndexes: { [mangaId: number]: number },
+  lastReadSortIndexes: { [mangaId: number]: number }
 ) {
   const { type, direction } = sortFlags;
   let sortedLibrary: Array<Manga> = mangaLibrary
     .slice() // clone array
-    .sort(sortFuncs(unread)[type]);
+    .sort(
+      sortFuncs(
+        mangaLibrary.length,
+        sources,
+        unread,
+        totalChaptersSortIndexes,
+        lastReadSortIndexes
+      )[type]
+    );
 
   if (direction === "DESCENDING") {
     sortedLibrary = sortedLibrary.reverse();
@@ -98,29 +128,41 @@ function filterLibrary(
   mangaLibrary: Array<Manga>,
   filterFlags: LibraryFlagsFiltersType,
   unread: { [mangaId: number]: number },
+  downloaded: { [mangaId: number]: number },
   searchQuery: string
 ) {
-  const [unreadFilter, completedFilter] = filterFlags;
+  const [DOWNLOADED, UNREAD, COMPLETED] = filterFlags;
   return mangaLibrary
     .slice() // clone array
-    .filter(readFilterFuncs(unread)[unreadFilter.status])
-    // TODO Blocking on fix to v3 endpoint
-    // .filter(downloadedFilterFuncs[downloadedFilter.status])
-    .filter(completedFilterFuncs[completedFilter.status])
+    .filter(downloadedFilterFuncs(downloaded)[DOWNLOADED.status])
+    .filter(readFilterFuncs(unread)[UNREAD.status])
+    .filter(completedFilterFuncs[COMPLETED.status])
     .filter(searchFilterFunc(searchQuery));
 }
 
 export default function filterSortLibrary(
   mangaLibrary: Array<Manga>,
   libraryFlags: LibraryFlagsType,
+  sources: SourceMap,
   unread: { [mangaId: number]: number },
+  downloaded: { [mangaId: number]: number },
+  totalChaptersSortIndexes: { [mangaId: number]: number },
+  lastReadSortIndexes: { [mangaId: number]: number },
   searchQuery: string
 ) {
   const filteredLibrary = filterLibrary(
     mangaLibrary,
     libraryFlags.filters,
     unread,
+    downloaded,
     searchQuery
   );
-  return sortLibrary(filteredLibrary, libraryFlags.sort, unread);
+  return sortLibrary(
+    filteredLibrary,
+    libraryFlags.sort,
+    sources,
+    unread,
+    totalChaptersSortIndexes,
+    lastReadSortIndexes
+  );
 }

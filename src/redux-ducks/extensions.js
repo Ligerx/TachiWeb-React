@@ -2,6 +2,7 @@
 import { Server } from "api";
 import type { ExtensionType } from "types";
 import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
+import { fetchSources, REMOVE_SOURCES } from "redux-ducks/sources";
 
 // ================================================================================
 // Actions
@@ -102,6 +103,7 @@ export function installExtension(packageName: string) {
 
       dispatch({ type: INSTALL_SUCCESS, extension });
       dispatch({ type: RESET_CATALOGUE_STATE });
+      await fetchSources();
     } catch (error) {
       dispatch({
         type: INSTALL_FAILURE,
@@ -112,8 +114,9 @@ export function installExtension(packageName: string) {
   };
 }
 
-export function uninstallExtension(packageName: string) {
+export function uninstallExtension(extension: ExtensionType) {
   return async (dispatch: Function) => {
+    const { pkg_name: packageName, sources } = extension;
     dispatch({ type: UNINSTALL_REQUEST, meta: { packageName } });
 
     try {
@@ -126,6 +129,7 @@ export function uninstallExtension(packageName: string) {
 
       dispatch({ type: UNINSTALL_SUCCESS, packageName });
       dispatch({ type: RESET_CATALOGUE_STATE });
+      dispatch({ type: REMOVE_SOURCES, sourceIds: sources });
     } catch (error) {
       dispatch({
         type: UNINSTALL_FAILURE,

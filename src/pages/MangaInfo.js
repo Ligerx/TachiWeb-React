@@ -18,6 +18,7 @@ class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
     const {
       fetchMangaInfo,
       fetchChapters,
+      fetchSources,
       updateMangaInfo,
       updateChapters
     } = this.props;
@@ -26,7 +27,7 @@ class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
       // Fetch chapters cached on the server
       // If there are none, tell the server to scrape chapters from the site
       if (!this.props.chapters.length) {
-        return updateChapters(); // return promise so next .then()'s wait
+        return updateChapters();
       }
       return null;
     });
@@ -39,6 +40,8 @@ class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
         updateMangaInfo();
       }
     });
+
+    fetchSources();
   }
 
   handleChangeTab = (event: SyntheticEvent<>, newValue: number) => {
@@ -55,13 +58,17 @@ class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
 
   tabContent = (): React.Node => {
     const { tabValue } = this.state;
-    const { mangaInfo, chapters, toggleRead } = this.props;
+    const { source, mangaInfo, chapters, toggleRead } = this.props;
 
     const numChapters: number = chapters ? chapters.length : 0;
 
     if (mangaInfo && tabValue === 0) {
       return (
-        <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters} />
+        <MangaInfoDetails
+          source={source}
+          mangaInfo={mangaInfo}
+          numChapters={numChapters}
+        />
       );
     }
     if (mangaInfo && tabValue === 1) {

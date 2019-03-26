@@ -1,8 +1,13 @@
 // @flow
 import { Server } from "api";
 import type { LibraryFlagsType, LibraryFlagsPossibleValueTypes } from "types";
+import type { LibraryManga } from "@tachiweb/api-client";
+import {
+  UPDATE_SUCCESS as UPDATE_CHAPTERS_SUCCESS,
+  UPDATE_READING_STATUS_SUCCESS
+} from "./chapters";
 import { ADD_MANGA } from "./mangaInfos";
-import { handleHTMLError, transformToMangaIdsArray } from "./utils"; import type {LibraryManga} from "@tachiweb/api-client";
+import { handleHTMLError, transformToMangaIdsArray } from "./utils";
 
 // ================================================================================
 // Actions
@@ -45,7 +50,12 @@ type State = {
   +mangaIds: $ReadOnlyArray<number>,
   +reloadLibrary: boolean,
   +unread: { +[mangaId: number]: number },
+  +downloaded: { +[mangaId: number]: number },
+  +totalChaptersSortIndexes: { +[index: number]: number },
+  +lastReadSortIndexes: { +[index: number]: number },
   +reloadUnread: boolean,
+  +reloadTotalChaptersSortIndexes: boolean,
+  +reloadLastReadSortIndexes: boolean,
   +flags: LibraryFlagsType,
   +isFlagsLoaded: boolean
 };
@@ -54,7 +64,13 @@ const defaultState: State = {
   mangaIds: [], // array of mangaIds that point at data loaded in mangaInfos reducer
   reloadLibrary: true, // Library should be loaded once on first visit
   unread: {}, // { mangaId: int }
+  downloaded: {},
+  totalChaptersSortIndexes: {},
+  lastReadSortIndexes: {},
   reloadUnread: true, // should refresh unread for library if something new is added
+  reloadDownloaded: true,
+  reloadTotalChaptersSortIndexes: true,
+  reloadLastReadSortIndexes: true,
   flags: {
     filters: [
       {
@@ -89,7 +105,12 @@ export default function libraryReducer(
       return {
         ...state,
         mangaIds: action.mangaIds,
-        reloadLibrary: false
+        totalChaptersSortIndexes: action.totalChaptersSortIndexes,
+        lastReadSortIndexes: action.lastReadSortIndexes,
+        reloadLibrary: false,
+        reloadDownloaded: false,
+        reloadTotalChaptersSortIndexes: false,
+        reloadLastReadSortIndexes: false
       };
 
     case FETCH_UNREAD_SUCCESS:
@@ -103,7 +124,10 @@ export default function libraryReducer(
       return {
         ...state,
         mangaIds: [...state.mangaIds, action.mangaId],
-        reloadUnread: true
+        reloadUnread: true,
+        reloadDownloaded: true,
+        reloadTotalChaptersSortIndexes: true,
+        reloadLastReadSortIndexes: true
       };
 
     case REMOVE_FROM_FAVORITES: {
@@ -133,6 +157,9 @@ export default function libraryReducer(
         ...state,
         reloadLibrary: true,
         reloadUnread: true,
+        reloadDownloaded: true,
+        reloadTotalChaptersSortIndexes: true,
+        reloadLastReadSortIndexes: true,
         isFlagsLoaded: false
       };
 
@@ -150,6 +177,19 @@ export default function libraryReducer(
           ...state.flags,
           [action.flag]: action.value
         }
+      };
+
+    case UPDATE_CHAPTERS_SUCCESS:
+      return {
+        ...state,
+        reloadUnread: true,
+        reloadTotalChaptersSortIndexes: true
+      };
+
+    case UPDATE_READING_STATUS_SUCCESS:
+      return {
+        ...state,
+        reloadLastReadSortIndexes: true
       };
 
     default:
@@ -171,17 +211,29 @@ export function fetchLibrary({ ignoreCache = false }: Options = {}) {
     dispatch({ type: FETCH_LIBRARY_REQUEST });
 
     return Server.api()
-      .getLibraryMangas(false)
+      .getLibraryMangas(true, true, true)
       .then(
         libraryMangas => {
           const mangas = libraryMangas.map(manga => manga.manga);
           const mangaIds = transformToMangaIdsArray(mangas);
 
           dispatch({ type: ADD_MANGA, newManga: mangas });
-          dispatch({ type: FETCH_LIBRARY_SUCCESS, mangaIds });
+          dispatch({
+            type: FETCH_LIBRARY_SUCCESS,
+            mangaIds,
+            downloaded: transformLibraryMangaField(libraryMangas, "downloaded"),
+            totalChaptersSortIndexes: transformLibraryMangaField(
+              libraryMangas,
+              "totalChaptersIndex"
+            ),
+            lastReadSortIndexes: transformLibraryMangaField(
+              libraryMangas,
+              "lastReadIndex"
+            )
+          });
           dispatch({
             type: FETCH_UNREAD_SUCCESS,
-            unread: transformLibraryMangaUnread(libraryMangas)
+            unread: transformLibraryMangaField(libraryMangas, "totalUnread")
           });
         },
         error =>
@@ -297,14 +349,15 @@ function transformUnread(unreadArray: Param): Return {
   return newUnread;
 }
 
-function transformLibraryMangaUnread(
-  libraryMangas: Array<LibraryManga>
+function transformLibraryMangaField(
+  libraryMangas: Array<LibraryManga>,
+  field: string
 ): Return {
-  const newUnread = {};
+  const newMappings = {};
   libraryMangas.forEach(libraryManga => {
-    newUnread[libraryManga.manga.id] = libraryManga.totalUnread;
+    newMappings[libraryManga.manga.id] = libraryManga[field];
   });
-  return newUnread;
+  return newMappings;
 }
 
 function uploadPostParameters(file: File): Object {

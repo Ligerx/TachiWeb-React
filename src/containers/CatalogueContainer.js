@@ -30,9 +30,11 @@ import {
 } from "redux-ducks/mangaInfos";
 import Catalogue from "pages/Catalogue";
 import { createLoadingSelector } from "redux-ducks/loading";
-import type { SourceType, ChapterType } from "types";
+import type { ChapterType } from "types";
 import type { FilterAnyType } from "types/filters";
-import type { Manga } from "@tachiweb/api-client";
+import type { Source, Manga } from "@tachiweb/api-client";
+import type { SourceMap } from "redux-ducks/sources";
+import { sortBy } from "lodash";
 
 const sourcesAreLoading: Function = createLoadingSelector([FETCH_SOURCES]);
 const catalogueIsLoading: Function = createLoadingSelector([
@@ -47,7 +49,8 @@ const mangaInfoIsLoading: Function = createLoadingSelector([
 ]);
 
 type StateToProps = {
-  sources: Array<SourceType>,
+  sources: SourceMap,
+  sortedSources: Array<Source>,
 
   hasNextPage: boolean,
   searchQuery: string,
@@ -72,6 +75,7 @@ const mapStateToProps = (state): StateToProps => {
   return {
     // Sources props
     sources: state.sources,
+    sortedSources: sortSources(state.sources),
     // Catalogue props
     hasNextPage,
     searchQuery,
@@ -134,6 +138,10 @@ const mapDispatchToProps = (dispatch): DispatchToProps => ({
 // Helper functions
 function mangaToShow(mangaLibrary, mangaIds) {
   return mangaIds.map(mangaId => mangaLibrary[mangaId]);
+}
+
+function sortSources(sources: SourceMap): Array<Source> {
+  return sortBy(Object.values(sources), "name");
 }
 
 export type CatalogueContainerProps = StateToProps & DispatchToProps;

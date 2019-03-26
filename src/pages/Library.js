@@ -22,11 +22,17 @@ class Library extends Component<LibraryContainerProps, State> {
   state = { searchQuery: "" };
 
   componentDidMount() {
-    const { fetchLibrary, fetchUnread, fetchLibraryFlags } = this.props;
+    const {
+      fetchLibrary,
+      fetchUnread,
+      fetchLibraryFlags,
+      fetchSources
+    } = this.props;
     // Fetch unread after library as fetching the library may have
     //   already loaded the unread
     fetchLibrary().then(() => fetchUnread());
     fetchLibraryFlags();
+    fetchSources();
   }
 
   handleRefreshClick = () => {
@@ -52,7 +58,11 @@ class Library extends Component<LibraryContainerProps, State> {
   render() {
     const {
       mangaLibrary,
+      sources,
       unread,
+      downloaded,
+      totalChaptersSortIndexes,
+      lastReadSortIndexes,
       flags,
       setLibraryFlag,
       libraryIsLoading,
@@ -64,7 +74,11 @@ class Library extends Component<LibraryContainerProps, State> {
     const filteredSortedLibrary = filterSortLibrary(
       mangaLibrary,
       flags,
+      sources,
       unread,
+      downloaded,
+      totalChaptersSortIndexes,
+      lastReadSortIndexes,
       searchQuery
     );
 

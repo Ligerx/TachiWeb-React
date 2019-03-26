@@ -10,16 +10,6 @@ export type ChapterType = {
   last_page_read: number
 };
 
-export type SourceType = {
-  name: string,
-  supports_latest: boolean,
-  id: string,
-  lang: {
-    name: string,
-    display_name: string
-  }
-};
-
 export type LibraryFlagsFiltersType = [
   {
     type: "DOWNLOADED",

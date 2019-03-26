@@ -43,7 +43,7 @@ type DispatchToProps = {
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchExtensions: () => dispatch(fetchExtensions()),
   installExtension: packageName => dispatch(installExtension(packageName)),
-  uninstallExtension: packageName => dispatch(uninstallExtension(packageName)),
+  uninstallExtension: extension => dispatch(uninstallExtension(extension)),
   reloadExtensions: () => dispatch(reloadExtensions())
 });
 
