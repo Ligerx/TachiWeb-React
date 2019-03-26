@@ -141,7 +141,7 @@ function mangaToShow(mangaLibrary, mangaIds) {
 }
 
 function sortSources(sources: SourceMap): Array<Source> {
-  return sortBy(Object.values(sources), "name");
+  return sortBy(Object.values(sources), "lang", "name");
 }
 
 export type CatalogueContainerProps = StateToProps & DispatchToProps;

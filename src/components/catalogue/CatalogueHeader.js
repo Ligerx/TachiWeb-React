@@ -53,7 +53,9 @@ const CatalogueHeader = ({
             >
               {sources.map((source, index) => (
                 <MenuItem value={index} key={source.id}>
-                  {source.name}
+                  {(source.lang != null
+                    ? `(${source.lang.toUpperCase()}) `
+                    : "") + source.name}
                 </MenuItem>
               ))}
             </Select>
