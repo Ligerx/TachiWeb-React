@@ -1,36 +1,25 @@
-// @flow
-import { combineReducers } from "redux";
-import loading from "./loading";
-import error from "./error";
-import library from "./library";
-import chapters from "./chapters";
-import pageCounts from "./pageCounts";
-import sources from "./sources";
-import catalogue from "./catalogue";
-import filters from "./filters";
-import mangaInfos from "./mangaInfos";
-import extensions from "./extensions";
-import settings from './settings';
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
+import logger from "redux-logger";
+import rootReducer from "./reducers";
 
-export default combineReducers({
-  loading,
-  error,
-  library,
-  chapters,
-  pageCounts,
-  sources,
-  catalogue,
-  filters,
-  mangaInfos,
-  extensions,
-  settings
-});
+// https://redux.js.org/recipes/configuring-your-store#hot-reloading
 
-// NOTE: some Thunks (asynchronous calls) may escape early
-//       (e.g. return cached data) instead of returning a promise.
-//
-// A consequence of this is that you can't call .then() on them safely.
-// A workaround is to forcefully return a promise so that any function can use
-// .then() regardless of cached data or fetch from the server.
-//
-// Not every function has had this modification made, only the ones that have caused problems.
+export default function configureStore() {
+  const middlewares = [thunk];
+  if (process.env.NODE_ENV === `development`) {
+    middlewares.push(logger);
+  }
+
+  const store = createStore(
+    rootReducer,
+    composeWithDevTools(applyMiddleware(...middlewares))
+  );
+
+  if (process.env.NODE_ENV !== "production" && module.hot) {
+    module.hot.accept("./reducers", () => store.replaceReducer(rootReducer));
+  }
+
+  return store;
+}
