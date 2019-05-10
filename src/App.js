@@ -12,9 +12,9 @@ import "index.css";
 // load them first. The rest of the app is blocked until settings are loaded.
 //
 // Note: [Written 5-8-2019]
-//       The Settings page is still handling its own settings dispatch calls.
-//       This way it continues to stay self contained and does not rely on an outside
-//       component to fetch data, as that behavior could change any time.
+// The Settings page is still handling its own settings dispatch calls.
+// This way it continues to stay self contained and does not rely on an outside
+// component to fetch data, as that behavior could change any time.
 
 // //////////////////////////////////////////////////////
 //     Settings related Redux stuff                    //
