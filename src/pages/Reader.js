@@ -15,9 +15,6 @@ import UrlPrefixContext from "components/UrlPrefixContext";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
-// https://www.javascriptstuff.com/detect-image-load/
-// https://tylermcginnis.com/react-router-programmatically-navigate/
-
 type Props = ReaderContainerProps & {
   classes: Object, // Classes is the injected styles
   history: { push: Function }, // react-router props
