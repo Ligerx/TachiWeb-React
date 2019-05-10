@@ -3,13 +3,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import ErrorNotificationsContainer from "containers/ErrorNotificationsContainer";
-import { createLoadingSelector } from "redux-ducks/loading";
-import {
-  FETCH_PREFS,
-  FETCH_SCHEMA,
-  fetchSettings,
-  fetchSettingsSchema
-} from "redux-ducks/settings";
+import { fetchSettings, fetchSettingsSchema } from "redux-ducks/settings";
 import FullScreenLoading from "components/loading/FullScreenLoading";
 import Router from "routes";
 import "index.css";
@@ -25,9 +19,7 @@ import "index.css";
 // //////////////////////////////////////////////////////
 //     Settings related Redux stuff                    //
 // //////////////////////////////////////////////////////
-const settingsAreLoading = createLoadingSelector([FETCH_PREFS, FETCH_SCHEMA]);
-
-type StateToProps = { settingsLoading: boolean };
+type StateToProps = { isSettingsLoaded: boolean };
 
 type DispatchToProps = {
   fetchSettings: Function,
@@ -35,7 +27,7 @@ type DispatchToProps = {
 };
 
 const mapStateToProps = state => ({
-  settingsLoading: settingsAreLoading(state)
+  isSettingsLoaded: state.settings.allPrefsFetched
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
@@ -53,16 +45,10 @@ const App = (props: StateToProps & DispatchToProps) => {
     props.fetchSettings().then(props.fetchSettingsSchema);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (props.settingsLoading) {
+  // eslint-disable-next-line react/destructuring-assignment
+  if (!props.isSettingsLoaded) {
     return <FullScreenLoading />;
   }
-  // FIXME: I think the problem here is that I need to know when settings are
-  //        LOADED, not when they're LOADING
-  //
-  //        My guess is that on mount, useEffect hasn't run yet,
-  //        so library starts rendering/loading early
-  //
-  //        Confirmed, useEffect runs after a the first render.
 
   // //////////////////////////////////////////////////////
 
