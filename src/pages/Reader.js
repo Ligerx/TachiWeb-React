@@ -1,17 +1,17 @@
 // @flow
-import React, { Component } from 'react';
-import { Server, Client } from 'api';
-import FullScreenLoading from 'components/loading/FullScreenLoading';
-import compact from 'lodash/compact';
-import type { ReaderContainerProps } from 'containers/ReaderContainer';
-import type { ChapterType, MangaType } from 'types';
-import SinglePageReader from 'components/reader/SinglePageReader';
-import WebtoonReader from 'components/reader/WebtoonReader';
-import ReadingStatusUpdaterContainer from 'containers/ReadingStatusUpdaterContainer';
-import ImagePreloaderContainer from 'containers/ImagePreloaderContainer';
-import { Helmet } from 'react-helmet';
-import { chapterNumPrettyPrint } from 'components/utils';
-import UrlPrefixContext from 'components/UrlPrefixContext';
+import React, { Component } from "react";
+import { Server, Client } from "api";
+import FullScreenLoading from "components/loading/FullScreenLoading";
+import compact from "lodash/compact";
+import type { ReaderContainerProps } from "containers/ReaderContainer";
+import type { ChapterType, MangaType } from "types";
+import SinglePageReader from "components/reader/SinglePageReader";
+import WebtoonReader from "components/reader/WebtoonReader";
+import ReadingStatusUpdaterContainer from "containers/ReadingStatusUpdaterContainer";
+import ImagePreloaderContainer from "containers/ImagePreloaderContainer";
+import { Helmet } from "react-helmet";
+import { chapterNumPrettyPrint } from "components/utils";
+import UrlPrefixContext from "components/UrlPrefixContext";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
@@ -21,14 +21,13 @@ import UrlPrefixContext from 'components/UrlPrefixContext';
 type Props = ReaderContainerProps & {
   classes: Object, // Classes is the injected styles
   history: { push: Function }, // react-router props
-  urlPrefix: string, // UrlPrefixConsumer prop
+  urlPrefix: string // UrlPrefixConsumer prop
 };
 
 class Reader extends Component<Props> {
-  componentDidMount() {
-    this.props.fetchMangaInfo();
-    this.props.fetchChapters()
-      .then(this.getAdjacentPageCounts);
+  componentDidMount({ fetchMangaInfo, fetchChapters }) {
+    fetchMangaInfo();
+    fetchChapters().then(this.getAdjacentPageCounts);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -44,25 +43,38 @@ class Reader extends Component<Props> {
   getAdjacentPageCounts = () => {
     // get current, previous, and next chapter page count
     const {
-      chapterId, prevChapterId, nextChapterId, fetchPageCount,
+      chapterId,
+      prevChapterId,
+      nextChapterId,
+      fetchPageCount
     } = this.props;
-    const chapters: Array<number> = compact([chapterId, prevChapterId, nextChapterId]);
+    const chapters: Array<number> = compact([
+      chapterId,
+      prevChapterId,
+      nextChapterId
+    ]);
 
-    chapters.forEach((thisChapterId) => {
+    chapters.forEach(thisChapterId => {
       fetchPageCount(thisChapterId);
     });
   };
 
   prevPageUrl = (): ?string => {
     const {
-      mangaInfo, chapterId, page, prevChapterId, pageCounts, urlPrefix,
+      mangaInfo,
+      chapterId,
+      page,
+      prevChapterId,
+      pageCounts,
+      urlPrefix
     } = this.props;
 
     if (!mangaInfo) return null;
 
     if (page > 0) {
       return Client.page(urlPrefix, mangaInfo.id, chapterId, page - 1);
-    } else if (page === 0 && prevChapterId) {
+    }
+    if (page === 0 && prevChapterId) {
       // If on the first page, link to the previous chapter's last page (if info available)
       const prevPageCount: ?number = pageCounts[prevChapterId];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
@@ -74,14 +86,20 @@ class Reader extends Component<Props> {
 
   nextPageUrl = (): ?string => {
     const {
-      mangaInfo, chapterId, pageCount, page, nextChapterId, urlPrefix,
+      mangaInfo,
+      chapterId,
+      pageCount,
+      page,
+      nextChapterId,
+      urlPrefix
     } = this.props;
 
     if (!mangaInfo) return null;
 
     if (page < pageCount - 1) {
       return Client.page(urlPrefix, mangaInfo.id, chapterId, page + 1);
-    } else if (page === pageCount - 1 && nextChapterId) {
+    }
+    if (page === pageCount - 1 && nextChapterId) {
       return Client.page(urlPrefix, mangaInfo.id, nextChapterId, 0);
     }
     return null;
@@ -89,11 +107,14 @@ class Reader extends Component<Props> {
 
   prevChapterUrl = (): ?string => {
     // Links to the previous chapter's last page read
-    const {
-      mangaInfo, prevChapterId, chapters, urlPrefix,
-    } = this.props;
+    const { mangaInfo, prevChapterId, chapters, urlPrefix } = this.props;
 
-    const prevUrl = changeChapterUrl(urlPrefix, mangaInfo, prevChapterId, chapters);
+    const prevUrl = changeChapterUrl(
+      urlPrefix,
+      mangaInfo,
+      prevChapterId,
+      chapters
+    );
 
     if (!prevUrl) return null;
     return prevUrl;
@@ -101,11 +122,14 @@ class Reader extends Component<Props> {
 
   nextChapterUrl = (): ?string => {
     // Links to the next chapter's last page read
-    const {
-      mangaInfo, nextChapterId, chapters, urlPrefix,
-    } = this.props;
+    const { mangaInfo, nextChapterId, chapters, urlPrefix } = this.props;
 
-    const nextUrl = changeChapterUrl(urlPrefix, mangaInfo, nextChapterId, chapters);
+    const nextUrl = changeChapterUrl(
+      urlPrefix,
+      mangaInfo,
+      nextChapterId,
+      chapters
+    );
 
     if (!nextUrl) return null;
     return nextUrl;
@@ -119,7 +143,7 @@ class Reader extends Component<Props> {
       chapter,
       chapterId,
       pageCount,
-      page,
+      page
     } = this.props;
 
     if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
@@ -130,7 +154,9 @@ class Reader extends Component<Props> {
       <React.Fragment>
         <Helmet>
           <title>
-            {`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(chapter.chapter_number)}, Pg. ${page + 1}`}
+            {`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
+              chapter.chapter_number
+            )}, Pg. ${page + 1}`}
             - TachiWeb
           </title>
         </Helmet>
@@ -170,7 +196,6 @@ class Reader extends Component<Props> {
 
         <ReadingStatusUpdaterContainer />
         <ImagePreloaderContainer />
-
       </React.Fragment>
     );
   }
@@ -181,7 +206,7 @@ function changeChapterUrl(
   urlPrefix: string,
   mangaInfo: ?MangaType,
   newChapterId: ?number,
-  chapters: Array<ChapterType>,
+  chapters: Array<ChapterType>
 ): ?string {
   if (!mangaInfo || !newChapterId) return null;
 
@@ -195,7 +220,10 @@ function changeChapterUrl(
   return Client.page(urlPrefix, mangaInfo.id, newChapterId, goToPage);
 }
 
-function findChapter(chapters: Array<ChapterType>, chapterId: number): ?ChapterType {
+function findChapter(
+  chapters: Array<ChapterType>,
+  chapterId: number
+): ?ChapterType {
   if (!chapters || chapters.length === 0) return null;
 
   return chapters.find(chapter => chapter.id === chapterId);
