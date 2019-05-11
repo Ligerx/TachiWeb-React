@@ -7,6 +7,10 @@ import Reader from "pages/Reader";
 import type { MangaType, ChapterType } from "types";
 
 type StateToProps = {
+  // [Written 5/10/2019] this setting could be missing from the prefs object
+  // also, there is no typing for prefs currently, so manually typing this
+  defaultViewer?: "left_to_right" | "right_to_left" | "webtoon",
+
   mangaInfo: ?MangaType,
   chapters: Array<ChapterType>,
   chapter: ?ChapterType,
@@ -19,10 +23,12 @@ type StateToProps = {
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
-  const { mangaInfos, chapters, pageCounts } = state;
+  const { settings, mangaInfos, chapters, pageCounts } = state;
   const { mangaId, chapterId, page } = ownProps.match.params;
 
   return {
+    defaultViewer: settings.prefs.pref_default_viewer_key,
+
     mangaInfo: mangaInfos[mangaId],
     chapters: chapters[mangaId] || [],
     chapter: findChapter(chapters[mangaId], chapterId),

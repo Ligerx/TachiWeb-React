@@ -22,7 +22,9 @@ type Props = ReaderContainerProps & {
 };
 
 class Reader extends Component<Props> {
-  componentDidMount({ fetchMangaInfo, fetchChapters }) {
+  componentDidMount() {
+    const { fetchMangaInfo, fetchChapters } = this.props;
+
     fetchMangaInfo();
     fetchChapters().then(this.getAdjacentPageCounts);
   }
@@ -134,6 +136,7 @@ class Reader extends Component<Props> {
 
   render() {
     const {
+      defaultViewer,
       urlPrefix,
       mangaInfo,
       chapters,
@@ -158,38 +161,37 @@ class Reader extends Component<Props> {
           </title>
         </Helmet>
 
-        {/*
-        <SinglePageReader
-          title={mangaInfo.title}
-          chapterNum={chapter.chapter_number}
-          pageCount={pageCount}
-          page={page}
-          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-          prevChapterUrl={this.prevChapterUrl()}
-          nextChapterUrl={this.nextChapterUrl()}
-          urlPrefix={urlPrefix}
-          mangaId={mangaInfo.id}
-          chapterId={chapterId}
-          imageSource={Server.image(mangaInfo.id, chapterId, page)}
-          alt={`${chapter.name} - Page ${page + 1}`}
-          nextPageUrl={this.nextPageUrl()}
-          prevPageUrl={this.prevPageUrl()}
-        />
-        */}
-        {/**/}
-        <WebtoonReader
-          title={mangaInfo.title}
-          chapterNum={chapter.chapter_number}
-          page={page}
-          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-          urlPrefix={urlPrefix}
-          mangaId={mangaInfo.id}
-          pageCount={pageCount}
-          chapter={chapter}
-          nextChapterUrl={this.nextChapterUrl()}
-          prevChapterUrl={this.prevChapterUrl()}
-        />
-        {/**/}
+        {defaultViewer === "webtoon" ? (
+          <WebtoonReader
+            title={mangaInfo.title}
+            chapterNum={chapter.chapter_number}
+            page={page}
+            backUrl={Client.manga(urlPrefix, mangaInfo.id)}
+            urlPrefix={urlPrefix}
+            mangaId={mangaInfo.id}
+            pageCount={pageCount}
+            chapter={chapter}
+            nextChapterUrl={this.nextChapterUrl()}
+            prevChapterUrl={this.prevChapterUrl()}
+          />
+        ) : (
+          <SinglePageReader
+            title={mangaInfo.title}
+            chapterNum={chapter.chapter_number}
+            pageCount={pageCount}
+            page={page}
+            backUrl={Client.manga(urlPrefix, mangaInfo.id)}
+            prevChapterUrl={this.prevChapterUrl()}
+            nextChapterUrl={this.nextChapterUrl()}
+            urlPrefix={urlPrefix}
+            mangaId={mangaInfo.id}
+            chapterId={chapterId}
+            imageSource={Server.image(mangaInfo.id, chapterId, page)}
+            alt={`${chapter.name} - Page ${page + 1}`}
+            nextPageUrl={this.nextPageUrl()}
+            prevPageUrl={this.prevPageUrl()}
+          />
+        )}
 
         <ReadingStatusUpdaterContainer />
         <ImagePreloaderContainer />
