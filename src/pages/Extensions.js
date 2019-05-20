@@ -4,26 +4,16 @@ import FullScreenLoading from "components/loading/FullScreenLoading";
 import type { ExtensionsContainerProps } from "containers/ExtensionsContainer";
 import { Helmet } from "react-helmet";
 import ResponsiveGrid from "components/ResponsiveGrid";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import List from "@material-ui/core/List";
-import { withStyles } from "@material-ui/core/styles";
-import ExtensionListItem from "components/extensions/ExtensionListItem";
 import Typography from "@material-ui/core/Typography";
-import ExtensionButton from "components/extensions/ExtensionButton";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
+import ExtensionList from "components/extensions/ExtensionList";
 
 // Currently, the buttons that appear do not completely match Tachiyomi's buttons.
 // Partially because I'm missing extension preferences,
 // but also because I don't think it's worth the effort to implement.
-
-const styles = () => ({
-  avatar: { borderRadius: 0 },
-  secondary: { right: 24 }
-});
 
 const Extensions = ({
   extensions,
@@ -32,7 +22,7 @@ const Extensions = ({
   installExtension,
   uninstallExtension,
   reloadExtensions
-}: ExtensionsContainerProps & { classes: Object }) => {
+}: ExtensionsContainerProps) => {
   useEffect(() => {
     fetchExtensions();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -62,68 +52,21 @@ const Extensions = ({
       </AppBar>
 
       <ResponsiveGrid maxWidth="xs">
-        {installedExtensions.length > 0 && (
-          <Grid item xs={12}>
-            <Typography variant="headline" gutterBottom>
-              Installed ({installedExtensions.length})
-            </Typography>
-            <Paper>
-              <List>
-                {installedExtensions.map(extension => (
-                  <ExtensionListItem
-                    key={extension.pkg_name}
-                    extension={extension}
-                  >
-                    <ExtensionButton
-                      status={extension.status}
-                      has_update={extension.has_update}
-                      name={extension.name}
-                      onUpdateClick={() => installExtension(extension.pkg_name)}
-                      onInstallClick={() =>
-                        installExtension(extension.pkg_name)
-                      }
-                      onUninstallClick={() =>
-                        uninstallExtension(extension.pkg_name)
-                      }
-                    />
-                  </ExtensionListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
-        )}
+        <ExtensionList
+          title="Installed"
+          extensions={installedExtensions}
+          onUpdateClick={installExtension}
+          onInstallClick={installExtension}
+          onUninstallClick={uninstallExtension}
+        />
 
-        {notInstalledExtensions.length > 0 && (
-          <Grid item xs={12}>
-            <Typography variant="headline" gutterBottom>
-              Available ({notInstalledExtensions.length})
-            </Typography>
-
-            <Paper>
-              <List>
-                {notInstalledExtensions.map(extension => (
-                  <ExtensionListItem
-                    key={extension.pkg_name}
-                    extension={extension}
-                  >
-                    <ExtensionButton
-                      status={extension.status}
-                      has_update={extension.has_update}
-                      name={extension.name}
-                      onUpdateClick={() => installExtension(extension.pkg_name)}
-                      onInstallClick={() =>
-                        installExtension(extension.pkg_name)
-                      }
-                      onUninstallClick={() =>
-                        uninstallExtension(extension.pkg_name)
-                      }
-                    />
-                  </ExtensionListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
-        )}
+        <ExtensionList
+          title="Available"
+          extensions={notInstalledExtensions}
+          onUpdateClick={installExtension}
+          onInstallClick={installExtension}
+          onUninstallClick={uninstallExtension}
+        />
       </ResponsiveGrid>
 
       {extensionsIsLoading && <FullScreenLoading />}
@@ -131,4 +74,4 @@ const Extensions = ({
   );
 };
 
-export default withStyles(styles)(Extensions);
+export default Extensions;
