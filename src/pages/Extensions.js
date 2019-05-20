@@ -10,6 +10,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
 import ExtensionList from "components/extensions/ExtensionList";
+import type { ExtensionType } from "types";
 
 // Currently, the buttons that appear do not completely match Tachiyomi's buttons.
 // Partially because I'm missing extension preferences,
@@ -27,13 +28,26 @@ const Extensions = ({
     fetchExtensions();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const installedExtensions = extensions.filter(
-    extension => extension.status === "INSTALLED"
-  );
+  function extensionSort(a: ExtensionType, b: ExtensionType) {
+    // First sort alphabetically by language
+    // Not using the pretty print / native name, but it gets the job done
+    if (a.lang > b.lang) return 1;
+    if (a.lang < b.lang) return -1;
 
-  const notInstalledExtensions = extensions.filter(
-    extension => extension.status !== "INSTALLED"
-  );
+    // Then sort alphabetically by source name
+    if (a.name > b.name) return 1;
+    if (a.name < b.name) return -1;
+
+    return 0;
+  }
+
+  const installedExtensions = extensions
+    .filter(extension => extension.status === "INSTALLED")
+    .sort(extensionSort);
+
+  const notInstalledExtensions = extensions
+    .filter(extension => extension.status !== "INSTALLED")
+    .sort(extensionSort);
 
   return (
     <React.Fragment>
