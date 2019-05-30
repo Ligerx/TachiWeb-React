@@ -88,7 +88,7 @@ class Settings extends Component<SettingsContainerProps> {
             ) : (
               <MenuDrawer />
             )}
-            <Typography variant="title">
+            <Typography variant="h6">
               {info != null && info.title != null ? info.title : "Settings"}
             </Typography>
           </Toolbar>

@@ -1,17 +1,17 @@
 // @flow
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Icon from '@material-ui/core/Icon';
-import IconButton from '@material-ui/core/IconButton';
-import RefreshButton from 'components/RefreshButton';
-import MangaInfoTabs from 'components/mangaInfo/MangaInfoTabs';
-import type { MangaType } from 'types';
-import BackButton from 'components/BackButton';
-import MangaInfoMore from 'components/mangaInfo/MangaInfoMore';
-import Tooltip from '@material-ui/core/Tooltip';
-import MangaInfoFilter from 'components/mangaInfo/MangaInfoFilter';
+import React from "react";
+import Typography from "@material-ui/core/Typography";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Icon from "@material-ui/core/Icon";
+import IconButton from "@material-ui/core/IconButton";
+import RefreshButton from "components/RefreshButton";
+import MangaInfoTabs from "components/mangaInfo/MangaInfoTabs";
+import type { MangaType } from "types";
+import BackButton from "components/BackButton";
+import MangaInfoMore from "components/mangaInfo/MangaInfoMore";
+import Tooltip from "@material-ui/core/Tooltip";
+import MangaInfoFilter from "components/mangaInfo/MangaInfoFilter";
 
 // NOTE: empty href in IconButton will not render <a>
 
@@ -21,7 +21,7 @@ type Props = {
   handleChangeTab: Function,
   onBackClick: string | Function,
   onRefreshClick: Function,
-  setFlag: Function,
+  setFlag: Function
 };
 
 const MangaInfoHeader = ({
@@ -30,14 +30,14 @@ const MangaInfoHeader = ({
   handleChangeTab,
   onBackClick,
   onRefreshClick,
-  setFlag,
+  setFlag
 }: Props) => (
   <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
     <Toolbar>
       {mangaInfo && (
         <React.Fragment>
           <BackButton onBackClick={onBackClick} />
-          <Typography variant="title" style={{ flex: 1 }}>
+          <Typography variant="h6" style={{ flex: 1 }}>
             {mangaInfo.title}
           </Typography>
 
@@ -71,25 +71,27 @@ const MangaInfoHeader = ({
 
 function handleSortClick(setFlag, flags) {
   return () => {
-    const newState = flags.SORT_DIRECTION === 'DESCENDING' ? 'ASCENDING' : 'DESCENDING';
-    setFlag('SORT_DIRECTION', newState);
+    const newState =
+      flags.SORT_DIRECTION === "DESCENDING" ? "ASCENDING" : "DESCENDING";
+    setFlag("SORT_DIRECTION", newState);
   };
 }
 
 function handleDisplayModeChange(setFlag) {
-  return newDisplayMode => setFlag('DISPLAY_MODE', newDisplayMode);
+  return newDisplayMode => setFlag("DISPLAY_MODE", newDisplayMode);
 }
 
 function handleSortTypeChange(setFlag) {
-  return newSortType => setFlag('SORT_TYPE', newSortType);
+  return newSortType => setFlag("SORT_TYPE", newSortType);
 }
 
 function handleReadFilterChange(setFlag) {
-  return newReadFilter => setFlag('READ_FILTER', newReadFilter);
+  return newReadFilter => setFlag("READ_FILTER", newReadFilter);
 }
 
 function handleDownloadedFilterChange(setFlag) {
-  return newDownloadedFilter => setFlag('DOWNLOADED_FILTER', newDownloadedFilter);
+  return newDownloadedFilter =>
+    setFlag("DOWNLOADED_FILTER", newDownloadedFilter);
 }
 
 export default MangaInfoHeader;

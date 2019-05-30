@@ -21,7 +21,7 @@ type Props = { classes: Object };
 const BackupCard = ({ classes }: Props) => (
   <Card>
     <CardContent>
-      <Typography gutterBottom variant="headline">
+      <Typography gutterBottom variant="h5">
         Create a Backup
       </Typography>
       <Typography>

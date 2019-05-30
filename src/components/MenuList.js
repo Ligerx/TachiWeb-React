@@ -21,7 +21,7 @@ const MenuList = ({ classes }: Props) => (
   <div className={classes.list}>
     <List>
       <ListItem>
-        <Typography variant="title" gutterBottom>
+        <Typography variant="h6" gutterBottom>
           TachiWeb
         </Typography>
       </ListItem>

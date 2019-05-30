@@ -53,7 +53,7 @@ const Extensions = ({
         <Toolbar>
           <MenuDrawer />
 
-          <Typography variant="title" style={{ flex: 1 }}>
+          <Typography variant="h6" style={{ flex: 1 }}>
             Extensions
           </Typography>
 
@@ -64,7 +64,7 @@ const Extensions = ({
       <ResponsiveGrid maxWidth="xs">
         {installedExtensions.length > 0 && (
           <Grid item xs={12}>
-            <Typography variant="headline" gutterBottom>
+            <Typography variant="h5" gutterBottom>
               Installed ({installedExtensions.length})
             </Typography>
             <Paper>
@@ -95,7 +95,7 @@ const Extensions = ({
 
         {notInstalledExtensions.length > 0 && (
           <Grid item xs={12}>
-            <Typography variant="headline" gutterBottom>
+            <Typography variant="h5" gutterBottom>
               Available ({notInstalledExtensions.length})
             </Typography>
 

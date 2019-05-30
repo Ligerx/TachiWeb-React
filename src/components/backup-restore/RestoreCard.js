@@ -83,7 +83,7 @@ class RestoreCard extends Component<Props, State> {
       return 'Only a single JSON backup file is accepted';
     } if (rejectedFiles.length) {
       return 'Invalid file selected';
-    } else if (acceptedFiles.length) {
+    } if (acceptedFiles.length) {
       return `${acceptedFiles[0].name}`;
     }
     return 'Drag and Drop or Click Here to upload your backup file';
@@ -115,7 +115,7 @@ class RestoreCard extends Component<Props, State> {
       <React.Fragment>
         <Card>
           <CardContent>
-            <Typography gutterBottom variant="headline">
+            <Typography gutterBottom variant="h5">
               Restore Your Library
             </Typography>
 
