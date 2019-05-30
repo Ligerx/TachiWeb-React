@@ -1,6 +1,6 @@
 // @flow
-import * as React from 'react';
-import Grid from '@material-ui/core/Grid';
+import * as React from "react";
+import Grid from "@material-ui/core/Grid";
 
 // TODO: tweak defailt maxWidth to something that makes sense (on an average monitor)
 
@@ -21,7 +21,7 @@ const breakpoints = {
   sm: 960 - 1,
   md: 1280 - 1,
   lg: 1920 - 1,
-  xl: 1920, // TODO: not sure what to do with xl size
+  xl: 1920 // TODO: not sure what to do with xl size
 };
 
 type Props = {
@@ -29,19 +29,23 @@ type Props = {
 
   // Optional props
   spacing: number,
-  maxWidth: number | 'xs' | 'sm' | 'md' | 'lg' | 'xl',
+  maxWidth: number | "xs" | "sm" | "md" | "lg" | "xl"
 }; // other props get passed to the inner grid
 
 const ResponsiveGrid = ({
-  children, spacing, maxWidth, ...otherProps
+  children,
+  spacing,
+  maxWidth,
+  ...otherProps
 }: Props) => {
-  const calcMaxWidth = typeof maxWidth === 'string' ? breakpoints[maxWidth] : maxWidth;
+  const calcMaxWidth =
+    typeof maxWidth === "string" ? breakpoints[maxWidth] : maxWidth;
   const maxWidthStyle = { maxWidth: calcMaxWidth };
 
   const padding = Math.max(8, spacing / 2); // at least 8px on each side
   const fixXOverflow = {
     paddingLeft: padding,
-    paddingRight: padding,
+    paddingRight: padding
   };
 
   return (
@@ -54,8 +58,8 @@ const ResponsiveGrid = ({
 };
 
 ResponsiveGrid.defaultProps = {
-  spacing: 16,
-  maxWidth: 'md',
+  spacing: 2,
+  maxWidth: "md"
 };
 
 export default ResponsiveGrid;
