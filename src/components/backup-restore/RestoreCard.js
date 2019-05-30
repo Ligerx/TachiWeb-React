@@ -1,14 +1,14 @@
 // @flow
-import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Dropzone from 'react-dropzone';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import RestoreDialog from 'components/backup-restore/RestoreDialog';
-import type { RestoreCardContainerProps } from 'containers/RestoreCardContainer';
+import React, { Component } from "react";
+import Button from "@material-ui/core/Button";
+import Icon from "@material-ui/core/Icon";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Dropzone from "react-dropzone";
+import { withStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import RestoreDialog from "components/backup-restore/RestoreDialog";
+import type { RestoreCardContainerProps } from "containers/RestoreCardContainer";
 
 // TODO: clear all files from state when user successfully restores library
 
@@ -30,29 +30,29 @@ import type { RestoreCardContainerProps } from 'containers/RestoreCardContainer'
 const styles = {
   icon: { marginRight: 8 },
   button: {
-    width: '100%',
-    marginTop: 16,
+    width: "100%",
+    marginTop: 16
   },
   dropzoneDefault: {
     borderWidth: 2,
-    borderColor: '#666',
-    borderStyle: 'dashed',
+    borderColor: "#666",
+    borderStyle: "dashed",
     borderRadius: 5,
 
-    width: '100%',
+    width: "100%",
     height: 200,
-    padding: 16,
+    padding: 16
   },
   dropzoneActive: {
-    borderStyle: 'solid',
-    borderColor: '#6c6',
-    backgroundColor: '#eee',
+    borderStyle: "solid",
+    borderColor: "#6c6",
+    backgroundColor: "#eee"
   },
   // Dragging a file that won't be accepted will add both the active and rejected class
   // using '!important' to force the correct borderColor. (this is just how dropzone works I guess)
   dropzoneRejected: {
-    borderColor: '#c66 !important',
-  },
+    borderColor: "#c66 !important"
+  }
 };
 
 type Props = RestoreCardContainerProps & { classes: Object };
@@ -60,7 +60,7 @@ type Props = RestoreCardContainerProps & { classes: Object };
 type State = {
   acceptedFiles: Array<File>,
   rejectedFiles: Array<File>,
-  dialogueOpen: boolean,
+  dialogueOpen: boolean
 };
 
 class RestoreCard extends Component<Props, State> {
@@ -69,7 +69,7 @@ class RestoreCard extends Component<Props, State> {
     acceptedFiles: [],
     rejectedFiles: [],
 
-    dialogueOpen: false,
+    dialogueOpen: false
   };
 
   handleDrop = (acceptedFiles: Array<File>, rejectedFiles: Array<File>) => {
@@ -81,7 +81,7 @@ class RestoreCard extends Component<Props, State> {
   dropzoneContent = ({ isDragReject, acceptedFiles, rejectedFiles }: Object) => {
     if (isDragReject) {
       return 'Only a single JSON backup file is accepted';
-    } else if (rejectedFiles.length) {
+    } if (rejectedFiles.length) {
       return 'Invalid file selected';
     } else if (acceptedFiles.length) {
       return `${acceptedFiles[0].name}`;
@@ -108,7 +108,8 @@ class RestoreCard extends Component<Props, State> {
     const { classes, restoreIsLoading, restoreFailed } = this.props;
     const { acceptedFiles, rejectedFiles, dialogueOpen } = this.state;
 
-    const buttonDisabled: boolean = acceptedFiles.length !== 1 || rejectedFiles.length > 0;
+    const buttonDisabled: boolean =
+      acceptedFiles.length !== 1 || rejectedFiles.length > 0;
 
     return (
       <React.Fragment>
@@ -132,7 +133,7 @@ class RestoreCard extends Component<Props, State> {
 
             <Button
               className={classes.button}
-              variant="raised"
+              variant="contained"
               color="primary"
               disabled={buttonDisabled}
               onClick={this.handleUpload}
