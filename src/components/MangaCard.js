@@ -28,6 +28,7 @@ const styles = {
     position: "absolute",
     bottom: 0,
     width: "100%",
+    maxHeight: "100%",
     padding: "24px 16px 16px",
     background:
       "linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 40%, rgba(0, 0, 0, 0) 100%)"
