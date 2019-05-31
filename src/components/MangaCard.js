@@ -1,9 +1,9 @@
 // @flow
-import React from 'react';
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import Card from "@material-ui/core/Card";
+import CardMedia from "@material-ui/core/CardMedia";
+import Typography from "@material-ui/core/Typography";
+import { withStyles } from "@material-ui/core/styles";
 
 // * fullWidth
 // Stretch card width to parent container.
@@ -18,30 +18,31 @@ import { withStyles } from '@material-ui/core/styles';
 // Also the ButtonBase's text is centered, so reset that to left align.
 const styles = {
   fullWidth: {
-    width: '100%',
+    width: "100%"
   },
   image: {
     height: 0,
-    paddingTop: '130%',
+    paddingTop: "130%"
   },
   gradient: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    width: '100%',
-    padding: '24px 16px 16px',
+    width: "100%",
+    maxHeight: "100%",
+    padding: "24px 16px 16px",
     background:
-      'linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 40%, rgba(0, 0, 0, 0) 100%)',
+      "linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 40%, rgba(0, 0, 0, 0) 100%)"
   },
   title: {
-    color: 'white',
-    textAlign: 'left',
-  },
+    color: "white",
+    textAlign: "left"
+  }
 };
 
 type Props = {
   classes: Object,
   coverUrl: string,
-  title?: string,
+  title?: string
 };
 
 // NOTE: this is a basic implementation, and is meant to be wrapped by other components
@@ -54,20 +55,22 @@ type Props = {
 
 const MangaCard = ({ classes, title, coverUrl }: Props) => (
   <Card className={classes.fullWidth}>
-    {!!coverUrl && <CardMedia className={classes.image} image={coverUrl} title={title} />}
+    {!!coverUrl && (
+      <CardMedia className={classes.image} image={coverUrl} title={title} />
+    )}
 
     {!!title && (
-    <div className={classes.gradient}>
-      <Typography variant="title" className={classes.title}>
-        {title}
-      </Typography>
-    </div>
-      )}
+      <div className={classes.gradient}>
+        <Typography variant="h6" className={classes.title}>
+          {title}
+        </Typography>
+      </div>
+    )}
   </Card>
 );
 
 MangaCard.defaultProps = {
-  title: '',
+  title: ""
 };
 
 export default withStyles(styles)(MangaCard);

@@ -64,7 +64,7 @@ const ChapterListItem = ({
       className={classes.listItem}
     >
       <div className={classes.chapterInfo}>
-        <Typography variant="subheading" className={dimIfRead(chapter.read)}>
+        <Typography variant="subtitle1" className={dimIfRead(chapter.read)}>
           {chapterName}
         </Typography>
 

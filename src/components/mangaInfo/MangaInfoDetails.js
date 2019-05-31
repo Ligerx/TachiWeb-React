@@ -1,16 +1,16 @@
 // @flow
-import * as React from 'react';
-import Typography from '@material-ui/core/Typography';
-import ResponsiveGrid from 'components/ResponsiveGrid';
-import MangaCard from 'components/MangaCard';
-import Grid from '@material-ui/core/Grid';
-import BackgroundImage from 'components/mangaInfo/BackgroundImage';
-import { withStyles } from '@material-ui/core/styles';
-import type { MangaType } from 'types';
-import classNames from 'classnames';
-import { Server } from 'api';
-import upperFirst from 'lodash/upperFirst';
-import FavoriteFABContainer from 'containers/FavoriteFABContainer';
+import * as React from "react";
+import Typography from "@material-ui/core/Typography";
+import ResponsiveGrid from "components/ResponsiveGrid";
+import MangaCard from "components/MangaCard";
+import Grid from "@material-ui/core/Grid";
+import BackgroundImage from "components/mangaInfo/BackgroundImage";
+import { withStyles } from "@material-ui/core/styles";
+import type { MangaType } from "types";
+import classNames from "classnames";
+import { Server } from "api";
+import upperFirst from "lodash/upperFirst";
+import FavoriteFABContainer from "containers/FavoriteFABContainer";
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
@@ -19,17 +19,17 @@ import FavoriteFABContainer from 'containers/FavoriteFABContainer';
 
 const styles = () => ({
   gridPadding: {
-    padding: '32px 24px',
+    padding: "32px 24px"
   },
   fabParent: {
-    position: 'relative',
-  },
+    position: "relative"
+  }
 });
 
 type Props = {
   classes: Object,
   mangaInfo: MangaType,
-  numChapters: number,
+  numChapters: number
 };
 
 const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
@@ -38,12 +38,14 @@ const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
   return (
     <React.Fragment>
       <BackgroundImage coverUrl={coverUrl}>
-        <ResponsiveGrid className={classNames(classes.gridPadding, classes.fabParent)}>
+        <ResponsiveGrid
+          className={classNames(classes.gridPadding, classes.fabParent)}
+        >
           <Grid item xs={4} sm={3}>
             <MangaCard coverUrl={coverUrl} />
           </Grid>
           <Grid item xs={8} sm={9}>
-            <Typography variant="title" gutterBottom>
+            <Typography variant="h6" gutterBottom>
               {mangaInfo.title}
             </Typography>
             <DetailComponent fieldName="Chapters" value={numChapters} />
@@ -55,25 +57,33 @@ const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
       </BackgroundImage>
 
       <ResponsiveGrid className={classes.gridPadding}>
-        <DetailComponent fieldName="Description" value={mangaInfo.description || ''} />
+        <DetailComponent
+          fieldName="Description"
+          value={mangaInfo.description || ""}
+        />
       </ResponsiveGrid>
     </React.Fragment>
   );
 };
 
 MangaInfoDetails.defaultProps = {
-  children: null,
+  children: null
 };
 
 // Helper functions
 function detailsElements(mangaInfo: MangaType): React.Node {
-  const fieldNames = ['status', 'source', 'author', 'genres', 'categories'];
+  const fieldNames = ["status", "source", "author", "genres", "categories"];
 
-  return fieldNames.map((fieldName) => {
+  return fieldNames.map(fieldName => {
     const value = mangaInfo[fieldName];
-    if ((!Array.isArray(value) && value) || (Array.isArray(value) && value.length > 0)) {
+    if (
+      (!Array.isArray(value) && value) ||
+      (Array.isArray(value) && value.length > 0)
+    ) {
       // NOTE: using field name as the key, this shouldn't be a problem
-      return <DetailComponent fieldName={fieldName} value={value} key={fieldName} />;
+      return (
+        <DetailComponent fieldName={fieldName} value={value} key={fieldName} />
+      );
     }
     return null;
   });
@@ -81,10 +91,13 @@ function detailsElements(mangaInfo: MangaType): React.Node {
 
 type DetailComponentProps = {
   fieldName: string,
-  value: string | Array<string> | number,
+  value: string | Array<string> | number
 };
 
-const DetailComponent = ({ fieldName, value }: DetailComponentProps): React.Node => (
+const DetailComponent = ({
+  fieldName,
+  value
+}: DetailComponentProps): React.Node => (
   <Typography>
     <b>{`${upperFirst(fieldName)}: `}</b>
     {value}

@@ -1,43 +1,43 @@
 // @flow
-import * as React from 'react';
-import Icon from '@material-ui/core/Icon';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import type { MangaInfoFlagsType } from 'types';
-import Tooltip from '@material-ui/core/Tooltip';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import RadioOptionsDialogue from './RadioOptionsDialogue';
+import * as React from "react";
+import Icon from "@material-ui/core/Icon";
+import IconButton from "@material-ui/core/IconButton";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import type { MangaInfoFlagsType } from "types";
+import Tooltip from "@material-ui/core/Tooltip";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import RadioOptionsDialogue from "./RadioOptionsDialogue";
 
 const displayModes = [
-  { flagState: 'NAME', label: 'Show title' },
-  { flagState: 'NUMBER', label: 'Show chapter number' },
+  { flagState: "NAME", label: "Show title" },
+  { flagState: "NUMBER", label: "Show chapter number" }
 ];
 
 const sortingModes = [
-  { flagState: 'SOURCE', label: 'By source' },
-  { flagState: 'NUMBER', label: 'By chapter number' },
+  { flagState: "SOURCE", label: "By source" },
+  { flagState: "NUMBER", label: "By chapter number" }
 ];
 
 type Props = {
   sourceUrl: string,
   flags: MangaInfoFlagsType,
   onDisplayModeChange: Function,
-  onSortTypeChange: Function,
+  onSortTypeChange: Function
 };
 
 type State = {
   anchorEl: ?React.Node,
   displayModeOpen: boolean,
-  sortTypeOpen: boolean,
+  sortTypeOpen: boolean
 };
 
 class MangaInfoMore extends React.Component<Props, State> {
   state = {
     anchorEl: null,
     displayModeOpen: false,
-    sortTypeOpen: false,
+    sortTypeOpen: false
   };
 
   handleClick = (event: SyntheticEvent<>) => {
@@ -87,17 +87,19 @@ class MangaInfoMore extends React.Component<Props, State> {
         {/* getContentAnchorEl must be null to make anchorOrigin work */}
         <Menu
           anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           getContentAnchorEl={null}
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleDisplayModeClick}>Change Display Mode</MenuItem>
+          <MenuItem onClick={this.handleDisplayModeClick}>
+            Change Display Mode
+          </MenuItem>
           <MenuItem onClick={this.handleSortTypeClick}>Sorting Mode</MenuItem>
           {/* <MenuItem>Download</MenuItem> */}
 
           <MenuItem component="a" href={this.props.sourceUrl} target="_blank">
-            <ListItemIcon style={{ marginRight: 0 }}>
+            <ListItemIcon>
               <Icon>open_in_new</Icon>
             </ListItemIcon>
             <ListItemText primary="Open source website" />
