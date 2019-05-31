@@ -73,7 +73,7 @@ const ChapterListItem = ({
             variant="caption"
             className={classNames(classes.date, dimIfRead(chapter.read))}
           >
-            {dateFnsFormat(chapter.date, "MM/DD/YYYY")}
+            {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
           </Typography>
 
           <Typography variant="caption" className={classes.lastReadPage}>
