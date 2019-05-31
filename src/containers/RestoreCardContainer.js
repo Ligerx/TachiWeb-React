@@ -1,28 +1,30 @@
 // @flow
-import { connect } from 'react-redux';
-import { uploadRestoreFile, UPLOAD_RESTORE } from 'redux-ducks/library';
-import RestoreCard from 'components/backup-restore/RestoreCard';
-import { createLoadingSelector } from 'redux-ducks/loading';
-import { createErrorMessageSelector } from 'redux-ducks/error';
-
-const restoreIsLoading = createLoadingSelector([UPLOAD_RESTORE]);
-const restoreErrorMessage = createErrorMessageSelector([UPLOAD_RESTORE]);
+import { connect } from "react-redux";
+import RestoreCard from "components/backup-restore/RestoreCard";
+import {
+  selectIsRestoreLoading,
+  selectDidRestoreFail,
+  uploadRestoreFile
+} from "redux-ducks/library";
 
 type StateToProps = {
-  restoreIsLoading: boolean,
-  restoreFailed: boolean,
+  isRestoreLoading: boolean,
+  didRestoreFail: boolean
 };
 
 const mapStateToProps = (state): StateToProps => ({
-  restoreIsLoading: restoreIsLoading(state),
-  restoreFailed: !!restoreErrorMessage(state),
+  isRestoreLoading: selectIsRestoreLoading(state),
+  didRestoreFail: selectDidRestoreFail(state)
 });
 
 type DispatchToProps = { uploadRestoreFile: Function };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
-  uploadRestoreFile: file => dispatch(uploadRestoreFile(file)),
+  uploadRestoreFile: file => dispatch(uploadRestoreFile(file))
 });
 
 export type RestoreCardContainerProps = StateToProps & DispatchToProps;
-export default connect(mapStateToProps, mapDispatchToProps)(RestoreCard);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RestoreCard);

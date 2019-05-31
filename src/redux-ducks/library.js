@@ -1,8 +1,10 @@
 // @flow
 import { Server } from "api";
 import type { LibraryFlagsType, LibraryFlagsPossibleValueTypes } from "types";
-import { ADD_MANGA } from "./mangaInfos";
-import { handleHTMLError, transformToMangaIdsArray } from "./utils";
+import { ADD_MANGA } from "redux-ducks/mangaInfos";
+import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
+import { createLoadingSelector } from "redux-ducks/loading";
+import { createErrorSelector } from "redux-ducks/error";
 
 // ================================================================================
 // Actions
@@ -156,6 +158,13 @@ export default function libraryReducer(
       return state;
   }
 }
+
+// ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectIsRestoreLoading = createLoadingSelector([UPLOAD_RESTORE]);
+export const selectDidRestoreFail = createErrorSelector([UPLOAD_RESTORE]);
 
 // ================================================================================
 // Action Creators

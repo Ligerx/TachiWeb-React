@@ -78,15 +78,21 @@ class RestoreCard extends Component<Props, State> {
 
   // If dropzone's child node is a function, it will inject params
   // refer to dropzone docs for more details
-  dropzoneContent = ({ isDragReject, acceptedFiles, rejectedFiles }: Object) => {
+  dropzoneContent = ({
+    isDragReject,
+    acceptedFiles,
+    rejectedFiles
+  }: Object) => {
     if (isDragReject) {
-      return 'Only a single JSON backup file is accepted';
-    } if (rejectedFiles.length) {
-      return 'Invalid file selected';
-    } if (acceptedFiles.length) {
+      return "Only a single JSON backup file is accepted";
+    }
+    if (rejectedFiles.length) {
+      return "Invalid file selected";
+    }
+    if (acceptedFiles.length) {
       return `${acceptedFiles[0].name}`;
     }
-    return 'Drag and Drop or Click Here to upload your backup file';
+    return "Drag and Drop or Click Here to upload your backup file";
   };
 
   handleUpload = () => {
@@ -105,7 +111,7 @@ class RestoreCard extends Component<Props, State> {
   };
 
   render() {
-    const { classes, restoreIsLoading, restoreFailed } = this.props;
+    const { classes, isRestoreLoading, didRestoreFail } = this.props;
     const { acceptedFiles, rejectedFiles, dialogueOpen } = this.state;
 
     const buttonDisabled: boolean =
@@ -147,8 +153,8 @@ class RestoreCard extends Component<Props, State> {
         <RestoreDialog
           open={dialogueOpen}
           onClose={this.handleCloseDialog}
-          isLoading={restoreIsLoading}
-          failed={restoreFailed}
+          isLoading={isRestoreLoading}
+          failed={didRestoreFail}
           tryAgain={this.handleUpload}
         />
       </React.Fragment>
