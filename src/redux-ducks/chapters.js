@@ -87,8 +87,9 @@ export const selectChaptersForManga = (
   mangaId: number
 ): Array<ChapterType> => state.chapters[mangaId] || [];
 
-// example call - selectChapter(state, mangaId, chapterId)
-// using re-reselector because I can't find the chapter directly without calling chapters.find()
+// Example call - selectChapter(state, mangaId, chapterId)
+// Using re-reselector because of the way chapters are stored as arrays inside a map
+// You can't find the chapter directly without calling chapters.find()
 export const selectChapter = createCachedSelector(
   [selectChaptersForManga, (_, __, chapterId: number) => chapterId],
   (chapters, chapterId) => {

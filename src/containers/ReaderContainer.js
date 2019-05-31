@@ -30,7 +30,9 @@ type StateToProps = {
 
 const mapStateToProps = (state, ownProps): StateToProps => {
   const { chapters, pageCounts } = state;
-  const { mangaId, chapterId, page } = ownProps.match.params;
+  const mangaId = parseInt(ownProps.match.params.mangaId, 10);
+  const chapterId = parseInt(ownProps.match.params.chapterId, 10);
+  const page = parseInt(ownProps.match.params.page, 10);
 
   return {
     defaultViewer: selectDefaultViewer(state),
@@ -38,10 +40,10 @@ const mapStateToProps = (state, ownProps): StateToProps => {
     mangaInfo: selectMangaInfo(state, mangaId),
     chapters: selectChaptersForManga(state, mangaId),
     chapter: selectChapter(state, mangaId, chapterId),
-    chapterId: parseInt(chapterId, 10),
+    chapterId,
     pageCounts,
     pageCount: pageCounts[chapterId] || 0,
-    page: parseInt(page, 10),
+    page,
     prevChapterId: getPrevChapterId(chapters[mangaId], chapterId),
     nextChapterId: getNextChapterId(chapters[mangaId], chapterId)
   };
@@ -70,9 +72,7 @@ function findChapterIndex(
   thisChapterId: number
 ): number {
   // If not found, returns -1. BUT this shouldn't ever happen.
-  return chapters.findIndex(
-    chapter => chapter.id === parseInt(thisChapterId, 10)
-  );
+  return chapters.findIndex(chapter => chapter.id === thisChapterId);
 }
 
 function getPrevChapterId(
