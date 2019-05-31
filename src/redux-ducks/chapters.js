@@ -82,10 +82,13 @@ export default function chaptersReducer(state: State = {}, action = {}) {
 //        Possible changes?
 //        - declare a const noChapters = [] outside this function
 //        - just pass down undefined and let the other components handle it
+//
+// I've added noChapters, but I haven't actually checked if this does anything.
+const noChapters = [];
 export const selectChaptersForManga = (
   state,
   mangaId: number
-): Array<ChapterType> => state.chapters[mangaId] || [];
+): Array<ChapterType> => state.chapters[mangaId] || noChapters;
 
 // Example call - selectChapter(state, mangaId, chapterId)
 // Using re-reselector because of the way chapters are stored as arrays inside a map
