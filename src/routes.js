@@ -7,15 +7,11 @@ import ReaderContainer from "containers/ReaderContainer";
 import CatalogueContainer from "containers/CatalogueContainer";
 import ExtensionsContainer from "containers/ExtensionsContainer";
 import BackupRestore from "pages/BackupRestore";
-import ErrorNotificationsContainer from "containers/ErrorNotificationsContainer";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import SettingsContainer from "containers/SettingsContainer";
 import { SETTING_INDEX } from "pages/Settings";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
-
-// FIXME: Including ErrorNotificationsContainer here because I have to
-//        Not idea, refactor out an App component or something.
 
 // match.path is the url prefix. i.e. '/library' '/catalogue'
 type MangaRouterProps = { match: Object }; // react router prop
@@ -76,8 +72,6 @@ const Router = () => (
         />
       </Switch>
     </BrowserRouter>
-
-    <ErrorNotificationsContainer />
   </React.Fragment>
 );
 
