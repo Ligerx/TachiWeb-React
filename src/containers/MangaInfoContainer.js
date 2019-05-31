@@ -1,29 +1,20 @@
 // @flow
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import {
+  selectMangaInfo,
   fetchMangaInfo,
   updateMangaInfo,
-  FETCH_MANGA,
-  UPDATE_MANGA,
-  setFlag,
-} from 'redux-ducks/mangaInfos';
+  setFlag
+} from "redux-ducks/mangaInfos";
 import {
+  selectChaptersForManga,
   fetchChapters,
   updateChapters,
-  toggleRead,
-  FETCH_CHAPTERS,
-  UPDATE_CHAPTERS,
-} from 'redux-ducks/chapters';
-import MangaInfo from 'pages/MangaInfo';
-import { createLoadingSelector } from 'redux-ducks/loading';
-import type { MangaType, ChapterType } from 'types';
-
-const fetchOrRefreshIsLoading: Function = createLoadingSelector([
-  FETCH_MANGA,
-  UPDATE_MANGA,
-  FETCH_CHAPTERS,
-  UPDATE_CHAPTERS,
-]);
+  toggleRead
+} from "redux-ducks/chapters";
+import MangaInfo from "pages/MangaInfo";
+import type { MangaType, ChapterType } from "types";
+import { selectIsMangaOrChaptersLoading } from "redux-ducks/sharedSelectors";
 
 type StateToProps = {
   mangaInfo: ?MangaType,
@@ -32,20 +23,19 @@ type StateToProps = {
 
   // below props should be passed in by router
   backUrl: string,
-  defaultTab: number,
+  defaultTab: number
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
-  const { mangaInfos, chapters } = state;
   const { mangaId } = ownProps.match.params;
 
   return {
-    mangaInfo: mangaInfos[mangaId],
-    chapters: chapters[mangaId] || [],
-    fetchOrRefreshIsLoading: fetchOrRefreshIsLoading(state),
+    mangaInfo: selectMangaInfo(state, mangaId),
+    chapters: selectChaptersForManga(state, mangaId),
+    fetchOrRefreshIsLoading: selectIsMangaOrChaptersLoading(state),
 
     backUrl: ownProps.backUrl,
-    defaultTab: ownProps.defaultTab,
+    defaultTab: ownProps.defaultTab
   };
 };
 
@@ -55,7 +45,7 @@ type DispatchToProps = {
   updateChapters: Function,
   updateMangaInfo: Function,
   setFlag: Function,
-  toggleRead: Function,
+  toggleRead: Function
 };
 
 const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
@@ -63,13 +53,18 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
 
   return {
     fetchChapters: () => dispatch(fetchChapters(mangaId)),
-    fetchMangaInfo: (options = {}) => dispatch(fetchMangaInfo(mangaId, options)),
+    fetchMangaInfo: (options = {}) =>
+      dispatch(fetchMangaInfo(mangaId, options)),
     updateChapters: () => dispatch(updateChapters(mangaId)),
     updateMangaInfo: () => dispatch(updateMangaInfo(mangaId)),
     setFlag: (flag, state) => dispatch(setFlag(mangaId, flag, state)),
-    toggleRead: (chapterId, read) => dispatch(toggleRead(mangaId, chapterId, read)),
+    toggleRead: (chapterId, read) =>
+      dispatch(toggleRead(mangaId, chapterId, read))
   };
 };
 
 export type MangaInfoContainerProps = StateToProps & DispatchToProps;
-export default connect(mapStateToProps, mapDispatchToProps)(MangaInfo);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MangaInfo);
