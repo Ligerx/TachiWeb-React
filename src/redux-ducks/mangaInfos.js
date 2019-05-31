@@ -83,6 +83,13 @@ export default function mangaInfosReducer(state: State = {}, action = {}) {
 }
 
 // ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectMangaInfo = (state, mangaId: number): ?MangaType =>
+  state.mangaInfos[mangaId];
+
+// ================================================================================
 // Action Creators
 // ================================================================================
 type Obj = { ignoreCache?: boolean };

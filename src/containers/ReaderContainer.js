@@ -1,7 +1,11 @@
 // @flow
 import { connect } from "react-redux";
-import { fetchMangaInfo } from "redux-ducks/mangaInfos";
-import { fetchChapters } from "redux-ducks/chapters";
+import { selectMangaInfo, fetchMangaInfo } from "redux-ducks/mangaInfos";
+import {
+  selectChaptersForManga,
+  selectChapter,
+  fetchChapters
+} from "redux-ducks/chapters";
 import { fetchPageCount } from "redux-ducks/pageCounts";
 import { selectDefaultViewer } from "redux-ducks/settings";
 import type { DefaultViewer } from "redux-ducks/settings";
@@ -25,15 +29,15 @@ type StateToProps = {
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
-  const { mangaInfos, chapters, pageCounts } = state;
+  const { chapters, pageCounts } = state;
   const { mangaId, chapterId, page } = ownProps.match.params;
 
   return {
     defaultViewer: selectDefaultViewer(state),
 
-    mangaInfo: mangaInfos[mangaId],
-    chapters: chapters[mangaId] || [],
-    chapter: findChapter(chapters[mangaId], chapterId),
+    mangaInfo: selectMangaInfo(state, mangaId),
+    chapters: selectChaptersForManga(state, mangaId),
+    chapter: selectChapter(state, mangaId, chapterId),
     chapterId: parseInt(chapterId, 10),
     pageCounts,
     pageCount: pageCounts[chapterId] || 0,
@@ -60,14 +64,6 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
 };
 
 // Helper functions
-function findChapter(
-  chapters: Array<ChapterType>,
-  chapterId: number
-): ?ChapterType {
-  if (!chapters || chapters.length === 0) return null;
-
-  return chapters.find(chapter => chapter.id === parseInt(chapterId, 10));
-}
 
 function findChapterIndex(
   chapters: Array<ChapterType>,
