@@ -1,38 +1,33 @@
 // @flow
 import { connect } from "react-redux";
-import type { PrefsType, State } from "redux-ducks/settings";
+import type { PrefsType } from "redux-ducks/settings";
 import {
-  FETCH_PREFS,
-  FETCH_SCHEMA,
+  selectIsSettingsLoading,
+  selectSettingsSchema,
+  selectSettingsPrefs,
   fetchSettings,
   fetchSettingsSchema,
   setSetting
 } from "redux-ducks/settings";
-import { createLoadingSelector } from "redux-ducks/loading";
 import Settings from "pages/Settings";
 import type { SchemaType } from "types/settings-schema";
 
-const settingsAreLoading = createLoadingSelector([FETCH_PREFS, FETCH_SCHEMA]);
-
-export type LoadedSettingsProps = {
-  settingsLoaded: true,
+type StateToProps = {
+  settingsLoaded: boolean,
   preferences: PrefsType,
-  schema: SchemaType,
+  schema: ?SchemaType,
+
   match: Object // Object representing current user path, required to determine current setting folder
 };
 
-export type StateToProps = { settingsLoaded: false } | LoadedSettingsProps;
-
 const mapStateToProps = (
-  state: { settings: State },
+  state: StateToProps,
   ownProps: Object
 ): StateToProps => {
-  if (settingsAreLoading(state) || state.settings.schema == null)
-    return { settingsLoaded: false };
   return {
-    settingsLoaded: true,
-    preferences: state.settings.prefs,
-    schema: state.settings.schema,
+    settingsLoaded: selectIsSettingsLoading(state),
+    preferences: selectSettingsPrefs(state),
+    schema: selectSettingsSchema(state),
     match: ownProps.match
   };
 };

@@ -7,10 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import MenuDrawer from "components/MenuDrawer";
 import List from "@material-ui/core/List";
 import { Client } from "api";
-import type {
-  LoadedSettingsProps,
-  SettingsContainerProps
-} from "containers/SettingsContainer";
+import type { SettingsContainerProps } from "containers/SettingsContainer";
 import FullScreenLoading from "components/loading/FullScreenLoading";
 import SettingsItem from "components/settings/SettingsItem";
 import type { PrefValue } from "redux-ducks/settings";
@@ -21,7 +18,7 @@ import BackButton from "components/BackButton";
 export const SETTING_INDEX = "settingIndex";
 
 // Split the path into a stack of indexes describing which folders the user has entered
-function splitSettingsPath(props: LoadedSettingsProps): Array<number> {
+function splitSettingsPath(props: SettingsContainerProps): Array<number> {
   const settingsPath = props.match.params[SETTING_INDEX];
   if (settingsPath == null) return [];
   return settingsPath
@@ -46,9 +43,11 @@ class Settings extends Component<SettingsContainerProps> {
     setSetting(key, value);
   };
 
-  parseInfo = (props: LoadedSettingsProps) => {
+  parseInfo = (props: SettingsContainerProps) => {
     let currentTitle: ?string = null;
-    let currentSchema: SchemaType = props.schema;
+    let currentSchema: ?SchemaType = props.schema;
+
+    if (currentSchema == null) return {};
 
     const split = splitSettingsPath(props);
     for (let i = 0; i < split.length; i += 1) {
@@ -68,10 +67,10 @@ class Settings extends Component<SettingsContainerProps> {
   };
 
   render() {
-    const copiedProps = { ...this.props }; // Copy the props (resolves some type issues)
-    const info = copiedProps.settingsLoaded
-      ? this.parseInfo((copiedProps: any) /* useless cast, flow bug */)
-      : null;
+    const { preferences } = this.props;
+
+    const info = this.parseInfo(this.props);
+    if (info == null || info.schema == null) return null;
 
     return (
       <React.Fragment>
@@ -105,7 +104,7 @@ class Settings extends Component<SettingsContainerProps> {
                 }
                 path={info.path.concat([index])}
                 schema={it}
-                prefs={copiedProps.preferences}
+                prefs={preferences}
                 onUpdateSetting={this.handleSettingsUpdate}
               />
             ))
