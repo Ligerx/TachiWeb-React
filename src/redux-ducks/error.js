@@ -5,7 +5,9 @@
 // weird array explaination
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_values_from_a_regular_expression_match
 
-import compact from 'lodash/compact';
+import compact from "lodash/compact";
+import some from "lodash/some";
+import get from "lodash/get";
 
 type State = { +[action: string]: string };
 
@@ -22,18 +24,20 @@ export default function errorReducer(state: State = {}, action = {}) {
     // Store errorMessage
     // e.g. stores errorMessage when receiving GET_TODOS_FAILURE
     //      else clear errorMessage when receiving GET_TODOS_REQUEST
-    [requestName]: requestState === 'FAILURE' ? errorMessage : '',
+    [requestName]: requestState === "FAILURE" ? errorMessage : ""
   };
 }
 
 export const allErrorsSelector = (state: State): string => {
   const allErrors = compact(Object.values(state.error));
-  return allErrors[0] || '';
+  return allErrors[0] || "";
 };
 
 // 'actions' should be an array of strings. Strings should be action prefixes.
 // e.g. ['GET_TODOS'] corresponds to GET_TODOS_REQUEST, _SUCCESS, _FAILURE
-export const createErrorMessageSelector = (actions: Array<string>) => (state: Object): string => {
+export const createErrorMessageSelector = (actions: Array<string>) => (
+  state: Object
+): string => {
   // returns the first error message for actions
   // * We assume when any request fails on a page that
   //   requires multiple API calls, we shows the first error
@@ -41,5 +45,11 @@ export const createErrorMessageSelector = (actions: Array<string>) => (state: Ob
   const allErrors = actions.map(action => state.error[action]);
   const errors = compact(allErrors);
 
-  return errors[0] || '';
+  return errors[0] || "";
 };
+
+export const createErrorSelector = (actions: Array<string>) => (
+  state: Object
+): boolean =>
+  // returns true if there are no errors related to the passed in actions
+  some(actions, action => get(state, `error.${action}`));
