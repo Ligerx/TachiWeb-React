@@ -4,9 +4,15 @@ import { selectMangaInfo, fetchMangaInfo } from "redux-ducks/mangaInfos";
 import {
   selectChaptersForManga,
   selectChapter,
+  selectNextChapterId,
+  selectPrevChapterId,
   fetchChapters
 } from "redux-ducks/chapters";
-import { fetchPageCount } from "redux-ducks/pageCounts";
+import {
+  selectPageCounts,
+  selectPageCount,
+  fetchPageCount
+} from "redux-ducks/pageCounts";
 import { selectDefaultViewer } from "redux-ducks/settings";
 import type { DefaultViewer } from "redux-ducks/settings";
 import Reader from "pages/Reader";
@@ -21,7 +27,7 @@ type StateToProps = {
   chapters: Array<ChapterType>,
   chapter: ?ChapterType,
   chapterId: number, // never null because it's pulled from the URL
-  pageCounts: { [chapterId: number]: number },
+  pageCounts: { +[chapterId: number]: number },
   pageCount: number,
   page: number, // never null because it's pulled from the URL
   prevChapterId: ?number,
@@ -29,7 +35,6 @@ type StateToProps = {
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
-  const { chapters, pageCounts } = state;
   const mangaId = parseInt(ownProps.match.params.mangaId, 10);
   const chapterId = parseInt(ownProps.match.params.chapterId, 10);
   const page = parseInt(ownProps.match.params.page, 10);
@@ -41,11 +46,11 @@ const mapStateToProps = (state, ownProps): StateToProps => {
     chapters: selectChaptersForManga(state, mangaId),
     chapter: selectChapter(state, mangaId, chapterId),
     chapterId,
-    pageCounts,
-    pageCount: pageCounts[chapterId] || 0,
+    pageCounts: selectPageCounts(state),
+    pageCount: selectPageCount(state, chapterId) || 0, // FIXME: inefficient redux design?
     page,
-    prevChapterId: getPrevChapterId(chapters[mangaId], chapterId),
-    nextChapterId: getNextChapterId(chapters[mangaId], chapterId)
+    prevChapterId: selectPrevChapterId(state, mangaId, chapterId),
+    nextChapterId: selectNextChapterId(state, mangaId, chapterId)
   };
 };
 
@@ -64,42 +69,6 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchToProps => {
     fetchPageCount: chapterId => dispatch(fetchPageCount(mangaId, chapterId))
   };
 };
-
-// Helper functions
-
-function findChapterIndex(
-  chapters: Array<ChapterType>,
-  thisChapterId: number
-): number {
-  // If not found, returns -1. BUT this shouldn't ever happen.
-  return chapters.findIndex(chapter => chapter.id === thisChapterId);
-}
-
-function getPrevChapterId(
-  chapters: Array<ChapterType>,
-  thisChapterId: number
-): ?number {
-  if (!chapters) return null;
-
-  const thisChapterIndex: number = findChapterIndex(chapters, thisChapterId);
-  if (thisChapterIndex === 0) {
-    return null;
-  }
-  return chapters[thisChapterIndex - 1].id;
-}
-
-function getNextChapterId(
-  chapters: Array<ChapterType>,
-  thisChapterId: number
-): ?number {
-  if (!chapters) return null;
-
-  const thisChapterIndex: number = findChapterIndex(chapters, thisChapterId);
-  if (thisChapterIndex === chapters.length - 1) {
-    return null;
-  }
-  return chapters[thisChapterIndex + 1].id;
-}
 
 export type ReaderContainerProps = StateToProps & DispatchToProps;
 export default connect(

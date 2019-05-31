@@ -1,14 +1,14 @@
 // @flow
-import { Server } from 'api';
-import { handleHTMLError } from './utils';
+import { Server } from "api";
+import { handleHTMLError } from "./utils";
 
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_REQUEST = 'pageCounts/FETCH_REQUEST';
-const FETCH_SUCCESS = 'pageCounts/FETCH_SUCCESS';
-const FETCH_FAILURE = 'pageCounts/FETCH_FAILURE';
-const FETCH_CACHE = 'pageCounts/FETCH_CACHE';
+const FETCH_REQUEST = "pageCounts/FETCH_REQUEST";
+const FETCH_SUCCESS = "pageCounts/FETCH_SUCCESS";
+const FETCH_FAILURE = "pageCounts/FETCH_FAILURE";
+const FETCH_CACHE = "pageCounts/FETCH_CACHE";
 
 // ================================================================================
 // Reducers
@@ -20,7 +20,7 @@ export default function pageCountsReducer(state: State = {}, action = {}) {
     case FETCH_SUCCESS:
       return {
         ...state,
-        [action.chapterId]: action.pageCount,
+        [action.chapterId]: action.pageCount
       };
     case FETCH_CACHE:
       return state;
@@ -28,6 +28,15 @@ export default function pageCountsReducer(state: State = {}, action = {}) {
       return state;
   }
 }
+
+// ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectPageCounts = (state): State => state.pageCounts;
+
+export const selectPageCount = (state, chapterId: number): ?number =>
+  state.pageCounts[chapterId];
 
 // ================================================================================
 // Action Creators
@@ -48,14 +57,14 @@ export function fetchPageCount(mangaId: number, chapterId: number) {
           dispatch({
             type: FETCH_SUCCESS,
             chapterId,
-            pageCount: json.page_count,
+            pageCount: json.page_count
           }),
         error =>
           dispatch({
             type: FETCH_FAILURE,
-            errorMessage: 'Failed to get page count',
-            meta: { error },
-          }),
+            errorMessage: "Failed to get page count",
+            meta: { error }
+          })
       );
   };
 }

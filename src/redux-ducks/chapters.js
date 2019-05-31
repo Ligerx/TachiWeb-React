@@ -95,12 +95,42 @@ export const selectChaptersForManga = (
 // You can't find the chapter directly without calling chapters.find()
 export const selectChapter = createCachedSelector(
   [selectChaptersForManga, (_, __, chapterId: number) => chapterId],
-  (chapters, chapterId) => {
-    if (chapters.length === 0) return null;
-    return chapters.find(chapter => chapter.id === chapterId);
-  }
+  (chapters, chapterId): ?ChapterType =>
+    chapters.find(chapter => chapter.id === chapterId)
   // Cache Key
 )((state, mangaId, chapterId) => `${mangaId}-${chapterId}`);
+
+// selectNextChapterId(state, mangaId, thisChapterId)
+export const selectNextChapterId = createCachedSelector(
+  [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],
+  (chapters, thisChapterId): ?number => {
+    const thisChapterIndex = chapters.findIndex(
+      chapter => chapter.id === thisChapterId
+    );
+
+    if (thisChapterIndex === chapters.length - 1 || thisChapterIndex === -1) {
+      return null;
+    }
+    return chapters[thisChapterIndex + 1].id;
+  }
+  // Cache Key
+)((state, mangaId, thisChapterId) => `${mangaId}-${thisChapterId}`);
+
+// selectPrevChapterId(state, mangaId, thisChapterId)
+export const selectPrevChapterId = createCachedSelector(
+  [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],
+  (chapters, thisChapterId): ?number => {
+    const thisChapterIndex = chapters.findIndex(
+      chapter => chapter.id === thisChapterId
+    );
+
+    if (thisChapterIndex === 0 || thisChapterIndex === -1) {
+      return null;
+    }
+    return chapters[thisChapterIndex - 1].id;
+  }
+  // Cache Key
+)((state, mangaId, thisChapterId) => `${mangaId}-${thisChapterId}`);
 
 // ================================================================================
 // Action Creators
