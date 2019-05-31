@@ -18,14 +18,20 @@ const styles = () => ({
 type Props = {
   classes: Object,
   extension: ExtensionType,
+  divider: boolean,
   children: React.Node
 };
 
-const ExtensionListItem = ({ classes, extension, children }: Props) => {
+const ExtensionListItem = ({
+  classes,
+  extension,
+  divider,
+  children
+}: Props) => {
   const { pkg_name, name, lang, version_name } = extension;
 
   return (
-    <ListItem divider>
+    <ListItem divider={divider}>
       <Avatar className={classes.avatar} src={Server.extensionIcon(pkg_name)} />
       <ListItemText
         primary={name}

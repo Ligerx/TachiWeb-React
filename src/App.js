@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import ErrorNotificationsContainer from "containers/ErrorNotificationsContainer";
-import { fetchSettings, fetchSettingsSchema } from "redux-ducks/settings";
+import { fetchSettings } from "redux-ducks/settings";
 import FullScreenLoading from "components/loading/FullScreenLoading";
 import Router from "routes";
 import "index.css";
@@ -20,19 +20,14 @@ import "index.css";
 //     Settings related Redux stuff                    //
 // //////////////////////////////////////////////////////
 type StateToProps = { isSettingsLoaded: boolean };
-
-type DispatchToProps = {
-  fetchSettings: Function,
-  fetchSettingsSchema: Function
-};
+type DispatchToProps = { fetchSettings: Function };
 
 const mapStateToProps = state => ({
   isSettingsLoaded: state.settings.allPrefsFetched
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => ({
-  fetchSettings: () => dispatch(fetchSettings()),
-  fetchSettingsSchema: () => dispatch(fetchSettingsSchema())
+  fetchSettings: () => dispatch(fetchSettings())
 });
 
 // //////////////////////////////////////////////////////
@@ -42,7 +37,7 @@ const App = (props: StateToProps & DispatchToProps) => {
   //     Block everything until settings are loaded      //
   // //////////////////////////////////////////////////////
   useEffect(() => {
-    props.fetchSettings().then(props.fetchSettingsSchema);
+    props.fetchSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // eslint-disable-next-line react/destructuring-assignment
