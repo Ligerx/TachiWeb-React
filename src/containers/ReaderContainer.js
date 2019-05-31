@@ -3,13 +3,15 @@ import { connect } from "react-redux";
 import { fetchMangaInfo } from "redux-ducks/mangaInfos";
 import { fetchChapters } from "redux-ducks/chapters";
 import { fetchPageCount } from "redux-ducks/pageCounts";
+import { selectDefaultViewer } from "redux-ducks/settings";
+import type { DefaultViewer } from "redux-ducks/settings";
 import Reader from "pages/Reader";
 import type { MangaType, ChapterType } from "types";
 
 type StateToProps = {
   // [Written 5/10/2019] this setting could be missing from the prefs object
   // also, there is no typing for prefs currently, so manually typing this
-  defaultViewer?: "left_to_right" | "right_to_left" | "webtoon",
+  defaultViewer: DefaultViewer,
 
   mangaInfo: ?MangaType,
   chapters: Array<ChapterType>,
@@ -23,11 +25,11 @@ type StateToProps = {
 };
 
 const mapStateToProps = (state, ownProps): StateToProps => {
-  const { settings, mangaInfos, chapters, pageCounts } = state;
+  const { mangaInfos, chapters, pageCounts } = state;
   const { mangaId, chapterId, page } = ownProps.match.params;
 
   return {
-    defaultViewer: settings.prefs.pref_default_viewer_key,
+    defaultViewer: selectDefaultViewer(state),
 
     mangaInfo: mangaInfos[mangaId],
     chapters: chapters[mangaId] || [],

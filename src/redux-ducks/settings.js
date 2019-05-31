@@ -100,6 +100,16 @@ export const selectSettingsSchema = (state): ?SchemaType =>
   state.settings.schema;
 export const selectSettingsPrefs = (state): PrefsType => state.settings.prefs;
 
+// [Written 5/10/2019] default viewer could be missing from the prefs object
+// also, there is no typing for prefs currently, so manually typing this
+export type DefaultViewer =
+  | "left_to_right"
+  | "right_to_left"
+  | "webtoon"
+  | void;
+export const selectDefaultViewer = (state): DefaultViewer =>
+  state.settings.prefs.pref_default_viewer_key;
+
 // ================================================================================
 // Action Creators
 // ================================================================================
