@@ -1,36 +1,24 @@
 // @flow
 import { connect } from "react-redux";
 import {
+  selectIsExtensionsLoading,
+  selectExtensions,
   fetchExtensions,
   installExtension,
   uninstallExtension,
-  reloadExtensions,
-  FETCH_EXTENSIONS,
-  INSTALL_EXTENSION,
-  UNINSTALL_EXTENSION,
-  RELOAD_EXTENSIONS
+  reloadExtensions
 } from "redux-ducks/extensions";
-import { createLoadingSelector } from "redux-ducks/loading";
 import Extensions from "pages/Extensions";
 import type { ExtensionType } from "types";
 
-const extensionsIsLoading: Function = createLoadingSelector([
-  FETCH_EXTENSIONS,
-  INSTALL_EXTENSION,
-  UNINSTALL_EXTENSION,
-  RELOAD_EXTENSIONS
-]);
-
 type StateToProps = {
   extensions: Array<ExtensionType>,
-  extensionsIsLoading: boolean
+  isExtensionsLoading: boolean
 };
 
 const mapStateToProps = (state): StateToProps => ({
-  // Extension props
-  extensions: state.extensions,
-  // Fetching props
-  extensionsIsLoading: extensionsIsLoading(state)
+  extensions: selectExtensions(state),
+  isExtensionsLoading: selectIsExtensionsLoading(state)
 });
 
 type DispatchToProps = {

@@ -27,7 +27,7 @@ const ExtensionList = ({
 
   return (
     <Grid item xs={12}>
-      <Typography variant="headline" gutterBottom>
+      <Typography variant="h5" gutterBottom>
         {title} ({extensions.length})
       </Typography>
       <Paper>

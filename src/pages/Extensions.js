@@ -18,7 +18,7 @@ import type { ExtensionType } from "types";
 
 const Extensions = ({
   extensions,
-  extensionsIsLoading,
+  isExtensionsLoading,
   fetchExtensions,
   installExtension,
   uninstallExtension,
@@ -83,7 +83,7 @@ const Extensions = ({
         />
       </ResponsiveGrid>
 
-      {extensionsIsLoading && <FullScreenLoading />}
+      {isExtensionsLoading && <FullScreenLoading />}
     </React.Fragment>
   );
 };

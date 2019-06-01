@@ -2,6 +2,7 @@
 import { Server } from "api";
 import type { ExtensionType } from "types";
 import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
+import { createLoadingSelector } from "redux-ducks/loading";
 
 // ================================================================================
 // Actions
@@ -60,6 +61,20 @@ export default function extensionsReducer(state: State = [], action = {}) {
       return state;
   }
 }
+
+// ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectIsExtensionsLoading = createLoadingSelector([
+  FETCH_EXTENSIONS,
+  INSTALL_EXTENSION,
+  UNINSTALL_EXTENSION,
+  RELOAD_EXTENSIONS
+]);
+
+export const selectExtensions = (state): Array<ExtensionType> =>
+  state.extensions;
 
 // ================================================================================
 // Action Creators
