@@ -2,6 +2,7 @@
 
 import { Server } from "api";
 import type { MangaType } from "types";
+import { createLoadingSelector } from "redux-ducks/loading";
 import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "./library";
 import { handleHTMLError } from "./utils";
 
@@ -85,6 +86,13 @@ export default function mangaInfosReducer(state: State = {}, action = {}) {
 // ================================================================================
 // Selectors
 // ================================================================================
+
+export const selectIsMangaInfosLoading = createLoadingSelector([
+  FETCH_MANGA,
+  UPDATE_MANGA
+]);
+
+export const selectMangaInfos = (state): State => state.mangaInfos;
 
 export const selectMangaInfo = (state, mangaId: number): ?MangaType =>
   state.mangaInfos[mangaId];

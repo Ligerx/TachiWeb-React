@@ -2,6 +2,7 @@
 import { Server } from "api";
 import type { ChapterType } from "types";
 import createCachedSelector from "re-reselect";
+import { createLoadingSelector } from "redux-ducks/loading";
 import { ADJUST_UNREAD } from "./library";
 import { handleHTMLError } from "./utils";
 
@@ -77,6 +78,11 @@ export default function chaptersReducer(state: State = {}, action = {}) {
 // ================================================================================
 // Selectors
 // ================================================================================
+
+export const selectIsChaptersLoading = createLoadingSelector([
+  FETCH_CHAPTERS,
+  UPDATE_CHAPTERS
+]);
 
 // FIXME: Not sure if including a fallback value causes redux to needlessly rerender.
 //        Possible changes?

@@ -1,36 +1,22 @@
 // @flow
 import { connect } from "react-redux";
 import {
+  selectIsLibraryLoading,
+  selectUnread,
+  selectLibraryFlags,
+  selectMangaLibrary,
   fetchLibrary,
   fetchUnread,
   fetchLibraryFlags,
-  setLibraryFlag,
-  FETCH_LIBRARY,
-  FETCH_UNREAD,
-  FETCH_LIBRARY_FLAGS
+  setLibraryFlag
 } from "redux-ducks/library";
 import Library from "pages/Library";
-import { createLoadingSelector } from "redux-ducks/loading";
 import type { MangaType, LibraryFlagsType } from "types";
-import {
-  updateChapters,
-  UPDATE_CHAPTERS,
-  FETCH_CHAPTERS
-} from "redux-ducks/chapters";
-
-const libraryIsLoading = createLoadingSelector([
-  FETCH_LIBRARY,
-  FETCH_UNREAD,
-  FETCH_LIBRARY_FLAGS
-]);
-const chaptersAreUpdating = createLoadingSelector([
-  UPDATE_CHAPTERS,
-  FETCH_CHAPTERS
-]);
+import { selectIsChaptersLoading, updateChapters } from "redux-ducks/chapters";
 
 type StateToProps = {
   mangaLibrary: Array<MangaType>,
-  unread: { [mangaId: number]: number },
+  unread: { +[mangaId: number]: number },
   libraryIsLoading: boolean,
   chaptersAreUpdating: boolean,
   flags: LibraryFlagsType
@@ -38,11 +24,11 @@ type StateToProps = {
 
 const mapStateToProps = state =>
   ({
-    mangaLibrary: getMangaLibrary(state.mangaInfos, state.library.mangaIds),
-    unread: state.library.unread,
-    flags: state.library.flags,
-    libraryIsLoading: libraryIsLoading(state),
-    chaptersAreUpdating: chaptersAreUpdating(state)
+    mangaLibrary: selectMangaLibrary(state),
+    unread: selectUnread(state),
+    flags: selectLibraryFlags(state),
+    libraryIsLoading: selectIsLibraryLoading(state),
+    chaptersAreUpdating: selectIsChaptersLoading(state)
   }: StateToProps);
 
 type DispatchToProps = {
@@ -60,11 +46,6 @@ const mapDispatchToProps = (dispatch): DispatchToProps => ({
   fetchLibraryFlags: () => dispatch(fetchLibraryFlags()),
   setLibraryFlag: (flag, state) => dispatch(setLibraryFlag(flag, state))
 });
-
-// Helper Functions
-function getMangaLibrary(mangaInfos, mangaIds): Array<MangaType> {
-  return mangaIds.map(mangaId => mangaInfos[mangaId]);
-}
 
 export type LibraryContainerProps = StateToProps & DispatchToProps;
 export default connect(
