@@ -1,15 +1,16 @@
 // @flow
-import { Server } from 'api';
-import type { SourceType } from 'types';
-import { handleHTMLError } from './utils';
+import { Server } from "api";
+import type { SourceType } from "types";
+import { createLoadingSelector } from "redux-ducks/loading";
+import { handleHTMLError } from "./utils";
 
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_REQUEST = 'sources/FETCH_REQUEST';
-const FETCH_SUCCESS = 'sources/FETCH_SUCCESS';
-const FETCH_FAILURE = 'sources/FETCH_FAILURE';
-export const FETCH_SOURCES = 'sources/FETCH';
+const FETCH_REQUEST = "sources/FETCH_REQUEST";
+const FETCH_SUCCESS = "sources/FETCH_SUCCESS";
+const FETCH_FAILURE = "sources/FETCH_FAILURE";
+export const FETCH_SOURCES = "sources/FETCH";
 
 // ================================================================================
 // Reducers
@@ -26,6 +27,13 @@ export default function sourcesReducer(state: State = [], action = {}) {
 }
 
 // ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectIsSourcesLoading = createLoadingSelector([FETCH_SOURCES]);
+export const selectSources = (state): Array<SourceType> => state.sources;
+
+// ================================================================================
 // Action Creators
 // ================================================================================
 export function fetchSources() {
@@ -39,9 +47,9 @@ export function fetchSources() {
         error =>
           dispatch({
             type: FETCH_FAILURE,
-            errorMessage: 'Failed to load sources',
-            meta: { error },
-          }),
+            errorMessage: "Failed to load sources",
+            meta: { error }
+          })
       );
   };
 }

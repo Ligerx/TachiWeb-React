@@ -62,6 +62,17 @@ export default function filtersReducer(
 }
 
 // ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectInitialFilters = (state): Array<FilterAnyType> =>
+  state.filters.initialFilters;
+export const selectLastUsedFilters = (state): Array<FilterAnyType> =>
+  state.filters.lastUsedFilters;
+export const selectCurrentFilters = (state): Array<FilterAnyType> =>
+  state.filters.currentFilters;
+
+// ================================================================================
 // Action Creators
 // ================================================================================
 export function fetchFilters() {

@@ -1,49 +1,40 @@
 // @flow
 import { connect } from "react-redux";
-import { fetchSources, FETCH_SOURCES } from "redux-ducks/sources";
 import {
+  selectIsSourcesLoading,
+  selectSources,
+  fetchSources
+} from "redux-ducks/sources";
+import {
+  selectIsCatalogueLoading,
+  selectCatalogueSourceId,
+  selectCatalogueHasNextPage,
+  selectCatalogueSearchQuery,
+  selectCatalogueMangaInfos,
   fetchCatalogue,
   fetchNextCataloguePage,
   resetCatalogue,
   updateSearchQuery,
-  changeSourceId,
-  FETCH_CATALOGUE,
-  CATALOGUE_ADD_PAGE
+  changeSourceId
 } from "redux-ducks/catalogue";
 import {
+  selectChapter,
   fetchChapters,
-  updateChapters,
-  FETCH_CHAPTERS,
-  UPDATE_CHAPTERS
+  updateChapters
 } from "redux-ducks/chapters";
 import {
+  selectInitialFilters,
+  selectLastUsedFilters,
+  selectCurrentFilters,
   fetchFilters,
   resetFilters,
   updateLastUsedFilters,
   updateCurrentFilters
 } from "redux-ducks/filters";
-import {
-  fetchMangaInfo,
-  updateMangaInfo,
-  FETCH_MANGA,
-  UPDATE_MANGA
-} from "redux-ducks/mangaInfos";
+import { fetchMangaInfo, updateMangaInfo } from "redux-ducks/mangaInfos";
 import Catalogue from "pages/Catalogue";
-import { createLoadingSelector } from "redux-ducks/loading";
 import type { SourceType, ChapterType, MangaType } from "types";
 import type { FilterAnyType } from "types/filters";
-
-const sourcesAreLoading: Function = createLoadingSelector([FETCH_SOURCES]);
-const catalogueIsLoading: Function = createLoadingSelector([
-  FETCH_CATALOGUE,
-  CATALOGUE_ADD_PAGE
-]);
-const mangaInfoIsLoading: Function = createLoadingSelector([
-  FETCH_MANGA,
-  UPDATE_MANGA,
-  FETCH_CHAPTERS,
-  UPDATE_CHAPTERS
-]);
 
 type StateToProps = {
   sources: Array<SourceType>,
@@ -60,33 +51,28 @@ type StateToProps = {
   currentFilters: Array<FilterAnyType>,
 
   sourcesAreLoading: boolean,
-  catalogueIsLoading: boolean,
-  mangaInfoIsLoading: boolean
+  catalogueIsLoading: boolean
 };
 
 const mapStateToProps = (state): StateToProps => {
-  const { mangaIds, hasNextPage, searchQuery, sourceId } = state.catalogue;
-  const mangaLibrary = mangaToShow(state.mangaInfos, mangaIds);
-
   return {
     // Sources props
-    sources: state.sources,
+    sources: selectSources(state),
     // Catalogue props
-    hasNextPage,
-    searchQuery,
-    sourceId,
+    hasNextPage: selectCatalogueHasNextPage(state),
+    searchQuery: selectCatalogueSearchQuery(state),
+    sourceId: selectCatalogueSourceId(state),
     // Chapter props
-    chaptersByMangaId: state.chapters,
+    chaptersByMangaId: selectChapter(state),
     // Library props
-    mangaLibrary,
+    mangaLibrary: selectCatalogueMangaInfos(state),
     // Filter props
-    initialFilters: state.filters.initialFilters,
-    lastUsedFilters: state.filters.lastUsedFilters,
-    currentFilters: state.filters.currentFilters,
+    initialFilters: selectInitialFilters(state),
+    lastUsedFilters: selectLastUsedFilters(state),
+    currentFilters: selectCurrentFilters(state),
     // Fetching props
-    sourcesAreLoading: sourcesAreLoading(state),
-    catalogueIsLoading: catalogueIsLoading(state),
-    mangaInfoIsLoading: mangaInfoIsLoading(state)
+    sourcesAreLoading: selectIsSourcesLoading(state),
+    catalogueIsLoading: selectIsCatalogueLoading(state)
   };
 };
 
@@ -129,11 +115,6 @@ const mapDispatchToProps = (dispatch): DispatchToProps => ({
   updateLastUsedFilters: () => dispatch(updateLastUsedFilters()),
   updateCurrentFilters: newFilters => dispatch(updateCurrentFilters(newFilters))
 });
-
-// Helper functions
-function mangaToShow(mangaLibrary, mangaIds) {
-  return mangaIds.map(mangaId => mangaLibrary[mangaId]);
-}
 
 export type CatalogueContainerProps = StateToProps & DispatchToProps;
 export default connect(
