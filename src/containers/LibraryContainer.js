@@ -4,7 +4,7 @@ import {
   selectIsLibraryLoading,
   selectUnread,
   selectLibraryFlags,
-  selectMangaLibrary,
+  selectLibraryMangaInfos,
   fetchLibrary,
   fetchUnread,
   fetchLibraryFlags,
@@ -24,7 +24,7 @@ type StateToProps = {
 
 const mapStateToProps = state =>
   ({
-    mangaLibrary: selectMangaLibrary(state),
+    mangaLibrary: selectLibraryMangaInfos(state),
     unread: selectUnread(state),
     flags: selectLibraryFlags(state),
     libraryIsLoading: selectIsLibraryLoading(state),

@@ -183,7 +183,7 @@ export const selectUnread = (state): { +[mangaId: number]: number } =>
 export const selectLibraryFlags = (state): LibraryFlagsType =>
   state.library.flags;
 
-export const selectMangaLibrary = createSelector(
+export const selectLibraryMangaInfos = createSelector(
   [selectMangaInfos, selectLibraryMangaIds],
   (mangaInfos, mangaIds): Array<MangaType> => {
     return mangaIds.map(mangaId => mangaInfos[mangaId]);
