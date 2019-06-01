@@ -3,6 +3,7 @@
 import { Server } from "api";
 import type { MangaType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
+import createCachedSelector from "re-reselect";
 import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "./library";
 import { handleHTMLError } from "./utils";
 
@@ -92,10 +93,25 @@ export const selectIsMangaInfosLoading = createLoadingSelector([
   UPDATE_MANGA
 ]);
 
+export const selectIsFavoriteToggling = createLoadingSelector([
+  TOGGLE_FAVORITE
+]);
+
 export const selectMangaInfos = (state): State => state.mangaInfos;
 
 export const selectMangaInfo = (state, mangaId: number): ?MangaType =>
   state.mangaInfos[mangaId];
+
+// selectIsFavorite(state, mangaId)
+export const selectIsFavorite = createCachedSelector(
+  [selectMangaInfos, (_, mangaId: number) => mangaId],
+  (mangaInfos, mangaId): boolean => {
+    if (!mangaInfos[mangaId]) return false;
+
+    return mangaInfos[mangaId].favorite;
+  }
+  // Cache Key
+)((state, mangaId) => mangaId);
 
 // ================================================================================
 // Action Creators

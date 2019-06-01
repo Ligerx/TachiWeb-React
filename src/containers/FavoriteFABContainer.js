@@ -1,45 +1,43 @@
 // @flow
-import { connect } from 'react-redux';
-import FavoriteFAB from 'components/FavoriteFAB';
-import { createLoadingSelector } from 'redux-ducks/loading';
-import { toggleFavorite, TOGGLE_FAVORITE } from 'redux-ducks/mangaInfos';
-
-const favoriteIsToggling: Function = createLoadingSelector([TOGGLE_FAVORITE]);
+import { connect } from "react-redux";
+import FavoriteFAB from "components/FavoriteFAB";
+import {
+  selectIsFavoriteToggling,
+  selectIsFavorite,
+  toggleFavorite
+} from "redux-ducks/mangaInfos";
 
 type Params = {
-  mangaId: number,
+  mangaId: number
 };
 
 type StateToProps = {
   isFavorite: boolean,
-  favoriteIsToggling: boolean,
+  favoriteIsToggling: boolean
 };
 
-const mapStateToProps = (state, ownProps: Params): StateToProps => ({
-  isFavorite: getIsFavorite(state.mangaInfos, ownProps.mangaId),
-  favoriteIsToggling: favoriteIsToggling(state),
-});
+const mapStateToProps = (state, { mangaId }: Params): StateToProps => {
+  return {
+    isFavorite: selectIsFavorite(state, mangaId),
+    favoriteIsToggling: selectIsFavoriteToggling(state)
+  };
+};
 
 type DispatchToProps = {
-  toggleFavorite: Function,
+  toggleFavorite: Function
 };
 
-const mapDispatchToProps = (dispatch, ownProps: Params): DispatchToProps => ({
+const mapDispatchToProps = (
+  dispatch,
+  { mangaId }: Params
+): DispatchToProps => ({
   toggleFavorite: isFavorite => () => {
-    const { mangaId } = ownProps;
-    if (!mangaId) return () => null;
-
     return dispatch(toggleFavorite(mangaId, isFavorite));
-  },
+  }
 });
 
-// Helper Functions
-function getIsFavorite(mangaInfos, mangaId): boolean {
-  if (!mangaId) return false;
-
-  const mangaInfo = mangaInfos[mangaId];
-  return mangaInfo.favorite;
-}
-
 export type FavoriteFABContainerProps = StateToProps & DispatchToProps;
-export default connect(mapStateToProps, mapDispatchToProps)(FavoriteFAB);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FavoriteFAB);
