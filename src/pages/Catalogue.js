@@ -1,19 +1,19 @@
 // @flow
-import React, { Component } from 'react';
-import debounce from 'lodash/debounce';
-import MangaGrid from 'components/MangaGrid';
-import CatalogueMangaCard from 'components/catalogue/CatalogueMangaCard';
-import Waypoint from 'react-waypoint';
-import DynamicSourceFilters from 'components/filters/DynamicSourceFilters';
-import ResponsiveGrid from 'components/ResponsiveGrid';
-import CatalogueHeader from 'components/catalogue/CatalogueHeader';
-import CenteredLoading from 'components/loading/CenteredLoading';
-import FullScreenLoading from 'components/loading/FullScreenLoading';
-import type { FilterAnyType } from 'types/filters';
-import type { CatalogueContainerProps } from 'containers/CatalogueContainer';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
-import { Helmet } from 'react-helmet';
+import React, { Component } from "react";
+import debounce from "lodash/debounce";
+import MangaGrid from "components/MangaGrid";
+import CatalogueMangaCard from "components/catalogue/CatalogueMangaCard";
+import Waypoint from "react-waypoint";
+import DynamicSourceFilters from "components/filters/DynamicSourceFilters";
+import ResponsiveGrid from "components/ResponsiveGrid";
+import CatalogueHeader from "components/catalogue/CatalogueHeader";
+import CenteredLoading from "components/loading/CenteredLoading";
+import FullScreenLoading from "components/loading/FullScreenLoading";
+import type { FilterAnyType } from "types/filters";
+import type { CatalogueContainerProps } from "containers/CatalogueContainer";
+import Typography from "@material-ui/core/Typography";
+import { withStyles } from "@material-ui/core/styles";
+import { Helmet } from "react-helmet";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 
@@ -25,18 +25,25 @@ import { Helmet } from 'react-helmet';
 const styles = {
   loading: {
     marginTop: 24,
-    marginBottom: 40,
+    marginBottom: 40
   },
   noMoreResults: {
     marginTop: 40,
-    marginBottom: 60,
-  },
+    marginBottom: 60
+  }
 };
 
-class Catalogue extends Component<CatalogueContainerProps & { classes: Object }> {
+class Catalogue extends Component<
+  CatalogueContainerProps & { classes: Object }
+> {
   componentDidMount() {
     const {
-      sources, sourceId, fetchSources, fetchCatalogue, fetchFilters, changeSourceId,
+      sources,
+      sourceId,
+      fetchSources,
+      fetchCatalogue,
+      fetchFilters,
+      changeSourceId
     } = this.props;
 
     // https://github.com/babel/babel/issues/2141
@@ -70,7 +77,11 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
     const {
-      sources, changeSourceId, resetCatalogue, fetchFilters, fetchCatalogue,
+      sources,
+      changeSourceId,
+      resetCatalogue,
+      fetchFilters,
+      fetchCatalogue
     } = this.props;
 
     const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
@@ -90,7 +101,9 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
 
   handleLoadNextPage = () => {
     const {
-      hasNextPage, fetchNextCataloguePage, catalogueIsLoading,
+      hasNextPage,
+      fetchNextCataloguePage,
+      catalogueIsLoading
     } = this.props;
 
     if (hasNextPage && !catalogueIsLoading) {
@@ -123,10 +136,11 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
       currentFilters,
       searchQuery,
       sourceId,
-      hasNextPage,
+      hasNextPage
     } = this.props;
 
-    const noMoreResults = !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
+    const noMoreResults =
+      !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
 
     return (
       <React.Fragment>
@@ -161,11 +175,16 @@ class Catalogue extends Component<CatalogueContainerProps & { classes: Object }>
 
         {catalogueIsLoading && <CenteredLoading className={classes.loading} />}
         {sourcesAreLoading && <FullScreenLoading />}
-        {noMoreResults &&
-          <Typography variant="caption" align="center" className={classes.noMoreResults}>
+        {noMoreResults && (
+          <Typography
+            variant="caption"
+            display="block"
+            align="center"
+            className={classes.noMoreResults}
+          >
             No more results
           </Typography>
-        }
+        )}
       </React.Fragment>
     );
   }
