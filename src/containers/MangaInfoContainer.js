@@ -1,12 +1,14 @@
 // @flow
 import { connect } from "react-redux";
 import {
+  selectIsMangaInfosLoading,
   selectMangaInfo,
   fetchMangaInfo,
   updateMangaInfo,
   setFlag
 } from "redux-ducks/mangaInfos";
 import {
+  selectIsChaptersLoading,
   selectChaptersForManga,
   fetchChapters,
   updateChapters,
@@ -14,12 +16,12 @@ import {
 } from "redux-ducks/chapters";
 import MangaInfo from "pages/MangaInfo";
 import type { MangaType, ChapterType } from "types";
-import { selectIsMangaOrChaptersLoading } from "redux-ducks/sharedSelectors";
 
 type StateToProps = {
   mangaInfo: ?MangaType,
   chapters: Array<ChapterType>,
-  fetchOrRefreshIsLoading: boolean,
+  isMangaInfosLoading: boolean,
+  isChaptersLoading: boolean,
 
   // below props should be passed in by router
   backUrl: string,
@@ -32,7 +34,8 @@ const mapStateToProps = (state, ownProps): StateToProps => {
   return {
     mangaInfo: selectMangaInfo(state, mangaId),
     chapters: selectChaptersForManga(state, mangaId),
-    fetchOrRefreshIsLoading: selectIsMangaOrChaptersLoading(state),
+    isMangaInfosLoading: selectIsMangaInfosLoading(state),
+    isChaptersLoading: selectIsChaptersLoading(state),
 
     backUrl: ownProps.backUrl,
     defaultTab: ownProps.defaultTab
