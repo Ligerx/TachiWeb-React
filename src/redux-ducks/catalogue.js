@@ -3,8 +3,8 @@ import { Server } from "api";
 import type { FilterAnyType } from "types/filters";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createSelector } from "reselect";
-import { selectMangaInfos, ADD_MANGA } from "./mangaInfos";
-import { handleHTMLError, transformToMangaIdsArray } from "./utils";
+import { selectMangaInfos, ADD_MANGA } from "redux-ducks/mangaInfos";
+import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 
 // ================================================================================
 // Actions

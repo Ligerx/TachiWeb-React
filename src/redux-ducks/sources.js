@@ -2,7 +2,7 @@
 import { Server } from "api";
 import type { SourceType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
-import { handleHTMLError } from "./utils";
+import { handleHTMLError } from "redux-ducks/utils";
 
 // ================================================================================
 // Actions

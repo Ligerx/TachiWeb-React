@@ -1,6 +1,6 @@
 // @flow
 import { Server } from "api";
-import { handleHTMLError } from "./utils";
+import { handleHTMLError } from "redux-ducks/utils";
 
 // ================================================================================
 // Actions

@@ -1,7 +1,7 @@
 // @flow
 import { Server } from "api";
 import type { FilterAnyType } from "types/filters";
-import { handleHTMLError } from "./utils";
+import { handleHTMLError } from "redux-ducks/utils";
 
 // ================================================================================
 // Actions

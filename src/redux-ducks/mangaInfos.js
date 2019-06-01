@@ -4,8 +4,8 @@ import { Server } from "api";
 import type { MangaType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
 import createCachedSelector from "re-reselect";
-import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "./library";
-import { handleHTMLError } from "./utils";
+import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "redux-ducks/library";
+import { handleHTMLError } from "redux-ducks/utils";
 
 // NOTE: for clarity, this will be called mangaInfos (with an s)
 //       Info doesn't really have a plural, so I need to differentiate somehow
