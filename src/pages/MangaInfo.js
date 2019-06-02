@@ -1,5 +1,5 @@
 // @flow
-import * as React from "react";
+import React, { useEffect, useState, type Node } from "react";
 import type { MangaType } from "types";
 import { Helmet } from "react-helmet";
 import MangaInfoHeader from "components/mangaInfo/MangaInfoHeader";
@@ -33,7 +33,7 @@ type Props = {
 const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const mangaId = parseInt(params.mangaId, 10);
 
-  const [tabValue, setTabValue] = React.useState(defaultTab);
+  const [tabValue, setTabValue] = useState(defaultTab);
 
   const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
   const chapters = useSelector(state => selectChaptersForManga(state, mangaId));
@@ -46,7 +46,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const handleToggleRead = (chapterId, read) =>
     dispatch(toggleRead(mangaId, chapterId, read));
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchChapters(mangaId))
       .then(() => {
         // Fetch chapters cached on the server
@@ -83,7 +83,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
     );
   };
 
-  const tabContent = (): React.Node => {
+  const tabContent = (): Node => {
     const numChapters: number = chapters ? chapters.length : 0;
 
     if (mangaInfo && tabValue === 0) {
