@@ -8,7 +8,7 @@ import type { ChapterType, MangaType } from "types";
 import SinglePageReader from "components/reader/SinglePageReader";
 import WebtoonReader from "components/reader/WebtoonReader";
 import ReadingStatusUpdater from "components/reader/ReadingStatusUpdater";
-import ImagePreloaderContainer from "containers/ImagePreloaderContainer";
+import ImagePreloader from "components/reader/ImagePreloader";
 import { Helmet } from "react-helmet";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -194,7 +194,7 @@ class Reader extends Component<Props> {
         )}
 
         <ReadingStatusUpdater />
-        <ImagePreloaderContainer />
+        <ImagePreloader />
       </React.Fragment>
     );
   }

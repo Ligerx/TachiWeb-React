@@ -1,9 +1,15 @@
 // @flow
-import { Component } from 'react';
-import type { ImagePreloaderContainerProps } from 'containers/ImagePreloaderContainer';
-import { Server } from 'api';
+import { useEffect } from "react";
+import { withRouter } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Server } from "api";
+import { selectPageCount } from "redux-ducks/pageCounts";
+import { selectNextChapterId } from "redux-ducks/chapters";
+import { usePrevious } from "components/hooks";
 
 // This expects whatever component is using it to load pageCount for the current chapter
+
+// TODO: Consider making this a custom useEffect hook?
 
 // TODO: Do we want to preload one behind as well?
 //       Loading from only this chapter would be trivial.
@@ -14,50 +20,64 @@ import { Server } from 'api';
 // https://www.photo-mark.com/notes/image-preloading/
 // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 
-type Props = ImagePreloaderContainerProps;
+const preloadImages = (page, pageCount, mangaId, chapterId, nextChapterId) => {
+  const numPreloadAhead = 3;
 
-class ImagePreloader extends Component<Props> {
-  componentDidMount() {
-    this.preloadImages();
+  for (let i = 1; i <= numPreloadAhead; i += 1) {
+    // Chrome only seems to preload if a new image object is used every time
+    const image = new Image();
+
+    if (page + i < pageCount) {
+      // Load pages from this chapter
+      image.src = Server.image(mangaId, chapterId, page + i);
+    } else if (nextChapterId) {
+      // Load pages from next chapter
+      // NOTE: Not bothering to check next chapter's pageCount. Doubt this will be a problem.
+      /* eslint-disable no-mixed-operators */
+      image.src = Server.image(mangaId, nextChapterId, page + i - pageCount);
+    }
   }
+};
 
-  componentDidUpdate(prevProps: Props) {
-    const { mangaId, chapterId, page } = this.props;
+type Props = { match: { params: Object } };
 
-    const mangaChanged = mangaId !== prevProps.mangaId;
-    const chapterChanged = chapterId !== prevProps.chapterId;
-    const pageChanged = page !== prevProps.page;
+const ImagePreloader = ({ match: { params } }: Props) => {
+  const mangaId = parseInt(params.mangaId, 10);
+  const chapterId = parseInt(params.chapterId, 10);
+  const page = parseInt(params.page, 10);
+
+  const prevMangaId = usePrevious(mangaId);
+  const prevChapterId = usePrevious(chapterId);
+  const prevPage = usePrevious(page);
+
+  // FIXME: inefficient redux design?
+  const pageCount =
+    useSelector(state => selectPageCount(state, chapterId)) || 0;
+
+  const nextChapterId = useSelector(state =>
+    selectNextChapterId(state, mangaId, chapterId)
+  );
+
+  useEffect(() => {
+    const mangaChanged = mangaId !== prevMangaId;
+    const chapterChanged = chapterId !== prevChapterId;
+    const pageChanged = page !== prevPage;
 
     if (mangaChanged || chapterChanged || pageChanged) {
-      this.preloadImages();
+      preloadImages(page, pageCount, mangaId, chapterId, nextChapterId);
     }
-  }
+  }, [
+    chapterId,
+    mangaId,
+    nextChapterId,
+    page,
+    pageCount,
+    prevChapterId,
+    prevMangaId,
+    prevPage
+  ]);
 
-  preloadImages = () => {
-    const {
-      mangaId, chapterId, page, pageCount, nextChapterId,
-    } = this.props;
-    const numPreloadAhead = 3;
+  return null;
+};
 
-    for (let i = 1; i <= numPreloadAhead; i += 1) {
-      // Chrome only seems to preload if a new image object is used every time
-      const image = new Image();
-
-      if (page + i < pageCount) {
-        // Load pages from this chapter
-        image.src = Server.image(mangaId, chapterId, page + i);
-      } else if (nextChapterId) {
-        // Load pages from next chapter
-        // NOTE: Not bothering to check next chapter's pageCount. Doubt this will be a problem.
-        /* eslint-disable no-mixed-operators */
-        image.src = Server.image(mangaId, nextChapterId, page + i - pageCount);
-      }
-    }
-  };
-
-  render() {
-    return null;
-  }
-}
-
-export default ImagePreloader;
+export default withRouter(ImagePreloader);
