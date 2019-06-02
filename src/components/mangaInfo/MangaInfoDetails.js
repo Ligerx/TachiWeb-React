@@ -10,7 +10,7 @@ import type { MangaType } from "types";
 import classNames from "classnames";
 import { Server } from "api";
 import upperFirst from "lodash/upperFirst";
-import FavoriteFABContainer from "containers/FavoriteFABContainer";
+import FavoriteFab from "components/FavoriteFab";
 
 // TODO: increase top/bottom padding for description so it doesn't touch the FAB
 
@@ -52,7 +52,7 @@ const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
             {detailsElements(mangaInfo)}
           </Grid>
 
-          <FavoriteFABContainer mangaId={mangaInfo.id} />
+          <FavoriteFab mangaId={mangaInfo.id} />
         </ResponsiveGrid>
       </BackgroundImage>
 
