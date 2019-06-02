@@ -7,7 +7,7 @@ import MenuDrawer from "components/MenuDrawer";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import Grid from "@material-ui/core/Grid";
 import BackupCard from "components/backup-restore/BackupCard";
-import RestoreCardContainer from "containers/RestoreCardContainer";
+import RestoreCard from "components/backup-restore/RestoreCard";
 import { Helmet } from "react-helmet";
 
 const BackupRestore = () => (
@@ -29,7 +29,7 @@ const BackupRestore = () => (
       </Grid>
 
       <Grid item xs={12}>
-        <RestoreCardContainer />
+        <RestoreCard />
       </Grid>
     </ResponsiveGrid>
   </React.Fragment>
