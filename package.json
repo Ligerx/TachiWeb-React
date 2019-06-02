@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.0.1",
+    "@material-ui/styles": "^4.0.1",
     "@tachiweb/api-client": "1.0.0-alpha.72",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
