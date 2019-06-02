@@ -5,7 +5,7 @@ import LibraryContainer from "containers/LibraryContainer";
 import MangaInfo from "pages/MangaInfo";
 import ReaderContainer from "containers/ReaderContainer";
 import CatalogueContainer from "containers/CatalogueContainer";
-import ExtensionsContainer from "containers/ExtensionsContainer";
+import Extensions from "pages/Extensions";
 import BackupRestore from "pages/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import Settings, { SETTING_INDEX } from "pages/Settings";
@@ -57,7 +57,7 @@ const Router = () => (
         <Route exact path="/library" component={LibraryContainer} />
         <Route path="/library" component={MangaRouter} />
 
-        <Route exact path="/extensions" component={ExtensionsContainer} />
+        <Route exact path="/extensions" component={Extensions} />
 
         <Route exact path="/backup_restore" component={BackupRestore} />
 

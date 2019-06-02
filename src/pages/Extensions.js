@@ -1,7 +1,6 @@
 // @flow
 import React, { useEffect } from "react";
 import FullScreenLoading from "components/loading/FullScreenLoading";
-import type { ExtensionsContainerProps } from "containers/ExtensionsContainer";
 import { Helmet } from "react-helmet";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import Typography from "@material-ui/core/Typography";
@@ -11,21 +10,36 @@ import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
 import ExtensionList from "components/extensions/ExtensionList";
 import type { ExtensionType } from "types";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectIsExtensionsLoading,
+  selectExtensions,
+  fetchExtensions,
+  installExtension,
+  uninstallExtension,
+  reloadExtensions
+} from "redux-ducks/extensions";
 
 // Currently, the buttons that appear do not completely match Tachiyomi's buttons.
 // Partially because I'm missing extension preferences,
 // but also because I don't think it's worth the effort to implement.
 
-const Extensions = ({
-  extensions,
-  isExtensionsLoading,
-  fetchExtensions,
-  installExtension,
-  uninstallExtension,
-  reloadExtensions
-}: ExtensionsContainerProps) => {
+const Extensions = () => {
+  const extensions = useSelector(selectExtensions);
+  const isExtensionsLoading = useSelector(selectIsExtensionsLoading);
+
+  const dispatch = useDispatch();
+
+  const handleInstallExtension = packageName =>
+    dispatch(installExtension(packageName));
+
+  const handleUninstallExtension = packageName =>
+    dispatch(uninstallExtension(packageName));
+
+  const handleReloadExtensions = () => dispatch(reloadExtensions());
+
   useEffect(() => {
-    fetchExtensions();
+    dispatch(fetchExtensions());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function extensionSort(a: ExtensionType, b: ExtensionType) {
@@ -61,7 +75,7 @@ const Extensions = ({
             Extensions
           </Typography>
 
-          <RefreshButton onClick={() => reloadExtensions()} />
+          <RefreshButton onClick={handleReloadExtensions} />
         </Toolbar>
       </AppBar>
 
@@ -69,17 +83,17 @@ const Extensions = ({
         <ExtensionList
           title="Installed"
           extensions={installedExtensions}
-          onUpdateClick={installExtension}
-          onInstallClick={installExtension}
-          onUninstallClick={uninstallExtension}
+          onUpdateClick={handleInstallExtension}
+          onInstallClick={handleInstallExtension}
+          onUninstallClick={handleUninstallExtension}
         />
 
         <ExtensionList
           title="Available"
           extensions={notInstalledExtensions}
-          onUpdateClick={installExtension}
-          onInstallClick={installExtension}
-          onUninstallClick={uninstallExtension}
+          onUpdateClick={handleInstallExtension}
+          onInstallClick={handleInstallExtension}
+          onUninstallClick={handleUninstallExtension}
         />
       </ResponsiveGrid>
 
