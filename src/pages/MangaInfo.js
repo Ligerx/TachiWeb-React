@@ -1,39 +1,62 @@
 // @flow
 import * as React from "react";
-import type { MangaInfoContainerProps } from "containers/MangaInfoContainer";
 import type { MangaType } from "types";
 import { Helmet } from "react-helmet";
 import MangaInfoHeader from "components/mangaInfo/MangaInfoHeader";
 import MangaInfoDetails from "components/mangaInfo/MangaInfoDetails";
 import FullScreenLoading from "components/loading/FullScreenLoading";
 import MangaInfoChapters from "components/mangaInfo/MangaInfoChapters";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectIsMangaInfosLoading,
+  selectMangaInfo,
+  fetchMangaInfo,
+  updateMangaInfo,
+  setFlag
+} from "redux-ducks/mangaInfos";
+import {
+  selectIsChaptersLoading,
+  selectChaptersForManga,
+  fetchChapters,
+  updateChapters,
+  toggleRead
+} from "redux-ducks/chapters";
 
-type State = { tabValue: number };
+type Props = {
+  backUrl: string,
+  defaultTab: number,
 
-class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
-  state = {
-    tabValue: this.props.defaultTab
-  };
+  // react router props
+  match: { params: Object }
+};
 
-  componentDidMount() {
-    const {
-      fetchMangaInfo,
-      fetchChapters,
-      updateMangaInfo,
-      updateChapters,
-      chapters
-    } = this.props;
+const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
+  const mangaId = parseInt(params.mangaId, 10);
 
-    fetchChapters()
+  const [tabValue, setTabValue] = React.useState(defaultTab);
+
+  const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
+  const chapters = useSelector(state => selectChaptersForManga(state, mangaId));
+  const isMangaInfosLoading = useSelector(selectIsMangaInfosLoading);
+  const isChaptersLoading = useSelector(selectIsChaptersLoading);
+
+  const dispatch = useDispatch();
+  const handleSetFlag = (flag, state) =>
+    dispatch(setFlag(mangaId, flag, state));
+  const handleToggleRead = (chapterId, read) =>
+    dispatch(toggleRead(mangaId, chapterId, read));
+
+  React.useEffect(() => {
+    dispatch(fetchChapters(mangaId))
       .then(() => {
         // Fetch chapters cached on the server
         // If there are none, tell the server to scrape chapters from the site
         if (!chapters.length) {
-          return updateChapters(); // return promise so next .then()'s wait
+          return dispatch(updateChapters(mangaId)); // return promise so next .then()'s wait
         }
         return null;
       })
-      .then(() => fetchMangaInfo())
+      .then(() => dispatch(fetchMangaInfo(mangaId)))
       .then(() => {
         // If we think the server hasn't had enough time to scrape the source website
         // for this mangaInfo, wait a little while and try fetching again.
@@ -42,29 +65,25 @@ class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
         //       likely missing information as well. Viewing them will then fetch the data.
         //
         // TODO: might try to do one additional fetch at a slightly later time. e.g. 1000 ms
-        const { mangaInfo } = this.props;
         if (mangaInfo && possiblyMissingInfo(mangaInfo)) {
-          setTimeout(() => updateMangaInfo(), 300);
+          setTimeout(() => dispatch(updateMangaInfo(mangaId)), 300);
         }
       });
-  }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  handleChangeTab = (event: SyntheticEvent<>, newValue: number) => {
-    this.setState({ tabValue: newValue });
+  const handleChangeTab = (event: SyntheticEvent<>, newValue: number) => {
+    setTabValue(newValue);
   };
 
-  handleRefreshClick = () => {
-    const { updateChapters, updateMangaInfo } = this.props;
-
+  const handleRefreshClick = () => {
     // Running updateChapters also updates mangaInfo.chapters and mangaInfo.unread
     // So run updateMangaInfo after chapters
-    updateChapters().then(() => updateMangaInfo());
+    dispatch(updateChapters(mangaId)).then(() =>
+      dispatch(updateMangaInfo(mangaId))
+    );
   };
 
-  tabContent = (): React.Node => {
-    const { tabValue } = this.state;
-    const { mangaInfo, chapters, toggleRead } = this.props;
-
+  const tabContent = (): React.Node => {
     const numChapters: number = chapters ? chapters.length : 0;
 
     if (mangaInfo && tabValue === 0) {
@@ -77,46 +96,33 @@ class MangaInfo extends React.Component<MangaInfoContainerProps, State> {
         <MangaInfoChapters
           chapters={chapters}
           mangaInfo={mangaInfo}
-          toggleRead={toggleRead}
+          toggleRead={handleToggleRead}
         />
       );
     }
     return null;
   };
 
-  render() {
-    const { tabValue } = this.state;
-    const {
-      mangaInfo,
-      isMangaInfosLoading,
-      isChaptersLoading,
-      backUrl,
-      setFlag
-    } = this.props;
+  return (
+    <React.Fragment>
+      <Helmet
+        title={`${mangaInfo ? mangaInfo.title : "Loading..."} - TachiWeb`}
+      />
 
-    const title = mangaInfo ? mangaInfo.title : "Loading...";
+      <MangaInfoHeader
+        mangaInfo={mangaInfo}
+        tabValue={tabValue}
+        handleChangeTab={handleChangeTab}
+        onBackClick={backUrl}
+        onRefreshClick={handleRefreshClick}
+        setFlag={handleSetFlag}
+      />
+      {tabContent()}
 
-    return (
-      <React.Fragment>
-        <Helmet>
-          <title>{title} - TachiWeb</title>
-        </Helmet>
-
-        <MangaInfoHeader
-          mangaInfo={mangaInfo}
-          tabValue={tabValue}
-          handleChangeTab={this.handleChangeTab}
-          onBackClick={backUrl}
-          onRefreshClick={this.handleRefreshClick}
-          setFlag={setFlag}
-        />
-        {this.tabContent()}
-
-        {(isMangaInfosLoading || isChaptersLoading) && <FullScreenLoading />}
-      </React.Fragment>
-    );
-  }
-}
+      {(isMangaInfosLoading || isChaptersLoading) && <FullScreenLoading />}
+    </React.Fragment>
+  );
+};
 
 // Helper methods
 function possiblyMissingInfo(manga: MangaType): boolean {

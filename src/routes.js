@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Client } from "api";
 import LibraryContainer from "containers/LibraryContainer";
-import MangaInfoContainer from "containers/MangaInfoContainer";
+import MangaInfo from "pages/MangaInfo";
 import ReaderContainer from "containers/ReaderContainer";
 import CatalogueContainer from "containers/CatalogueContainer";
 import ExtensionsContainer from "containers/ExtensionsContainer";
@@ -37,11 +37,7 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
         <Route
           path={`${match.path}/:mangaId`}
           render={props => (
-            <MangaInfoContainer
-              {...props}
-              backUrl={backUrl}
-              defaultTab={defaultTab}
-            />
+            <MangaInfo {...props} backUrl={backUrl} defaultTab={defaultTab} />
           )}
         />
       </Switch>
