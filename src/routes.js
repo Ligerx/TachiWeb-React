@@ -8,8 +8,7 @@ import CatalogueContainer from "containers/CatalogueContainer";
 import ExtensionsContainer from "containers/ExtensionsContainer";
 import BackupRestore from "pages/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
-import SettingsContainer from "containers/SettingsContainer";
-import { SETTING_INDEX } from "pages/Settings";
+import Settings, { SETTING_INDEX } from "pages/Settings";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
@@ -66,10 +65,7 @@ const Router = () => (
 
         <Route exact path="/backup_restore" component={BackupRestore} />
 
-        <Route
-          path={`/settings/:${SETTING_INDEX}*`}
-          component={SettingsContainer}
-        />
+        <Route path={`/settings/:${SETTING_INDEX}*`} component={Settings} />
       </Switch>
     </BrowserRouter>
   </React.Fragment>

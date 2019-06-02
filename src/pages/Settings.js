@@ -1,25 +1,34 @@
 // @flow
-import React, { Component } from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { withRouter } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import MenuDrawer from "components/MenuDrawer";
 import List from "@material-ui/core/List";
-import { Client } from "api";
-import type { SettingsContainerProps } from "containers/SettingsContainer";
+import MenuDrawer from "components/MenuDrawer";
 import FullScreenLoading from "components/loading/FullScreenLoading";
 import SettingsItem from "components/settings/SettingsItem";
+import BackButton from "components/BackButton";
+import {
+  selectIsSettingsLoading,
+  selectSettingsSchema,
+  selectSettingsPrefs,
+  fetchSettings,
+  fetchSettingsSchema,
+  setSetting
+} from "redux-ducks/settings";
+import { Client } from "api";
 import type { PrefValue } from "redux-ducks/settings";
 import type { SchemaType } from "types/settings-schema";
-import BackButton from "components/BackButton";
 
 // The name of the path parameter describing the setting folder the user is currently viewing
 export const SETTING_INDEX = "settingIndex";
 
 // Split the path into a stack of indexes describing which folders the user has entered
-function splitSettingsPath(props: SettingsContainerProps): Array<number> {
-  const settingsPath = props.match.params[SETTING_INDEX];
+function splitSettingsPath(params): Array<number> {
+  const settingsPath = params[SETTING_INDEX];
   if (settingsPath == null) return [];
   return settingsPath
     .split("/")
@@ -28,93 +37,85 @@ function splitSettingsPath(props: SettingsContainerProps): Array<number> {
     .map(it => parseInt(it, 10));
 }
 
-/**
- * The base settings page
- */
-class Settings extends Component<SettingsContainerProps> {
-  componentDidMount(): void {
-    const { fetchSettings, fetchSettingsSchema } = this.props;
+function parseInfo(schema: ?SchemaType, params) {
+  if (schema == null) return {};
 
-    fetchSettings().then(fetchSettingsSchema);
+  let currentTitle: ?string = null;
+  let currentSchema: SchemaType = [...schema];
+  const split = splitSettingsPath(params);
+
+  for (let i = 0; i < split.length; i += 1) {
+    const settingIndex = split[i];
+    const nextSchema = schema[settingIndex];
+
+    if (nextSchema.type === "nested") {
+      currentSchema = nextSchema.prefs;
+      currentTitle = nextSchema.label;
+    } else break;
   }
 
-  handleSettingsUpdate = (key: string, value: PrefValue) => {
-    const { setSetting } = this.props;
-    setSetting(key, value);
+  return {
+    title: currentTitle, // The title of the current folder, null at top level
+    schema: currentSchema, // The list of preferences in the current folder
+    path: split // The path to the current folder
   };
-
-  parseInfo = (props: SettingsContainerProps) => {
-    let currentTitle: ?string = null;
-    let currentSchema: ?SchemaType = props.schema;
-
-    if (currentSchema == null) return {};
-
-    const split = splitSettingsPath(props);
-    for (let i = 0; i < split.length; i += 1) {
-      const settingIndex = split[i];
-      const nextSchema = currentSchema[settingIndex];
-      if (nextSchema.type === "nested") {
-        currentSchema = nextSchema.prefs;
-        currentTitle = nextSchema.label;
-      } else break;
-    }
-
-    return {
-      title: currentTitle, // The title of the current folder, null at top level
-      schema: currentSchema, // The list of preferences in the current folder
-      path: split // The path to the current folder
-    };
-  };
-
-  render() {
-    const { preferences } = this.props;
-
-    const info = this.parseInfo(this.props);
-    if (info == null || info.schema == null) return null;
-
-    return (
-      <React.Fragment>
-        <Helmet>
-          <title>Settings - TachiWeb</title>
-        </Helmet>
-
-        <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
-          <Toolbar>
-            {info != null && info.path.length > 0 ? (
-              <BackButton
-                onBackClick={Client.settings(info.path.slice(0, -1))}
-              />
-            ) : (
-              <MenuDrawer />
-            )}
-            <Typography variant="h6">
-              {info != null && info.title != null ? info.title : "Settings"}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-
-        <List component="nav">
-          {info != null ? (
-            info.schema.map((it, index) => (
-              <SettingsItem
-                key={
-                  // This array is static, so the below eslint rule is pointless
-                  // eslint-disable-next-line react/no-array-index-key
-                  index
-                }
-                path={info.path.concat([index])}
-                schema={it}
-                prefs={preferences}
-                onUpdateSetting={this.handleSettingsUpdate}
-              />
-            ))
-          ) : (
-            <FullScreenLoading />
-          )}
-        </List>
-      </React.Fragment>
-    );
-  }
 }
 
-export default Settings;
+const Settings = ({ match }) => {
+  const settingsLoaded = useSelector(selectIsSettingsLoading);
+  const preferences = useSelector(selectSettingsPrefs);
+  const schema = useSelector(selectSettingsSchema);
+
+  const dispatch = useDispatch();
+  const handleSetSetting = (key: string, newValue: PrefValue) =>
+    dispatch(setSetting(key, newValue));
+
+  const info = parseInfo(schema, match.params);
+
+  useEffect(() => {
+    dispatch(fetchSettings()).then(() => dispatch(fetchSettingsSchema()));
+  }, [dispatch]);
+
+  if (info == null || info.schema == null) return null;
+
+  return (
+    <React.Fragment>
+      <Helmet title="Settings - TachiWeb" />
+
+      <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+        <Toolbar>
+          {info != null && info.path.length > 0 ? (
+            <BackButton onBackClick={Client.settings(info.path.slice(0, -1))} />
+          ) : (
+            <MenuDrawer />
+          )}
+          <Typography variant="h6">
+            {info != null && info.title != null ? info.title : "Settings"}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <List component="nav">
+        {info != null ? (
+          info.schema.map((it, index) => (
+            <SettingsItem
+              key={
+                // This array is static, so the below eslint rule is pointless
+                // eslint-disable-next-line react/no-array-index-key
+                index
+              }
+              path={info.path.concat([index])}
+              schema={it}
+              prefs={preferences}
+              onUpdateSetting={handleSetSetting}
+            />
+          ))
+        ) : (
+          <FullScreenLoading />
+        )}
+      </List>
+    </React.Fragment>
+  );
+};
+
+export default withRouter(Settings);
