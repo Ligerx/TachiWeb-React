@@ -1,7 +1,6 @@
 // @flow
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { withRouter } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -61,7 +60,9 @@ function parseInfo(schema: ?SchemaType, params) {
   };
 }
 
-const Settings = ({ match }) => {
+type Props = { match: { params: Object } };
+
+const Settings = ({ match }: Props) => {
   const settingsLoaded = useSelector(selectIsSettingsLoading);
   const preferences = useSelector(selectSettingsPrefs);
   const schema = useSelector(selectSettingsSchema);
@@ -118,4 +119,4 @@ const Settings = ({ match }) => {
   );
 };
 
-export default withRouter(Settings);
+export default Settings;
