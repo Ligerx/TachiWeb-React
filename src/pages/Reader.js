@@ -1,9 +1,9 @@
 // @flow
-import React, { Component } from "react";
+import React, { useEffect, useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Server, Client } from "api";
 import FullScreenLoading from "components/loading/FullScreenLoading";
 import compact from "lodash/compact";
-import type { ReaderContainerProps } from "containers/ReaderContainer";
 import type { ChapterType, MangaType } from "types";
 import SinglePageReader from "components/reader/SinglePageReader";
 import WebtoonReader from "components/reader/WebtoonReader";
@@ -12,62 +12,70 @@ import ImagePreloader from "components/reader/ImagePreloader";
 import { Helmet } from "react-helmet";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
+import {
+  selectChaptersForManga,
+  selectChapter,
+  selectNextChapterId,
+  selectPrevChapterId,
+  fetchChapters
+} from "redux-ducks/chapters";
+import {
+  selectPageCounts,
+  selectPageCount,
+  fetchPageCount
+} from "redux-ducks/pageCounts";
+import { selectDefaultViewer } from "redux-ducks/settings";
+import { selectMangaInfo, fetchMangaInfo } from "redux-ducks/mangaInfos";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
-type Props = ReaderContainerProps & {
-  classes: Object, // Classes is the injected styles
-  history: { push: Function }, // react-router props
-  urlPrefix: string // UrlPrefixConsumer prop
-};
+type Props = { match: { params: Object } };
 
-class Reader extends Component<Props> {
-  componentDidMount() {
-    const { fetchMangaInfo, fetchChapters } = this.props;
+const Reader = ({ match: { params } }: Props) => {
+  const mangaId = parseInt(params.mangaId, 10);
+  const chapterId = parseInt(params.chapterId, 10);
+  const page = parseInt(params.page, 10);
 
-    fetchMangaInfo();
-    fetchChapters().then(this.getAdjacentPageCounts);
-  }
+  const urlPrefix = useContext(UrlPrefixContext);
 
-  componentDidUpdate(prevProps: Props) {
-    const { chapterId } = this.props;
-    const chapterChanged = chapterId !== prevProps.chapterId;
+  const defaultViewer = useSelector(selectDefaultViewer);
+  const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
+  const chapters = useSelector(state => selectChaptersForManga(state, mangaId));
+  const chapter = useSelector(state =>
+    selectChapter(state, mangaId, chapterId)
+  );
+  const pageCounts = useSelector(selectPageCounts);
+  // FIXME: inefficient redux design?
+  const pageCount =
+    useSelector(state => selectPageCount(state, chapterId)) || 0;
+  const prevChapterId = useSelector(state =>
+    selectPrevChapterId(state, mangaId, chapterId)
+  );
+  const nextChapterId = useSelector(state =>
+    selectNextChapterId(state, mangaId, chapterId)
+  );
 
-    // Always have the adjacent chapters' page counts loaded
-    if (chapterChanged) {
-      this.getAdjacentPageCounts();
-    }
-  }
+  const dispatch = useDispatch();
 
-  getAdjacentPageCounts = () => {
-    // get current, previous, and next chapter page count
-    const {
-      chapterId,
-      prevChapterId,
-      nextChapterId,
-      fetchPageCount
-    } = this.props;
-    const chapters: Array<number> = compact([
+  useEffect(() => {
+    dispatch(fetchMangaInfo(mangaId));
+    dispatch(fetchChapters(mangaId));
+  }, [dispatch, mangaId]);
+
+  useEffect(() => {
+    // Get adjacent chapter page counts
+    const chapterIds: Array<number> = compact([
       chapterId,
       prevChapterId,
       nextChapterId
     ]);
 
-    chapters.forEach(thisChapterId => {
-      fetchPageCount(thisChapterId);
+    chapterIds.forEach(thisChapterId => {
+      dispatch(fetchPageCount(mangaId, thisChapterId));
     });
-  };
+  }, [dispatch, mangaId, chapterId, nextChapterId, prevChapterId]);
 
-  prevPageUrl = (): ?string => {
-    const {
-      mangaInfo,
-      chapterId,
-      page,
-      prevChapterId,
-      pageCounts,
-      urlPrefix
-    } = this.props;
-
+  const prevPageUrl = (): ?string => {
     if (!mangaInfo) return null;
 
     if (page > 0) {
@@ -83,16 +91,7 @@ class Reader extends Component<Props> {
     return null;
   };
 
-  nextPageUrl = (): ?string => {
-    const {
-      mangaInfo,
-      chapterId,
-      pageCount,
-      page,
-      nextChapterId,
-      urlPrefix
-    } = this.props;
-
+  const nextPageUrl = (): ?string => {
     if (!mangaInfo) return null;
 
     if (page < pageCount - 1) {
@@ -104,10 +103,8 @@ class Reader extends Component<Props> {
     return null;
   };
 
-  prevChapterUrl = (): ?string => {
+  const prevChapterUrl = (): ?string => {
     // Links to the previous chapter's last page read
-    const { mangaInfo, prevChapterId, chapters, urlPrefix } = this.props;
-
     const prevUrl = changeChapterUrl(
       urlPrefix,
       mangaInfo,
@@ -119,10 +116,8 @@ class Reader extends Component<Props> {
     return prevUrl;
   };
 
-  nextChapterUrl = (): ?string => {
+  const nextChapterUrl = (): ?string => {
     // Links to the next chapter's last page read
-    const { mangaInfo, nextChapterId, chapters, urlPrefix } = this.props;
-
     const nextUrl = changeChapterUrl(
       urlPrefix,
       mangaInfo,
@@ -134,71 +129,55 @@ class Reader extends Component<Props> {
     return nextUrl;
   };
 
-  render() {
-    const {
-      defaultViewer,
-      urlPrefix,
-      mangaInfo,
-      chapters,
-      chapter,
-      chapterId,
-      pageCount,
-      page
-    } = this.props;
-
-    if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
-      return <FullScreenLoading />;
-    }
-
-    return (
-      <React.Fragment>
-        <Helmet>
-          <title>
-            {`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
-              chapter.chapter_number
-            )}, Pg. ${page + 1}`}
-            - TachiWeb
-          </title>
-        </Helmet>
-
-        {defaultViewer === "webtoon" ? (
-          <WebtoonReader
-            title={mangaInfo.title}
-            chapterNum={chapter.chapter_number}
-            page={page}
-            backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-            urlPrefix={urlPrefix}
-            mangaId={mangaInfo.id}
-            pageCount={pageCount}
-            chapter={chapter}
-            nextChapterUrl={this.nextChapterUrl()}
-            prevChapterUrl={this.prevChapterUrl()}
-          />
-        ) : (
-          <SinglePageReader
-            title={mangaInfo.title}
-            chapterNum={chapter.chapter_number}
-            pageCount={pageCount}
-            page={page}
-            backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-            prevChapterUrl={this.prevChapterUrl()}
-            nextChapterUrl={this.nextChapterUrl()}
-            urlPrefix={urlPrefix}
-            mangaId={mangaInfo.id}
-            chapterId={chapterId}
-            imageSource={Server.image(mangaInfo.id, chapterId, page)}
-            alt={`${chapter.name} - Page ${page + 1}`}
-            nextPageUrl={this.nextPageUrl()}
-            prevPageUrl={this.prevPageUrl()}
-          />
-        )}
-
-        <ReadingStatusUpdater />
-        <ImagePreloader />
-      </React.Fragment>
-    );
+  if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
+    return <FullScreenLoading />;
   }
-}
+
+  return (
+    <React.Fragment>
+      <Helmet
+        title={`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
+          chapter.chapter_number
+        )}, Pg. ${page + 1} TachiWeb`}
+      />
+
+      {defaultViewer === "webtoon" ? (
+        <WebtoonReader
+          title={mangaInfo.title}
+          chapterNum={chapter.chapter_number}
+          page={page}
+          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
+          urlPrefix={urlPrefix}
+          mangaId={mangaInfo.id}
+          pageCount={pageCount}
+          chapter={chapter}
+          nextChapterUrl={nextChapterUrl()}
+          prevChapterUrl={prevChapterUrl()}
+        />
+      ) : (
+        <SinglePageReader
+          title={mangaInfo.title}
+          chapterNum={chapter.chapter_number}
+          pageCount={pageCount}
+          page={page}
+          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
+          prevChapterUrl={prevChapterUrl()}
+          nextChapterUrl={nextChapterUrl()}
+          urlPrefix={urlPrefix}
+          mangaId={mangaInfo.id}
+          chapterId={chapterId}
+          imageSource={Server.image(mangaInfo.id, chapterId, page)}
+          alt={`${chapter.name} - Page ${page + 1}`}
+          nextPageUrl={nextPageUrl()}
+          prevPageUrl={prevPageUrl()}
+        />
+      )}
+
+      <ReadingStatusUpdater />
+      <ImagePreloader />
+    </React.Fragment>
+  );
+};
 
 // Helper methods
 function changeChapterUrl(
@@ -228,8 +207,4 @@ function findChapter(
   return chapters.find(chapter => chapter.id === chapterId);
 }
 
-export default (props: Object) => (
-  <UrlPrefixContext.Consumer>
-    {urlPrefix => <Reader {...props} urlPrefix={urlPrefix} />}
-  </UrlPrefixContext.Consumer>
-);
+export default Reader;

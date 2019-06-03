@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Client } from "api";
 import Library from "pages/Library";
 import MangaInfo from "pages/MangaInfo";
-import ReaderContainer from "containers/ReaderContainer";
+import Reader from "pages/Reader";
 import CatalogueContainer from "containers/CatalogueContainer";
 import Extensions from "pages/Extensions";
 import BackupRestore from "pages/BackupRestore";
@@ -31,7 +31,7 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
       <Switch>
         <Route
           path={`${match.path}/:mangaId/:chapterId/:page`}
-          component={ReaderContainer}
+          component={Reader}
         />
 
         <Route
