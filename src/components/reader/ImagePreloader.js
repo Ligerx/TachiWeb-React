@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { Server } from "api";
 import { selectPageCount } from "redux-ducks/pageCounts";
 import { selectNextChapterId } from "redux-ducks/chapters";
-import { usePrevious } from "components/hooks";
 
 // This expects whatever component is using it to load pageCount for the current chapter
 
@@ -46,10 +45,6 @@ const ImagePreloader = ({ match: { params } }: Props) => {
   const chapterId = parseInt(params.chapterId, 10);
   const page = parseInt(params.page, 10);
 
-  const prevMangaId = usePrevious(mangaId);
-  const prevChapterId = usePrevious(chapterId);
-  const prevPage = usePrevious(page);
-
   // FIXME: inefficient redux design?
   const pageCount =
     useSelector(state => selectPageCount(state, chapterId)) || 0;
@@ -59,23 +54,8 @@ const ImagePreloader = ({ match: { params } }: Props) => {
   );
 
   useEffect(() => {
-    const mangaChanged = mangaId !== prevMangaId;
-    const chapterChanged = chapterId !== prevChapterId;
-    const pageChanged = page !== prevPage;
-
-    if (mangaChanged || chapterChanged || pageChanged) {
-      preloadImages(page, pageCount, mangaId, chapterId, nextChapterId);
-    }
-  }, [
-    chapterId,
-    mangaId,
-    nextChapterId,
-    page,
-    pageCount,
-    prevChapterId,
-    prevMangaId,
-    prevPage
-  ]);
+    preloadImages(page, pageCount, mangaId, chapterId, nextChapterId);
+  }, [mangaId, chapterId, nextChapterId, page, pageCount]);
 
   return null;
 };
