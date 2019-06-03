@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Client } from "api";
-import LibraryContainer from "containers/LibraryContainer";
+import Library from "pages/Library";
 import MangaInfo from "pages/MangaInfo";
 import ReaderContainer from "containers/ReaderContainer";
 import CatalogueContainer from "containers/CatalogueContainer";
@@ -49,12 +49,12 @@ const Router = () => (
   <React.Fragment>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={LibraryContainer} />
+        <Route exact path="/" component={Library} />
 
         <Route exact path="/catalogue" component={CatalogueContainer} />
         <Route path="/catalogue" component={MangaRouter} />
 
-        <Route exact path="/library" component={LibraryContainer} />
+        <Route exact path="/library" component={Library} />
         <Route path="/library" component={MangaRouter} />
 
         <Route exact path="/extensions" component={Extensions} />
