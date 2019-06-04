@@ -84,13 +84,7 @@ export const selectIsChaptersLoading = createLoadingSelector([
   UPDATE_CHAPTERS
 ]);
 
-// FIXME: Not sure if including a fallback value causes redux to needlessly rerender.
-//        Possible changes?
-//        - declare a const noChapters = [] outside this function
-//        - just pass down undefined and let the other components handle it
-//
-// I've added noChapters, but I haven't actually checked if this does anything.
-const noChapters = [];
+const noChapters = []; // selector memoization optimization
 export const selectChaptersForManga = (
   state,
   mangaId: number
