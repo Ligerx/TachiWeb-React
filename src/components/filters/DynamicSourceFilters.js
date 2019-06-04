@@ -5,8 +5,8 @@ import Drawer from "@material-ui/core/Drawer";
 import { withStyles } from "@material-ui/core/styles";
 import FormGroup from "@material-ui/core/FormGroup";
 import type { FilterAnyType } from "types/filters";
-import FilterActions from "components/filters/FilterActions";
-import { filterElements } from "components/filters/filterUtils";
+import FilterActions from "components/Filters/FilterActions";
+import { filterElements } from "components/Filters/filterUtils";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
 

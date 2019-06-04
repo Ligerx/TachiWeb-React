@@ -9,7 +9,7 @@ import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import MangaGrid from "components/MangaGrid";
 import CatalogueMangaCard from "components/Catalogue/CatalogueMangaCard";
-import DynamicSourceFilters from "components/filters/DynamicSourceFilters";
+import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import CatalogueHeader from "components/Catalogue/CatalogueHeader";
 import CenteredLoading from "components/loading/CenteredLoading";

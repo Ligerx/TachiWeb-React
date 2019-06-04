@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import FormGroup from "@material-ui/core/FormGroup";
 import type { FilterTristate as FilterTristateType } from "types/filters";
-import FilterTristate from "components/filters/FilterTristate";
+import FilterTristate from "components/Filters/FilterTristate";
 
 type Props = {
   name: string,

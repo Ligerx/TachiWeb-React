@@ -9,10 +9,10 @@ import type {
   FilterSort as FilterSortType,
   FilterGroup as FilterGroupType
 } from "types/filters";
-import FilterSelect from "components/filters/FilterSelect";
-import FilterTristate from "components/filters/FilterTristate";
-import FilterGroup from "components/filters/FilterGroup";
-import FilterSort from "components/filters/FilterSort";
+import FilterSelect from "components/Filters/FilterSelect";
+import FilterTristate from "components/Filters/FilterTristate";
+import FilterGroup from "components/Filters/FilterGroup";
+import FilterSort from "components/Filters/FilterSort";
 
 // FIXME: Still feels a little laggy in dev mode.
 //        May partially be caused in dev by React DevTools
@@ -40,7 +40,7 @@ export function filterElements(
     } if (filter._type === 'SEPARATOR') {
       console.error('DynamicSourcesFilters SEPARATOR not implemented');
       return null;
-    } else if (filter._type === 'CHECKBOX') {
+    } if (filter._type === 'CHECKBOX') {
       console.error('DynamicSourcesFilters CHECKBOX not implemented');
       return null;
     } else if (filter._type === 'TEXT') {
