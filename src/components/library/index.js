@@ -13,11 +13,11 @@ import {
   setLibraryFlag
 } from "redux-ducks/library";
 import { selectIsChaptersLoading, updateChapters } from "redux-ducks/chapters";
-import LibraryHeader from "components/library/LibraryHeader";
+import LibraryHeader from "components/Library/LibraryHeader";
 import MangaGrid from "components/MangaGrid";
-import LibraryMangaCard from "components/library/LibraryMangaCard";
+import LibraryMangaCard from "components/Library/LibraryMangaCard";
 import FullScreenLoading from "components/loading/FullScreenLoading";
-import filterSortLibrary from "components/library/libraryUtils";
+import filterSortLibrary from "components/Library/libraryUtils";
 
 // TODO: no feedback of success/errors after clicking the library update button
 

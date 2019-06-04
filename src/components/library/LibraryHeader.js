@@ -3,12 +3,12 @@ import React from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import LibraryMore from "components/library/LibraryMore";
+import LibraryMore from "components/Library/LibraryMore";
 import RefreshButton from "components/RefreshButton";
-import LibrarySearch from "components/library/LibrarySearch";
+import LibrarySearch from "components/Library/LibrarySearch";
 import MenuDrawer from "components/MenuDrawer";
-import LibraryFilter from "components/library/LibraryFilter";
-import LibrarySort from "components/library/LibrarySort";
+import LibraryFilter from "components/Library/LibraryFilter";
+import LibrarySort from "components/Library/LibrarySort";
 import type { LibraryFlagsType } from "types";
 
 type Props = {

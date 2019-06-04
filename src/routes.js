@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Client } from "api";
-import Library from "pages/Library";
+import Library from "components/Library";
 import MangaInfo from "pages/MangaInfo";
 import Reader from "components/Reader";
 import Catalogue from "components/Catalogue";
