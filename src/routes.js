@@ -5,7 +5,7 @@ import Library from "pages/Library";
 import MangaInfo from "pages/MangaInfo";
 import Reader from "components/Reader";
 import Catalogue from "components/Catalogue";
-import Extensions from "pages/Extensions";
+import Extensions from "components/Extensions";
 import BackupRestore from "components/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import Settings, { SETTING_INDEX } from "components/Settings";

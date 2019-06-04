@@ -8,7 +8,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
-import ExtensionList from "components/extensions/ExtensionList";
+import ExtensionList from "components/Extensions/ExtensionList";
 import type { ExtensionType } from "types";
 import { useSelector, useDispatch } from "react-redux";
 import {

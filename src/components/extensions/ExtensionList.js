@@ -4,9 +4,9 @@ import type { ExtensionType } from "types";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
-import ExtensionListItem from "components/extensions/ExtensionListItem";
+import ExtensionListItem from "components/Extensions/ExtensionListItem";
 import Typography from "@material-ui/core/Typography";
-import ExtensionButton from "components/extensions/ExtensionButton";
+import ExtensionButton from "components/Extensions/ExtensionButton";
 
 type Props = {
   title: string,
