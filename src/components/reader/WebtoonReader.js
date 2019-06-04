@@ -6,13 +6,13 @@ import Grid from '@material-ui/core/Grid';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
-import ImageWithLoader from 'components/reader/ImageWithLoader';
+import ImageWithLoader from 'components/Reader/ImageWithLoader';
 import type { ChapterType } from 'types';
 import { Server, Client } from 'api';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
 import Waypoint from 'react-waypoint';
-import ReaderOverlay from 'components/reader/ReaderOverlay';
+import ReaderOverlay from 'components/Reader/ReaderOverlay';
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>

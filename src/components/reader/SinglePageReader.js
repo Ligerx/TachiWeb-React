@@ -6,10 +6,10 @@ import ResponsiveGrid from 'components/ResponsiveGrid';
 import ScrollToTop from 'components/ScrollToTop';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
-import ImageWithLoader from 'components/reader/ImageWithLoader';
+import ImageWithLoader from 'components/Reader/ImageWithLoader';
 import { withRouter } from 'react-router-dom';
 import Link from 'components/Link';
-import ReaderOverlay from 'components/reader/ReaderOverlay';
+import ReaderOverlay from 'components/Reader/ReaderOverlay';
 import { Client } from 'api';
 
 // TODO: add some spacing around the nav buttons

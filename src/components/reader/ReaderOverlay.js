@@ -7,7 +7,7 @@ import Link from "components/Link";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import { withStyles } from "@material-ui/core/styles";
-import PageSlider from "components/reader/PageSlider";
+import PageSlider from "components/Reader/PageSlider";
 import { chapterNumPrettyPrint } from "components/utils";
 
 // TODO: using two toolbars currently, but it might be too big. Consider changing/customizing later.

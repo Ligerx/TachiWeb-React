@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Client } from "api";
 import Library from "pages/Library";
 import MangaInfo from "pages/MangaInfo";
-import Reader from "pages/Reader";
+import Reader from "components/Reader";
 import Catalogue from "pages/Catalogue";
 import Extensions from "pages/Extensions";
 import BackupRestore from "pages/BackupRestore";
