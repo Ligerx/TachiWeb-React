@@ -92,11 +92,8 @@ const Catalogue = () => {
     }, 500)
   );
   const handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    updateSearchQuery(event.currentTarget.value);
+    dispatch(updateSearchQuery(event.currentTarget.value));
     debouncedSearch.current();
-    // debounce(() => {
-    //   dispatch(fetchCatalogue());
-    // }, 500);
   };
 
   const handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
