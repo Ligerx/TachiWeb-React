@@ -4,7 +4,7 @@ import { Client } from "api";
 import Library from "pages/Library";
 import MangaInfo from "pages/MangaInfo";
 import Reader from "pages/Reader";
-import CatalogueContainer from "containers/CatalogueContainer";
+import Catalogue from "pages/Catalogue";
 import Extensions from "pages/Extensions";
 import BackupRestore from "pages/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -51,7 +51,7 @@ const Router = () => (
       <Switch>
         <Route exact path="/" component={Library} />
 
-        <Route exact path="/catalogue" component={CatalogueContainer} />
+        <Route exact path="/catalogue" component={Catalogue} />
         <Route path="/catalogue" component={MangaRouter} />
 
         <Route exact path="/library" component={Library} />

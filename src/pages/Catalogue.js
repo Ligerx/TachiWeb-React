@@ -1,19 +1,43 @@
 // @flow
-import React, { Component } from "react";
+import React, { useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import Waypoint from "react-waypoint";
 import debounce from "lodash/debounce";
+import { Helmet } from "react-helmet";
+import type { FilterAnyType } from "types/filters";
+import { makeStyles } from "@material-ui/styles";
+import Typography from "@material-ui/core/Typography";
 import MangaGrid from "components/MangaGrid";
 import CatalogueMangaCard from "components/catalogue/CatalogueMangaCard";
-import Waypoint from "react-waypoint";
 import DynamicSourceFilters from "components/filters/DynamicSourceFilters";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import CatalogueHeader from "components/catalogue/CatalogueHeader";
 import CenteredLoading from "components/loading/CenteredLoading";
 import FullScreenLoading from "components/loading/FullScreenLoading";
-import type { FilterAnyType } from "types/filters";
-import type { CatalogueContainerProps } from "containers/CatalogueContainer";
-import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
-import { Helmet } from "react-helmet";
+import {
+  selectIsSourcesLoading,
+  selectSources,
+  fetchSources
+} from "redux-ducks/sources";
+import {
+  selectIsCatalogueLoading,
+  selectCatalogueSourceId,
+  selectCatalogueHasNextPage,
+  selectCatalogueSearchQuery,
+  selectCatalogueMangaInfos,
+  fetchCatalogue,
+  fetchNextCataloguePage,
+  resetCatalogue,
+  updateSearchQuery,
+  changeSourceId
+} from "redux-ducks/catalogue";
+import {
+  selectCurrentFilters,
+  fetchFilters,
+  resetFilters,
+  updateLastUsedFilters,
+  updateCurrentFilters
+} from "redux-ducks/filters";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 
@@ -22,7 +46,7 @@ import { Helmet } from "react-helmet";
 
 // TODO: If you update search, then change it back to it's original value, don't search again?
 
-const styles = {
+const useStyles = makeStyles({
   loading: {
     marginTop: 24,
     marginBottom: 40
@@ -31,163 +55,127 @@ const styles = {
     marginTop: 40,
     marginBottom: 60
   }
-};
+});
 
-class Catalogue extends Component<
-  CatalogueContainerProps & { classes: Object }
-> {
-  componentDidMount() {
-    const {
-      sources,
-      sourceId,
-      fetchSources,
-      fetchCatalogue,
-      fetchFilters,
-      changeSourceId
-    } = this.props;
+const Catalogue = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
 
-    // https://github.com/babel/babel/issues/2141
-    // this is undefined in the promise, so manually bind this
-    const that = this;
+  // Sources data
+  const sources = useSelector(selectSources);
+  // Catalogue data
+  const hasNextPage = useSelector(selectCatalogueHasNextPage);
+  const searchQuery = useSelector(selectCatalogueSearchQuery);
+  const sourceId = useSelector(selectCatalogueSourceId);
+  // Library data
+  const mangaLibrary = useSelector(selectCatalogueMangaInfos);
+  // Filter data
+  const currentFilters = useSelector(selectCurrentFilters);
+  // Fetching data
+  const sourcesAreLoading = useSelector(selectIsSourcesLoading);
+  const catalogueIsLoading = useSelector(selectIsCatalogueLoading);
 
-    // Only reload on component mount if it's missing data
-    if (!sources.length || sourceId == null) {
-      fetchSources().then(() => {
-        changeSourceId(that.props.sources[0].id); // use the first available source
-        fetchCatalogue();
-        fetchFilters();
+  useEffect(() => {
+    // Only reload on component mount if it's missing data, otherwise show cached data
+    if (sources.length === 0 || sourceId == null) {
+      dispatch(fetchSources()).then(() => {
+        dispatch(fetchCatalogue());
+        dispatch(fetchFilters());
       });
     }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
-    // Debouncing the search text
-    this.delayedSearch = debounce(() => {
-      fetchCatalogue();
-    }, 500);
-  }
+  // Debouncing the search text
+  const debouncedSearch = useRef(
+    debounce(() => {
+      dispatch(fetchCatalogue());
+    }, 500)
+  );
+  const handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
+    updateSearchQuery(event.currentTarget.value);
+    debouncedSearch.current();
+    // debounce(() => {
+    //   dispatch(fetchCatalogue());
+    // }, 500);
+  };
 
-  componentWillUnmount() {
-    // Clean up debouncing function
-    this.delayedSearch.cancel();
-  }
-
-  delayedSearch = () => null; // Placeholder, this gets replaced in componentDidMount()
-
-  handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
+  const handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
-    const {
-      sources,
-      changeSourceId,
-      resetCatalogue,
-      fetchFilters,
-      fetchCatalogue
-    } = this.props;
-
     const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
     const newSourceId = sources[newSourceIndex].id;
 
-    resetCatalogue();
-    changeSourceId(newSourceId);
-    fetchFilters(); // call before fetchCatalogue so filters don't get used between sources
-    fetchCatalogue();
+    dispatch(resetCatalogue());
+    dispatch(changeSourceId(newSourceId));
+    dispatch(fetchFilters()); // call before fetchCatalogue so filters don't get used between sources
+    dispatch(fetchCatalogue());
   };
 
-  handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    // https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
-    this.props.updateSearchQuery(event.currentTarget.value);
-    this.delayedSearch();
-  };
-
-  handleLoadNextPage = () => {
-    const {
-      hasNextPage,
-      fetchNextCataloguePage,
-      catalogueIsLoading
-    } = this.props;
-
+  const handleLoadNextPage = () => {
     if (hasNextPage && !catalogueIsLoading) {
-      fetchNextCataloguePage();
+      dispatch(fetchNextCataloguePage());
     }
   };
 
-  handleResetFilters = () => {
-    this.props.resetFilters();
+  const handleResetFilters = () => {
+    dispatch(resetFilters());
   };
 
-  handleFilterChange = (newFilters: Array<FilterAnyType>) => {
-    this.props.updateCurrentFilters(newFilters);
+  const handleFilterChange = (newFilters: Array<FilterAnyType>) => {
+    dispatch(updateCurrentFilters(newFilters));
   };
 
-  handleSearchFilters = () => {
-    const { fetchCatalogue, updateLastUsedFilters } = this.props;
-
-    updateLastUsedFilters(); // Must come before fetchCatalogue. This is a synchronous function.
-    fetchCatalogue();
+  const handleSearchFilters = () => {
+    dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
+    dispatch(fetchCatalogue());
   };
 
-  render() {
-    const {
-      classes,
-      mangaLibrary,
-      sources,
-      sourcesAreLoading,
-      catalogueIsLoading,
-      currentFilters,
-      searchQuery,
-      sourceId,
-      hasNextPage
-    } = this.props;
+  const noMoreResults =
+    !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
 
-    const noMoreResults =
-      !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
+  return (
+    <React.Fragment>
+      <Helmet title="Catalogue - TachiWeb" />
 
-    return (
-      <React.Fragment>
-        <Helmet>
-          <title>Catalogue - TachiWeb</title>
-        </Helmet>
+      <CatalogueHeader
+        sourceId={sourceId}
+        sources={sources}
+        searchQuery={searchQuery}
+        onSourceChange={handleSourceChange}
+        onSearchChange={handleSearchChange}
+      />
 
-        <CatalogueHeader
-          sourceId={sourceId}
-          sources={sources}
-          searchQuery={searchQuery}
-          onSourceChange={this.handleSourceChange}
-          onSearchChange={this.handleSearchChange}
+      <ResponsiveGrid>
+        <DynamicSourceFilters
+          filters={currentFilters}
+          onResetClick={handleResetFilters}
+          onSearchClick={handleSearchFilters}
+          onFilterChange={handleFilterChange}
         />
+      </ResponsiveGrid>
 
-        <ResponsiveGrid>
-          <DynamicSourceFilters
-            filters={currentFilters}
-            onResetClick={this.handleResetFilters}
-            onSearchClick={this.handleSearchFilters}
-            onFilterChange={this.handleFilterChange}
-          />
-        </ResponsiveGrid>
+      <MangaGrid
+        mangaLibrary={mangaLibrary}
+        cardComponent={<CatalogueMangaCard />}
+      />
+      {mangaLibrary.length > 0 && (
+        <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
+      )}
 
-        <MangaGrid
-          mangaLibrary={mangaLibrary}
-          cardComponent={<CatalogueMangaCard />}
-        />
-        {mangaLibrary.length > 0 && (
-          <Waypoint onEnter={this.handleLoadNextPage} bottomOffset={-300} />
-        )}
+      {catalogueIsLoading && <CenteredLoading className={classes.loading} />}
+      {sourcesAreLoading && <FullScreenLoading />}
+      {noMoreResults && (
+        <Typography
+          variant="caption"
+          display="block"
+          align="center"
+          className={classes.noMoreResults}
+        >
+          No more results
+        </Typography>
+      )}
+    </React.Fragment>
+  );
+};
 
-        {catalogueIsLoading && <CenteredLoading className={classes.loading} />}
-        {sourcesAreLoading && <FullScreenLoading />}
-        {noMoreResults && (
-          <Typography
-            variant="caption"
-            display="block"
-            align="center"
-            className={classes.noMoreResults}
-          >
-            No more results
-          </Typography>
-        )}
-      </React.Fragment>
-    );
-  }
-}
-
-export default withStyles(styles)(Catalogue);
+export default Catalogue;
