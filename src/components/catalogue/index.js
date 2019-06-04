@@ -8,10 +8,10 @@ import type { FilterAnyType } from "types/filters";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import MangaGrid from "components/MangaGrid";
-import CatalogueMangaCard from "components/catalogue/CatalogueMangaCard";
+import CatalogueMangaCard from "components/Catalogue/CatalogueMangaCard";
 import DynamicSourceFilters from "components/filters/DynamicSourceFilters";
 import ResponsiveGrid from "components/ResponsiveGrid";
-import CatalogueHeader from "components/catalogue/CatalogueHeader";
+import CatalogueHeader from "components/Catalogue/CatalogueHeader";
 import CenteredLoading from "components/loading/CenteredLoading";
 import FullScreenLoading from "components/loading/FullScreenLoading";
 import {
