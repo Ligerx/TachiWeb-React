@@ -2,10 +2,10 @@
 import React from "react";
 import type { PrefsType, PrefValue } from "redux-ducks/settings";
 import type { MutableSchemaEntry, SchemaEntry } from "types/settings-schema";
-import NestedSettingsItem from "components/settings/NestedSettingsItem";
-import ToggleableSettingsItem from "components/settings/ToggleableSettingsItem";
-import SelectSingleSettingsItem from "components/settings/SelectSingleSettingsItem";
-import TextSettingsItem from "components/settings/TextSettingsItem";
+import NestedSettingsItem from "components/Settings/NestedSettingsItem";
+import ToggleableSettingsItem from "components/Settings/ToggleableSettingsItem";
+import SelectSingleSettingsItem from "components/Settings/SelectSingleSettingsItem";
+import TextSettingsItem from "components/Settings/TextSettingsItem";
 
 export type UpdateSettingFunction = (key: string, newValue: PrefValue) => void;
 

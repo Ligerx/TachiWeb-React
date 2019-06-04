@@ -8,7 +8,7 @@ import Catalogue from "pages/Catalogue";
 import Extensions from "pages/Extensions";
 import BackupRestore from "pages/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
-import Settings, { SETTING_INDEX } from "pages/Settings";
+import Settings, { SETTING_INDEX } from "components/Settings";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 

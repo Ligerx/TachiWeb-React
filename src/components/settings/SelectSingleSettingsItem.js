@@ -1,7 +1,7 @@
 // @flow
 import * as React from "react";
-import type { BaseSettingsItemProps } from "components/settings/SettingsItem";
-import { currentValueOrFallback } from "components/settings/SettingsItem";
+import type { BaseSettingsItemProps } from "components/Settings/SettingsItem";
+import { currentValueOrFallback } from "components/Settings/SettingsItem";
 import type { SelectSingleSchemaEntry } from "types/settings-schema";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -11,7 +11,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
-import SettingsListItem from "components/settings/SettingsListItem";
+import SettingsListItem from "components/Settings/SettingsListItem";
 
 type State = {
   dialogOpen: boolean, // Whether or not the editing dialog is open

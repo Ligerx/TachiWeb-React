@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import MenuDrawer from "components/MenuDrawer";
 import FullScreenLoading from "components/loading/FullScreenLoading";
-import SettingsItem from "components/settings/SettingsItem";
+import SettingsItem from "components/Settings/SettingsItem";
 import BackButton from "components/BackButton";
 import {
   selectIsSettingsLoading,

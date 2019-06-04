@@ -3,8 +3,8 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import { Client } from "api";
 import type { NestedSchemaEntry } from "types/settings-schema";
-import type { BaseSettingsItemProps } from "components/settings/SettingsItem";
-import SettingsListItem from "components/settings/SettingsListItem";
+import type { BaseSettingsItemProps } from "components/Settings/SettingsItem";
+import SettingsListItem from "components/Settings/SettingsListItem";
 
 /**
  * Settings item representing a folder/directory of settings

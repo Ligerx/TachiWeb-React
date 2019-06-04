@@ -6,10 +6,10 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import SettingsListItem from "components/settings/SettingsListItem";
+import SettingsListItem from "components/Settings/SettingsListItem";
 import type { TextSchemaEntry } from "types/settings-schema";
-import { currentValueOrFallback } from "components/settings/SettingsItem";
-import type { BaseSettingsItemProps } from "components/settings/SettingsItem";
+import { currentValueOrFallback } from "components/Settings/SettingsItem";
+import type { BaseSettingsItemProps } from "components/Settings/SettingsItem";
 
 type State = {
   dialogOpen: boolean, // Whether or not the editing dialog is open

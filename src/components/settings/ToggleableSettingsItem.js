@@ -3,10 +3,10 @@ import * as React from "react";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Switch from "@material-ui/core/Switch";
-import type { BaseSettingsItemProps } from "components/settings/SettingsItem";
-import { currentValueOrFallback } from "components/settings/SettingsItem";
+import type { BaseSettingsItemProps } from "components/Settings/SettingsItem";
+import { currentValueOrFallback } from "components/Settings/SettingsItem";
 import type { ToggleableSchemaEntry } from "types/settings-schema";
-import SettingsListItem from "components/settings/SettingsListItem";
+import SettingsListItem from "components/Settings/SettingsListItem";
 
 // setting-type to element mappings
 const ITEM_TYPE_TO_SCHEMA_TYPE_MAPPING = {
