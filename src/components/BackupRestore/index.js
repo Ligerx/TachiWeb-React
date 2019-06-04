@@ -6,8 +6,8 @@ import Typography from "@material-ui/core/Typography";
 import MenuDrawer from "components/MenuDrawer";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import Grid from "@material-ui/core/Grid";
-import BackupCard from "components/backup-restore/BackupCard";
-import RestoreCard from "components/backup-restore/RestoreCard";
+import BackupCard from "components/BackupRestore/BackupCard";
+import RestoreCard from "components/BackupRestore/RestoreCard";
 import { Helmet } from "react-helmet";
 
 const BackupRestore = () => (

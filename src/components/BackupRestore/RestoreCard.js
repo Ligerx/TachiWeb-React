@@ -8,7 +8,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Dropzone from "react-dropzone";
-import RestoreDialog from "components/backup-restore/RestoreDialog";
+import RestoreDialog from "components/BackupRestore/RestoreDialog";
 import {
   selectIsRestoreLoading,
   selectDidRestoreFail,
