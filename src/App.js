@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import ErrorNotifications from "components/ErrorNotifications";
 import { fetchSettings } from "redux-ducks/settings";
-import FullScreenLoading from "components/loading/FullScreenLoading";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import Router from "routes";
 import "index.css";
 

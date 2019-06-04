@@ -7,7 +7,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import MenuDrawer from "components/MenuDrawer";
-import FullScreenLoading from "components/loading/FullScreenLoading";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import SettingsItem from "components/Settings/SettingsItem";
 import BackButton from "components/BackButton";
 import {

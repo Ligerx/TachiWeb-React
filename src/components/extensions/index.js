@@ -1,6 +1,6 @@
 // @flow
 import React, { useEffect } from "react";
-import FullScreenLoading from "components/loading/FullScreenLoading";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import { Helmet } from "react-helmet";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import Typography from "@material-ui/core/Typography";

@@ -16,7 +16,7 @@ import { selectIsChaptersLoading, updateChapters } from "redux-ducks/chapters";
 import LibraryHeader from "components/Library/LibraryHeader";
 import MangaGrid from "components/MangaGrid";
 import LibraryMangaCard from "components/Library/LibraryMangaCard";
-import FullScreenLoading from "components/loading/FullScreenLoading";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import filterSortLibrary from "components/Library/libraryUtils";
 
 // TODO: no feedback of success/errors after clicking the library update button

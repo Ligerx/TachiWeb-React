@@ -12,8 +12,8 @@ import CatalogueMangaCard from "components/Catalogue/CatalogueMangaCard";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import CatalogueHeader from "components/Catalogue/CatalogueHeader";
-import CenteredLoading from "components/loading/CenteredLoading";
-import FullScreenLoading from "components/loading/FullScreenLoading";
+import CenteredLoading from "components/Loading/CenteredLoading";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import {
   selectIsSourcesLoading,
   selectSources,

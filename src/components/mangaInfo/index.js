@@ -4,7 +4,7 @@ import type { MangaType } from "types";
 import { Helmet } from "react-helmet";
 import MangaInfoHeader from "components/MangaInfo/MangaInfoHeader";
 import MangaInfoDetails from "components/MangaInfo/MangaInfoDetails";
-import FullScreenLoading from "components/loading/FullScreenLoading";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import MangaInfoChapters from "components/MangaInfo/MangaInfoChapters";
 import { useSelector, useDispatch } from "react-redux";
 import {

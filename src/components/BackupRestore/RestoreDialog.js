@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles';
-import CenteredLoading from 'components/loading/CenteredLoading';
+import CenteredLoading from 'components/Loading/CenteredLoading';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import { Client } from 'api';

@@ -2,7 +2,7 @@
 import React, { useEffect, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Server, Client } from "api";
-import FullScreenLoading from "components/loading/FullScreenLoading";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import compact from "lodash/compact";
 import type { ChapterType, MangaType } from "types";
 import SinglePageReader from "components/Reader/SinglePageReader";
