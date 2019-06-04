@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import ResponsiveGrid from 'components/ResponsiveGrid';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
-import ChapterListItem from 'components/mangaInfo/ChapterListItem';
+import ChapterListItem from 'components/MangaInfo/ChapterListItem';
 import type { ChapterType, MangaType } from 'types';
 
 // TODO: I've made ResponsiveGrid maxWidth="xs". What happens when the chapter title is too long?

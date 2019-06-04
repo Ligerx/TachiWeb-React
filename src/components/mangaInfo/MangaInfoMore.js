@@ -8,7 +8,7 @@ import type { MangaInfoFlagsType } from "types";
 import Tooltip from "@material-ui/core/Tooltip";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import RadioOptionsDialogue from "components/mangaInfo/RadioOptionsDialogue";
+import RadioOptionsDialogue from "components/MangaInfo/RadioOptionsDialogue";
 
 const displayModes = [
   { flagState: "NAME", label: "Show title" },

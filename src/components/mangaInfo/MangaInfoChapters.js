@@ -1,10 +1,10 @@
 // @flow
 import React from "react";
-import ContinueReadingButton from "components/mangaInfo/ContinueReadingButton";
+import ContinueReadingButton from "components/MangaInfo/ContinueReadingButton";
 import CenterHorizontally from "components/CenterHorizontally";
-import MangaInfoChapterList from "components/mangaInfo/MangaInfoChapterList";
+import MangaInfoChapterList from "components/MangaInfo/MangaInfoChapterList";
 import type { MangaType, ChapterType } from "types";
-import filterSortChapters from "components/mangaInfo/chapterUtils";
+import filterSortChapters from "components/MangaInfo/chapterUtils";
 
 type Props = {
   chapters: Array<ChapterType>,

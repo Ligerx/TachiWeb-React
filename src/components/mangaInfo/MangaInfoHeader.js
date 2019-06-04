@@ -6,12 +6,12 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import RefreshButton from "components/RefreshButton";
-import MangaInfoTabs from "components/mangaInfo/MangaInfoTabs";
+import MangaInfoTabs from "components/MangaInfo/MangaInfoTabs";
 import type { MangaType } from "types";
 import BackButton from "components/BackButton";
-import MangaInfoMore from "components/mangaInfo/MangaInfoMore";
+import MangaInfoMore from "components/MangaInfo/MangaInfoMore";
 import Tooltip from "@material-ui/core/Tooltip";
-import MangaInfoFilter from "components/mangaInfo/MangaInfoFilter";
+import MangaInfoFilter from "components/MangaInfo/MangaInfoFilter";
 
 // NOTE: empty href in IconButton will not render <a>
 

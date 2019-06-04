@@ -7,7 +7,7 @@ import classNames from "classnames";
 import Link from "components/Link";
 import type { ChapterType, MangaType } from "types";
 import { chapterNumPrettyPrint } from "components/utils";
-import ChapterMenu from "components/mangaInfo/ChapterMenu";
+import ChapterMenu from "components/MangaInfo/ChapterMenu";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import { Client } from "api";
 import dateFnsFormat from "date-fns/format";
