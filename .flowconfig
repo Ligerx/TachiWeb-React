@@ -31,4 +31,4 @@ esproposal.class_instance_fields=enable
 # ^ explaination for 'resolve_dirname=./src'
 
 [version]
-0.93.0
+0.72.0

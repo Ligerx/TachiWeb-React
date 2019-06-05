@@ -17,5 +17,6 @@
   // Disable built-in VSCode validations because it doesn't understand Flow
   "javascript.validate.enable": false,
   "flow.useNPMPackagedFlow": true,
-  "flow.runOnAllFiles": true
+  "flow.runOnAllFiles": true,
+  "flow.useLSP": false
 }
