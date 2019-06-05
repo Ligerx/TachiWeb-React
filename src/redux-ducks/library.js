@@ -1,8 +1,15 @@
 // @flow
 import { Server } from "api";
-import type { LibraryFlagsType, LibraryFlagsPossibleValueTypes } from "types";
-import { ADD_MANGA } from "./mangaInfos";
-import { handleHTMLError, transformToMangaIdsArray } from "./utils";
+import type {
+  MangaType,
+  LibraryFlagsType,
+  LibraryFlagsPossibleValueTypes
+} from "types";
+import { selectMangaInfos, ADD_MANGA } from "redux-ducks/mangaInfos";
+import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
+import { createLoadingSelector } from "redux-ducks/loading";
+import { createErrorSelector } from "redux-ducks/error";
+import { createSelector } from "reselect";
 
 // ================================================================================
 // Actions
@@ -156,6 +163,35 @@ export default function libraryReducer(
       return state;
   }
 }
+
+// ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectIsLibraryLoading = createLoadingSelector([
+  FETCH_LIBRARY,
+  FETCH_UNREAD,
+  FETCH_LIBRARY_FLAGS
+]);
+
+export const selectLibraryMangaIds = (state): $ReadOnlyArray<number> =>
+  state.library.mangaIds;
+
+export const selectUnread = (state): { +[mangaId: number]: number } =>
+  state.library.unread;
+
+export const selectLibraryFlags = (state): LibraryFlagsType =>
+  state.library.flags;
+
+export const selectLibraryMangaInfos = createSelector(
+  [selectMangaInfos, selectLibraryMangaIds],
+  (mangaInfos, mangaIds): Array<MangaType> => {
+    return mangaIds.map(mangaId => mangaInfos[mangaId]);
+  }
+);
+
+export const selectIsRestoreLoading = createLoadingSelector([UPLOAD_RESTORE]);
+export const selectDidRestoreFail = createErrorSelector([UPLOAD_RESTORE]);
 
 // ================================================================================
 // Action Creators

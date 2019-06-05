@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.0.1",
+    "@material-ui/styles": "^4.0.1",
     "@tachiweb/api-client": "1.0.0-alpha.72",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
@@ -12,17 +13,19 @@
     "prop-types": "^15.6.1",
     "query-string-es5": "^6.1.0",
     "rc-slider": "^8.6.1",
+    "re-reselect": "^3.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-dropzone": "^4.2.10",
     "react-helmet": "^5.2.0",
-    "react-redux": "^5.0.7",
+    "react-redux": "^7.1.0-rc.1",
     "react-router-dom": "^4.2.2",
     "react-scripts": "3.0.1",
     "react-waypoint": "^8.0.1",
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
+    "reselect": "^4.0.0",
     "source-map-explorer": "^1.5.0"
   },
   "scripts": {
@@ -38,7 +41,7 @@
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react-hooks": "^1.5.0",
-    "flow-bin": "^0.93.0",
+    "flow-bin": "0.93.0",
     "prettier": "^1.16.4",
     "redux-devtools-extension": "^2.13.2"
   },

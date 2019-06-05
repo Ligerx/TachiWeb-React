@@ -2,9 +2,14 @@
 import React from "react";
 import Icon from "@material-ui/core/Icon";
 import Fab from "@material-ui/core/Fab";
-import { withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import type { FavoriteFABContainerProps } from "containers/FavoriteFABContainer";
+import { makeStyles } from "@material-ui/styles";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectIsFavoriteToggling,
+  selectIsFavorite,
+  toggleFavorite
+} from "redux-ducks/mangaInfos";
 
 // TODO: Loading spinner flickers because of short delay.
 //       Would be interesting to create a spinner with a small delay before appearing.
@@ -20,7 +25,7 @@ import type { FavoriteFABContainerProps } from "containers/FavoriteFABContainer"
 //   },
 // });
 
-const styles = {
+const useStyles = makeStyles({
   fab: {
     position: "absolute",
     bottom: 0,
@@ -31,33 +36,39 @@ const styles = {
     position: "absolute",
     animation: "fadeInFromNone 2.5s ease-out"
   }
+});
+
+type Props = { mangaId: number };
+
+const FavoriteFab = ({ mangaId }: Props) => {
+  const isFavorite = useSelector(state => selectIsFavorite(state, mangaId));
+  const favoriteIsToggling = useSelector(selectIsFavoriteToggling);
+
+  const dispatch = useDispatch();
+  const classes = useStyles();
+
+  const handleToggleFavorite = () =>
+    dispatch(toggleFavorite(mangaId, isFavorite));
+
+  return (
+    <React.Fragment>
+      <Fab
+        color="primary"
+        className={classes.fab}
+        onClick={handleToggleFavorite}
+      >
+        {isFavorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
+
+        {favoriteIsToggling && (
+          <CircularProgress
+            size={70}
+            color="secondary"
+            className={classes.fabProgress}
+          />
+        )}
+      </Fab>
+    </React.Fragment>
+  );
 };
 
-type Props = { classes: Object };
-
-const FavoriteFAB = ({
-  classes,
-  isFavorite,
-  favoriteIsToggling,
-  toggleFavorite
-}: FavoriteFABContainerProps & Props) => (
-  <React.Fragment>
-    <Fab
-      color="primary"
-      className={classes.fab}
-      onClick={toggleFavorite(isFavorite)}
-    >
-      {isFavorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
-
-      {favoriteIsToggling && (
-        <CircularProgress
-          size={70}
-          color="secondary"
-          className={classes.fabProgress}
-        />
-      )}
-    </Fab>
-  </React.Fragment>
-);
-
-export default withStyles(styles)(FavoriteFAB);
+export default FavoriteFab;

@@ -1,7 +1,7 @@
 // @flow
 import { Server } from "api";
 import type { FilterAnyType } from "types/filters";
-import { handleHTMLError } from "./utils";
+import { handleHTMLError } from "redux-ducks/utils";
 
 // ================================================================================
 // Actions
@@ -60,6 +60,17 @@ export default function filtersReducer(
       return state;
   }
 }
+
+// ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectInitialFilters = (state): Array<FilterAnyType> =>
+  state.filters.initialFilters;
+export const selectLastUsedFilters = (state): Array<FilterAnyType> =>
+  state.filters.lastUsedFilters;
+export const selectCurrentFilters = (state): Array<FilterAnyType> =>
+  state.filters.currentFilters;
 
 // ================================================================================
 // Action Creators

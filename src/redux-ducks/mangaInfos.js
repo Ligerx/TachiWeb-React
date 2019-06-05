@@ -2,8 +2,10 @@
 
 import { Server } from "api";
 import type { MangaType } from "types";
-import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "./library";
-import { handleHTMLError } from "./utils";
+import { createLoadingSelector } from "redux-ducks/loading";
+import createCachedSelector from "re-reselect";
+import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "redux-ducks/library";
+import { handleHTMLError } from "redux-ducks/utils";
 
 // NOTE: for clarity, this will be called mangaInfos (with an s)
 //       Info doesn't really have a plural, so I need to differentiate somehow
@@ -81,6 +83,35 @@ export default function mangaInfosReducer(state: State = {}, action = {}) {
       return state;
   }
 }
+
+// ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectIsMangaInfosLoading = createLoadingSelector([
+  FETCH_MANGA,
+  UPDATE_MANGA
+]);
+
+export const selectIsFavoriteToggling = createLoadingSelector([
+  TOGGLE_FAVORITE
+]);
+
+export const selectMangaInfos = (state): State => state.mangaInfos;
+
+export const selectMangaInfo = (state, mangaId: number): ?MangaType =>
+  state.mangaInfos[mangaId];
+
+// selectIsFavorite(state, mangaId)
+export const selectIsFavorite = createCachedSelector(
+  [selectMangaInfos, (_, mangaId: number) => mangaId],
+  (mangaInfos, mangaId): boolean => {
+    if (!mangaInfos[mangaId]) return false;
+
+    return mangaInfos[mangaId].favorite;
+  }
+  // Cache Key
+)((state, mangaId) => mangaId);
 
 // ================================================================================
 // Action Creators

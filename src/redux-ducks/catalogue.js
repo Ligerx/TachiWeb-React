@@ -1,8 +1,10 @@
 // @flow
 import { Server } from "api";
 import type { FilterAnyType } from "types/filters";
-import { ADD_MANGA } from "./mangaInfos";
-import { handleHTMLError, transformToMangaIdsArray } from "./utils";
+import { createLoadingSelector } from "redux-ducks/loading";
+import { createSelector } from "reselect";
+import { selectMangaInfos, ADD_MANGA } from "redux-ducks/mangaInfos";
+import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 
 // ================================================================================
 // Actions
@@ -84,6 +86,37 @@ export default function catalogueReducer(
       return state;
   }
 }
+
+// ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectIsCatalogueLoading = createLoadingSelector([
+  FETCH_CATALOGUE,
+  CATALOGUE_ADD_PAGE
+]);
+
+export const selectCatalogueSourceId = (state): ?string =>
+  state.catalogue.sourceId;
+
+export const selectCatalogueMangaIds = (state): Array<number> =>
+  state.catalogue.mangaIds;
+
+export const selectCatalogueHasNextPage = (state): boolean =>
+  state.catalogue.hasNextPage;
+
+export const selectCatalogueSearchQuery = (state): string =>
+  state.catalogue.searchQuery;
+
+export const selectCatalogueMangaInfos = createSelector(
+  [selectMangaInfos, selectCatalogueMangaIds],
+  (mangaInfos, mangaIds): Array<MangaType> => {
+    return mangaIds.map(mangaId => mangaInfos[mangaId]);
+  }
+);
+
+// unused
+export const selectCataloguePage = (state): number => state.catalogue.page;
 
 // ================================================================================
 // Action Creators

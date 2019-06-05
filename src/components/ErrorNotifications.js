@@ -1,78 +1,66 @@
 // @flow
-import React, { Component } from 'react';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-
-type Props = { errorMessage: string };
-type State = { open: boolean, message: string };
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { allErrorsSelector } from "redux-ducks/error";
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
 
 // TODO: Honestly, the logic here feels really fragile, and I don't
 //       have the best grasp of all the edge cases.
 //       Maybe finding a library would be helpful for this.
 
-class ErrorNotifications extends Component<Props, State> {
-  state = {
-    open: false,
-    message: '',
-  };
+const ErrorNotifications = () => {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
 
-  componentDidUpdate() {
-    const { open, message } = this.state;
-    const { errorMessage: propsMessage } = this.props;
+  const errorMessage = useSelector(allErrorsSelector);
 
-    if (message === propsMessage) return;
+  useEffect(() => {
+    if (message === errorMessage) return;
 
-    /* eslint-disable react/no-did-update-set-state */
-    if (!propsMessage) {
-      this.setState({ open: false, message: '' });
+    if (!errorMessage) {
+      setOpen(false);
+      setMessage("");
     } else if (!open) {
-      this.setState({ open: true, message: propsMessage });
+      setOpen(true);
+      setMessage(errorMessage);
     } else if (open) {
-      this.setState({ open: false });
+      setOpen(false);
       // then let handleExited() update if necessary
     }
-    /* eslint-enable react/no-did-update-set-state */
-  }
+  }, [errorMessage, message, open]);
 
-  handleClose = (event: SyntheticEvent<>, reason: ?string) => {
-    if (reason === 'clickaway') return;
-
-    this.setState({ open: false });
+  const handleClose = (event: SyntheticEvent<>, reason: ?string) => {
+    if (reason === "clickaway") return;
+    setOpen(false);
   };
 
-  handleExited = () => {
-    const { message } = this.state;
-    const { errorMessage: propsMessage } = this.props;
-
-    if (message !== propsMessage) {
-      this.setState({ open: true, message: propsMessage });
-    }
+  const handleExited = () => {
+    if (message === errorMessage) return;
+    setOpen(true);
+    setMessage(errorMessage);
   };
 
-  render() {
-    const { message } = this.state;
-
-    return (
-      <Snackbar
-        key={message}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={this.state.open}
-        autoHideDuration={6000}
-        onClose={this.handleClose}
-        onExited={this.handleExited}
-        message={<span id="message-id">{message}</span>}
-        action={
-          <IconButton onClick={this.handleClose}>
-            <Icon>close</Icon>
-          </IconButton>
-        }
-      />
-    );
-  }
-}
+  return (
+    <Snackbar
+      key={message}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "left"
+      }}
+      open={open}
+      autoHideDuration={6000}
+      onClose={handleClose}
+      onExited={handleExited}
+      message={<span id="message-id">{message}</span>}
+      action={
+        <IconButton onClick={handleClose}>
+          <Icon>close</Icon>
+        </IconButton>
+      }
+    />
+  );
+};
 
 export default ErrorNotifications;

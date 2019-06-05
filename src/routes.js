@@ -1,15 +1,14 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Client } from "api";
-import LibraryContainer from "containers/LibraryContainer";
-import MangaInfoContainer from "containers/MangaInfoContainer";
-import ReaderContainer from "containers/ReaderContainer";
-import CatalogueContainer from "containers/CatalogueContainer";
-import ExtensionsContainer from "containers/ExtensionsContainer";
-import BackupRestore from "pages/BackupRestore";
+import Library from "components/Library";
+import MangaInfo from "components/MangaInfo";
+import Reader from "components/Reader";
+import Catalogue from "components/Catalogue";
+import Extensions from "components/Extensions";
+import BackupRestore from "components/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
-import SettingsContainer from "containers/SettingsContainer";
-import { SETTING_INDEX } from "pages/Settings";
+import Settings, { SETTING_INDEX } from "components/Settings";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
@@ -32,17 +31,13 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
       <Switch>
         <Route
           path={`${match.path}/:mangaId/:chapterId/:page`}
-          component={ReaderContainer}
+          component={Reader}
         />
 
         <Route
           path={`${match.path}/:mangaId`}
           render={props => (
-            <MangaInfoContainer
-              {...props}
-              backUrl={backUrl}
-              defaultTab={defaultTab}
-            />
+            <MangaInfo {...props} backUrl={backUrl} defaultTab={defaultTab} />
           )}
         />
       </Switch>
@@ -54,22 +49,19 @@ const Router = () => (
   <React.Fragment>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={LibraryContainer} />
+        <Route exact path="/" component={Library} />
 
-        <Route exact path="/catalogue" component={CatalogueContainer} />
+        <Route exact path="/catalogue" component={Catalogue} />
         <Route path="/catalogue" component={MangaRouter} />
 
-        <Route exact path="/library" component={LibraryContainer} />
+        <Route exact path="/library" component={Library} />
         <Route path="/library" component={MangaRouter} />
 
-        <Route exact path="/extensions" component={ExtensionsContainer} />
+        <Route exact path="/extensions" component={Extensions} />
 
         <Route exact path="/backup_restore" component={BackupRestore} />
 
-        <Route
-          path={`/settings/:${SETTING_INDEX}*`}
-          component={SettingsContainer}
-        />
+        <Route path={`/settings/:${SETTING_INDEX}*`} component={Settings} />
       </Switch>
     </BrowserRouter>
   </React.Fragment>

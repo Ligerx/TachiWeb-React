@@ -1,31 +1,34 @@
 // @flow
-import { Server } from 'api';
-import type { ChapterType } from 'types';
-import { ADJUST_UNREAD } from './library';
-import { handleHTMLError } from './utils';
+import { Server } from "api";
+import type { ChapterType } from "types";
+import createCachedSelector from "re-reselect";
+import { createLoadingSelector } from "redux-ducks/loading";
+import { ADJUST_UNREAD } from "redux-ducks/library";
+import { handleHTMLError } from "redux-ducks/utils";
 
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_CACHE = 'chapters/FETCH_CACHE';
-const FETCH_REQUEST = 'chapters/FETCH_REQUEST';
-const FETCH_SUCCESS = 'chapters/FETCH_SUCCESS';
-const FETCH_FAILURE = 'chapters/FETCH_FAILURE';
-export const FETCH_CHAPTERS = 'chapters/FETCH';
+const FETCH_CACHE = "chapters/FETCH_CACHE";
+const FETCH_REQUEST = "chapters/FETCH_REQUEST";
+const FETCH_SUCCESS = "chapters/FETCH_SUCCESS";
+const FETCH_FAILURE = "chapters/FETCH_FAILURE";
+export const FETCH_CHAPTERS = "chapters/FETCH";
 
-const UPDATE_REQUEST = 'chapters/UPDATE_REQUEST';
-const UPDATE_SUCCESS = 'chapters/UPDATE_SUCCESS';
-const UPDATE_FAILURE = 'chapters/UPDATE_FAILURE';
-export const UPDATE_CHAPTERS = 'chapters/UPDATE';
+const UPDATE_REQUEST = "chapters/UPDATE_REQUEST";
+const UPDATE_SUCCESS = "chapters/UPDATE_SUCCESS";
+const UPDATE_FAILURE = "chapters/UPDATE_FAILURE";
+export const UPDATE_CHAPTERS = "chapters/UPDATE";
 
-const UPDATE_READING_STATUS_NO_CHANGE = 'chapters/UPDATE_READING_STATUS_NO_CHANGE';
-const UPDATE_READING_STATUS_REQUEST = 'chapters/UPDATE_READING_STATUS_REQUEST';
-const UPDATE_READING_STATUS_SUCCESS = 'chapters/UPDATE_READING_STATUS_SUCCESS';
-const UPDATE_READING_STATUS_FAILURE = 'chapters/UPDATE_READING_STATUS_FAILURE';
+const UPDATE_READING_STATUS_NO_CHANGE =
+  "chapters/UPDATE_READING_STATUS_NO_CHANGE";
+const UPDATE_READING_STATUS_REQUEST = "chapters/UPDATE_READING_STATUS_REQUEST";
+const UPDATE_READING_STATUS_SUCCESS = "chapters/UPDATE_READING_STATUS_SUCCESS";
+const UPDATE_READING_STATUS_FAILURE = "chapters/UPDATE_READING_STATUS_FAILURE";
 
-const TOGGLE_READ_REQUEST = 'chapters/TOGGLE_READ_REQUEST';
-const TOGGLE_READ_SUCCESS = 'chapters/TOGGLE_READ_SUCCESS';
-const TOGGLE_READ_FAILURE = 'chapters/TOGGLE_READ_FAILURE';
+const TOGGLE_READ_REQUEST = "chapters/TOGGLE_READ_REQUEST";
+const TOGGLE_READ_SUCCESS = "chapters/TOGGLE_READ_SUCCESS";
+const TOGGLE_READ_FAILURE = "chapters/TOGGLE_READ_FAILURE";
 
 // ================================================================================
 // Reducers
@@ -37,7 +40,7 @@ export default function chaptersReducer(state: State = {}, action = {}) {
     case FETCH_SUCCESS:
       return {
         ...state,
-        [action.mangaId]: action.payload,
+        [action.mangaId]: action.payload
       };
 
     case FETCH_CACHE:
@@ -47,12 +50,15 @@ export default function chaptersReducer(state: State = {}, action = {}) {
       return state; // doesn't directly edit state, calls fetchChapters
 
     case UPDATE_READING_STATUS_SUCCESS: {
-      const {
-        mangaId, chapterId, readPage, didReadLastPage,
-      } = action;
+      const { mangaId, chapterId, readPage, didReadLastPage } = action;
       return {
         ...state,
-        [mangaId]: changeChapterObjReadState(state[mangaId], chapterId, didReadLastPage, readPage),
+        [mangaId]: changeChapterObjReadState(
+          state[mangaId],
+          chapterId,
+          didReadLastPage,
+          readPage
+        )
       };
     }
 
@@ -60,7 +66,7 @@ export default function chaptersReducer(state: State = {}, action = {}) {
       const { mangaId, chapterId, read } = action;
       return {
         ...state,
-        [mangaId]: changeChapterObjReadState(state[mangaId], chapterId, read),
+        [mangaId]: changeChapterObjReadState(state[mangaId], chapterId, read)
       };
     }
 
@@ -70,11 +76,71 @@ export default function chaptersReducer(state: State = {}, action = {}) {
 }
 
 // ================================================================================
+// Selectors
+// ================================================================================
+
+export const selectIsChaptersLoading = createLoadingSelector([
+  FETCH_CHAPTERS,
+  UPDATE_CHAPTERS
+]);
+
+const noChapters = []; // selector memoization optimization
+export const selectChaptersForManga = (
+  state,
+  mangaId: number
+): Array<ChapterType> => state.chapters[mangaId] || noChapters;
+
+// Example call - selectChapter(state, mangaId, chapterId)
+// Using re-reselector because of the way chapters are stored as arrays inside a map
+// You can't find the chapter directly without calling chapters.find()
+export const selectChapter = createCachedSelector(
+  [selectChaptersForManga, (_, __, chapterId: number) => chapterId],
+  (chapters, chapterId): ?ChapterType =>
+    chapters.find(chapter => chapter.id === chapterId)
+  // Cache Key
+)((state, mangaId, chapterId) => `${mangaId}-${chapterId}`);
+
+// selectNextChapterId(state, mangaId, thisChapterId)
+export const selectNextChapterId = createCachedSelector(
+  [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],
+  (chapters, thisChapterId): ?number => {
+    const thisChapterIndex = chapters.findIndex(
+      chapter => chapter.id === thisChapterId
+    );
+
+    if (thisChapterIndex === chapters.length - 1 || thisChapterIndex === -1) {
+      return null;
+    }
+    return chapters[thisChapterIndex + 1].id;
+  }
+  // Cache Key
+)((state, mangaId, thisChapterId) => `${mangaId}-${thisChapterId}`);
+
+// selectPrevChapterId(state, mangaId, thisChapterId)
+export const selectPrevChapterId = createCachedSelector(
+  [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],
+  (chapters, thisChapterId): ?number => {
+    const thisChapterIndex = chapters.findIndex(
+      chapter => chapter.id === thisChapterId
+    );
+
+    if (thisChapterIndex === 0 || thisChapterIndex === -1) {
+      return null;
+    }
+    return chapters[thisChapterIndex - 1].id;
+  }
+  // Cache Key
+)((state, mangaId, thisChapterId) => `${mangaId}-${thisChapterId}`);
+
+// ================================================================================
 // Action Creators
 // ================================================================================
 // Fetch the chapters that are currently cached by the server
 type Obj = { ignoreCache?: boolean };
-export function fetchChapters(mangaId: number, { ignoreCache = false }: Obj = {}) {
+export function fetchChapters(
+  mangaId: number,
+  { ignoreCache = false }: Obj = {}
+) {
   return (dispatch: Function, getState: Function) => {
     // Return manga's cached chapters if they're already in the store
     if (!ignoreCache && getState().chapters[mangaId]) {
@@ -86,13 +152,14 @@ export function fetchChapters(mangaId: number, { ignoreCache = false }: Obj = {}
     return fetch(Server.chapters(mangaId))
       .then(handleHTMLError)
       .then(
-        json => dispatch({ type: FETCH_SUCCESS, payload: json.content, mangaId }),
+        json =>
+          dispatch({ type: FETCH_SUCCESS, payload: json.content, mangaId }),
         error =>
           dispatch({
             type: FETCH_FAILURE,
-            errorMessage: 'Failed to load chapters',
-            meta: { error },
-          }),
+            errorMessage: "Failed to load chapters",
+            meta: { error }
+          })
       );
   };
 }
@@ -106,12 +173,12 @@ export function updateChapters(mangaId: number) {
     return fetch(Server.updateMangaChapters(mangaId))
       .then(handleHTMLError)
       .then(
-        (json) => {
+        json => {
           if (!json.success) {
             return dispatch({
               type: UPDATE_FAILURE,
-              errorMessage: 'Failed to update the chapters list',
-              meta: { json },
+              errorMessage: "Failed to update the chapters list",
+              meta: { json }
             });
           }
 
@@ -120,14 +187,17 @@ export function updateChapters(mangaId: number) {
             return dispatch(fetchChapters(mangaId, { ignoreCache: true }));
           }
 
-          return dispatch({ type: UPDATE_SUCCESS, meta: { note: 'No updates', json } });
+          return dispatch({
+            type: UPDATE_SUCCESS,
+            meta: { note: "No updates", json }
+          });
         },
         error =>
           dispatch({
             type: UPDATE_FAILURE,
-            errorMessage: 'Failed to update the chapters list',
-            meta: { error },
-          }),
+            errorMessage: "Failed to update the chapters list",
+            meta: { error }
+          })
       );
   };
 }
@@ -136,7 +206,7 @@ export function updateChapters(mangaId: number) {
 export function updateReadingStatus(
   mangaId: number,
   chapterId: number,
-  readPage: number,
+  readPage: number
 ) {
   return (dispatch: Function, getState: Function) => {
     // Handle checking if no update needs to happen. Escape early if so.
@@ -147,18 +217,27 @@ export function updateReadingStatus(
       return dispatch({
         type: UPDATE_READING_STATUS_NO_CHANGE,
         meta: {
-          readPage, lastPageRead: chapter.last_page_read, isRead: chapter.read,
-        },
+          readPage,
+          lastPageRead: chapter.last_page_read,
+          isRead: chapter.read
+        }
       });
     }
 
     const pageCount = pageCounts[chapter.id];
     const didReadLastPage: ?boolean = readPage === pageCount - 1 ? true : null;
 
-    const updateReadingStatusUrl =
-      Server.updateReadingStatus(mangaId, chapter.id, readPage, didReadLastPage);
+    const updateReadingStatusUrl = Server.updateReadingStatus(
+      mangaId,
+      chapter.id,
+      readPage,
+      didReadLastPage
+    );
 
-    dispatch({ type: UPDATE_READING_STATUS_REQUEST, meta: { readPage, didReadLastPage } });
+    dispatch({
+      type: UPDATE_READING_STATUS_REQUEST,
+      meta: { readPage, didReadLastPage }
+    });
 
     return fetch(updateReadingStatusUrl)
       .then(handleHTMLError)
@@ -174,15 +253,15 @@ export function updateReadingStatus(
             mangaId,
             chapterId: chapter.id,
             readPage,
-            didReadLastPage,
+            didReadLastPage
           });
         },
         error =>
           dispatch({
             type: UPDATE_READING_STATUS_FAILURE,
-            errorMessage: 'Failed to save your reading status',
-            meta: { error },
-          }),
+            errorMessage: "Failed to save your reading status",
+            meta: { error }
+          })
       );
   };
 }
@@ -204,15 +283,17 @@ export function toggleRead(mangaId: number, chapterId: number, read: boolean) {
             type: TOGGLE_READ_SUCCESS,
             mangaId,
             chapterId,
-            read,
+            read
           });
         },
         error =>
           dispatch({
             type: TOGGLE_READ_FAILURE,
-            errorMessage: `Failed to mark chapter as ${read ? 'read' : 'unread'}`,
-            meta: { error },
-          }),
+            errorMessage: `Failed to mark chapter as ${
+              read ? "read" : "unread"
+            }`,
+            meta: { error }
+          })
       );
   };
 }
@@ -220,15 +301,24 @@ export function toggleRead(mangaId: number, chapterId: number, read: boolean) {
 // ================================================================================
 // Helper Functions
 // ================================================================================
-function changeChapterObjReadState(chapters, chapterId, didReadLastPage, readPage = 0) {
+function changeChapterObjReadState(
+  chapters,
+  chapterId,
+  didReadLastPage,
+  readPage = 0
+) {
   const chapterIndex = chapters.findIndex(chapter => chapter.id === chapterId);
   const chapter = chapters[chapterIndex];
 
   const newChapter = {
     ...chapter,
     last_page_read: readPage,
-    read: didReadLastPage,
+    read: didReadLastPage
   };
 
-  return [...chapters.slice(0, chapterIndex), newChapter, ...chapters.slice(chapterIndex + 1)];
+  return [
+    ...chapters.slice(0, chapterIndex),
+    newChapter,
+    ...chapters.slice(chapterIndex + 1)
+  ];
 }

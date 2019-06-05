@@ -29,3 +29,6 @@ esproposal.class_instance_fields=enable
 
 # https://github.com/facebook/flow/issues/5180#issuecomment-341888566
 # ^ explaination for 'resolve_dirname=./src'
+
+[version]
+0.93.0
