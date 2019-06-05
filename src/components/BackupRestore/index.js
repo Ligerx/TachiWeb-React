@@ -12,9 +12,7 @@ import { Helmet } from "react-helmet";
 
 const BackupRestore = () => (
   <React.Fragment>
-    <Helmet>
-      <title>Backup and Restore - TachiWeb</title>
-    </Helmet>
+    <Helmet title="Backup and Restore - TachiWeb" />
 
     <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
       <Toolbar>
