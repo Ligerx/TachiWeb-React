@@ -1,6 +1,7 @@
 // @flow
 import { Server } from "api";
 import type { FilterAnyType } from "types/filters";
+import type { MangaType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createSelector } from "reselect";
 import { selectMangaInfos, ADD_MANGA } from "redux-ducks/mangaInfos";
