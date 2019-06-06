@@ -3,6 +3,7 @@ import { Server } from "api";
 import type { ExtensionType } from "types";
 import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
 import { createLoadingSelector } from "redux-ducks/loading";
+import { createSelector } from "reselect";
 
 // ================================================================================
 // Actions
@@ -75,6 +76,24 @@ export const selectIsExtensionsLoading = createLoadingSelector([
 
 export const selectExtensions = (state): Array<ExtensionType> =>
   state.extensions;
+
+export const selectInstalledExtensions = createSelector(
+  [selectExtensions],
+  extensions => {
+    return extensions
+      .filter(extension => extension.status === "INSTALLED")
+      .sort(extensionSort);
+  }
+);
+
+export const selectNotInstalledExtensions = createSelector(
+  [selectExtensions],
+  extensions => {
+    return extensions
+      .filter(extension => extension.status !== "INSTALLED")
+      .sort(extensionSort);
+  }
+);
 
 // ================================================================================
 // Action Creators
@@ -177,4 +196,21 @@ export function reloadExtensions() {
       });
     }
   };
+}
+
+// ================================================================================
+// Helper Functions
+// ================================================================================
+
+function extensionSort(a: ExtensionType, b: ExtensionType) {
+  // First sort alphabetically by language
+  // Not using the pretty print / native name, but it gets the job done
+  if (a.lang > b.lang) return 1;
+  if (a.lang < b.lang) return -1;
+
+  // Then sort alphabetically by source name
+  if (a.name > b.name) return 1;
+  if (a.name < b.name) return -1;
+
+  return 0;
 }
