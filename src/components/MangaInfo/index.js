@@ -6,7 +6,7 @@ import MangaInfoHeader from "components/MangaInfo/MangaInfoHeader";
 import MangaInfoDetails from "components/MangaInfo/MangaInfoDetails";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import MangaInfoChapters from "components/MangaInfo/MangaInfoChapters";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, useStore } from "react-redux";
 import {
   selectIsMangaInfosLoading,
   selectMangaInfo,
@@ -17,6 +17,7 @@ import {
 import {
   selectIsChaptersLoading,
   selectFilteredSortedChapters,
+  selectChaptersForManga,
   fetchChapters,
   updateChapters,
   toggleRead
@@ -48,15 +49,26 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const handleToggleRead = (chapterId, read) =>
     dispatch(toggleRead(mangaId, chapterId, read));
 
+  const store = useStore();
+
   useEffect(() => {
     dispatch(fetchChapters(mangaId))
       .then(() => {
-        // Fetch chapters cached on the server
-        // If there are none, tell the server to scrape chapters from the site
-        if (!chapters.length) {
-          return dispatch(updateChapters(mangaId)); // return promise so next .then()'s wait
+        // The first time a manga is loaded by the server, it will not have any chapters scraped.
+        // So check if we found any chapters. If not, try scraping the site once.
+
+        // Check for chapters directly in the store instead of relying on useSelector().
+        // This is because the useSelector() value doesn't update until the next render
+        // which occurs AFTER this useEffect() promise runs.
+        const chaptersInStore = selectChaptersForManga(
+          store.getState(),
+          mangaId
+        );
+
+        if (!chaptersInStore.length) {
+          // return promise so next .then()'s wait until the data has finished fetching
+          return dispatch(updateChapters(mangaId));
         }
-        return null;
       })
       .then(() => dispatch(fetchMangaInfo(mangaId)))
       .then(() => {
