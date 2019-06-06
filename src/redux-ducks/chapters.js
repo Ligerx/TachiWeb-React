@@ -1,6 +1,6 @@
 // @flow
 import { Server } from "api";
-import type { ChapterType } from "types";
+import type { ChapterType, MangaType } from "types";
 import createCachedSelector from "re-reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { ADJUST_UNREAD } from "redux-ducks/library";
@@ -81,12 +81,13 @@ export default function chaptersReducer(state: State = {}, action = {}) {
 // Selectors
 // ================================================================================
 
+const noChapters = []; // selector memoization optimization
+
 export const selectIsChaptersLoading = createLoadingSelector([
   FETCH_CHAPTERS,
   UPDATE_CHAPTERS
 ]);
 
-const noChapters = []; // selector memoization optimization
 export const selectChaptersForManga = (
   state,
   mangaId: number
@@ -105,7 +106,8 @@ export const selectChapter = createCachedSelector(
 // selectFilteredSortedChapters(state, mangaId)
 export const selectFilteredSortedChapters = createCachedSelector(
   [selectMangaInfo, selectChaptersForManga],
-  (mangaInfo, chapters) => {
+  (mangaInfo: ?MangaType, chapters: Array<ChapterType>) => {
+    if (!mangaInfo) return noChapters;
     return filterSortChapters(chapters, mangaInfo.flags);
   }
 )((_, mangaId) => mangaId);
