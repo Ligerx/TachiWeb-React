@@ -4,7 +4,6 @@ import ContinueReadingButton from "components/MangaInfo/ContinueReadingButton";
 import CenterHorizontally from "components/CenterHorizontally";
 import MangaInfoChapterList from "components/MangaInfo/MangaInfoChapterList";
 import type { MangaType, ChapterType } from "types";
-import filterSortChapters from "components/MangaInfo/chapterUtils";
 
 type Props = {
   chapters: Array<ChapterType>,
@@ -13,8 +12,6 @@ type Props = {
 };
 
 const MangaInfoChapters = ({ chapters, mangaInfo, toggleRead }: Props) => {
-  const filteredSortedChapters = filterSortChapters(chapters, mangaInfo.flags);
-
   return (
     <React.Fragment>
       <CenterHorizontally>
@@ -27,7 +24,7 @@ const MangaInfoChapters = ({ chapters, mangaInfo, toggleRead }: Props) => {
 
       <MangaInfoChapterList
         mangaInfo={mangaInfo}
-        chapters={filteredSortedChapters}
+        chapters={chapters}
         toggleRead={toggleRead}
       />
     </React.Fragment>

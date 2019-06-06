@@ -16,7 +16,7 @@ import {
 } from "redux-ducks/mangaInfos";
 import {
   selectIsChaptersLoading,
-  selectChaptersForManga,
+  selectFilteredSortedChapters,
   fetchChapters,
   updateChapters,
   toggleRead
@@ -36,7 +36,9 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const [tabValue, setTabValue] = useState(defaultTab);
 
   const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
-  const chapters = useSelector(state => selectChaptersForManga(state, mangaId));
+  const chapters = useSelector(state =>
+    selectFilteredSortedChapters(state, mangaId)
+  );
   const isMangaInfosLoading = useSelector(selectIsMangaInfosLoading);
   const isChaptersLoading = useSelector(selectIsChaptersLoading);
 

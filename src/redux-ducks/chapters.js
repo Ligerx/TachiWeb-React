@@ -5,6 +5,8 @@ import createCachedSelector from "re-reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { ADJUST_UNREAD } from "redux-ducks/library";
 import { handleHTMLError } from "redux-ducks/utils";
+import filterSortChapters from "redux-ducks/chapterUtils";
+import { selectMangaInfo } from "redux-ducks/mangaInfos";
 
 // ================================================================================
 // Actions
@@ -99,6 +101,14 @@ export const selectChapter = createCachedSelector(
     chapters.find(chapter => chapter.id === chapterId)
   // Cache Key
 )((state, mangaId, chapterId) => `${mangaId}-${chapterId}`);
+
+// selectFilteredSortedChapters(state, mangaId)
+export const selectFilteredSortedChapters = createCachedSelector(
+  [selectMangaInfo, selectChaptersForManga],
+  (mangaInfo, chapters) => {
+    return filterSortChapters(chapters, mangaInfo.flags);
+  }
+)((_, mangaId) => mangaId);
 
 // selectNextChapterId(state, mangaId, thisChapterId)
 export const selectNextChapterId = createCachedSelector(
