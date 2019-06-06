@@ -96,6 +96,9 @@ export const selectIsSettingsLoading = createLoadingSelector([
   FETCH_SCHEMA
 ]);
 
+export const selectIsSettingsLoaded = (state): boolean =>
+  state.settings.allPrefsFetched;
+
 export const selectSettingsSchema = (state): ?SchemaType =>
   state.settings.schema;
 export const selectSettingsPrefs = (state): PrefsType => state.settings.prefs;

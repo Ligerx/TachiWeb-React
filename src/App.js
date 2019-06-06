@@ -1,9 +1,9 @@
 // @flow
 import React, { useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import ErrorNotifications from "components/ErrorNotifications";
-import { fetchSettings } from "redux-ducks/settings";
+import { selectIsSettingsLoaded, fetchSettings } from "redux-ducks/settings";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import Router from "routes";
 import "index.css";
@@ -16,36 +16,18 @@ import "index.css";
 // This way it continues to stay self contained and does not rely on an outside
 // component to fetch data, as that behavior could change any time.
 
-// //////////////////////////////////////////////////////
-//     Settings related Redux stuff                    //
-// //////////////////////////////////////////////////////
-type StateToProps = { isSettingsLoaded: boolean };
-type DispatchToProps = { fetchSettings: Function };
+const App = () => {
+  // Block everything until settings are loaded
+  const dispatch = useDispatch();
+  const isSettingsLoaded = useSelector(selectIsSettingsLoaded);
 
-const mapStateToProps = state => ({
-  isSettingsLoaded: state.settings.allPrefsFetched
-});
-
-const mapDispatchToProps = (dispatch): DispatchToProps => ({
-  fetchSettings: () => dispatch(fetchSettings())
-});
-
-// //////////////////////////////////////////////////////
-
-const App = (props: StateToProps & DispatchToProps) => {
-  // //////////////////////////////////////////////////////
-  //     Block everything until settings are loaded      //
-  // //////////////////////////////////////////////////////
   useEffect(() => {
-    props.fetchSettings();
+    dispatch(fetchSettings());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // eslint-disable-next-line react/destructuring-assignment
-  if (!props.isSettingsLoaded) {
+  if (!isSettingsLoaded) {
     return <FullScreenLoading />;
   }
-
-  // //////////////////////////////////////////////////////
 
   return (
     <React.Fragment>
@@ -57,7 +39,4 @@ const App = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default App;
