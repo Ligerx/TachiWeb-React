@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Helmet } from "react-helmet";
 import {
+  selectFilteredSortedLibrary,
   selectIsLibraryLoading,
   selectUnread,
   selectLibraryFlags,
-  selectLibraryMangaInfos,
   fetchLibrary,
   fetchUnread,
   fetchLibraryFlags,
@@ -17,7 +17,6 @@ import LibraryHeader from "components/Library/LibraryHeader";
 import MangaGrid from "components/MangaGrid";
 import LibraryMangaCard from "components/Library/LibraryMangaCard";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
-import filterSortLibrary from "components/Library/libraryUtils";
 
 // TODO: no feedback of success/errors after clicking the library update button
 
@@ -27,7 +26,9 @@ import filterSortLibrary from "components/Library/libraryUtils";
 const Library = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const mangaLibrary = useSelector(selectLibraryMangaInfos);
+  const mangaLibrary = useSelector(state =>
+    selectFilteredSortedLibrary(state, searchQuery)
+  );
   const unread = useSelector(selectUnread);
   const flags = useSelector(selectLibraryFlags);
   const libraryIsLoading = useSelector(selectIsLibraryLoading);
@@ -60,13 +61,6 @@ const Library = () => {
     setSearchQuery(newSearchQuery);
   };
 
-  const filteredSortedLibrary = filterSortLibrary(
-    mangaLibrary,
-    flags,
-    unread,
-    searchQuery
-  );
-
   return (
     <React.Fragment>
       <Helmet title="Library - TachiWeb" />
@@ -80,7 +74,7 @@ const Library = () => {
       />
 
       <MangaGrid
-        mangaLibrary={filteredSortedLibrary}
+        mangaLibrary={mangaLibrary}
         cardComponent={<LibraryMangaCard unread={unread} />}
       />
 

@@ -10,6 +10,8 @@ import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createErrorSelector } from "redux-ducks/error";
 import { createSelector } from "reselect";
+import createCachedSelector from "re-reselect";
+import filterSortLibrary from "redux-ducks/libraryUtils";
 
 // ================================================================================
 // Actions
@@ -189,6 +191,18 @@ export const selectLibraryMangaInfos = createSelector(
     return mangaIds.map(mangaId => mangaInfos[mangaId]);
   }
 );
+
+// selectFilteredSortedLibrary(state, searchQuery)
+export const selectFilteredSortedLibrary = createCachedSelector(
+  [
+    selectLibraryMangaInfos,
+    selectLibraryFlags,
+    selectUnread,
+    (_, searchQuery) => searchQuery
+  ],
+  filterSortLibrary
+  // Cache Key
+)((_, searchQuery) => searchQuery);
 
 export const selectIsRestoreLoading = createLoadingSelector([UPLOAD_RESTORE]);
 export const selectDidRestoreFail = createErrorSelector([UPLOAD_RESTORE]);
