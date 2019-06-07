@@ -1,11 +1,11 @@
 // @flow
 import React, { useEffect } from "react";
-import FullScreenLoading from "components/Loading/FullScreenLoading";
 import { Helmet } from "react-helmet";
-import ResponsiveGrid from "components/ResponsiveGrid";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
+import ResponsiveGrid from "components/ResponsiveGrid";
 import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
 import ExtensionList from "components/Extensions/ExtensionList";
@@ -15,8 +15,6 @@ import {
   selectInstalledExtensions,
   selectNotInstalledExtensions,
   fetchExtensions,
-  installExtension,
-  uninstallExtension,
   reloadExtensions
 } from "redux-ducks/extensions";
 
@@ -30,12 +28,6 @@ const Extensions = () => {
   const isExtensionsLoading = useSelector(selectIsExtensionsLoading);
 
   const dispatch = useDispatch();
-
-  const handleInstallExtension = packageName =>
-    dispatch(installExtension(packageName));
-
-  const handleUninstallExtension = packageName =>
-    dispatch(uninstallExtension(packageName));
 
   const handleReloadExtensions = () => dispatch(reloadExtensions());
 
@@ -60,21 +52,9 @@ const Extensions = () => {
       </AppBar>
 
       <ResponsiveGrid maxWidth="xs">
-        <ExtensionList
-          title="Installed"
-          extensions={installedExtensions}
-          onUpdateClick={handleInstallExtension}
-          onInstallClick={handleInstallExtension}
-          onUninstallClick={handleUninstallExtension}
-        />
+        <ExtensionList title="Installed" extensions={installedExtensions} />
 
-        <ExtensionList
-          title="Available"
-          extensions={notInstalledExtensions}
-          onUpdateClick={handleInstallExtension}
-          onInstallClick={handleInstallExtension}
-          onUninstallClick={handleUninstallExtension}
-        />
+        <ExtensionList title="Available" extensions={notInstalledExtensions} />
       </ResponsiveGrid>
 
       {isExtensionsLoading && <FullScreenLoading />}
