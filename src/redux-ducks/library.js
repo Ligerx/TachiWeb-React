@@ -12,6 +12,7 @@ import { createErrorSelector } from "redux-ducks/error";
 import { createSelector } from "reselect";
 import createCachedSelector from "re-reselect";
 import filterSortLibrary from "redux-ducks/libraryUtils";
+import { updateChapters } from "redux-ducks/chapters";
 
 // ================================================================================
 // Actions
@@ -263,6 +264,32 @@ export function fetchUnread({ ignoreCache = false }: Options = {}) {
             meta: { error }
           })
       );
+  };
+}
+
+export function updateLibrary() {
+  return (dispatch: Function, getState: Function) => {
+    // https://decembersoft.com/posts/promises-in-serial-with-array-reduce/
+    function serialPromiseChain(promiseArray) {
+      return promiseArray.reduce(
+        (promiseChain, currentPromise) =>
+          promiseChain.then(() => currentPromise()),
+        Promise.resolve([])
+      );
+    }
+
+    const library = selectLibraryMangaInfos(getState());
+
+    // Create an array of promise functions
+    // Since calling updateChapters runs the function, create an intermediate function
+    const updateChapterPromises = library.map(mangaInfo => () =>
+      dispatch(updateChapters(mangaInfo.id))
+    );
+
+    return serialPromiseChain(updateChapterPromises).then(() => {
+      dispatch(fetchLibrary({ ignoreCache: true }));
+      dispatch(fetchUnread({ ignoreCache: true }));
+    });
   };
 }
 
