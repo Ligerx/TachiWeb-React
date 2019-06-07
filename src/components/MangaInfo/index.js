@@ -44,8 +44,6 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const isChaptersLoading = useSelector(selectIsChaptersLoading);
 
   const dispatch = useDispatch();
-  const handleSetFlag = (flag, state) =>
-    dispatch(setFlag(mangaId, flag, state));
   const handleToggleRead = (chapterId, read) =>
     dispatch(toggleRead(mangaId, chapterId, read));
 
@@ -89,14 +87,6 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
     setTabValue(newValue);
   };
 
-  const handleRefreshClick = () => {
-    // Running updateChapters also updates mangaInfo.chapters and mangaInfo.unread
-    // So run updateMangaInfo after chapters
-    dispatch(updateChapters(mangaId)).then(() =>
-      dispatch(updateMangaInfo(mangaId))
-    );
-  };
-
   const tabContent = (): Node => {
     const numChapters: number = chapters ? chapters.length : 0;
 
@@ -117,20 +107,19 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
     return null;
   };
 
+  if (!mangaInfo) return <FullScreenLoading />;
+
   return (
     <React.Fragment>
-      <Helmet
-        title={`${mangaInfo ? mangaInfo.title : "Loading..."} - TachiWeb`}
-      />
+      <Helmet title={`${mangaInfo.title} - TachiWeb`} />
 
       <MangaInfoHeader
         mangaInfo={mangaInfo}
         tabValue={tabValue}
         handleChangeTab={handleChangeTab}
         onBackClick={backUrl}
-        onRefreshClick={handleRefreshClick}
-        setFlag={handleSetFlag}
       />
+
       {tabContent()}
 
       {(isMangaInfosLoading || isChaptersLoading) && <FullScreenLoading />}

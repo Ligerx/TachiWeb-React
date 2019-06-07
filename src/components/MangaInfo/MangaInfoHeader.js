@@ -12,86 +12,97 @@ import BackButton from "components/BackButton";
 import MangaInfoMore from "components/MangaInfo/MangaInfoMore";
 import Tooltip from "@material-ui/core/Tooltip";
 import MangaInfoFilter from "components/MangaInfo/MangaInfoFilter";
+import { useDispatch } from "react-redux";
+import { updateMangaInfo, setFlag } from "redux-ducks/mangaInfos";
+import { updateChapters } from "redux-ducks/chapters";
 
 // NOTE: empty href in IconButton will not render <a>
 
 type Props = {
-  mangaInfo: ?MangaType,
+  mangaInfo: MangaType,
   tabValue: number,
   handleChangeTab: Function,
-  onBackClick: string | Function,
-  onRefreshClick: Function,
-  setFlag: Function
+  onBackClick: string | Function
 };
 
 const MangaInfoHeader = ({
   mangaInfo,
   tabValue,
   handleChangeTab,
-  onBackClick,
-  onRefreshClick,
-  setFlag
-}: Props) => (
-  <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
-    <Toolbar>
-      {mangaInfo && (
-        <React.Fragment>
-          <BackButton onBackClick={onBackClick} />
-          <Typography variant="h6" style={{ flex: 1 }}>
-            {mangaInfo.title}
-          </Typography>
+  onBackClick
+}: Props) => {
+  const dispatch = useDispatch();
 
-          <RefreshButton onClick={onRefreshClick} />
+  const handleSetFlag = (flag, state) => {
+    dispatch(setFlag(mangaInfo.id, flag, state));
+  };
 
-          <MangaInfoFilter
-            flags={mangaInfo.flags}
-            onReadFilterChange={handleReadFilterChange(setFlag)}
-            onDownloadedFilterChange={handleDownloadedFilterChange(setFlag)}
-          />
+  const handleRefreshClick = () => {
+    // Running updateChapters also updates mangaInfo.chapters and mangaInfo.unread
+    // So run updateMangaInfo after chapters
+    dispatch(updateChapters(mangaInfo.id)).then(() =>
+      dispatch(updateMangaInfo(mangaInfo.id))
+    );
+  };
 
-          <Tooltip title="Sort">
-            <IconButton onClick={handleSortClick(setFlag, mangaInfo.flags)}>
-              <Icon>sort_by_alpha</Icon>
-            </IconButton>
-          </Tooltip>
+  return (
+    <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+      <Toolbar>
+        <BackButton onBackClick={onBackClick} />
+        <Typography variant="h6" style={{ flex: 1 }}>
+          {mangaInfo.title}
+        </Typography>
 
-          <MangaInfoMore
-            sourceUrl={mangaInfo.url}
-            flags={mangaInfo.flags}
-            onDisplayModeChange={handleDisplayModeChange(setFlag)}
-            onSortTypeChange={handleSortTypeChange(setFlag)}
-          />
-        </React.Fragment>
-      )}
-    </Toolbar>
+        <RefreshButton onClick={handleRefreshClick} />
 
-    <MangaInfoTabs tabValue={tabValue} handleChange={handleChangeTab} />
-  </AppBar>
-);
+        <MangaInfoFilter
+          flags={mangaInfo.flags}
+          onReadFilterChange={handleReadFilterChange(handleSetFlag)}
+          onDownloadedFilterChange={handleDownloadedFilterChange(handleSetFlag)}
+        />
 
-function handleSortClick(setFlag, flags) {
+        <Tooltip title="Sort">
+          <IconButton onClick={handleSortClick(handleSetFlag, mangaInfo.flags)}>
+            <Icon>sort_by_alpha</Icon>
+          </IconButton>
+        </Tooltip>
+
+        <MangaInfoMore
+          sourceUrl={mangaInfo.url}
+          flags={mangaInfo.flags}
+          onDisplayModeChange={handleDisplayModeChange(handleSetFlag)}
+          onSortTypeChange={handleSortTypeChange(handleSetFlag)}
+        />
+      </Toolbar>
+
+      <MangaInfoTabs tabValue={tabValue} handleChange={handleChangeTab} />
+    </AppBar>
+  );
+};
+
+function handleSortClick(handleSetFlag, flags) {
   return () => {
     const newState =
       flags.SORT_DIRECTION === "DESCENDING" ? "ASCENDING" : "DESCENDING";
-    setFlag("SORT_DIRECTION", newState);
+    handleSetFlag("SORT_DIRECTION", newState);
   };
 }
 
-function handleDisplayModeChange(setFlag) {
-  return newDisplayMode => setFlag("DISPLAY_MODE", newDisplayMode);
+function handleDisplayModeChange(handleSetFlag) {
+  return newDisplayMode => handleSetFlag("DISPLAY_MODE", newDisplayMode);
 }
 
-function handleSortTypeChange(setFlag) {
-  return newSortType => setFlag("SORT_TYPE", newSortType);
+function handleSortTypeChange(handleSetFlag) {
+  return newSortType => handleSetFlag("SORT_TYPE", newSortType);
 }
 
-function handleReadFilterChange(setFlag) {
-  return newReadFilter => setFlag("READ_FILTER", newReadFilter);
+function handleReadFilterChange(handleSetFlag) {
+  return newReadFilter => handleSetFlag("READ_FILTER", newReadFilter);
 }
 
-function handleDownloadedFilterChange(setFlag) {
+function handleDownloadedFilterChange(handleSetFlag) {
   return newDownloadedFilter =>
-    setFlag("DOWNLOADED_FILTER", newDownloadedFilter);
+    handleSetFlag("DOWNLOADED_FILTER", newDownloadedFilter);
 }
 
 export default MangaInfoHeader;
