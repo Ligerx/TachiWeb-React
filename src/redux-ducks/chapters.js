@@ -112,6 +112,27 @@ export const selectFilteredSortedChapters = createCachedSelector(
   }
 )((_, mangaId) => mangaId);
 
+// selectFirstUnreadChapter(state, mangaId)
+export const selectFirstUnreadChapter = createCachedSelector(
+  [selectChaptersForManga],
+  chapters => {
+    // Currently just relying on the default sort order
+    let firstUnreadChapter = null;
+
+    // using Array.some() for a short-circuit-able iterator
+    chapters.some(chapter => {
+      if (!chapter.read) {
+        firstUnreadChapter = chapter;
+        return true; // escape
+      }
+      return false; // continue
+    });
+
+    return firstUnreadChapter;
+  }
+  // Cache Key
+)((_, mangaId) => mangaId);
+
 // selectNextChapterId(state, mangaId, thisChapterId)
 export const selectNextChapterId = createCachedSelector(
   [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],

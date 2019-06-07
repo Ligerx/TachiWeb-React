@@ -5,14 +5,15 @@ import { Helmet } from "react-helmet";
 import MangaInfoHeader from "components/MangaInfo/MangaInfoHeader";
 import MangaInfoDetails from "components/MangaInfo/MangaInfoDetails";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
-import MangaInfoChapters from "components/MangaInfo/MangaInfoChapters";
+import ContinueReadingButton from "components/MangaInfo/ContinueReadingButton";
+import MangaInfoChapterList from "components/MangaInfo/MangaInfoChapterList";
+import CenterHorizontally from "components/CenterHorizontally";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {
   selectIsMangaInfosLoading,
   selectMangaInfo,
   fetchMangaInfo,
-  updateMangaInfo,
-  setFlag
+  updateMangaInfo
 } from "redux-ducks/mangaInfos";
 import {
   selectIsChaptersLoading,
@@ -67,6 +68,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
           // return promise so next .then()'s wait until the data has finished fetching
           return dispatch(updateChapters(mangaId));
         }
+        return null;
       })
       .then(() => dispatch(fetchMangaInfo(mangaId)))
       .then(() => {
@@ -97,11 +99,17 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
     }
     if (mangaInfo && tabValue === 1) {
       return (
-        <MangaInfoChapters
-          chapters={chapters}
-          mangaInfo={mangaInfo}
-          toggleRead={handleToggleRead}
-        />
+        <React.Fragment>
+          <CenterHorizontally>
+            <ContinueReadingButton mangaId={mangaInfo.id} />
+          </CenterHorizontally>
+
+          <MangaInfoChapterList
+            chapters={chapters}
+            mangaInfo={mangaInfo}
+            toggleRead={handleToggleRead}
+          />
+        </React.Fragment>
       );
     }
     return null;
