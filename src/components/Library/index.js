@@ -6,13 +6,11 @@ import {
   selectFilteredSortedLibrary,
   selectIsLibraryLoading,
   selectUnread,
-  selectLibraryFlags,
   fetchLibrary,
   fetchUnread,
-  fetchLibraryFlags,
-  setLibraryFlag
+  fetchLibraryFlags
 } from "redux-ducks/library";
-import { selectIsChaptersLoading, updateChapters } from "redux-ducks/chapters";
+import { selectIsChaptersLoading } from "redux-ducks/chapters";
 import LibraryHeader from "components/Library/LibraryHeader";
 import MangaGrid from "components/MangaGrid";
 import LibraryMangaCard from "components/Library/LibraryMangaCard";
@@ -30,14 +28,10 @@ const Library = () => {
     selectFilteredSortedLibrary(state, searchQuery)
   );
   const unread = useSelector(selectUnread);
-  const flags = useSelector(selectLibraryFlags);
   const libraryIsLoading = useSelector(selectIsLibraryLoading);
   const chaptersAreUpdating = useSelector(selectIsChaptersLoading);
 
   const dispatch = useDispatch();
-
-  const handleSetLibraryFlag = (flag, state) =>
-    dispatch(setLibraryFlag(flag, state));
 
   useEffect(() => {
     dispatch(fetchLibrary());
@@ -45,32 +39,13 @@ const Library = () => {
     dispatch(fetchLibraryFlags());
   }, [dispatch]);
 
-  const handleRefreshClick = () => {
-    // Create an array of promise functions
-    // Since calling updateChapters runs the function, create an intermediate function
-    const updateChapterPromises = mangaLibrary.map(mangaInfo => () =>
-      dispatch(updateChapters(mangaInfo.id))
-    );
-
-    serialPromiseChain(updateChapterPromises)
-      .then(() => dispatch(fetchLibrary({ ignoreCache: true })))
-      .then(() => dispatch(fetchUnread({ ignoreCache: true })));
-  };
-
-  const handleSearchChange = (newSearchQuery: string) => {
-    setSearchQuery(newSearchQuery);
-  };
-
   return (
     <React.Fragment>
       <Helmet title="Library - TachiWeb" />
 
       <LibraryHeader
         searchQuery={searchQuery}
-        flags={flags}
-        onSearchChange={handleSearchChange}
-        onRefreshClick={handleRefreshClick}
-        setLibraryFlag={handleSetLibraryFlag}
+        onSearchChange={setSearchQuery}
       />
 
       <MangaGrid
@@ -82,14 +57,5 @@ const Library = () => {
     </React.Fragment>
   );
 };
-
-// Helper Functions
-// https://decembersoft.com/posts/promises-in-serial-with-array-reduce/
-function serialPromiseChain(promiseArray) {
-  return promiseArray.reduce(
-    (promiseChain, currentPromise) => promiseChain.then(() => currentPromise()),
-    Promise.resolve([])
-  );
-}
 
 export default Library;
