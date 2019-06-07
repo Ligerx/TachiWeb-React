@@ -1,5 +1,6 @@
 // @flow
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -9,45 +10,53 @@ import LibrarySearch from "components/Library/LibrarySearch";
 import MenuDrawer from "components/MenuDrawer";
 import LibraryFilter from "components/Library/LibraryFilter";
 import LibrarySort from "components/Library/LibrarySort";
-import type { LibraryFlagsType } from "types";
+import {
+  selectLibraryFlags,
+  setLibraryFlag,
+  updateLibrary
+} from "redux-ducks/library";
 
 type Props = {
-  flags: LibraryFlagsType,
   searchQuery: string,
-  onSearchChange: Function,
-  onRefreshClick: Function,
-  setLibraryFlag: Function
+  onSearchChange: Function
 };
 
-const LibraryHeader = ({
-  flags,
-  searchQuery,
-  onSearchChange,
-  onRefreshClick,
-  setLibraryFlag
-}: Props) => (
-  <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
-    <Toolbar>
-      <MenuDrawer />
+const LibraryHeader = ({ searchQuery, onSearchChange }: Props) => {
+  const dispatch = useDispatch();
 
-      <Typography variant="h6" style={{ flex: 1 }}>
-        Library
-      </Typography>
+  const flags = useSelector(selectLibraryFlags);
 
-      <LibrarySearch
-        searchQuery={searchQuery}
-        onSearchChange={onSearchChange}
-      />
+  const handleRefreshClick = () => {
+    dispatch(updateLibrary());
+  };
 
-      <RefreshButton onClick={onRefreshClick} />
+  const handleSetLibraryFlag = (flag, state) =>
+    dispatch(setLibraryFlag(flag, state));
 
-      <LibraryFilter flags={flags} setLibraryFlag={setLibraryFlag} />
+  return (
+    <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+      <Toolbar>
+        <MenuDrawer />
 
-      <LibrarySort flags={flags} setLibraryFlag={setLibraryFlag} />
+        <Typography variant="h6" style={{ flex: 1 }}>
+          Library
+        </Typography>
 
-      <LibraryMore />
-    </Toolbar>
-  </AppBar>
-);
+        <LibrarySearch
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+        />
+
+        <RefreshButton onClick={handleRefreshClick} />
+
+        <LibraryFilter flags={flags} setLibraryFlag={handleSetLibraryFlag} />
+
+        <LibrarySort flags={flags} setLibraryFlag={handleSetLibraryFlag} />
+
+        <LibraryMore />
+      </Toolbar>
+    </AppBar>
+  );
+};
 
 export default LibraryHeader;

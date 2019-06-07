@@ -1,19 +1,15 @@
 // @flow
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
+import Dropzone from "react-dropzone";
 import { makeStyles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import Dropzone from "react-dropzone";
 import RestoreDialog from "components/BackupRestore/RestoreDialog";
-import {
-  selectIsRestoreLoading,
-  selectDidRestoreFail,
-  uploadRestoreFile
-} from "redux-ducks/library";
+import { uploadRestoreFile } from "redux-ducks/library";
 
 // TODO: clear all files from state when user successfully restores library
 
@@ -80,11 +76,8 @@ const dropzoneContent = ({
 };
 
 const RestoreCard = () => {
-  const isRestoreLoading = useSelector(selectIsRestoreLoading);
-  const didRestoreFail = useSelector(selectDidRestoreFail);
-
-  const dispatch = useDispatch();
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const [acceptedFiles, setAcceptedFiles] = useState([]);
   const [rejectedFiles, setRejectedFiles] = useState([]);
@@ -147,8 +140,6 @@ const RestoreCard = () => {
       <RestoreDialog
         open={dialogueOpen}
         onClose={handleCloseDialog}
-        isLoading={isRestoreLoading}
-        failed={didRestoreFail}
         tryAgain={handleUpload}
       />
     </React.Fragment>

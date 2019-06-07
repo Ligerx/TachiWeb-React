@@ -1,10 +1,8 @@
 // @flow
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Waypoint from "react-waypoint";
-import debounce from "lodash/debounce";
 import { Helmet } from "react-helmet";
-import type { FilterAnyType } from "types/filters";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import MangaGrid from "components/MangaGrid";
@@ -23,21 +21,11 @@ import {
   selectIsCatalogueLoading,
   selectCatalogueSourceId,
   selectCatalogueHasNextPage,
-  selectCatalogueSearchQuery,
   selectCatalogueMangaInfos,
   fetchCatalogue,
-  fetchNextCataloguePage,
-  resetCatalogue,
-  updateSearchQuery,
-  changeSourceId
+  fetchNextCataloguePage
 } from "redux-ducks/catalogue";
-import {
-  selectCurrentFilters,
-  fetchFilters,
-  resetFilters,
-  updateLastUsedFilters,
-  updateCurrentFilters
-} from "redux-ducks/filters";
+import { fetchFilters } from "redux-ducks/filters";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 
@@ -65,12 +53,9 @@ const Catalogue = () => {
   const sources = useSelector(selectSources);
   // Catalogue data
   const hasNextPage = useSelector(selectCatalogueHasNextPage);
-  const searchQuery = useSelector(selectCatalogueSearchQuery);
   const sourceId = useSelector(selectCatalogueSourceId);
   // Library data
   const mangaLibrary = useSelector(selectCatalogueMangaInfos);
-  // Filter data
-  const currentFilters = useSelector(selectCurrentFilters);
   // Fetching data
   const sourcesAreLoading = useSelector(selectIsSourcesLoading);
   const catalogueIsLoading = useSelector(selectIsCatalogueLoading);
@@ -85,46 +70,10 @@ const Catalogue = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Debouncing the search text
-  const debouncedSearch = useRef(
-    debounce(() => {
-      dispatch(fetchCatalogue());
-    }, 500)
-  );
-  const handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    dispatch(updateSearchQuery(event.currentTarget.value));
-    debouncedSearch.current();
-  };
-
-  const handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
-    // NOTE: Using LIElement because that's how my HTML is structured.
-    //       Doubt it'll cause problems, but change this or the actual component if needed.
-    const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
-    const newSourceId = sources[newSourceIndex].id;
-
-    dispatch(resetCatalogue());
-    dispatch(changeSourceId(newSourceId));
-    dispatch(fetchFilters()); // call before fetchCatalogue so filters don't get used between sources
-    dispatch(fetchCatalogue());
-  };
-
   const handleLoadNextPage = () => {
     if (hasNextPage && !catalogueIsLoading) {
       dispatch(fetchNextCataloguePage());
     }
-  };
-
-  const handleResetFilters = () => {
-    dispatch(resetFilters());
-  };
-
-  const handleFilterChange = (newFilters: Array<FilterAnyType>) => {
-    dispatch(updateCurrentFilters(newFilters));
-  };
-
-  const handleSearchFilters = () => {
-    dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
-    dispatch(fetchCatalogue());
   };
 
   const noMoreResults =
@@ -134,21 +83,10 @@ const Catalogue = () => {
     <React.Fragment>
       <Helmet title="Catalogue - TachiWeb" />
 
-      <CatalogueHeader
-        sourceId={sourceId}
-        sources={sources}
-        searchQuery={searchQuery}
-        onSourceChange={handleSourceChange}
-        onSearchChange={handleSearchChange}
-      />
+      <CatalogueHeader />
 
       <ResponsiveGrid>
-        <DynamicSourceFilters
-          filters={currentFilters}
-          onResetClick={handleResetFilters}
-          onSearchClick={handleSearchFilters}
-          onFilterChange={handleFilterChange}
-        />
+        <DynamicSourceFilters />
       </ResponsiveGrid>
 
       <MangaGrid

@@ -1,12 +1,20 @@
 // @flow
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer";
-import { withStyles } from "@material-ui/core/styles";
 import FormGroup from "@material-ui/core/FormGroup";
 import type { FilterAnyType } from "types/filters";
 import FilterActions from "components/Filters/FilterActions";
 import { filterElements } from "components/Filters/filterUtils";
+import { makeStyles } from "@material-ui/styles";
+import { fetchCatalogue } from "redux-ducks/catalogue";
+import {
+  selectCurrentFilters,
+  resetFilters,
+  updateLastUsedFilters,
+  updateCurrentFilters
+} from "redux-ducks/filters";
+import { useSelector, useDispatch } from "react-redux";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
 
@@ -18,7 +26,7 @@ import { filterElements } from "components/Filters/filterUtils";
 // It would be a huge pain to try updating an array of objects (and be less readable)
 // https://stackoverflow.com/questions/29537299/react-how-do-i-update-state-item1-on-setstate-with-jsfiddle
 
-const styles = {
+const useStyles = makeStyles({
   openButton: {
     marginBottom: 24,
     // Kinda hacking the UI for this together right now (right align)
@@ -34,69 +42,62 @@ const styles = {
     // Add margin to all children
     "& > *": { marginBottom: 16 }
   }
-};
+});
 
-type Props = {
-  classes: Object,
-  filters: Array<FilterAnyType>,
-  onResetClick: Function,
-  onSearchClick: Function,
-  onFilterChange: Function
-};
+const DynamicSourceFilters = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
 
-type State = {
-  drawerOpen: boolean
-};
+  const filters = useSelector(selectCurrentFilters);
 
-class DynamicSourceFilters extends Component<Props, State> {
-  state = {
-    drawerOpen: false
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleResetFilters = () => {
+    dispatch(resetFilters());
   };
 
-  toggleDrawer = (isOpen: boolean) => () => {
-    this.setState({ drawerOpen: isOpen });
+  const handleUpdateFilters = (newFilters: Array<FilterAnyType>) => {
+    dispatch(updateCurrentFilters(newFilters));
   };
 
-  handleSearchClick = (/* event */) => {
-    this.props.onSearchClick();
-    this.setState({ drawerOpen: false }); // also close drawer on search
+  const handleSearchWithFilters = () => {
+    dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
+    dispatch(fetchCatalogue());
+    setDrawerOpen(false);
   };
 
-  render() {
-    const { classes, filters, onFilterChange, onResetClick } = this.props;
+  return (
+    <React.Fragment>
+      <Button
+        disabled={!filters.length}
+        variant="contained"
+        color="primary"
+        onClick={() => setDrawerOpen(true)}
+        className={classes.openButton}
+      >
+        Filters
+      </Button>
 
-    return (
-      <React.Fragment>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={filters.length ? this.toggleDrawer(true) : () => null}
-          className={classes.openButton}
-        >
-          Filters
-        </Button>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        {/* without this div, FilterGroup components screw up, not sure why though */}
+        <div>
+          <FilterActions
+            onResetClick={handleResetFilters}
+            onSearchClick={handleSearchWithFilters}
+          />
+          {filters.length && (
+            <FormGroup className={classes.filters}>
+              {filterElements(filters, handleUpdateFilters)}
+            </FormGroup>
+          )}
+        </div>
+      </Drawer>
+    </React.Fragment>
+  );
+};
 
-        <Drawer
-          anchor="right"
-          open={this.state.drawerOpen}
-          onClose={this.toggleDrawer(false)}
-        >
-          {/* without this div, FilterGroup components screw up, not sure why though */}
-          <div>
-            <FilterActions
-              onResetClick={onResetClick}
-              onSearchClick={this.handleSearchClick}
-            />
-            {filters.length && (
-              <FormGroup className={classes.filters}>
-                {filterElements(filters, onFilterChange)}
-              </FormGroup>
-            )}
-          </div>
-        </Drawer>
-      </React.Fragment>
-    );
-  }
-}
-
-export default withStyles(styles)(DynamicSourceFilters);
+export default DynamicSourceFilters;
