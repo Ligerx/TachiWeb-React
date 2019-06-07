@@ -2,6 +2,7 @@
 import { Server } from "api";
 import type { FilterAnyType } from "types/filters";
 import { handleHTMLError } from "redux-ducks/utils";
+import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
 
 // ================================================================================
 // Actions
@@ -35,6 +36,10 @@ export default function filtersReducer(
   action = {}
 ) {
   switch (action.type) {
+    case RESET_CATALOGUE_STATE:
+      // SIDE EFFECT based on catalogue actions
+      return initialState;
+
     case FETCH_REQUEST:
       return initialState;
 
