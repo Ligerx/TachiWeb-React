@@ -65,7 +65,6 @@ const Catalogue = () => {
   const sources = useSelector(selectSources);
   // Catalogue data
   const hasNextPage = useSelector(selectCatalogueHasNextPage);
-  const searchQuery = useSelector(selectCatalogueSearchQuery);
   const sourceId = useSelector(selectCatalogueSourceId);
   // Library data
   const mangaLibrary = useSelector(selectCatalogueMangaInfos);
@@ -84,29 +83,6 @@ const Catalogue = () => {
       });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Debouncing the search text
-  const debouncedSearch = useRef(
-    debounce(() => {
-      dispatch(fetchCatalogue());
-    }, 500)
-  );
-  const handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    dispatch(updateSearchQuery(event.currentTarget.value));
-    debouncedSearch.current();
-  };
-
-  const handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
-    // NOTE: Using LIElement because that's how my HTML is structured.
-    //       Doubt it'll cause problems, but change this or the actual component if needed.
-    const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
-    const newSourceId = sources[newSourceIndex].id;
-
-    dispatch(resetCatalogue());
-    dispatch(changeSourceId(newSourceId));
-    dispatch(fetchFilters()); // call before fetchCatalogue so filters don't get used between sources
-    dispatch(fetchCatalogue());
-  };
 
   const handleLoadNextPage = () => {
     if (hasNextPage && !catalogueIsLoading) {
@@ -134,13 +110,7 @@ const Catalogue = () => {
     <React.Fragment>
       <Helmet title="Catalogue - TachiWeb" />
 
-      <CatalogueHeader
-        sourceId={sourceId}
-        sources={sources}
-        searchQuery={searchQuery}
-        onSourceChange={handleSourceChange}
-        onSearchChange={handleSearchChange}
-      />
+      <CatalogueHeader />
 
       <ResponsiveGrid>
         <DynamicSourceFilters

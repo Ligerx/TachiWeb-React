@@ -1,15 +1,26 @@
 // @flow
-import React from "react";
+import React, { useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import debounce from "lodash/debounce";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import MenuDrawer from "components/MenuDrawer";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import type { SourceType } from "types";
 import Input from "@material-ui/core/Input";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/styles";
+import MenuDrawer from "components/MenuDrawer";
+import { selectSources } from "redux-ducks/sources";
+import {
+  selectCatalogueSourceId,
+  selectCatalogueSearchQuery,
+  fetchCatalogue,
+  resetCatalogue,
+  updateSearchQuery,
+  changeSourceId
+} from "redux-ducks/catalogue";
+import { fetchFilters } from "redux-ducks/filters";
 
-const styles = {
+const useStyles = makeStyles({
   catalogueSelect: {
     paddingLeft: 8
   },
@@ -17,25 +28,39 @@ const styles = {
     flex: 1, // fill remaining width
     marginLeft: 16
   }
-};
+});
 
-type Props = {
-  classes: Object, // injected styles
-  sourceId: ?string,
-  sources: Array<SourceType>,
-  searchQuery: string,
-  onSourceChange: Function,
-  onSearchChange: Function
-};
+const CatalogueHeader = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
 
-const CatalogueHeader = ({
-  classes,
-  sourceId,
-  sources,
-  searchQuery,
-  onSourceChange,
-  onSearchChange
-}: Props) => {
+  const sources = useSelector(selectSources);
+  const searchQuery = useSelector(selectCatalogueSearchQuery);
+  const sourceId = useSelector(selectCatalogueSourceId);
+
+  // Debouncing the search text
+  const debouncedSearch = useRef(
+    debounce(() => {
+      dispatch(fetchCatalogue());
+    }, 500)
+  );
+  const handleSearchChange = (event: SyntheticEvent<HTMLInputElement>) => {
+    dispatch(updateSearchQuery(event.currentTarget.value));
+    debouncedSearch.current();
+  };
+
+  const handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
+    // NOTE: Using LIElement because that's how my HTML is structured.
+    //       Doubt it'll cause problems, but change this or the actual component if needed.
+    const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
+    const newSourceId = sources[newSourceIndex].id;
+
+    dispatch(resetCatalogue());
+    dispatch(changeSourceId(newSourceId));
+    dispatch(fetchFilters()); // call before fetchCatalogue so filters don't get used between sources
+    dispatch(fetchCatalogue());
+  };
+
   const sourcesExist = sources && sources.length > 0 && sourceId != null;
   const sourceIndex = sources.findIndex(source => source.id === sourceId);
 
@@ -48,7 +73,7 @@ const CatalogueHeader = ({
           <React.Fragment>
             <Select
               value={sourceIndex}
-              onChange={onSourceChange}
+              onChange={handleSourceChange}
               classes={{ select: classes.catalogueSelect }}
             >
               {sources.map((source, index) => (
@@ -62,7 +87,7 @@ const CatalogueHeader = ({
               className={classes.searchInput}
               placeholder="Search"
               value={searchQuery}
-              onChange={onSearchChange}
+              onChange={handleSearchChange}
             />
           </React.Fragment>
         )}
@@ -71,4 +96,4 @@ const CatalogueHeader = ({
   );
 };
 
-export default withStyles(styles)(CatalogueHeader);
+export default CatalogueHeader;
