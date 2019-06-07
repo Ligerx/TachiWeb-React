@@ -1,10 +1,8 @@
 // @flow
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Waypoint from "react-waypoint";
-import debounce from "lodash/debounce";
 import { Helmet } from "react-helmet";
-import type { FilterAnyType } from "types/filters";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import MangaGrid from "components/MangaGrid";
@@ -23,21 +21,11 @@ import {
   selectIsCatalogueLoading,
   selectCatalogueSourceId,
   selectCatalogueHasNextPage,
-  selectCatalogueSearchQuery,
   selectCatalogueMangaInfos,
   fetchCatalogue,
-  fetchNextCataloguePage,
-  resetCatalogue,
-  updateSearchQuery,
-  changeSourceId
+  fetchNextCataloguePage
 } from "redux-ducks/catalogue";
-import {
-  selectCurrentFilters,
-  fetchFilters,
-  resetFilters,
-  updateLastUsedFilters,
-  updateCurrentFilters
-} from "redux-ducks/filters";
+import { fetchFilters } from "redux-ducks/filters";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 
@@ -68,8 +56,6 @@ const Catalogue = () => {
   const sourceId = useSelector(selectCatalogueSourceId);
   // Library data
   const mangaLibrary = useSelector(selectCatalogueMangaInfos);
-  // Filter data
-  const currentFilters = useSelector(selectCurrentFilters);
   // Fetching data
   const sourcesAreLoading = useSelector(selectIsSourcesLoading);
   const catalogueIsLoading = useSelector(selectIsCatalogueLoading);
@@ -90,19 +76,6 @@ const Catalogue = () => {
     }
   };
 
-  const handleResetFilters = () => {
-    dispatch(resetFilters());
-  };
-
-  const handleFilterChange = (newFilters: Array<FilterAnyType>) => {
-    dispatch(updateCurrentFilters(newFilters));
-  };
-
-  const handleSearchFilters = () => {
-    dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
-    dispatch(fetchCatalogue());
-  };
-
   const noMoreResults =
     !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
 
@@ -113,12 +86,7 @@ const Catalogue = () => {
       <CatalogueHeader />
 
       <ResponsiveGrid>
-        <DynamicSourceFilters
-          filters={currentFilters}
-          onResetClick={handleResetFilters}
-          onSearchClick={handleSearchFilters}
-          onFilterChange={handleFilterChange}
-        />
+        <DynamicSourceFilters />
       </ResponsiveGrid>
 
       <MangaGrid
