@@ -76,6 +76,8 @@ const DynamicSourceFilters = () => {
 
           <FormGroup className={classes.filters}>
             {times(filtersLength).map((_, index) => (
+              // The order of filters is constant, so using index as the key is fine.
+              // eslint-disable-next-line react/no-array-index-key
               <DynamicFilter index={index} key={index} />
             ))}
           </FormGroup>
