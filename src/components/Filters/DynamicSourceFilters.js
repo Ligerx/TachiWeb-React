@@ -5,13 +5,17 @@ import Drawer from "@material-ui/core/Drawer";
 import FormGroup from "@material-ui/core/FormGroup";
 import FilterActions from "components/Filters/FilterActions";
 import { makeStyles } from "@material-ui/styles";
-import { selectCurrentFilters } from "redux-ducks/filters";
+import {
+  selectFiltersLength,
+  selectFilterTypeAtIndex
+} from "redux-ducks/filters";
 import { useSelector } from "react-redux";
 import FilterTextField from "components/Filters/FilterTextField";
 import FilterSelect from "components/Filters/FilterSelect";
 import FilterSort from "components/Filters/FilterSort";
 import FilterTristate from "components/Filters/FilterTristate";
 import FilterGroup from "components/Filters/FilterGroup";
+import times from "lodash/times";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
 
@@ -36,7 +40,7 @@ const useStyles = makeStyles({
 const DynamicSourceFilters = () => {
   const classes = useStyles();
 
-  const filters = useSelector(selectCurrentFilters);
+  const filtersLength = useSelector(selectFiltersLength);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -44,7 +48,7 @@ const DynamicSourceFilters = () => {
     setDrawerOpen(false);
   };
 
-  if (!filters.length) {
+  if (!filtersLength) {
     return (
       <Button
         disabled
@@ -78,8 +82,8 @@ const DynamicSourceFilters = () => {
           <FilterActions onSearchClick={handleSearchClick} />
 
           <FormGroup className={classes.filters}>
-            {filters.map((filter, index) => (
-              <DynamicFilter type={filter._type} index={index} key={index} />
+            {times(filtersLength).map((_, index) => (
+              <DynamicFilter index={index} key={index} />
             ))}
           </FormGroup>
         </div>
@@ -88,9 +92,11 @@ const DynamicSourceFilters = () => {
   );
 };
 
-type Props = { type: string, index: number };
+type Props = { index: number };
 
-const DynamicFilter = ({ type, index }: Props) => {
+const DynamicFilter = ({ index }: Props) => {
+  const type = useSelector(state => selectFilterTypeAtIndex(state, index));
+
   if (["HEADER", "SEPARATOR", "CHECKBOX"].includes(type)) {
     console.error(`Catalogue filters - ${type} is not implemented.`);
   }

@@ -3,6 +3,8 @@ import { Server } from "api";
 import type { FilterAnyType, FilterSelect } from "types/filters";
 import { handleHTMLError } from "redux-ducks/utils";
 import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
+import { createSelector } from "reselect";
+import createCachedSelector from "re-reselect";
 
 // ================================================================================
 // Actions
@@ -94,6 +96,22 @@ export const selectCurrentFilters = (state): Array<FilterAnyType> =>
 
 export const selectFilterAtIndex = (state, index): FilterAnyType =>
   state.filters.currentFilters[index];
+
+export const selectFiltersLength = createSelector(
+  // Optimization
+  // The length of filters is constant, so we can look outside of currentFilters
+  [selectInitialFilters],
+  (filters): Array<FilterAnyType> => filters.length
+);
+
+// selectFilterTypeAtIndex(state, index)
+export const selectFilterTypeAtIndex = createCachedSelector(
+  // Optimization
+  // The type and position of a filter is constant, so we can look outside of currentFilters
+  [selectInitialFilters, (_, index) => index],
+  (filters, index) => filters[index]._type
+  // Cache Key
+)((_, index) => index);
 
 // ================================================================================
 // Action Creators
