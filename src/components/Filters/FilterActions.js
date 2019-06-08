@@ -1,10 +1,10 @@
 // @flow
-import React from "react";
-import { withStyles } from "@material-ui/core/styles";
+import React, { memo } from "react";
+import { makeStyles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 
-const styles = {
+const useStyles = makeStyles({
   // TODO: Position the controls div so that it's always at the top of the viewport
   //       I tried with position sticky and absolute, but it didn't work as intended
   //       Try again in the future
@@ -21,24 +21,27 @@ const styles = {
       flexBasis: "40%"
     }
   }
-};
+});
 
 type Props = {
-  classes: Object,
   onResetClick: Function,
   onSearchClick: Function
 };
 
-const FilterActions = ({ classes, onResetClick, onSearchClick }: Props) => (
-  <div className={classes.controls}>
-    <div className={classes.actionButtons}>
-      <Button onClick={onResetClick}>Reset</Button>
-      <Button variant="contained" color="primary" onClick={onSearchClick}>
-        Search
-      </Button>
-    </div>
-    <Divider />
-  </div>
-);
+const FilterActions = memo(({ onResetClick, onSearchClick }: Props) => {
+  const classes = useStyles();
 
-export default withStyles(styles)(FilterActions);
+  return (
+    <div className={classes.controls}>
+      <div className={classes.actionButtons}>
+        <Button onClick={onResetClick}>Reset</Button>
+        <Button variant="contained" color="primary" onClick={onSearchClick}>
+          Search
+        </Button>
+      </div>
+      <Divider />
+    </div>
+  );
+});
+
+export default FilterActions;

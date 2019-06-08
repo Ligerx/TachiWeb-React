@@ -1,9 +1,9 @@
 // @flow
-import React from 'react';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import React, { memo } from "react";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 
 // NOTE: Odd obsevations about choosing the key (No errors though)
 //
@@ -19,15 +19,17 @@ type Props = {
   values: Array<string>,
   index: number,
   state: number,
-  onChange: Function,
+  onChange: Function
 };
 
-const FilterSelect = ({
-  name, values, index, state, onChange,
-}: Props) => (
+const FilterSelect = memo(({ name, values, index, state, onChange }: Props) => (
   <FormControl>
     <InputLabel htmlFor={generateId(index)}>{name}</InputLabel>
-    <Select value={state} onChange={onChange} inputProps={{ id: generateId(index) }}>
+    <Select
+      value={state}
+      onChange={onChange}
+      inputProps={{ id: generateId(index) }}
+    >
       {values.map((text, valuesIndex) => (
         <MenuItem value={valuesIndex} key={`${name} ${text}`}>
           {text}
@@ -35,7 +37,7 @@ const FilterSelect = ({
       ))}
     </Select>
   </FormControl>
-);
+));
 
 // Helper function
 function generateId(index: number): string {
