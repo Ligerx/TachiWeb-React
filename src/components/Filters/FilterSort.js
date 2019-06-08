@@ -8,6 +8,8 @@ import Icon from "@material-ui/core/Icon";
 import FormGroup from "@material-ui/core/FormGroup";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { makeStyles } from "@material-ui/styles";
+import { selectFilterAtIndex, updateFilterSort } from "redux-ducks/filters";
+import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
   item: {
@@ -25,34 +27,37 @@ const useStyles = makeStyles({
   }
 });
 
-type Props = {
-  values: Array<string>,
-  name: string,
-  state: {
-    index: number,
-    ascending: boolean
-  },
-  onChange: Function
-};
+type Props = { index: number };
 
-const FilterSort = memo(({ values, name, state, onChange }: Props) => {
+const FilterSort = memo(({ index }: Props) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const filter = useSelector(state => selectFilterAtIndex(state, index));
+
+  const handleChange = (clickedIndex: number) => () => {
+    dispatch(updateFilterSort(index, clickedIndex));
+  };
 
   return (
     <ExpansionPanel>
       <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
-        <Typography>{name}</Typography>
+        <Typography>{filter.name}</Typography>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>
         <FormGroup className={classes.formGroup}>
-          {values.map((value, nestedIndex) => (
+          {filter.values.map((value, nestedIndex) => (
             <ButtonBase
-              onClick={onChange(nestedIndex)}
-              key={`${name} ${value}`}
+              onClick={handleChange(nestedIndex)}
+              key={`${filter.name} ${value}`}
               className={classes.item}
             >
               <Icon className={classes.icon}>
-                {iconValue(state.index, state.ascending, nestedIndex)}
+                {iconValue(
+                  filter.state.index,
+                  filter.state.ascending,
+                  nestedIndex
+                )}
               </Icon>
               <Typography>{value}</Typography>
             </ButtonBase>

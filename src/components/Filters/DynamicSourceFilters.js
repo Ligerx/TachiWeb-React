@@ -3,18 +3,20 @@ import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer";
 import FormGroup from "@material-ui/core/FormGroup";
-import type { FilterAnyType } from "types/filters";
 import FilterActions from "components/Filters/FilterActions";
-import { filterElements } from "components/Filters/filterUtils";
 import { makeStyles } from "@material-ui/styles";
 import { fetchCatalogue } from "redux-ducks/catalogue";
 import {
   selectCurrentFilters,
   resetFilters,
-  updateLastUsedFilters,
-  updateCurrentFilters
+  updateLastUsedFilters
 } from "redux-ducks/filters";
 import { useSelector, useDispatch } from "react-redux";
+import FilterTextField from "components/Filters/FilterTextField";
+import FilterSelect from "components/Filters/FilterSelect";
+import FilterSort from "components/Filters/FilterSort";
+import FilterTristate from "components/Filters/FilterTristate";
+import FilterGroup from "components/Filters/FilterGroup";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
 
@@ -56,20 +58,28 @@ const DynamicSourceFilters = () => {
     dispatch(resetFilters());
   };
 
-  const handleUpdateFilters = (newFilters: Array<FilterAnyType>) => {
-    dispatch(updateCurrentFilters(newFilters));
-  };
-
   const handleSearchWithFilters = () => {
     dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
     dispatch(fetchCatalogue());
     setDrawerOpen(false);
   };
 
+  if (!filters.length) {
+    return (
+      <Button
+        disabled
+        variant="contained"
+        color="primary"
+        className={classes.openButton}
+      >
+        Filters
+      </Button>
+    );
+  }
+
   return (
     <React.Fragment>
       <Button
-        disabled={!filters.length}
         variant="contained"
         color="primary"
         onClick={() => setDrawerOpen(true)}
@@ -89,11 +99,36 @@ const DynamicSourceFilters = () => {
             onResetClick={handleResetFilters}
             onSearchClick={handleSearchWithFilters}
           />
-          {filters.length && (
-            <FormGroup className={classes.filters}>
-              {filterElements(filters, handleUpdateFilters)}
-            </FormGroup>
-          )}
+
+          <FormGroup className={classes.filters}>
+            {filters.map((filter, index) => {
+              if (["HEADER", "SEPARATOR", "CHECKBOX"].includes(filter._type)) {
+                console.error(
+                  `Catalogue filters - ${filter._type} is not implemented.`
+                );
+              }
+
+              switch (filter._type) {
+                case "TEXT":
+                  return <FilterTextField index={index} key={index} />;
+
+                case "SELECT":
+                  return <FilterSelect index={index} key={index} />;
+
+                case "SORT":
+                  return <FilterSort index={index} key={index} />;
+
+                case "TRISTATE":
+                  return <FilterTristate index={index} key={index} />;
+
+                case "GROUP":
+                  return <FilterGroup index={index} key={index} />;
+
+                default:
+                  return null;
+              }
+            })}
+          </FormGroup>
         </div>
       </Drawer>
     </React.Fragment>
