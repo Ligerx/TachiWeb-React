@@ -5,13 +5,8 @@ import Drawer from "@material-ui/core/Drawer";
 import FormGroup from "@material-ui/core/FormGroup";
 import FilterActions from "components/Filters/FilterActions";
 import { makeStyles } from "@material-ui/styles";
-import { fetchCatalogue } from "redux-ducks/catalogue";
-import {
-  selectCurrentFilters,
-  resetFilters,
-  updateLastUsedFilters
-} from "redux-ducks/filters";
-import { useSelector, useDispatch } from "react-redux";
+import { selectCurrentFilters } from "redux-ducks/filters";
+import { useSelector } from "react-redux";
 import FilterTextField from "components/Filters/FilterTextField";
 import FilterSelect from "components/Filters/FilterSelect";
 import FilterSort from "components/Filters/FilterSort";
@@ -19,14 +14,6 @@ import FilterTristate from "components/Filters/FilterTristate";
 import FilterGroup from "components/Filters/FilterGroup";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
-
-// FIXME: I think using cloneDeep here is getting really laggy.
-//        Even after switching to non-lodash, still laggy.
-//        May have to do actual object updates instead.
-
-// Choosing to use a deep copy instead of the standard setState method
-// It would be a huge pain to try updating an array of objects (and be less readable)
-// https://stackoverflow.com/questions/29537299/react-how-do-i-update-state-item1-on-setstate-with-jsfiddle
 
 const useStyles = makeStyles({
   openButton: {
@@ -48,19 +35,12 @@ const useStyles = makeStyles({
 
 const DynamicSourceFilters = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const filters = useSelector(selectCurrentFilters);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleResetFilters = () => {
-    dispatch(resetFilters());
-  };
-
-  const handleSearchWithFilters = () => {
-    dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
-    dispatch(fetchCatalogue());
+  const handleSearchClick = () => {
     setDrawerOpen(false);
   };
 
@@ -95,44 +75,45 @@ const DynamicSourceFilters = () => {
       >
         {/* without this div, FilterGroup components screw up, not sure why though */}
         <div>
-          <FilterActions
-            onResetClick={handleResetFilters}
-            onSearchClick={handleSearchWithFilters}
-          />
+          <FilterActions onSearchClick={handleSearchClick} />
 
           <FormGroup className={classes.filters}>
-            {filters.map((filter, index) => {
-              if (["HEADER", "SEPARATOR", "CHECKBOX"].includes(filter._type)) {
-                console.error(
-                  `Catalogue filters - ${filter._type} is not implemented.`
-                );
-              }
-
-              switch (filter._type) {
-                case "TEXT":
-                  return <FilterTextField index={index} key={index} />;
-
-                case "SELECT":
-                  return <FilterSelect index={index} key={index} />;
-
-                case "SORT":
-                  return <FilterSort index={index} key={index} />;
-
-                case "TRISTATE":
-                  return <FilterTristate index={index} key={index} />;
-
-                case "GROUP":
-                  return <FilterGroup index={index} key={index} />;
-
-                default:
-                  return null;
-              }
-            })}
+            {filters.map((filter, index) => (
+              <DynamicFilter type={filter._type} index={index} key={index} />
+            ))}
           </FormGroup>
         </div>
       </Drawer>
     </React.Fragment>
   );
+};
+
+type Props = { type: string, index: number };
+
+const DynamicFilter = ({ type, index }: Props) => {
+  if (["HEADER", "SEPARATOR", "CHECKBOX"].includes(type)) {
+    console.error(`Catalogue filters - ${type} is not implemented.`);
+  }
+
+  switch (type) {
+    case "TEXT":
+      return <FilterTextField index={index} key={index} />;
+
+    case "SELECT":
+      return <FilterSelect index={index} key={index} />;
+
+    case "SORT":
+      return <FilterSort index={index} key={index} />;
+
+    case "TRISTATE":
+      return <FilterTristate index={index} key={index} />;
+
+    case "GROUP":
+      return <FilterGroup index={index} key={index} />;
+
+    default:
+      return null;
+  }
 };
 
 export default DynamicSourceFilters;
