@@ -11,6 +11,9 @@ import { makeStyles } from "@material-ui/styles";
 import { selectFilterAtIndex, updateFilterSort } from "redux-ducks/filters";
 import { useSelector, useDispatch } from "react-redux";
 
+// NOTE: This component is unoptimized. A single change will cause the entire list to rerender.
+//       However, sorts tend to be short lists, so I'm not going to optimize this for now.
+
 const useStyles = makeStyles({
   item: {
     width: "100%",

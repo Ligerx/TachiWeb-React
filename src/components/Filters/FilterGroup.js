@@ -10,6 +10,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectFilterAtIndex, updateFilterGroup } from "redux-ducks/filters";
 import TristateCheckbox from "components/Filters/TristateCheckbox";
 
+// NOTE: This component is unoptimized. A single change will cause the entire list to rerender.
+//       The list of tristates this generates does tend to get quite long, but I think it's still
+//       reasonably performant. Not going to optimize this for now.
+
 // NOTE: Assuming that GROUP will only contain TRISTATE children
 // NOTE: using name as the key, this shouldn't be a problem
 
