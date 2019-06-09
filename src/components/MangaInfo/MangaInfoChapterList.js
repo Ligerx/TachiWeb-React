@@ -26,7 +26,7 @@ type Props = {
   chapters: Array<ChapterType>
 };
 
-const RowContext = React.createContext();
+const RowContext = createContext();
 
 type RowProps = {
   index: number,
