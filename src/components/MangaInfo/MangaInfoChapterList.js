@@ -59,6 +59,8 @@ const useStyles = makeStyles({
 const MangaInfoChapterList = ({ mangaInfo, chapters }: Props) => {
   const classes = useStyles();
 
+  if (!chapters.length) return null;
+
   return (
     <ResponsiveGrid
       maxWidth="xs"
