@@ -3,28 +3,14 @@ import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer";
 import FormGroup from "@material-ui/core/FormGroup";
-import type { FilterAnyType } from "types/filters";
 import FilterActions from "components/Filters/FilterActions";
-import { filterElements } from "components/Filters/filterUtils";
 import { makeStyles } from "@material-ui/styles";
-import { fetchCatalogue } from "redux-ducks/catalogue";
-import {
-  selectCurrentFilters,
-  resetFilters,
-  updateLastUsedFilters,
-  updateCurrentFilters
-} from "redux-ducks/filters";
-import { useSelector, useDispatch } from "react-redux";
+import { selectFiltersLength } from "redux-ducks/filters";
+import { useSelector } from "react-redux";
+import DynamicFilter from "components/Filters/DynamicFilter";
+import times from "lodash/times";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
-
-// FIXME: I think using cloneDeep here is getting really laggy.
-//        Even after switching to non-lodash, still laggy.
-//        May have to do actual object updates instead.
-
-// Choosing to use a deep copy instead of the standard setState method
-// It would be a huge pain to try updating an array of objects (and be less readable)
-// https://stackoverflow.com/questions/29537299/react-how-do-i-update-state-item1-on-setstate-with-jsfiddle
 
 const useStyles = makeStyles({
   openButton: {
@@ -46,30 +32,31 @@ const useStyles = makeStyles({
 
 const DynamicSourceFilters = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
-  const filters = useSelector(selectCurrentFilters);
+  const filtersLength = useSelector(selectFiltersLength);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleResetFilters = () => {
-    dispatch(resetFilters());
-  };
-
-  const handleUpdateFilters = (newFilters: Array<FilterAnyType>) => {
-    dispatch(updateCurrentFilters(newFilters));
-  };
-
-  const handleSearchWithFilters = () => {
-    dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
-    dispatch(fetchCatalogue());
+  const handleSearchClick = () => {
     setDrawerOpen(false);
   };
+
+  if (!filtersLength) {
+    return (
+      <Button
+        disabled
+        variant="contained"
+        color="primary"
+        className={classes.openButton}
+      >
+        Filters
+      </Button>
+    );
+  }
 
   return (
     <React.Fragment>
       <Button
-        disabled={!filters.length}
         variant="contained"
         color="primary"
         onClick={() => setDrawerOpen(true)}
@@ -85,15 +72,15 @@ const DynamicSourceFilters = () => {
       >
         {/* without this div, FilterGroup components screw up, not sure why though */}
         <div>
-          <FilterActions
-            onResetClick={handleResetFilters}
-            onSearchClick={handleSearchWithFilters}
-          />
-          {filters.length && (
-            <FormGroup className={classes.filters}>
-              {filterElements(filters, handleUpdateFilters)}
-            </FormGroup>
-          )}
+          <FilterActions onSearchClick={handleSearchClick} />
+
+          <FormGroup className={classes.filters}>
+            {times(filtersLength).map((_, index) => (
+              // The order of filters is constant, so using index as the key is fine.
+              // eslint-disable-next-line react/no-array-index-key
+              <DynamicFilter index={index} key={index} />
+            ))}
+          </FormGroup>
         </div>
       </Drawer>
     </React.Fragment>

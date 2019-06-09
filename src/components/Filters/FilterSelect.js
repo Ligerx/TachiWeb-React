@@ -1,9 +1,11 @@
 // @flow
-import React from 'react';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import React, { memo } from "react";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import { selectFilterAtIndex, updateFilterSelect } from "redux-ducks/filters";
+import { useSelector, useDispatch } from "react-redux";
 
 // NOTE: Odd obsevations about choosing the key (No errors though)
 //
@@ -14,28 +16,36 @@ import MenuItem from '@material-ui/core/MenuItem';
 // I think because MenuItem is so deeply nested in other components (via material-ui)
 // it makes passing values behave oddly...
 
-type Props = {
-  name: string,
-  values: Array<string>,
-  index: number,
-  state: number,
-  onChange: Function,
-};
+type Props = { index: number };
 
-const FilterSelect = ({
-  name, values, index, state, onChange,
-}: Props) => (
-  <FormControl>
-    <InputLabel htmlFor={generateId(index)}>{name}</InputLabel>
-    <Select value={state} onChange={onChange} inputProps={{ id: generateId(index) }}>
-      {values.map((text, valuesIndex) => (
-        <MenuItem value={valuesIndex} key={`${name} ${text}`}>
-          {text}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
+const FilterSelect = memo(({ index }: Props) => {
+  const dispatch = useDispatch();
+
+  const filter = useSelector(state => selectFilterAtIndex(state, index));
+
+  const handleChange = (event: SyntheticEvent<HTMLLIElement>) => {
+    // NOTE: LIElement is actually within a select
+    const newValue = parseInt(event.currentTarget.dataset.value, 10);
+    dispatch(updateFilterSelect(index, newValue));
+  };
+
+  return (
+    <FormControl>
+      <InputLabel htmlFor={generateId(index)}>{filter.name}</InputLabel>
+      <Select
+        value={filter.state}
+        onChange={handleChange}
+        inputProps={{ id: generateId(index) }}
+      >
+        {filter.values.map((text, valuesIndex) => (
+          <MenuItem value={valuesIndex} key={`${filter.name} ${text}`}>
+            {text}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+});
 
 // Helper function
 function generateId(index: number): string {

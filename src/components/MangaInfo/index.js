@@ -20,9 +20,9 @@ import {
   selectFilteredSortedChapters,
   selectChaptersForManga,
   fetchChapters,
-  updateChapters,
-  toggleRead
+  updateChapters
 } from "redux-ducks/chapters";
+import { makeStyles } from "@material-ui/styles";
 
 type Props = {
   backUrl: string,
@@ -32,7 +32,19 @@ type Props = {
   match: { params: Object }
 };
 
+const useStyles = makeStyles({
+  // use flexbox to allow virtualized chapter list fill the remaining
+  // viewport height with flex-grow: 1
+  parent: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column"
+  }
+});
+
 const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
+  const classes = useStyles();
+
   const mangaId = parseInt(params.mangaId, 10);
 
   const [tabValue, setTabValue] = useState(defaultTab);
@@ -45,8 +57,6 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const isChaptersLoading = useSelector(selectIsChaptersLoading);
 
   const dispatch = useDispatch();
-  const handleToggleRead = (chapterId, read) =>
-    dispatch(toggleRead(mangaId, chapterId, read));
 
   const store = useStore();
 
@@ -104,11 +114,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
             <ContinueReadingButton mangaId={mangaInfo.id} />
           </CenterHorizontally>
 
-          <MangaInfoChapterList
-            chapters={chapters}
-            mangaInfo={mangaInfo}
-            toggleRead={handleToggleRead}
-          />
+          <MangaInfoChapterList chapters={chapters} mangaInfo={mangaInfo} />
         </React.Fragment>
       );
     }
@@ -118,7 +124,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   if (!mangaInfo) return <FullScreenLoading />;
 
   return (
-    <React.Fragment>
+    <div className={classes.parent}>
       <Helmet title={`${mangaInfo.title} - TachiWeb`} />
 
       <MangaInfoHeader
@@ -131,7 +137,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
       {tabContent()}
 
       {(isMangaInfosLoading || isChaptersLoading) && <FullScreenLoading />}
-    </React.Fragment>
+    </div>
   );
 };
 

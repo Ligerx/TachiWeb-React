@@ -29,13 +29,16 @@ type Props = {
 
   // Optional props
   spacing: number,
-  maxWidth: number | "xs" | "sm" | "md" | "lg" | "xl"
+  maxWidth: number | "xs" | "sm" | "md" | "lg" | "xl",
+
+  parentProps: Object
 }; // other props get passed to the inner grid
 
 const ResponsiveGrid = ({
   children,
   spacing,
   maxWidth,
+  parentProps,
   ...otherProps
 }: Props) => {
   const calcMaxWidth =
@@ -49,7 +52,7 @@ const ResponsiveGrid = ({
   };
 
   return (
-    <Grid container justify="center" style={fixXOverflow}>
+    <Grid container justify="center" style={fixXOverflow} {...parentProps}>
       <Grid container {...otherProps} spacing={spacing} style={maxWidthStyle}>
         {children}
       </Grid>
