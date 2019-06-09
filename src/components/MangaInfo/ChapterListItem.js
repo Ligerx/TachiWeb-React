@@ -37,13 +37,14 @@ type Props = {
   mangaInfo: MangaType,
   chapter: ChapterType,
   toggleRead: Function
-};
+}; // other props will be passed to the root ListItem
 
 const ChapterListItem = ({
   classes,
   mangaInfo,
   chapter,
-  toggleRead
+  toggleRead,
+  ...otherProps
 }: Props) => {
   const urlPrefix = useContext(UrlPrefixContext);
 
@@ -57,6 +58,7 @@ const ChapterListItem = ({
 
   return (
     <ListItem
+      {...otherProps}
       button
       divider
       component={Link}
