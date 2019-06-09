@@ -1,30 +1,30 @@
 // @flow
-import React, { Component } from 'react';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import type { ChapterType } from 'types';
-import { withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
+import React, { Component } from "react";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
+import type { ChapterType } from "types";
+import { withStyles } from "@material-ui/core/styles";
+import classNames from "classnames";
 
 // Because this is nested inside ChapterListItem, which wraps the entire thing with a Link
 // You have to e.preventDefault() everywhere to stop from navigating to the Reader unintentionally
 
 const styles = {
-  hiddenMenuItem: { display: 'none' },
+  hiddenMenuItem: { display: "none" }
 };
 
 type Props = {
   classes: Object, // injected styles
   chapter: ChapterType,
-  toggleRead: Function,
+  toggleRead: Function
 };
 type State = { anchorEl: ?HTMLElement };
 
-class ChapterListItem extends Component<Props, State> {
+class ChapterMenu extends Component<Props, State> {
   state = {
-    anchorEl: null,
+    anchorEl: null
   };
 
   handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
@@ -51,7 +51,8 @@ class ChapterListItem extends Component<Props, State> {
     const { anchorEl } = this.state;
 
     const showMarkAsRead = !chapter.read;
-    const showMarkAsUnread = chapter.read || (!chapter.read && chapter.last_page_read > 0);
+    const showMarkAsUnread =
+      chapter.read || (!chapter.read && chapter.last_page_read > 0);
 
     return (
       <React.Fragment>
@@ -62,7 +63,7 @@ class ChapterListItem extends Component<Props, State> {
         {/* getContentAnchorEl must be null to make anchorOrigin work */}
         <Menu
           anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           getContentAnchorEl={null}
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
@@ -76,14 +77,18 @@ class ChapterListItem extends Component<Props, State> {
 
           <MenuItem
             onClick={this.handleToggleRead(true)}
-            className={classNames({ [classes.hiddenMenuItem]: !showMarkAsRead })}
+            className={classNames({
+              [classes.hiddenMenuItem]: !showMarkAsRead
+            })}
           >
             Mark as Read
           </MenuItem>
 
           <MenuItem
             onClick={this.handleToggleRead(false)}
-            className={classNames({ [classes.hiddenMenuItem]: !showMarkAsUnread })}
+            className={classNames({
+              [classes.hiddenMenuItem]: !showMarkAsUnread
+            })}
           >
             Mark as Unread
           </MenuItem>
@@ -98,4 +103,4 @@ class ChapterListItem extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(ChapterListItem);
+export default withStyles(styles)(ChapterMenu);
