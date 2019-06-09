@@ -17,7 +17,8 @@ const styles = () => ({
     color: "#AAA"
   },
   listItem: {
-    paddingRight: 8 // decrease padding (default 24)
+    paddingRight: 8, // decrease padding (default 24)
+    backgroundColor: "white"
   },
   chapterInfo: {
     flex: 1,

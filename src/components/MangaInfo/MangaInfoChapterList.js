@@ -1,6 +1,5 @@
 // @flow
 import React from "react";
-import List from "@material-ui/core/List";
 import Grid from "@material-ui/core/Grid";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import Paper from "@material-ui/core/Paper";
@@ -20,6 +19,8 @@ import AutoSizer from "react-virtualized-auto-sizer";
 //   flexDirection: "column"
 // }
 
+// https://react-window.now.sh/#/examples/list/memoized-list-items
+
 type Props = {
   mangaInfo: MangaType,
   chapters: Array<ChapterType>,
@@ -27,11 +28,15 @@ type Props = {
 };
 
 const useStyles = makeStyles({
-  list: {
-    paddingTop: 0,
-    paddingBottom: 0
+  virtualizedListParent: {
+    flexGrow: 1,
+    marginBottom: 16
   },
-  virtualizedListParent: { flexGrow: 1 }
+  paper: {
+    height: "100%",
+    backgroundColor: "#fafafa",
+    overflow: "hidden"
+  }
 });
 
 const MangaInfoChapterList = ({ mangaInfo, chapters, toggleRead }: Props) => {
@@ -43,28 +48,30 @@ const MangaInfoChapterList = ({ mangaInfo, chapters, toggleRead }: Props) => {
       parentProps={{ className: classes.virtualizedListParent }}
     >
       <Grid item xs={12}>
-        {/* itemSize is hard coded using what I saw in the inspector */}
-        <AutoSizer>
-          {({ height, width }) => (
-            <FixedSizeList
-              height={height}
-              width={width}
-              itemSize={65}
-              itemCount={chapters.length}
-              itemData={chapters}
-              itemKey={(index, data) => data[index].id}
-            >
-              {({ index, style, data }) => (
-                <ChapterListItem
-                  style={style}
-                  chapter={data[index]}
-                  mangaInfo={mangaInfo}
-                  toggleRead={toggleRead}
-                />
-              )}
-            </FixedSizeList>
-          )}
-        </AutoSizer>
+        <Paper className={classes.paper}>
+          {/* itemSize is hard coded using what I saw in the inspector */}
+          <AutoSizer>
+            {({ height, width }) => (
+              <FixedSizeList
+                height={height}
+                width={width}
+                itemSize={65}
+                itemCount={chapters.length}
+                itemData={chapters}
+                itemKey={(index, data) => data[index].id}
+              >
+                {({ index, style, data }) => (
+                  <ChapterListItem
+                    style={style}
+                    chapter={data[index]}
+                    mangaInfo={mangaInfo}
+                    toggleRead={toggleRead}
+                  />
+                )}
+              </FixedSizeList>
+            )}
+          </AutoSizer>
+        </Paper>
       </Grid>
     </ResponsiveGrid>
   );
