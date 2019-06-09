@@ -1,7 +1,6 @@
 // @flow
-import React, { useContext } from "react";
+import React, { useContext, memo } from "react";
 import ListItem from "@material-ui/core/ListItem";
-import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import classNames from "classnames";
 import Link from "components/Link";
@@ -11,8 +10,16 @@ import ChapterMenu from "components/MangaInfo/ChapterMenu";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import { Client } from "api";
 import dateFnsFormat from "date-fns/format";
+import { useDispatch } from "react-redux";
+import { toggleRead } from "redux-ducks/chapters";
+import { makeStyles } from "@material-ui/styles";
 
-const styles = () => ({
+type Props = {
+  mangaInfo: MangaType,
+  chapter: ChapterType
+}; // other props will be passed to the root ListItem
+
+const useStyles = makeStyles({
   read: {
     color: "#AAA"
   },
@@ -33,20 +40,13 @@ const styles = () => ({
   lastReadPage: { color: "rgba(0, 0, 0, 0.87)" }
 });
 
-type Props = {
-  classes: Object,
-  mangaInfo: MangaType,
-  chapter: ChapterType,
-  toggleRead: Function
-}; // other props will be passed to the root ListItem
+const ChapterListItem = memo(({ mangaInfo, chapter, ...otherProps }: Props) => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
 
-const ChapterListItem = ({
-  classes,
-  mangaInfo,
-  chapter,
-  toggleRead,
-  ...otherProps
-}: Props) => {
+  const handleToggleRead = (read: boolean) =>
+    dispatch(toggleRead(mangaInfo.id, chapter.id, read));
+
   const urlPrefix = useContext(UrlPrefixContext);
 
   const dimIfRead: Function = (read: boolean): ?String =>
@@ -85,10 +85,10 @@ const ChapterListItem = ({
         </div>
       </div>
 
-      <ChapterMenu chapter={chapter} toggleRead={toggleRead} />
+      <ChapterMenu chapter={chapter} toggleRead={handleToggleRead} />
     </ListItem>
   );
-};
+});
 
 // Helper Functions
 /* eslint-disable camelcase */
@@ -101,4 +101,4 @@ function chapterText(read: boolean, last_page_read: number) {
 }
 /* eslint-enable camelcase */
 
-export default withStyles(styles)(ChapterListItem);
+export default ChapterListItem;

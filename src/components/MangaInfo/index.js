@@ -20,8 +20,7 @@ import {
   selectFilteredSortedChapters,
   selectChaptersForManga,
   fetchChapters,
-  updateChapters,
-  toggleRead
+  updateChapters
 } from "redux-ducks/chapters";
 import { makeStyles } from "@material-ui/styles";
 
@@ -58,8 +57,6 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const isChaptersLoading = useSelector(selectIsChaptersLoading);
 
   const dispatch = useDispatch();
-  const handleToggleRead = (chapterId, read) =>
-    dispatch(toggleRead(mangaId, chapterId, read));
 
   const store = useStore();
 
@@ -117,11 +114,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
             <ContinueReadingButton mangaId={mangaInfo.id} />
           </CenterHorizontally>
 
-          <MangaInfoChapterList
-            chapters={chapters}
-            mangaInfo={mangaInfo}
-            toggleRead={handleToggleRead}
-          />
+          <MangaInfoChapterList chapters={chapters} mangaInfo={mangaInfo} />
         </React.Fragment>
       );
     }
