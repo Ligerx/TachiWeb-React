@@ -1,9 +1,10 @@
 // @flow
 import { Server } from "api";
-import type { SourceType } from "types";
+import { selectCatalogueSourceId, changeSourceId } from "redux-ducks/catalogue";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { handleHTMLError } from "redux-ducks/utils";
-import { selectCatalogueSourceId, changeSourceId } from "redux-ducks/catalogue";
+import type { SourceType } from "types";
+import type { GlobalState } from "redux-ducks/reducers";
 
 // ================================================================================
 // Actions
@@ -50,7 +51,8 @@ export default function sourcesReducer(
 // ================================================================================
 
 export const selectIsSourcesLoading = createLoadingSelector([FETCH_SOURCES]);
-export const selectSources = (state): Array<SourceType> => state.sources;
+export const selectSources = (state: GlobalState): $ReadOnlyArray<SourceType> =>
+  state.sources;
 
 // ================================================================================
 // Action Creators
