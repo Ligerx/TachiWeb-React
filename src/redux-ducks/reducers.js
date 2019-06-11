@@ -12,7 +12,7 @@ import mangaInfos from "./mangaInfos";
 import extensions from "./extensions";
 import settings from "./settings";
 
-export default combineReducers({
+const reducers = {
   loading,
   error,
   library,
@@ -24,7 +24,14 @@ export default combineReducers({
   mangaInfos,
   extensions,
   settings
-});
+};
+
+// Get the type of the entire redux store by extracting it from the reducers' return types
+type Reducers = typeof reducers;
+type ExtractReturnType = <V>(() => V) => V;
+export type GlobalState = $ObjMap<Reducers, ExtractReturnType>;
+
+export default combineReducers(reducers);
 
 // NOTE: some Thunks (asynchronous calls) may escape early
 //       (e.g. return cached data) instead of returning a promise.
@@ -34,3 +41,8 @@ export default combineReducers({
 // .then() regardless of cached data or fetch from the server.
 //
 // Not every function has had this modification made, only the ones that have caused problems.
+
+// Guides used when adding flow types to redux
+// https://flow.org/en/docs/react/redux/
+// https://blog.callstack.io/type-checking-react-and-redux-thunk-with-flow-part-2-206ce5f6e705
+// https://engineering.wework.com/adventures-in-static-typing-react-redux-flow-oh-my-284c5f74adac#cbfa
