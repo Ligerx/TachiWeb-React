@@ -1,44 +1,106 @@
 // @flow
 import { Server } from "api";
+import type { GlobalState } from "redux-ducks/reducers";
 import type { FilterAnyType } from "types/filters";
 import type { MangaType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createSelector } from "reselect";
 import { selectMangaInfos, ADD_MANGA } from "redux-ducks/mangaInfos";
+import { selectLastUsedFilters } from "redux-ducks/filters";
 import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 
 // ================================================================================
 // Actions
 // ================================================================================
 export const RESET_STATE = "catalogue/RESET_STATE";
+type RESET_STATE_TYPE = "catalogue/RESET_STATE";
 
+type ResetStateAction = { type: RESET_STATE_TYPE };
+
+const FETCH_CATALOGUE = "catalogue/FETCH";
 const FETCH_CATALOGUE_REQUEST = "catalogue/FETCH_REQUEST";
+type FETCH_CATALOGUE_REQUEST_TYPE = "catalogue/FETCH_REQUEST";
 const FETCH_CATALOGUE_SUCCESS = "catalogue/FETCH_SUCCESS";
+type FETCH_CATALOGUE_SUCCESS_TYPE = "catalogue/FETCH_SUCCESS";
 const FETCH_CATALOGUE_FAILURE = "catalogue/FETCH_FAILURE";
-export const FETCH_CATALOGUE = "catalogue/FETCH";
+type FETCH_CATALOGUE_FAILURE_TYPE = "catalogue/FETCH_FAILURE";
 
-const ADD_PAGE_NO_NEXT_PAGE = "catalogue/ADD_PAGE_NO_NEXT_PAGE"; // failsafe, don't use
+type FetchCatalogueRequestAction = {
+  type: FETCH_CATALOGUE_REQUEST_TYPE,
+  meta: Object
+};
+type FetchCatalogueSuccessAction = {
+  type: FETCH_CATALOGUE_SUCCESS_TYPE,
+  mangaIds: Array<number>,
+  page: number,
+  hasNextPage: boolean
+};
+type FetchCatalogueFailureAction = {
+  type: FETCH_CATALOGUE_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+const CATALOGUE_ADD_PAGE = "catalogue/ADD_PAGE";
 const ADD_PAGE_REQUEST = "catalogue/ADD_PAGE_REQUEST";
+type ADD_PAGE_REQUEST_TYPE = "catalogue/ADD_PAGE_REQUEST";
 const ADD_PAGE_SUCCESS = "catalogue/ADD_PAGE_SUCCESS";
+type ADD_PAGE_SUCCESS_TYPE = "catalogue/ADD_PAGE_SUCCESS";
 const ADD_PAGE_FAILURE = "catalogue/ADD_PAGE_FAILURE";
-export const CATALOGUE_ADD_PAGE = "catalogue/ADD_PAGE";
+type ADD_PAGE_FAILURE_TYPE = "catalogue/ADD_PAGE_FAILURE";
+const ADD_PAGE_NO_NEXT_PAGE = "catalogue/ADD_PAGE_NO_NEXT_PAGE"; // failsafe, don't use
+type ADD_PAGE_NO_NEXT_PAGE_TYPE = "catalogue/ADD_PAGE_NO_NEXT_PAGE";
+
+type AddPageRequestAction = { type: ADD_PAGE_REQUEST_TYPE, meta: Object };
+type AddPageSuccessAction = {
+  type: ADD_PAGE_SUCCESS_TYPE,
+  mangaIds: Array<number>,
+  page: number,
+  hasNextPage: boolean
+};
+type AddPageFailureAction = {
+  type: ADD_PAGE_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+type AddPageNoNextPageAction = { type: ADD_PAGE_NO_NEXT_PAGE_TYPE };
 
 const UPDATE_SEARCH_QUERY = "catalogue/UPDATE_SEARCH_QUERY";
+type UPDATE_SEARCH_QUERY_TYPE = "catalogue/UPDATE_SEARCH_QUERY";
+
+type UpdateSearchQueryAction = {
+  type: UPDATE_SEARCH_QUERY_TYPE,
+  searchQuery: string
+};
 
 const CHANGE_SOURCEID = "catalogue/CHANGE_SOURCEID";
+type CHANGE_SOURCEID_TYPE = "catalogue/CHANGE_SOURCEID";
+
+type ChangeSourceIdAction = { type: CHANGE_SOURCEID_TYPE, newSourceId: string };
 
 // ================================================================================
 // Reducers
 // ================================================================================
-type State = {
-  +sourceId: ?string,
-  +mangaIds: $ReadOnlyArray<number>,
-  +page: number,
-  +hasNextPage: boolean,
-  +searchQuery: string
-};
+type State = $ReadOnly<{
+  sourceId: ?string,
+  mangaIds: $ReadOnlyArray<number>,
+  page: number,
+  hasNextPage: boolean,
+  searchQuery: string
+}>;
+type Action =
+  | ResetStateAction
+  | FetchCatalogueRequestAction
+  | FetchCatalogueSuccessAction
+  | FetchCatalogueFailureAction
+  | AddPageRequestAction
+  | AddPageSuccessAction
+  | AddPageFailureAction
+  | AddPageNoNextPageAction
+  | UpdateSearchQueryAction
+  | ChangeSourceIdAction;
 
-const initialState = {
+const initialState: State = {
   sourceId: null,
   mangaIds: [], // array of mangaIds that point that data loaded in mangaInfos reducer
   page: 1,
@@ -48,8 +110,8 @@ const initialState = {
 
 export default function catalogueReducer(
   state: State = initialState,
-  action = {}
-) {
+  action: Action
+): State {
   switch (action.type) {
     case RESET_STATE:
       return initialState;
@@ -97,16 +159,19 @@ export const selectIsCatalogueLoading = createLoadingSelector([
   CATALOGUE_ADD_PAGE
 ]);
 
-export const selectCatalogueSourceId = (state): ?string =>
+export const selectCatalogue = (state: GlobalState): State => state.catalogue;
+
+export const selectCatalogueSourceId = (state: GlobalState): ?string =>
   state.catalogue.sourceId;
 
-export const selectCatalogueMangaIds = (state): Array<number> =>
-  state.catalogue.mangaIds;
+export const selectCatalogueMangaIds = (
+  state: GlobalState
+): $ReadOnlyArray<number> => state.catalogue.mangaIds;
 
-export const selectCatalogueHasNextPage = (state): boolean =>
+export const selectCatalogueHasNextPage = (state: GlobalState): boolean =>
   state.catalogue.hasNextPage;
 
-export const selectCatalogueSearchQuery = (state): string =>
+export const selectCatalogueSearchQuery = (state: GlobalState): string =>
   state.catalogue.searchQuery;
 
 export const selectCatalogueMangaInfos = createSelector(
@@ -117,15 +182,27 @@ export const selectCatalogueMangaInfos = createSelector(
 );
 
 // unused
-export const selectCataloguePage = (state): number => state.catalogue.page;
+export const selectCataloguePage = (state: GlobalState): number =>
+  state.catalogue.page;
 
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchCatalogue() {
-  return (dispatch: Function, getState: Function) => {
-    const { lastUsedFilters } = getState().filters;
-    const { searchQuery, sourceId } = getState().catalogue;
+type GetState = () => GlobalState;
+type PromiseAction = Promise<Action>;
+// eslint-disable-next-line no-use-before-define
+type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+// eslint-disable-next-line no-use-before-define
+type RegularAction = (dispatch: Dispatch) => any;
+type Dispatch = (
+  action: Action | ThunkAction | PromiseAction | Array<Action>
+) => any;
+
+export function fetchCatalogue(): ThunkAction {
+  return (dispatch, getState) => {
+    const lastUsedFilters = selectLastUsedFilters(getState());
+    const searchQuery = selectCatalogueSearchQuery(getState());
+    const sourceId = selectCatalogueSourceId(getState());
 
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
@@ -136,7 +213,7 @@ export function fetchCatalogue() {
       return dispatch({
         type: FETCH_CATALOGUE_FAILURE,
         errorMessage: "No source selected",
-        meta: "fetchCatalogue() sourceId is null"
+        meta: { error: "fetchCatalogue() sourceId is null" }
       });
     }
 
@@ -173,10 +250,12 @@ export function fetchCatalogue() {
   };
 }
 
-export function fetchNextCataloguePage() {
-  return (dispatch: Function, getState: Function) => {
-    const { page, hasNextPage, searchQuery, sourceId } = getState().catalogue;
-    const { lastUsedFilters } = getState().filters;
+export function fetchNextCataloguePage(): ThunkAction {
+  return (dispatch, getState) => {
+    const { page, hasNextPage, searchQuery, sourceId } = selectCatalogue(
+      getState()
+    );
+    const lastUsedFilters = selectLastUsedFilters(getState());
     const nextPage = page + 1;
 
     if (!hasNextPage) {
@@ -187,7 +266,7 @@ export function fetchNextCataloguePage() {
       return dispatch({
         type: ADD_PAGE_FAILURE,
         errorMessage: "There was a problem loading the next page of manga",
-        meta: "fetchNextCataloguePage() sourceId is null"
+        meta: { error: "fetchNextCataloguePage() sourceId is null" }
       });
     }
 
@@ -239,18 +318,17 @@ export function fetchNextCataloguePage() {
   };
 }
 
-export function resetCatalogue() {
-  return (dispatch: Function) => dispatch({ type: RESET_STATE });
+export function resetCatalogue(): RegularAction {
+  return dispatch => dispatch({ type: RESET_STATE });
 }
 
-export function updateSearchQuery(newSearchQuery: string) {
-  return (dispatch: Function) =>
+export function updateSearchQuery(newSearchQuery: string): RegularAction {
+  return dispatch =>
     dispatch({ type: UPDATE_SEARCH_QUERY, searchQuery: newSearchQuery });
 }
 
-export function changeSourceId(newSourceId: number) {
-  return (dispatch: Function) =>
-    dispatch({ type: CHANGE_SOURCEID, newSourceId });
+export function changeSourceId(newSourceId: string): RegularAction {
+  return dispatch => dispatch({ type: CHANGE_SOURCEID, newSourceId });
 }
 
 // ================================================================================
@@ -260,8 +338,8 @@ function cataloguePostParameters(
   page: number,
   sourceId: string,
   query: string,
-  filters: ?Array<FilterAnyType>
-): Object {
+  filters: ?$ReadOnlyArray<FilterAnyType>
+) {
   return {
     method: "POST",
     body: JSON.stringify({
