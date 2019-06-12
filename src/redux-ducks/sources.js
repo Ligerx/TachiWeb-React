@@ -57,7 +57,7 @@ export const selectSources = (state: GlobalState): $ReadOnlyArray<SourceType> =>
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => State;
+type GetState = () => GlobalState;
 type PromiseAction = Promise<Action>;
 // eslint-disable-next-line no-use-before-define
 type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
