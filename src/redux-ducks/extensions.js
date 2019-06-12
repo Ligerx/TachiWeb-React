@@ -1,5 +1,6 @@
 // @flow
 import { Server } from "api";
+import type { GlobalState } from "redux-ducks/reducers";
 import type { ExtensionType } from "types";
 import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
 import { createLoadingSelector } from "redux-ducks/loading";
@@ -8,32 +9,101 @@ import { createSelector } from "reselect";
 // ================================================================================
 // Actions
 // ================================================================================
-export const FETCH_EXTENSIONS = "extensions/FETCH";
-const FETCH_REQUEST = `${FETCH_EXTENSIONS}_REQUEST`;
-const FETCH_SUCCESS = `${FETCH_EXTENSIONS}_SUCCESS`;
-const FETCH_FAILURE = `${FETCH_EXTENSIONS}_FAILURE`;
+const FETCH_EXTENSIONS = "extensions/FETCH";
+const FETCH_REQUEST = "extensions/FETCH_REQUEST";
+type FETCH_REQUEST_TYPE = "extensions/FETCH_REQUEST";
+const FETCH_SUCCESS = "extensions/FETCH_SUCCESS";
+type FETCH_SUCCESS_TYPE = "extensions/FETCH_SUCCESS";
+const FETCH_FAILURE = "extensions/FETCH_FAILURE";
+type FETCH_FAILURE_TYPE = "extensions/FETCH_FAILURE";
 
-export const INSTALL_EXTENSION = "extensions/INSTALL";
-const INSTALL_REQUEST = `${INSTALL_EXTENSION}_REQUEST`;
-const INSTALL_SUCCESS = `${INSTALL_EXTENSION}_SUCCESS`;
-const INSTALL_FAILURE = `${INSTALL_EXTENSION}_FAILURE`;
+type FetchRequestAction = { type: FETCH_REQUEST_TYPE };
+type FetchSuccessAction = {
+  type: FETCH_SUCCESS_TYPE,
+  extensions: Array<ExtensionType>
+};
+type FetchFailureAction = {
+  type: FETCH_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
 
-export const UNINSTALL_EXTENSION = "extensions/UNINSTALL";
-const UNINSTALL_REQUEST = `${UNINSTALL_EXTENSION}_REQUEST`;
-const UNINSTALL_SUCCESS = `${UNINSTALL_EXTENSION}_SUCCESS`;
-const UNINSTALL_FAILURE = `${UNINSTALL_EXTENSION}_FAILURE`;
+const INSTALL_EXTENSION = "extensions/INSTALL";
+const INSTALL_REQUEST = "extensions/INSTALL_REQUEST";
+type INSTALL_REQUEST_TYPE = "extensions/INSTALL_REQUEST";
+const INSTALL_SUCCESS = "extensions/INSTALL_SUCCESS";
+type INSTALL_SUCCESS_TYPE = "extensions/INSTALL_SUCCESS";
+const INSTALL_FAILURE = "extensions/INSTALL_FAILURE";
+type INSTALL_FAILURE_TYPE = "extensions/INSTALL_FAILURE";
 
-export const RELOAD_EXTENSIONS = "extensions/RELOAD";
-const RELOAD_REQUEST = `${RELOAD_EXTENSIONS}_REQUEST`;
-const RELOAD_SUCCESS = `${RELOAD_EXTENSIONS}_SUCCESS`;
-const RELOAD_FAILURE = `${RELOAD_EXTENSIONS}_FAILURE`;
+type InstallRequestAction = { type: INSTALL_REQUEST_TYPE, meta: Object };
+type InstallSuccessAction = {
+  type: INSTALL_SUCCESS_TYPE,
+  extension: ExtensionType
+};
+type InstallFailureAction = {
+  type: INSTALL_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+const UNINSTALL_EXTENSION = "extensions/UNINSTALL";
+const UNINSTALL_REQUEST = "extensions/UNINSTALL_REQUEST";
+type UNINSTALL_REQUEST_TYPE = "extensions/UNINSTALL_REQUEST";
+const UNINSTALL_SUCCESS = "extensions/UNINSTALL_SUCCESS";
+type UNINSTALL_SUCCESS_TYPE = "extensions/UNINSTALL_SUCCESS";
+const UNINSTALL_FAILURE = "extensions/UNINSTALL_FAILURE";
+type UNINSTALL_FAILURE_TYPE = "extensions/UNINSTALL_FAILURE";
+
+type UninstallRequestAction = { type: UNINSTALL_REQUEST_TYPE, meta: Object };
+type UninstallSuccessAction = {
+  type: UNINSTALL_SUCCESS_TYPE,
+  packageName: string
+};
+type UninstallFailureAction = {
+  type: UNINSTALL_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+const RELOAD_EXTENSIONS = "extensions/RELOAD";
+const RELOAD_REQUEST = "extensions/RELOAD_REQUEST";
+type RELOAD_REQUEST_TYPE = "extensions/RELOAD_REQUEST";
+const RELOAD_SUCCESS = "extensions/RELOAD_SUCCESS";
+type RELOAD_SUCCESS_TYPE = "extensions/RELOAD_SUCCESS";
+const RELOAD_FAILURE = "extensions/RELOAD_FAILURE";
+type RELOAD_FAILURE_TYPE = "extensions/RELOAD_FAILURE";
+
+type ReloadRequestAction = { type: RELOAD_REQUEST_TYPE };
+type ReloadSuccessAction = { type: RELOAD_SUCCESS_TYPE };
+type ReloadFailureAction = {
+  type: RELOAD_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
 
 // ================================================================================
 // Reducers
 // ================================================================================
 type State = $ReadOnlyArray<ExtensionType>;
+type Action =
+  | FetchRequestAction
+  | FetchSuccessAction
+  | FetchFailureAction
+  | InstallRequestAction
+  | InstallSuccessAction
+  | InstallFailureAction
+  | UninstallRequestAction
+  | UninstallSuccessAction
+  | UninstallFailureAction
+  | ReloadRequestAction
+  | ReloadSuccessAction
+  | ReloadFailureAction;
 
-export default function extensionsReducer(state: State = [], action = {}) {
+export default function extensionsReducer(
+  state: State = [],
+  action: Action
+): State {
   switch (action.type) {
     case FETCH_SUCCESS:
       return action.extensions;
@@ -44,7 +114,7 @@ export default function extensionsReducer(state: State = [], action = {}) {
       return (state.map(extension => {
         // Replace the non-installed extension data with updated extension
         if (updatedExtension.pkg_name === extension.pkg_name) {
-          return action.extension;
+          return updatedExtension;
         }
         return extension;
       }): State);
@@ -74,8 +144,9 @@ export const selectIsExtensionsLoading = createLoadingSelector([
   RELOAD_EXTENSIONS
 ]);
 
-export const selectExtensions = (state): Array<ExtensionType> =>
-  state.extensions;
+export const selectExtensions = (
+  state: GlobalState
+): $ReadOnlyArray<ExtensionType> => state.extensions;
 
 export const selectInstalledExtensions = createSelector(
   [selectExtensions],
@@ -98,8 +169,17 @@ export const selectNotInstalledExtensions = createSelector(
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchExtensions() {
-  return async (dispatch: Function) => {
+type GetState = () => GlobalState;
+type PromiseAction = Promise<Action>;
+// eslint-disable-next-line no-use-before-define
+type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+// eslint-disable-next-line no-use-before-define
+type Dispatch = (
+  action: Action | ThunkAction | PromiseAction | Array<Action>
+) => any;
+
+export function fetchExtensions(): ThunkAction {
+  return async dispatch => {
     dispatch({ type: FETCH_REQUEST });
 
     try {
@@ -120,8 +200,8 @@ export function fetchExtensions() {
 }
 
 // Running install on an already installed extension will update it
-export function installExtension(packageName: string) {
-  return async (dispatch: Function) => {
+export function installExtension(packageName: string): ThunkAction {
+  return async dispatch => {
     dispatch({ type: INSTALL_REQUEST, meta: { packageName } });
 
     try {
@@ -146,8 +226,8 @@ export function installExtension(packageName: string) {
   };
 }
 
-export function uninstallExtension(packageName: string) {
-  return async (dispatch: Function) => {
+export function uninstallExtension(packageName: string): ThunkAction {
+  return async dispatch => {
     dispatch({ type: UNINSTALL_REQUEST, meta: { packageName } });
 
     try {
@@ -170,8 +250,8 @@ export function uninstallExtension(packageName: string) {
   };
 }
 
-export function reloadExtensions() {
-  return async (dispatch: Function) => {
+export function reloadExtensions(): ThunkAction {
+  return async dispatch => {
     dispatch({ type: RELOAD_REQUEST });
 
     try {
