@@ -1,8 +1,18 @@
 // @flow
 import { Server } from "api";
-import type { FilterAnyType, FilterSelect } from "types/filters";
+import type {
+  FilterAnyType,
+  FilterSelect,
+  FilterSort,
+  FilterGroup,
+  FilterTristate
+} from "types/filters";
+import type { GlobalState } from "redux-ducks/reducers";
 import { handleHTMLError } from "redux-ducks/utils";
-import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
+import {
+  RESET_STATE as RESET_CATALOGUE_STATE,
+  selectCatalogueSourceId
+} from "redux-ducks/catalogue";
 import { createSelector } from "reselect";
 import createCachedSelector from "re-reselect";
 
@@ -10,26 +20,68 @@ import createCachedSelector from "re-reselect";
 // Actions
 // ================================================================================
 const FETCH_REQUEST = "filters/FETCH_REQUEST";
+type FETCH_REQUEST_TYPE = "filters/FETCH_REQUEST";
 const FETCH_SUCCESS = "filters/FETCH_SUCCESS";
+type FETCH_SUCCESS_TYPE = "filters/FETCH_SUCCESS";
 const FETCH_FAILURE = "filters/FETCH_FAILURE";
+type FETCH_FAILURE_TYPE = "filters/FETCH_FAILURE";
+
+type FetchRequestAction = { type: FETCH_REQUEST_TYPE, meta: Object };
+type FetchSuccessAction = {
+  type: FETCH_SUCCESS_TYPE,
+  filters: Array<FilterAnyType>
+};
+type FetchFailureAction = {
+  type: FETCH_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
 
 const RESET_FILTERS = "filters/RESET_FILTERS";
+type RESET_FILTERS_TYPE = "filters/RESET_FILTERS";
 const UPDATE_LAST_USED_FILTERS = "filters/UPDATE_LAST_USED_FILTERS";
+type UPDATE_LAST_USED_FILTERS_TYPE = "filters/UPDATE_LAST_USED_FILTERS";
 const UPDATE_CURRENT_FILTERS = "filters/UPDATE_CURRENT_FILTERS";
+type UPDATE_CURRENT_FILTERS_TYPE = "filters/UPDATE_CURRENT_FILTERS";
+
+type ResetFiltersAction = { type: RESET_FILTERS_TYPE };
+type UpdateLastUsedFiltersAction = {
+  type: UPDATE_LAST_USED_FILTERS_TYPE
+};
+type UpdateCurrentFiltersAction = {
+  type: UPDATE_CURRENT_FILTERS_TYPE,
+  filters: Array<FilterAnyType>
+};
 
 const UPDATE_FILTER = "filters/UPDATE_FILTER";
+type UPDATE_FILTER_TYPE = "filters/UPDATE_FILTER";
+
+type UpdateFilterAction = {
+  type: UPDATE_FILTER_TYPE,
+  filter: FilterAnyType,
+  index: number
+};
 
 // ================================================================================
 // Reducers
 // ================================================================================
-type State = {
-  +initialFilters: $ReadOnlyArray<FilterAnyType>,
-  +lastUsedFilters: $ReadOnlyArray<FilterAnyType>, // use this for the actual search fetches
+type State = $ReadOnly<{
+  initialFilters: $ReadOnlyArray<FilterAnyType>,
+  lastUsedFilters: $ReadOnlyArray<FilterAnyType>, // use this for the actual search fetches
 
   // having this in the redux store is going to create a ton of actions being logged
   // the benefit is that any un-searched changes will remain when you leave and return to catalogue
-  +currentFilters: $ReadOnlyArray<FilterAnyType> // stores changes that haven't been submitted yet
-};
+  currentFilters: $ReadOnlyArray<FilterAnyType> // stores changes that haven't been submitted yet
+}>;
+type Action =
+  | FetchRequestAction
+  | FetchSuccessAction
+  | FetchFailureAction
+  | ResetFiltersAction
+  | UpdateLastUsedFiltersAction
+  | UpdateCurrentFiltersAction
+  | UpdateFilterAction;
+
 const initialState: State = {
   initialFilters: [],
   lastUsedFilters: [],
@@ -37,8 +89,8 @@ const initialState: State = {
 };
 export default function filtersReducer(
   state: State = initialState,
-  action = {}
-) {
+  action: Action
+): State {
   switch (action.type) {
     case RESET_CATALOGUE_STATE:
       // SIDE EFFECT based on catalogue actions
@@ -87,21 +139,26 @@ export default function filtersReducer(
 // Selectors
 // ================================================================================
 
-export const selectInitialFilters = (state): Array<FilterAnyType> =>
-  state.filters.initialFilters;
-export const selectLastUsedFilters = (state): Array<FilterAnyType> =>
-  state.filters.lastUsedFilters;
-export const selectCurrentFilters = (state): Array<FilterAnyType> =>
-  state.filters.currentFilters;
+export const selectInitialFilters = (
+  state: GlobalState
+): $ReadOnlyArray<FilterAnyType> => state.filters.initialFilters;
+export const selectLastUsedFilters = (
+  state: GlobalState
+): $ReadOnlyArray<FilterAnyType> => state.filters.lastUsedFilters;
+export const selectCurrentFilters = (
+  state: GlobalState
+): $ReadOnlyArray<FilterAnyType> => state.filters.currentFilters;
 
-export const selectFilterAtIndex = (state, index): FilterAnyType =>
-  state.filters.currentFilters[index];
+export const selectFilterAtIndex = (
+  state: GlobalState,
+  index: number
+): FilterAnyType => state.filters.currentFilters[index];
 
 export const selectFiltersLength = createSelector(
   // Optimization
   // The length of filters is constant, so we can look outside of currentFilters
   [selectInitialFilters],
-  (filters): Array<FilterAnyType> => filters.length
+  (filters): number => filters.length
 );
 
 // selectFilterTypeAtIndex(state, index)
@@ -116,16 +173,26 @@ export const selectFilterTypeAtIndex = createCachedSelector(
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchFilters() {
-  return (dispatch: Function, getState: Function) => {
-    const { sourceId }: { sourceId: ?string } = getState().catalogue;
+type GetState = () => GlobalState;
+type PromiseAction = Promise<Action>;
+// eslint-disable-next-line no-use-before-define
+type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+// eslint-disable-next-line no-use-before-define
+type RegularAction = (dispatch: Dispatch) => any;
+type Dispatch = (
+  action: Action | ThunkAction | PromiseAction | Array<Action>
+) => any;
+
+export function fetchFilters(): ThunkAction {
+  return (dispatch, getState) => {
+    const sourceId = selectCatalogueSourceId(getState());
     dispatch({ type: FETCH_REQUEST, meta: { sourceId } });
 
     if (sourceId == null) {
       return dispatch({
         type: FETCH_FAILURE,
         errorMessage: "Failed to get the filters.",
-        meta: "fetchFilters() sourceId is null"
+        meta: { error: "fetchFilters() sourceId is null" }
       });
     }
 
@@ -143,25 +210,29 @@ export function fetchFilters() {
   };
 }
 
-export function resetFilters() {
-  return (dispatch: Function) => dispatch({ type: RESET_FILTERS });
+export function resetFilters(): RegularAction {
+  return dispatch => dispatch({ type: RESET_FILTERS });
 }
 
-export function updateLastUsedFilters() {
-  return (dispatch: Function) => dispatch({ type: UPDATE_LAST_USED_FILTERS });
+export function updateLastUsedFilters(): RegularAction {
+  return dispatch => dispatch({ type: UPDATE_LAST_USED_FILTERS });
 }
 
-export function updateCurrentFilters(filters: Array<FilterAnyType>) {
-  return (dispatch: Function) =>
-    dispatch({ type: UPDATE_CURRENT_FILTERS, filters });
+export function updateCurrentFilters(
+  filters: Array<FilterAnyType>
+): RegularAction {
+  return dispatch => dispatch({ type: UPDATE_CURRENT_FILTERS, filters });
 }
 
 // ================================================================================
 // Action Creators - Individual filter update actions
 // ================================================================================
-export function updateFilterTextField(index: number, newState: string) {
+export function updateFilterTextField(index: number, newState: number) {
   return (dispatch: Function, getState: Function) => {
-    const currentFilter = selectFilterAtIndex(getState(), index);
+    const currentFilter: FilterSelect = (selectFilterAtIndex(
+      getState(),
+      index
+    ): any); // forced type refinement
 
     const updatedFilter: FilterSelect = {
       ...currentFilter,
@@ -174,7 +245,10 @@ export function updateFilterTextField(index: number, newState: string) {
 
 export function updateFilterSelect(index: number, newState: number) {
   return (dispatch: Function, getState: Function) => {
-    const currentFilter = selectFilterAtIndex(getState(), index);
+    const currentFilter: FilterSelect = (selectFilterAtIndex(
+      getState(),
+      index
+    ): any); // forced type refinement
 
     const updatedFilter: FilterSelect = {
       ...currentFilter,
@@ -187,7 +261,10 @@ export function updateFilterSelect(index: number, newState: number) {
 
 export function updateFilterSort(index: number, selectedIndex: number) {
   return (dispatch: Function, getState: Function) => {
-    const currentFilter = selectFilterAtIndex(getState(), index);
+    const currentFilter: FilterSort = (selectFilterAtIndex(
+      getState(),
+      index
+    ): any); // forced type refinement
 
     const isAscending = currentFilter.state.ascending;
     const currentIndex = currentFilter.state.index;
@@ -195,7 +272,7 @@ export function updateFilterSort(index: number, selectedIndex: number) {
     const newAscendingState =
       currentIndex === selectedIndex ? !isAscending : false;
 
-    const updatedFilter = {
+    const updatedFilter: FilterSort = {
       ...currentFilter,
       state: { index: selectedIndex, ascending: newAscendingState }
     };
@@ -206,9 +283,12 @@ export function updateFilterSort(index: number, selectedIndex: number) {
 
 export function updateFilterTristate(index: number) {
   return (dispatch: Function, getState: Function) => {
-    const currentFilter = selectFilterAtIndex(getState(), index);
+    const currentFilter: FilterTristate = (selectFilterAtIndex(
+      getState(),
+      index
+    ): any); // forced type refinement
 
-    const updatedFilter = {
+    const updatedFilter: FilterTristate = {
       ...currentFilter,
       state: newTristateState(currentFilter.state)
     };
@@ -219,23 +299,29 @@ export function updateFilterTristate(index: number) {
 
 export function updateFilterGroup(index: number, nestedIndex: number) {
   return (dispatch: Function, getState: Function) => {
-    const currentFilter = selectFilterAtIndex(getState(), index);
+    const currentFilter: FilterGroup = (selectFilterAtIndex(
+      getState(),
+      index
+    ): any);
 
     // Update the state of the nested item
     const nestedTristate = currentFilter.state[nestedIndex];
-    const updatedTristate: FilterTristateType = {
+    const updatedTristate: FilterTristate = {
       ...nestedTristate,
       state: newTristateState(nestedTristate.state)
     };
 
     // Update the array of state with the updated item
-    const updatedState = [
+    const updatedState: Array<FilterTristate> = [
       ...currentFilter.state.slice(0, nestedIndex),
       updatedTristate,
       ...currentFilter.state.slice(nestedIndex + 1)
     ];
 
-    const updatedFilter = { ...currentFilter, state: updatedState };
+    const updatedFilter: FilterGroup = {
+      ...currentFilter,
+      state: updatedState
+    };
 
     dispatch({ type: UPDATE_FILTER, filter: updatedFilter, index });
   };
