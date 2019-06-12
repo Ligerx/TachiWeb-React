@@ -8,12 +8,17 @@
 // NOTE: the general naming you should follow when referencing this state is [thing]IsLoading
 //       e.g. catalogueIsLoading
 
-import some from 'lodash/some';
-import get from 'lodash/get';
+import type { GlobalState } from "redux-ducks/reducers";
+import some from "lodash/some";
+import get from "lodash/get";
 
-type State = { +[action: string]: boolean };
+type State = $ReadOnly<{ [action: string]: boolean }>;
+type Action = { type: string };
 
-export default function loadingReducer(state: State = {}, action = {}) {
+export default function loadingReducer(
+  state: State = {},
+  action: Action
+): State {
   const { type } = action;
   const matches = /(.*)_(REQUEST|SUCCESS|FAILURE)/.exec(type);
 
@@ -26,12 +31,14 @@ export default function loadingReducer(state: State = {}, action = {}) {
     // Store whether a request is happening at the moment or not
     // e.g. will be true when receiving GET_TODOS_REQUEST
     //      and false when receiving GET_TODOS_SUCCESS / GET_TODOS_FAILURE
-    [requestName]: requestState === 'REQUEST',
+    [requestName]: requestState === "REQUEST"
   };
 }
 
 // 'actions' should be an array of strings. Strings should be action prefixes.
 // e.g. ['GET_TODOS'] corresponds to GET_TODOS_REQUEST, _SUCCESS, _FAILURE
-export const createLoadingSelector = (actions: Array<string>) => (state: Object): boolean =>
+export const createLoadingSelector = (actions: Array<string>) => (
+  state: GlobalState
+): boolean =>
   // returns true only when all actions is not loading
   some(actions, action => get(state, `loading.${action}`));
