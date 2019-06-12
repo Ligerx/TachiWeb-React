@@ -40,8 +40,8 @@ class ChapterMenu extends Component<Props, State> {
   handleToggleRead = (read: boolean) => (event: SyntheticEvent<>) => {
     event.preventDefault();
 
-    const { chapter, toggleRead } = this.props;
-    toggleRead(chapter.id, read);
+    const { toggleRead } = this.props;
+    toggleRead(read);
 
     this.setState({ anchorEl: null });
   };
