@@ -4,7 +4,7 @@ import type { GlobalState } from "redux-ducks/reducers";
 import type { ChapterType, MangaType } from "types";
 import createCachedSelector from "re-reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
-import { ADJUST_UNREAD } from "redux-ducks/library";
+import { ADJUST_UNREAD, type AdjustUnreadAction } from "redux-ducks/library";
 import { handleHTMLError } from "redux-ducks/utils";
 import filterSortChapters from "redux-ducks/chapterUtils";
 import { selectMangaInfo } from "redux-ducks/mangaInfos";
@@ -126,7 +126,9 @@ type Action =
   | UpdateReadingStatusNoChangeAction
   | ToggleReadRequestAction
   | ToggleReadSuccessAction
-  | ToggleReadFailureAction;
+  | ToggleReadFailureAction
+  // external actions
+  | AdjustUnreadAction;
 
 export default function chaptersReducer(
   state: State = {},

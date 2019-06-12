@@ -73,7 +73,7 @@ export function fetchSources(): ThunkAction {
       .then(handleHTMLError)
       .then(
         json => {
-          const sources = json.content;
+          const sources: Array<SourceType> = json.content;
           dispatch({ type: FETCH_SUCCESS, payload: sources });
 
           // SIDE EFFECT - set the catalogue sourceId on first sources load

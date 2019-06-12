@@ -11,7 +11,8 @@ import type { GlobalState } from "redux-ducks/reducers";
 import { handleHTMLError } from "redux-ducks/utils";
 import {
   RESET_STATE as RESET_CATALOGUE_STATE,
-  selectCatalogueSourceId
+  selectCatalogueSourceId,
+  type ResetStateAction
 } from "redux-ducks/catalogue";
 import { createSelector } from "reselect";
 import createCachedSelector from "re-reselect";
@@ -80,7 +81,9 @@ type Action =
   | ResetFiltersAction
   | UpdateLastUsedFiltersAction
   | UpdateCurrentFiltersAction
-  | UpdateFilterAction;
+  | UpdateFilterAction
+  // external actions
+  | ResetStateAction;
 
 const initialState: State = {
   initialFilters: [],
@@ -166,7 +169,7 @@ export const selectFilterTypeAtIndex = createCachedSelector(
   // Optimization
   // The type and position of a filter is constant, so we can look outside of currentFilters
   [selectInitialFilters, (_, index) => index],
-  (filters, index) => filters[index]._type
+  (filters, index) => filters[index]._type // eslint-disable-line no-underscore-dangle
   // Cache Key
 )((_, index) => index);
 

@@ -2,7 +2,10 @@
 import { Server } from "api";
 import type { GlobalState } from "redux-ducks/reducers";
 import type { ExtensionType } from "types";
-import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
+import {
+  RESET_STATE as RESET_CATALOGUE_STATE,
+  type ResetStateAction
+} from "redux-ducks/catalogue";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createSelector } from "reselect";
 
@@ -98,7 +101,9 @@ type Action =
   | UninstallFailureAction
   | ReloadRequestAction
   | ReloadSuccessAction
-  | ReloadFailureAction;
+  | ReloadFailureAction
+  // external actions
+  | ResetStateAction;
 
 export default function extensionsReducer(
   state: State = [],

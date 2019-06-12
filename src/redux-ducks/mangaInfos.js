@@ -4,7 +4,12 @@ import { Server } from "api";
 import type { MangaType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
 import createCachedSelector from "re-reselect";
-import { ADD_TO_FAVORITES, REMOVE_FROM_FAVORITES } from "redux-ducks/library";
+import {
+  ADD_TO_FAVORITES,
+  REMOVE_FROM_FAVORITES,
+  type AddToFavoriteAction,
+  type RemoveFromFavoriteAction
+} from "redux-ducks/library";
 import { handleHTMLError } from "redux-ducks/utils";
 import type { GlobalState } from "redux-ducks/reducers";
 
@@ -87,7 +92,10 @@ type ToggleFavoriteFailureAction = {
 export const ADD_MANGA = "mangaInfos/ADD_MANGA";
 type ADD_MANGA_TYPE = "mangaInfos/ADD_MANGA";
 
-type AddMangaAction = { type: ADD_MANGA_TYPE, newManga: Array<MangaType> };
+export type AddMangaAction = {
+  type: ADD_MANGA_TYPE,
+  newManga: Array<MangaType>
+};
 
 const SET_FLAG_REQUEST = "mangaInfos/SET_FLAG_REQUEST";
 type SET_FLAG_REQUEST_TYPE = "mangaInfos/SET_FLAG_REQUEST";
@@ -129,7 +137,10 @@ type Action =
   | SetFlagRequestAction
   | SetFlagSuccessAction
   | SetFlagFailureAction
-  | SetFlagNoChangeAction;
+  | SetFlagNoChangeAction
+  // external actions
+  | AddToFavoriteAction
+  | RemoveFromFavoriteAction;
 
 export default function mangaInfosReducer(
   state: State = {},

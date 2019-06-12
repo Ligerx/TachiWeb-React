@@ -5,7 +5,11 @@ import type { FilterAnyType } from "types/filters";
 import type { MangaType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createSelector } from "reselect";
-import { selectMangaInfos, ADD_MANGA } from "redux-ducks/mangaInfos";
+import {
+  selectMangaInfos,
+  ADD_MANGA,
+  type AddMangaAction
+} from "redux-ducks/mangaInfos";
 import { selectLastUsedFilters } from "redux-ducks/filters";
 import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 
@@ -15,7 +19,7 @@ import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 export const RESET_STATE = "catalogue/RESET_STATE";
 type RESET_STATE_TYPE = "catalogue/RESET_STATE";
 
-type ResetStateAction = { type: RESET_STATE_TYPE };
+export type ResetStateAction = { type: RESET_STATE_TYPE };
 
 const FETCH_CATALOGUE = "catalogue/FETCH";
 const FETCH_CATALOGUE_REQUEST = "catalogue/FETCH_REQUEST";
@@ -76,7 +80,10 @@ type UpdateSearchQueryAction = {
 const CHANGE_SOURCEID = "catalogue/CHANGE_SOURCEID";
 type CHANGE_SOURCEID_TYPE = "catalogue/CHANGE_SOURCEID";
 
-type ChangeSourceIdAction = { type: CHANGE_SOURCEID_TYPE, newSourceId: string };
+export type ChangeSourceIdAction = {
+  type: CHANGE_SOURCEID_TYPE,
+  newSourceId: string
+};
 
 // ================================================================================
 // Reducers
@@ -98,7 +105,9 @@ type Action =
   | AddPageFailureAction
   | AddPageNoNextPageAction
   | UpdateSearchQueryAction
-  | ChangeSourceIdAction;
+  | ChangeSourceIdAction
+  // external actions
+  | AddMangaAction;
 
 const initialState: State = {
   sourceId: null,

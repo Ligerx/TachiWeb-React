@@ -6,7 +6,11 @@ import type {
   LibraryFlagsType,
   LibraryFlagsPossibleValueTypes
 } from "types";
-import { selectMangaInfos, ADD_MANGA } from "redux-ducks/mangaInfos";
+import {
+  selectMangaInfos,
+  ADD_MANGA,
+  type AddMangaAction
+} from "redux-ducks/mangaInfos";
 import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createErrorSelector } from "redux-ducks/error";
@@ -125,12 +129,15 @@ type REMOVE_FROM_FAVORITES_TYPE = "library/REMOVE_FROM_FAVORITES";
 export const ADJUST_UNREAD = "library/ADJUST_UNREAD";
 type ADJUST_UNREAD_TYPE = "library/ADJUST_UNREAD";
 
-type AddToFavoriteAction = { type: ADD_TO_FAVORITES_TYPE, mangaId: number };
-type RemoveFromFavoriteAction = {
+export type AddToFavoriteAction = {
+  type: ADD_TO_FAVORITES_TYPE,
+  mangaId: number
+};
+export type RemoveFromFavoriteAction = {
   type: REMOVE_FROM_FAVORITES_TYPE,
   mangaId: number
 };
-type AdjustUnreadAction = {
+export type AdjustUnreadAction = {
   type: ADJUST_UNREAD_TYPE,
   mangaId: number,
   difference: 1 | -1
@@ -168,7 +175,9 @@ type Action =
   | UploadRestoreFailureAction
   | AddToFavoriteAction
   | RemoveFromFavoriteAction
-  | AdjustUnreadAction;
+  | AdjustUnreadAction
+  // external actions
+  | AddMangaAction;
 
 const defaultState: State = {
   mangaIds: [], // array of mangaIds that point at data loaded in mangaInfos reducer
@@ -227,8 +236,9 @@ export default function libraryReducer(
       };
 
     case REMOVE_FROM_FAVORITES: {
+      const mangaIdToRemove = action.mangaId;
       const newMangaIds: Array<number> = state.mangaIds.filter(
-        mangaId => mangaId !== action.mangaId
+        mangaId => mangaId !== mangaIdToRemove
       );
       return {
         ...state,
