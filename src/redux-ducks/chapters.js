@@ -1,5 +1,6 @@
 // @flow
 import { Server } from "api";
+import type { GlobalState } from "redux-ducks/reducers";
 import type { ChapterType, MangaType } from "types";
 import createCachedSelector from "re-reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
@@ -7,37 +8,130 @@ import { ADJUST_UNREAD } from "redux-ducks/library";
 import { handleHTMLError } from "redux-ducks/utils";
 import filterSortChapters from "redux-ducks/chapterUtils";
 import { selectMangaInfo } from "redux-ducks/mangaInfos";
+import { selectPageCount } from "redux-ducks/pageCounts";
 
 // ================================================================================
 // Actions
 // ================================================================================
-const FETCH_CACHE = "chapters/FETCH_CACHE";
+const FETCH_CHAPTERS = "chapters/FETCH";
 const FETCH_REQUEST = "chapters/FETCH_REQUEST";
+type FETCH_REQUEST_TYPE = "chapters/FETCH_REQUEST";
 const FETCH_SUCCESS = "chapters/FETCH_SUCCESS";
+type FETCH_SUCCESS_TYPE = "chapters/FETCH_SUCCESS";
 const FETCH_FAILURE = "chapters/FETCH_FAILURE";
-export const FETCH_CHAPTERS = "chapters/FETCH";
+type FETCH_FAILURE_TYPE = "chapters/FETCH_FAILURE";
+const FETCH_CACHE = "chapters/FETCH_CACHE";
+type FETCH_CACHE_TYPE = "chapters/FETCH_CACHE";
 
+type FetchRequestAction = { type: FETCH_REQUEST_TYPE, meta: Object };
+type FetchSuccessAction = {
+  type: FETCH_SUCCESS_TYPE,
+  payload: Array<ChapterType>,
+  mangaId: number
+};
+type FetchFailureAction = {
+  type: FETCH_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+type FetchCacheAction = { type: FETCH_CACHE_TYPE };
+
+const UPDATE_CHAPTERS = "chapters/UPDATE";
 const UPDATE_REQUEST = "chapters/UPDATE_REQUEST";
+type UPDATE_REQUEST_TYPE = "chapters/UPDATE_REQUEST";
 const UPDATE_SUCCESS = "chapters/UPDATE_SUCCESS";
+type UPDATE_SUCCESS_TYPE = "chapters/UPDATE_SUCCESS";
 const UPDATE_FAILURE = "chapters/UPDATE_FAILURE";
-export const UPDATE_CHAPTERS = "chapters/UPDATE";
+type UPDATE_FAILURE_TYPE = "chapters/UPDATE_FAILURE";
 
+type UpdateRequestAction = { type: UPDATE_REQUEST_TYPE, meta: Object };
+// call fetchChapters() after UpdateSuccessAction if there were new manga added
+type UpdateSuccessAction = { type: UPDATE_SUCCESS_TYPE, meta: Object };
+type UpdateFailureAction = {
+  type: UPDATE_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+const UPDATE_READING_STATUS_REQUEST = "chapters/UPDATE_READING_STATUS_REQUEST";
+type UPDATE_READING_STATUS_REQUEST_TYPE =
+  "chapters/UPDATE_READING_STATUS_REQUEST";
+const UPDATE_READING_STATUS_SUCCESS = "chapters/UPDATE_READING_STATUS_SUCCESS";
+type UPDATE_READING_STATUS_SUCCESS_TYPE =
+  "chapters/UPDATE_READING_STATUS_SUCCESS";
+const UPDATE_READING_STATUS_FAILURE = "chapters/UPDATE_READING_STATUS_FAILURE";
+type UPDATE_READING_STATUS_FAILURE_TYPE =
+  "chapters/UPDATE_READING_STATUS_FAILURE";
 const UPDATE_READING_STATUS_NO_CHANGE =
   "chapters/UPDATE_READING_STATUS_NO_CHANGE";
-const UPDATE_READING_STATUS_REQUEST = "chapters/UPDATE_READING_STATUS_REQUEST";
-const UPDATE_READING_STATUS_SUCCESS = "chapters/UPDATE_READING_STATUS_SUCCESS";
-const UPDATE_READING_STATUS_FAILURE = "chapters/UPDATE_READING_STATUS_FAILURE";
+type UPDATE_READING_STATUS_NO_CHANGE_TYPE =
+  "chapters/UPDATE_READING_STATUS_NO_CHANGE";
+
+type UpdateReadingStatusRequestAction = {
+  type: UPDATE_READING_STATUS_REQUEST_TYPE,
+  meta: Object
+};
+type UpdateReadingStatusSuccessAction = {
+  type: UPDATE_READING_STATUS_SUCCESS_TYPE,
+  mangaId: number,
+  chapterId: number,
+  readPage: number,
+  didReadLastPage: boolean
+};
+type UpdateReadingStatusFailureAction = {
+  type: UPDATE_READING_STATUS_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+type UpdateReadingStatusNoChangeAction = {
+  type: UPDATE_READING_STATUS_NO_CHANGE_TYPE,
+  meta: Object
+};
 
 const TOGGLE_READ_REQUEST = "chapters/TOGGLE_READ_REQUEST";
+type TOGGLE_READ_REQUEST_TYPE = "chapters/TOGGLE_READ_REQUEST";
 const TOGGLE_READ_SUCCESS = "chapters/TOGGLE_READ_SUCCESS";
+type TOGGLE_READ_SUCCESS_TYPE = "chapters/TOGGLE_READ_SUCCESS";
 const TOGGLE_READ_FAILURE = "chapters/TOGGLE_READ_FAILURE";
+type TOGGLE_READ_FAILURE_TYPE = "chapters/TOGGLE_READ_FAILURE";
+
+type ToggleReadRequestAction = { type: TOGGLE_READ_REQUEST_TYPE, meta: Object };
+type ToggleReadSuccessAction = {
+  type: TOGGLE_READ_SUCCESS_TYPE,
+  mangaId: number,
+  chapterId: number,
+  read: boolean
+};
+type ToggleReadFailureAction = {
+  type: TOGGLE_READ_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
 
 // ================================================================================
 // Reducers
 // ================================================================================
-type State = { +[mangaId: number]: Array<ChapterType> };
+type State = $ReadOnly<{ [mangaId: number]: Array<ChapterType> }>;
+type Action =
+  | FetchRequestAction
+  | FetchSuccessAction
+  | FetchFailureAction
+  | FetchCacheAction
+  | UpdateRequestAction
+  | UpdateSuccessAction
+  | UpdateFailureAction
+  | UpdateReadingStatusRequestAction
+  | UpdateReadingStatusSuccessAction
+  | UpdateReadingStatusFailureAction
+  | UpdateReadingStatusNoChangeAction
+  | ToggleReadRequestAction
+  | ToggleReadSuccessAction
+  | ToggleReadFailureAction;
 
-export default function chaptersReducer(state: State = {}, action = {}) {
+export default function chaptersReducer(
+  state: State = {},
+  action: Action
+): State {
   switch (action.type) {
     case FETCH_SUCCESS:
       return {
@@ -89,7 +183,7 @@ export const selectIsChaptersLoading = createLoadingSelector([
 ]);
 
 export const selectChaptersForManga = (
-  state,
+  state: GlobalState,
   mangaId: number
 ): Array<ChapterType> => state.chapters[mangaId] || noChapters;
 
@@ -168,15 +262,26 @@ export const selectPrevChapterId = createCachedSelector(
 // ================================================================================
 // Action Creators
 // ================================================================================
+type GetState = () => GlobalState;
+type PromiseAction = Promise<Action>;
+// eslint-disable-next-line no-use-before-define
+type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+type Dispatch = (
+  action: Action | ThunkAction | PromiseAction | Array<Action>
+) => any;
+
 // Fetch the chapters that are currently cached by the server
 type Obj = { ignoreCache?: boolean };
 export function fetchChapters(
   mangaId: number,
   { ignoreCache = false }: Obj = {}
-) {
-  return (dispatch: Function, getState: Function) => {
+): ThunkAction {
+  return (dispatch, getState) => {
     // Return manga's cached chapters if they're already in the store
-    if (!ignoreCache && getState().chapters[mangaId]) {
+    if (
+      !ignoreCache &&
+      selectChaptersForManga(getState(), mangaId).length > 0
+    ) {
       return Promise.resolve().then(dispatch({ type: FETCH_CACHE }));
     }
 
@@ -199,8 +304,8 @@ export function fetchChapters(
 
 // Request the server to re-scrape the source site for chapters
 // If there have been any changes, re-fetch the cached chapter list from the server
-export function updateChapters(mangaId: number) {
-  return (dispatch: Function) => {
+export function updateChapters(mangaId: number): ThunkAction {
+  return dispatch => {
     dispatch({ type: UPDATE_REQUEST, meta: { mangaId } });
 
     return fetch(Server.updateMangaChapters(mangaId))
@@ -240,11 +345,19 @@ export function updateReadingStatus(
   mangaId: number,
   chapterId: number,
   readPage: number
-) {
-  return (dispatch: Function, getState: Function) => {
+): ThunkAction {
+  return (dispatch, getState) => {
     // Handle checking if no update needs to happen. Escape early if so.
-    const { chapters, pageCounts } = getState();
-    const chapter = chapters[mangaId].find(ch => ch.id === chapterId);
+    const chapter = selectChapter(getState(), mangaId, chapterId);
+    const pageCount = selectPageCount(getState(), chapterId);
+
+    if (pageCount == null) {
+      return dispatch({
+        type: UPDATE_READING_STATUS_FAILURE,
+        errorMessage: "Couldn't find page count for this chapter.",
+        meta: { mangaId, chapterId, readPage }
+      });
+    }
 
     if (!chapter || chapter.read || readPage <= chapter.last_page_read) {
       return dispatch({
@@ -257,8 +370,7 @@ export function updateReadingStatus(
       });
     }
 
-    const pageCount = pageCounts[chapter.id];
-    const didReadLastPage: ?boolean = readPage === pageCount - 1 ? true : null;
+    const didReadLastPage: boolean = readPage === pageCount - 1;
 
     const updateReadingStatusUrl = Server.updateReadingStatus(
       mangaId,
@@ -300,8 +412,12 @@ export function updateReadingStatus(
 }
 
 // TODO: Update this function (and maybe updateReadingStatus()) to new api version
-export function toggleRead(mangaId: number, chapterId: number, read: boolean) {
-  return (dispatch: Function) => {
+export function toggleRead(
+  mangaId: number,
+  chapterId: number,
+  read: boolean
+): ThunkAction {
+  return dispatch => {
     dispatch({ type: TOGGLE_READ_REQUEST, meta: { mangaId, chapterId, read } });
 
     return fetch(Server.updateReadingStatus(mangaId, chapterId, 0, read))
@@ -343,7 +459,7 @@ function changeChapterObjReadState(
   const chapterIndex = chapters.findIndex(chapter => chapter.id === chapterId);
   const chapter = chapters[chapterIndex];
 
-  const newChapter = {
+  const newChapter: ChapterType = {
     ...chapter,
     last_page_read: readPage,
     read: didReadLastPage
