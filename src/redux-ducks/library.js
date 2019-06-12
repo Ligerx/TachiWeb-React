@@ -1,5 +1,6 @@
 // @flow
 import { Server } from "api";
+import type { GlobalState } from "redux-ducks/reducers";
 import type {
   MangaType,
   LibraryFlagsType,
@@ -17,48 +18,157 @@ import { updateChapters } from "redux-ducks/chapters";
 // ================================================================================
 // Actions
 // ================================================================================
+const FETCH_LIBRARY = "library/FETCH";
 const FETCH_LIBRARY_REQUEST = "library/FETCH_REQUEST";
+type FETCH_LIBRARY_REQUEST_TYPE = "library/FETCH_REQUEST";
 const FETCH_LIBRARY_SUCCESS = "library/FETCH_SUCCESS";
+type FETCH_LIBRARY_SUCCESS_TYPE = "library/FETCH_SUCCESS";
 const FETCH_LIBRARY_FAILURE = "library/FETCH_FAILURE";
+type FETCH_LIBRARY_FAILURE_TYPE = "library/FETCH_FAILURE";
 const FETCH_LIBRARY_CACHE = "library/FETCH_CACHE";
-export const FETCH_LIBRARY = "library/FETCH";
+type FETCH_LIBRARY_CACHE_TYPE = "library/FETCH_CACHE";
 
+type FetchLibraryRequestAction = { type: FETCH_LIBRARY_REQUEST_TYPE };
+type FetchLibrarySuccessAction = {
+  type: FETCH_LIBRARY_SUCCESS_TYPE,
+  mangaIds: Array<number>
+};
+type FetchLibraryFailureAction = {
+  type: FETCH_LIBRARY_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+type FetchLibraryCacheAction = { type: FETCH_LIBRARY_CACHE_TYPE };
+
+const FETCH_UNREAD = "library/FETCH_UNREAD";
 const FETCH_UNREAD_REQUEST = "library/FETCH_UNREAD_REQUEST";
+type FETCH_UNREAD_REQUEST_TYPE = "library/FETCH_UNREAD_REQUEST";
 const FETCH_UNREAD_SUCCESS = "library/FETCH_UNREAD_SUCCESS";
+type FETCH_UNREAD_SUCCESS_TYPE = "library/FETCH_UNREAD_SUCCESS";
 const FETCH_UNREAD_FAILURE = "library/FETCH_UNREAD_FAILURE";
+type FETCH_UNREAD_FAILURE_TYPE = "library/FETCH_UNREAD_FAILURE";
 const FETCH_UNREAD_CACHE = "library/FETCH_UNREAD_CACHE";
-export const FETCH_UNREAD = "library/FETCH_UNREAD";
+type FETCH_UNREAD_CACHE_TYPE = "library/FETCH_UNREAD_CACHE";
 
-export const ADD_TO_FAVORITES = "library/ADD_TO_FAVORITES";
-export const REMOVE_FROM_FAVORITES = "library/REMOVE_FROM_FAVORITES";
-export const ADJUST_UNREAD = "library/ADJUST_UNREAD";
+type FetchUnreadRequestAction = { type: FETCH_UNREAD_REQUEST_TYPE };
+type FetchUnreadSuccessAction = {
+  type: FETCH_UNREAD_SUCCESS_TYPE,
+  unread: { [mangaId: number]: number }
+};
+type FetchUnreadFailureAction = {
+  type: FETCH_UNREAD_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+type FetchUnreadCacheAction = { type: FETCH_UNREAD_CACHE_TYPE };
 
-const UPLOAD_RESTORE_REQUEST = "library/UPLOAD_RESTORE_REQUEST";
-const UPLOAD_RESTORE_SUCCESS = "library/UPLOAD_RESTORE_SUCCESS";
-const UPLOAD_RESTORE_FAILURE = "library/UPLOAD_RESTORE_FAILURE";
-export const UPLOAD_RESTORE = "library/UPLOAD_RESTORE";
-
+const FETCH_LIBRARY_FLAGS = "library/FETCH_FLAGS";
 const FETCH_LIBRARY_FLAGS_REQUEST = "library/FETCH_FLAGS_REQUEST";
+type FETCH_LIBRARY_FLAGS_REQUEST_TYPE = "library/FETCH_FLAGS_REQUEST";
 const FETCH_LIBRARY_FLAGS_SUCCESS = "library/FETCH_FLAGS_SUCCESS";
+type FETCH_LIBRARY_FLAGS_SUCCESS_TYPE = "library/FETCH_FLAGS_SUCCESS";
 const FETCH_LIBRARY_FLAGS_FAILURE = "library/FETCH_FLAGS_FAILURE";
+type FETCH_LIBRARY_FLAGS_FAILURE_TYPE = "library/FETCH_FLAGS_FAILURE";
 const FETCH_LIBRARY_FLAGS_CACHE = "library/FETCH_FLAGS_CACHE";
-export const FETCH_LIBRARY_FLAGS = "library/FETCH_FLAGS";
+type FETCH_LIBRARY_FLAGS_CACHE_TYPE = "library/FETCH_FLAGS_CACHE";
+
+type FetchLibraryFlagsRequestAction = {
+  type: FETCH_LIBRARY_FLAGS_REQUEST_TYPE
+};
+type FetchLibraryFlagsSuccessAction = {
+  type: FETCH_LIBRARY_FLAGS_SUCCESS_TYPE,
+  flags: LibraryFlagsType
+};
+type FetchLibraryFlagsFailureAction = {
+  type: FETCH_LIBRARY_FLAGS_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+type FetchLibraryFlagsCacheAction = { type: FETCH_LIBRARY_FLAGS_CACHE_TYPE };
 
 const SET_FLAG_REQUEST = "library/SET_FLAG_REQUEST";
+type SET_FLAG_REQUEST_TYPE = "library/SET_FLAG_REQUEST";
 const SET_FLAG_SUCCESS = "library/SET_FLAG_SUCCESS";
+type SET_FLAG_SUCCESS_TYPE = "library/SET_FLAG_SUCCESS";
 const SET_FLAG_FAILURE = "library/SET_FLAG_FAILURE";
+type SET_FLAG_FAILURE_TYPE = "library/SET_FLAG_FAILURE";
+
+type SetFlagRequestAction = {
+  type: SET_FLAG_REQUEST_TYPE,
+  // key value pair for LibraryFlagsType
+  flag: string,
+  value: LibraryFlagsPossibleValueTypes
+};
+type SetFlagSuccessAction = { type: SET_FLAG_SUCCESS_TYPE };
+type SetFlagFailureAction = { type: SET_FLAG_FAILURE_TYPE };
+
+const UPLOAD_RESTORE = "library/UPLOAD_RESTORE";
+const UPLOAD_RESTORE_REQUEST = "library/UPLOAD_RESTORE_REQUEST";
+type UPLOAD_RESTORE_REQUEST_TYPE = "library/UPLOAD_RESTORE_REQUEST";
+const UPLOAD_RESTORE_SUCCESS = "library/UPLOAD_RESTORE_SUCCESS";
+type UPLOAD_RESTORE_SUCCESS_TYPE = "library/UPLOAD_RESTORE_SUCCESS";
+const UPLOAD_RESTORE_FAILURE = "library/UPLOAD_RESTORE_FAILURE";
+type UPLOAD_RESTORE_FAILURE_TYPE = "library/UPLOAD_RESTORE_FAILURE";
+
+type UploadRestoreRequestAction = { type: UPLOAD_RESTORE_REQUEST_TYPE };
+type UploadRestoreSuccessAction = { type: UPLOAD_RESTORE_SUCCESS_TYPE };
+type UploadRestoreFailureAction = {
+  type: UPLOAD_RESTORE_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+export const ADD_TO_FAVORITES = "library/ADD_TO_FAVORITES";
+type ADD_TO_FAVORITES_TYPE = "library/ADD_TO_FAVORITES";
+export const REMOVE_FROM_FAVORITES = "library/REMOVE_FROM_FAVORITES";
+type REMOVE_FROM_FAVORITES_TYPE = "library/REMOVE_FROM_FAVORITES";
+export const ADJUST_UNREAD = "library/ADJUST_UNREAD";
+type ADJUST_UNREAD_TYPE = "library/ADJUST_UNREAD";
+
+type AddToFavoriteAction = { type: ADD_TO_FAVORITES_TYPE, mangaId: number };
+type RemoveFromFavoriteAction = {
+  type: REMOVE_FROM_FAVORITES_TYPE,
+  mangaId: number
+};
+type AdjustUnreadAction = {
+  type: ADJUST_UNREAD_TYPE,
+  mangaId: number,
+  difference: 1 | -1
+};
 
 // ================================================================================
 // Reducers
 // ================================================================================
-type State = {
-  +mangaIds: $ReadOnlyArray<number>,
-  +reloadLibrary: boolean,
-  +unread: { +[mangaId: number]: number },
-  +reloadUnread: boolean,
-  +flags: LibraryFlagsType,
-  +isFlagsLoaded: boolean
-};
+type State = $ReadOnly<{
+  mangaIds: $ReadOnlyArray<number>,
+  reloadLibrary: boolean,
+  unread: $ReadOnly<{ [mangaId: number]: number }>,
+  reloadUnread: boolean,
+  flags: LibraryFlagsType,
+  isFlagsLoaded: boolean
+}>;
+type Action =
+  | FetchLibraryRequestAction
+  | FetchLibrarySuccessAction
+  | FetchLibraryFailureAction
+  | FetchLibraryCacheAction
+  | FetchUnreadRequestAction
+  | FetchUnreadSuccessAction
+  | FetchUnreadFailureAction
+  | FetchUnreadCacheAction
+  | FetchLibraryFlagsRequestAction
+  | FetchLibraryFlagsSuccessAction
+  | FetchLibraryFlagsFailureAction
+  | FetchLibraryFlagsCacheAction
+  | SetFlagRequestAction
+  | SetFlagSuccessAction
+  | SetFlagFailureAction
+  | UploadRestoreRequestAction
+  | UploadRestoreSuccessAction
+  | UploadRestoreFailureAction
+  | AddToFavoriteAction
+  | RemoveFromFavoriteAction
+  | AdjustUnreadAction;
 
 const defaultState: State = {
   mangaIds: [], // array of mangaIds that point at data loaded in mangaInfos reducer
@@ -92,8 +202,8 @@ const defaultState: State = {
 
 export default function libraryReducer(
   state: State = defaultState,
-  action = {}
-) {
+  action: Action
+): State {
   switch (action.type) {
     case FETCH_LIBRARY_SUCCESS:
       return {
@@ -171,19 +281,24 @@ export default function libraryReducer(
 // Selectors
 // ================================================================================
 
+export const selectIsRestoreLoading = createLoadingSelector([UPLOAD_RESTORE]);
+export const selectDidRestoreFail = createErrorSelector([UPLOAD_RESTORE]);
+
 export const selectIsLibraryLoading = createLoadingSelector([
   FETCH_LIBRARY,
   FETCH_UNREAD,
   FETCH_LIBRARY_FLAGS
 ]);
 
-export const selectLibraryMangaIds = (state): $ReadOnlyArray<number> =>
-  state.library.mangaIds;
+export const selectLibraryMangaIds = (
+  state: GlobalState
+): $ReadOnlyArray<number> => state.library.mangaIds;
 
-export const selectUnread = (state): { +[mangaId: number]: number } =>
-  state.library.unread;
+export const selectUnread = (
+  state: GlobalState
+): $ReadOnly<{ [mangaId: number]: number }> => state.library.unread;
 
-export const selectLibraryFlags = (state): LibraryFlagsType =>
+export const selectLibraryFlags = (state: GlobalState): LibraryFlagsType =>
   state.library.flags;
 
 export const selectLibraryMangaInfos = createSelector(
@@ -193,7 +308,7 @@ export const selectLibraryMangaInfos = createSelector(
   }
 );
 
-// selectFilteredSortedLibrary(state, searchQuery)
+// selectFilteredSortedLibrary(state, searchQuery: string)
 export const selectFilteredSortedLibrary = createCachedSelector(
   [
     selectLibraryMangaInfos,
@@ -205,15 +320,22 @@ export const selectFilteredSortedLibrary = createCachedSelector(
   // Cache Key
 )((_, searchQuery) => searchQuery);
 
-export const selectIsRestoreLoading = createLoadingSelector([UPLOAD_RESTORE]);
-export const selectDidRestoreFail = createErrorSelector([UPLOAD_RESTORE]);
-
 // ================================================================================
 // Action Creators
 // ================================================================================
+type GetState = () => GlobalState;
+type PromiseAction = Promise<Action>;
+// eslint-disable-next-line no-use-before-define
+type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+type Dispatch = (
+  action: Action | ThunkAction | PromiseAction | Array<Action>
+) => any;
+
 type Options = { ignoreCache?: boolean };
-export function fetchLibrary({ ignoreCache = false }: Options = {}) {
-  return (dispatch: Function, getState: Function) => {
+export function fetchLibrary({
+  ignoreCache = false
+}: Options = {}): ThunkAction {
+  return (dispatch, getState) => {
     // Return cached mangaLibrary if it's been loaded before
     if (!ignoreCache && !getState().library.reloadLibrary) {
       return dispatch({ type: FETCH_LIBRARY_CACHE });
@@ -241,8 +363,10 @@ export function fetchLibrary({ ignoreCache = false }: Options = {}) {
   };
 }
 
-export function fetchUnread({ ignoreCache = false }: Options = {}) {
-  return (dispatch: Function, getState: Function) => {
+export function fetchUnread({
+  ignoreCache = false
+}: Options = {}): ThunkAction {
+  return (dispatch, getState) => {
     if (!ignoreCache && !getState().library.reloadUnread) {
       return dispatch({ type: FETCH_UNREAD_CACHE });
     }
@@ -267,8 +391,8 @@ export function fetchUnread({ ignoreCache = false }: Options = {}) {
   };
 }
 
-export function updateLibrary() {
-  return (dispatch: Function, getState: Function) => {
+export function updateLibrary(): ThunkAction {
+  return (dispatch, getState) => {
     // https://decembersoft.com/posts/promises-in-serial-with-array-reduce/
     function serialPromiseChain(promiseArray) {
       return promiseArray.reduce(
@@ -293,8 +417,8 @@ export function updateLibrary() {
   };
 }
 
-export function uploadRestoreFile(file: File) {
-  return (dispatch: Function) => {
+export function uploadRestoreFile(file: File): ThunkAction {
+  return dispatch => {
     dispatch({ type: UPLOAD_RESTORE_REQUEST });
 
     return fetch(Server.restoreUpload(), uploadPostParameters(file))
@@ -312,8 +436,8 @@ export function uploadRestoreFile(file: File) {
   };
 }
 
-export function fetchLibraryFlags() {
-  return (dispatch: Function, getState: Function) => {
+export function fetchLibraryFlags(): ThunkAction {
+  return (dispatch, getState) => {
     if (getState().library.isFlagsLoaded) {
       return dispatch({ type: FETCH_LIBRARY_FLAGS_CACHE });
     }
@@ -338,9 +462,9 @@ export function fetchLibraryFlags() {
 export function setLibraryFlag(
   flag: string,
   value: LibraryFlagsPossibleValueTypes
-) {
+): ThunkAction {
   // Updating the store without waiting for the server to reply
-  return (dispatch: Function, getState: Function) => {
+  return (dispatch, getState) => {
     dispatch({ type: SET_FLAG_REQUEST, flag, value });
 
     return fetch(Server.libraryFlags(), {
