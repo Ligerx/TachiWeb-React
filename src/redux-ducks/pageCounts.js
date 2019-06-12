@@ -1,21 +1,47 @@
 // @flow
 import { Server } from "api";
 import { handleHTMLError } from "redux-ducks/utils";
+import type { GlobalState } from "redux-ducks/reducers";
 
 // ================================================================================
 // Actions
 // ================================================================================
 const FETCH_REQUEST = "pageCounts/FETCH_REQUEST";
+type FETCH_REQUEST_TYPE = "pageCounts/FETCH_REQUEST";
 const FETCH_SUCCESS = "pageCounts/FETCH_SUCCESS";
+type FETCH_SUCCESS_TYPE = "pageCounts/FETCH_SUCCESS";
 const FETCH_FAILURE = "pageCounts/FETCH_FAILURE";
+type FETCH_FAILURE_TYPE = "pageCounts/FETCH_FAILURE";
 const FETCH_CACHE = "pageCounts/FETCH_CACHE";
+type FETCH_CACHE_TYPE = "pageCounts/FETCH_CACHE";
+
+type FetchRequestAction = { type: FETCH_REQUEST_TYPE };
+type FetchSuccessAction = {
+  type: FETCH_SUCCESS_TYPE,
+  chapterId: number,
+  pageCount: number
+};
+type FetchFailureAction = {
+  type: FETCH_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+type FetchCacheAction = { type: FETCH_CACHE_TYPE };
 
 // ================================================================================
 // Reducers
 // ================================================================================
-type State = { +[chapterId: number]: number };
+type State = $ReadOnly<{ [chapterId: number]: number }>;
+type Action =
+  | FetchRequestAction
+  | FetchSuccessAction
+  | FetchFailureAction
+  | FetchCacheAction;
 
-export default function pageCountsReducer(state: State = {}, action = {}) {
+export default function pageCountsReducer(
+  state: State = {},
+  action: Action
+): State {
   switch (action.type) {
     case FETCH_SUCCESS:
       return {
@@ -33,18 +59,31 @@ export default function pageCountsReducer(state: State = {}, action = {}) {
 // Selectors
 // ================================================================================
 
-export const selectPageCounts = (state): State => state.pageCounts;
+export const selectPageCounts = (state: GlobalState): State => state.pageCounts;
 
-export const selectPageCount = (state, chapterId: number): ?number =>
-  state.pageCounts[chapterId];
+export const selectPageCount = (
+  state: GlobalState,
+  chapterId: number
+): ?number => state.pageCounts[chapterId];
 
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchPageCount(mangaId: number, chapterId: number) {
-  return (dispatch: Function, getState: Function) => {
+type GetState = () => GlobalState;
+type PromiseAction = Promise<Action>;
+// eslint-disable-next-line no-use-before-define
+type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+type Dispatch = (
+  action: Action | ThunkAction | PromiseAction | Array<Action>
+) => any;
+
+export function fetchPageCount(
+  mangaId: number,
+  chapterId: number
+): ThunkAction {
+  return (dispatch, getState) => {
     // Return manga's chapters' cached pageCount data if they're already in the store
-    if (getState().pageCounts[chapterId]) {
+    if (selectPageCount(getState(), chapterId)) {
       return dispatch({ type: FETCH_CACHE });
     }
 
