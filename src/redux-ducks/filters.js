@@ -302,7 +302,7 @@ export function updateFilterGroup(index: number, nestedIndex: number) {
     const currentFilter: FilterGroup = (selectFilterAtIndex(
       getState(),
       index
-    ): any);
+    ): any); // forced type refinement
 
     // Update the state of the nested item
     const nestedTristate = currentFilter.state[nestedIndex];
