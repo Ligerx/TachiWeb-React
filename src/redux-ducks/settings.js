@@ -81,11 +81,11 @@ type FetchSchemaCacheAction = { type: FETCH_SCHEMA_CACHE_TYPE };
 // ================================================================================
 // Reducers
 // ================================================================================
-type State = {
+type State = $ReadOnly<{
   schema: ?SchemaType,
   prefs: PrefsType,
   allPrefsFetched: boolean // Whether or not all preferences have been fetched, required as prefs can be fetch individually
-};
+}>;
 
 type Action =
   | FetchRequestAction
