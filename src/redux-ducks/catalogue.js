@@ -201,8 +201,6 @@ type GetState = () => GlobalState;
 type PromiseAction = Promise<Action>;
 // eslint-disable-next-line no-use-before-define
 type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-// eslint-disable-next-line no-use-before-define
-type RegularAction = (dispatch: Dispatch) => any;
 type Dispatch = (
   action: Action | ThunkAction | PromiseAction | Array<Action>
 ) => any;
@@ -327,17 +325,18 @@ export function fetchNextCataloguePage(): ThunkAction {
   };
 }
 
-export function resetCatalogue(): RegularAction {
-  return dispatch => dispatch({ type: RESET_STATE });
+export function resetCatalogue(): ResetStateAction {
+  return { type: RESET_STATE };
 }
 
-export function updateSearchQuery(newSearchQuery: string): RegularAction {
-  return dispatch =>
-    dispatch({ type: UPDATE_SEARCH_QUERY, searchQuery: newSearchQuery });
+export function updateSearchQuery(
+  newSearchQuery: string
+): UpdateSearchQueryAction {
+  return { type: UPDATE_SEARCH_QUERY, searchQuery: newSearchQuery };
 }
 
-export function changeSourceId(newSourceId: string): RegularAction {
-  return dispatch => dispatch({ type: CHANGE_SOURCEID, newSourceId });
+export function changeSourceId(newSourceId: string): ChangeSourceIdAction {
+  return { type: CHANGE_SOURCEID, newSourceId };
 }
 
 // ================================================================================

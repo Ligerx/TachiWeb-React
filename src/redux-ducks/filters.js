@@ -180,8 +180,6 @@ type GetState = () => GlobalState;
 type PromiseAction = Promise<Action>;
 // eslint-disable-next-line no-use-before-define
 type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-// eslint-disable-next-line no-use-before-define
-type RegularAction = (dispatch: Dispatch) => any;
 type Dispatch = (
   action: Action | ThunkAction | PromiseAction | Array<Action>
 ) => any;
@@ -213,18 +211,18 @@ export function fetchFilters(): ThunkAction {
   };
 }
 
-export function resetFilters(): RegularAction {
-  return dispatch => dispatch({ type: RESET_FILTERS });
+export function resetFilters(): ResetFiltersAction {
+  return { type: RESET_FILTERS };
 }
 
-export function updateLastUsedFilters(): RegularAction {
-  return dispatch => dispatch({ type: UPDATE_LAST_USED_FILTERS });
+export function updateLastUsedFilters(): UpdateLastUsedFiltersAction {
+  return { type: UPDATE_LAST_USED_FILTERS };
 }
 
 export function updateCurrentFilters(
   filters: Array<FilterAnyType>
-): RegularAction {
-  return dispatch => dispatch({ type: UPDATE_CURRENT_FILTERS, filters });
+): UpdateCurrentFiltersAction {
+  return { type: UPDATE_CURRENT_FILTERS, filters };
 }
 
 // ================================================================================
