@@ -1,10 +1,11 @@
 // @flow
 
 import { Server } from "api";
-import type { MangaType } from "types";
+import type { MangaType, MangaInfoFlagsType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
 import createCachedSelector from "re-reselect";
 import {
+  selectShouldReloadLibrary,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
   type AddToFavoriteAction,
@@ -217,6 +218,12 @@ export const selectIsFavorite = createCachedSelector(
   // Cache Key
 )((state, mangaId) => mangaId);
 
+const selectMangaFlagValue = (
+  state: GlobalState,
+  mangaId: number,
+  flag: $Keys<MangaInfoFlagsType>
+) => state.mangaInfos[mangaId].flags[flag];
+
 // ================================================================================
 // Action Creators
 // ================================================================================
@@ -235,7 +242,7 @@ export function fetchMangaInfo(
 ): ThunkAction {
   return (dispatch, getState) => {
     // Return cached mangaInfo if already loaded
-    if (!ignoreCache && !getState().library.reloadLibrary) {
+    if (!ignoreCache && !selectShouldReloadLibrary(getState())) {
       return Promise.resolve().then(dispatch({ type: FETCH_MANGA_CACHE }));
     }
 
@@ -323,7 +330,7 @@ export function setFlag(
   // I'm just updating the store without waiting for the server to reply
   // And failure should just pop up a message
   return (dispatch, getState) => {
-    if (getState().mangaInfos[mangaId].flags[flag] === state) {
+    if (selectMangaFlagValue(getState(), mangaId, flag) === state) {
       return dispatch({
         type: SET_FLAG_NO_CHANGE,
         meta: { mangaId, flag, state }

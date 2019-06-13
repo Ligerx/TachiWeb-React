@@ -330,6 +330,12 @@ export const selectFilteredSortedLibrary = createCachedSelector(
   // Cache Key
 )((_, searchQuery) => searchQuery);
 
+export const selectShouldReloadLibrary = (state: GlobalState): boolean =>
+  state.library.reloadLibrary;
+
+const selectIsLibraryFlagsLoaded = (state: GlobalState): boolean =>
+  state.library.isFlagsLoaded;
+
 // ================================================================================
 // Action Creators
 // ================================================================================
@@ -347,7 +353,7 @@ export function fetchLibrary({
 }: Options = {}): ThunkAction {
   return (dispatch, getState) => {
     // Return cached mangaLibrary if it's been loaded before
-    if (!ignoreCache && !getState().library.reloadLibrary) {
+    if (!ignoreCache && !selectShouldReloadLibrary(getState())) {
       return dispatch({ type: FETCH_LIBRARY_CACHE });
     }
 
@@ -377,7 +383,7 @@ export function fetchUnread({
   ignoreCache = false
 }: Options = {}): ThunkAction {
   return (dispatch, getState) => {
-    if (!ignoreCache && !getState().library.reloadUnread) {
+    if (!ignoreCache && !selectShouldReloadLibrary(getState())) {
       return dispatch({ type: FETCH_UNREAD_CACHE });
     }
 
@@ -448,7 +454,7 @@ export function uploadRestoreFile(file: File): ThunkAction {
 
 export function fetchLibraryFlags(): ThunkAction {
   return (dispatch, getState) => {
-    if (getState().library.isFlagsLoaded) {
+    if (selectIsLibraryFlagsLoaded(getState())) {
       return dispatch({ type: FETCH_LIBRARY_FLAGS_CACHE });
     }
 
@@ -480,7 +486,7 @@ export function setLibraryFlag(
     return fetch(Server.libraryFlags(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(getState().library.flags)
+      body: JSON.stringify(selectLibraryFlags(getState()))
     })
       .then(handleHTMLError)
       .then(

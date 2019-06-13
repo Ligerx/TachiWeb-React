@@ -178,6 +178,9 @@ export type DefaultViewer =
 export const selectDefaultViewer = (state: GlobalState): DefaultViewer =>
   state.settings.prefs.pref_default_viewer_key;
 
+export const selectPrefValue = (state: GlobalState, key: string): PrefValue =>
+  state.settings.prefs[key];
+
 // ================================================================================
 // Action Creators
 // ================================================================================
@@ -218,7 +221,7 @@ export function fetchSettings({
 export function setSetting(key: string, newValue: PrefValue): ThunkAction {
   return (dispatch, getState) => {
     // TODO: replace this getState() check with a selector
-    if (getState().settings.prefs[key] === newValue)
+    if (selectPrefValue(getState(), key) === newValue)
       return Promise.resolve(dispatch({ type: SET_PREF_NO_CHANGE }));
 
     dispatch({ type: SET_PREF_REQUEST, key, newVal: newValue });
