@@ -45,7 +45,7 @@ const Reader = ({ match: { params } }: Props) => {
     selectChapter(state, mangaId, chapterId)
   );
   const pageCounts = useSelector(selectPageCounts);
-  // FIXME: inefficient redux design?
+
   const pageCount =
     useSelector(state => selectPageCount(state, chapterId)) || 0;
   const prevChapterId = useSelector(state =>
