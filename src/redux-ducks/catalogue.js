@@ -129,7 +129,10 @@ export default function catalogueReducer(
       return { ...state, mangaIds: [] }; // also clear manga shown when loading
 
     case FETCH_CATALOGUE_SUCCESS: {
-      const { mangaIds, hasNextPage } = action;
+      const { mangaIds, hasNextPage, sourceIdChanged } = action;
+
+      if (sourceIdChanged) return state;
+
       return {
         ...state,
         mangaIds,
@@ -233,6 +236,14 @@ export function fetchCatalogue(): ThunkAction {
       .then(handleHTMLError)
       .then(
         json => {
+          // If we get an ajax response for source A but it completes after
+          // we switch to source B, don't update the store
+          const currentSourceId = getState().catalogue.sourceId;
+          if (currentSourceId !== sourceId) {
+            dispatch({ type: FETCH_CATALOGUE_SUCCESS, sourceIdChanged: true });
+            return;
+          }
+
           const { content, has_next: hasNextPage } = json;
 
           // content is sometimes undefined. Difficult to reproduce bug from the server
