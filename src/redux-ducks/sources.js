@@ -1,6 +1,10 @@
 // @flow
 import { Server } from "api";
-import { selectCatalogueSourceId, changeSourceId } from "redux-ducks/catalogue";
+import {
+  selectCatalogueSourceId,
+  changeSourceId,
+  type ChangeSourceIdAction
+} from "redux-ducks/catalogue";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { handleHTMLError } from "redux-ducks/utils";
 import type { SourceType } from "types";
@@ -32,7 +36,12 @@ type FetchFailureAction = {
 // Reducers
 // ================================================================================
 type State = $ReadOnlyArray<SourceType>;
-type Action = FetchRequestAction | FetchSuccessAction | FetchFailureAction;
+type Action =
+  | FetchRequestAction
+  | FetchSuccessAction
+  | FetchFailureAction
+  // external actions
+  | ChangeSourceIdAction;
 
 export default function sourcesReducer(
   state: State = [],
