@@ -33,12 +33,17 @@ type FetchCatalogueRequestAction = {
   type: FETCH_CATALOGUE_REQUEST_TYPE,
   meta: Object
 };
-type FetchCatalogueSuccessAction = {
-  type: FETCH_CATALOGUE_SUCCESS_TYPE,
-  mangaIds: Array<number>,
-  page: number,
-  hasNextPage: boolean
-};
+type FetchCatalogueSuccessAction =
+  | {
+      type: FETCH_CATALOGUE_SUCCESS_TYPE,
+      mangaIds: Array<number>,
+      page: number,
+      hasNextPage: boolean
+    }
+  | {
+      type: FETCH_CATALOGUE_SUCCESS_TYPE,
+      sourceIdChanged: boolean
+    };
 type FetchCatalogueFailureAction = {
   type: FETCH_CATALOGUE_FAILURE_TYPE,
   errorMessage: string,
@@ -238,7 +243,7 @@ export function fetchCatalogue(): ThunkAction {
         json => {
           // If we get an ajax response for source A but it completes after
           // we switch to source B, don't update the store
-          const currentSourceId = getState().catalogue.sourceId;
+          const currentSourceId = selectCatalogueSourceId(getState());
           if (currentSourceId !== sourceId) {
             dispatch({ type: FETCH_CATALOGUE_SUCCESS, sourceIdChanged: true });
             return;
