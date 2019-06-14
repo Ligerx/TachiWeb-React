@@ -4,7 +4,6 @@
 
   // List of extensions which should be recommended for users of this workspace.
   "recommendations": [
-    "dzannotti.vscode-babel-coloring",
     "msjsdiag.debugger-for-chrome",
     "dbaeumer.vscode-eslint",
     "flowtype.flow-for-vscode",
