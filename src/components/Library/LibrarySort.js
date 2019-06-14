@@ -66,7 +66,7 @@ class LibrarySort extends Component<Props, State> {
     const { anchorEl } = this.state;
 
     return (
-      <React.Fragment>
+      <>
         <Tooltip title="Sort">
           <IconButton onClick={this.handleClick}>
             <Icon>sort_by_alpha</Icon>
@@ -86,7 +86,7 @@ class LibrarySort extends Component<Props, State> {
               key={sort.flagState}
               onClick={this.handleSortChange(sort.flagState)}
             >
-              <React.Fragment>
+              <>
                 <Icon className={classes.icon}>
                   {iconValue(
                     flags.sort.type,
@@ -95,11 +95,11 @@ class LibrarySort extends Component<Props, State> {
                   )}
                 </Icon>
                 <Typography>{sort.description}</Typography>
-              </React.Fragment>
+              </>
             </MenuItem>
           ))}
         </Menu>
-      </React.Fragment>
+      </>
     );
   }
 }

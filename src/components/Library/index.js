@@ -40,7 +40,7 @@ const Library = () => {
   }, [dispatch]);
 
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Library - TachiWeb" />
 
       <LibraryHeader
@@ -54,7 +54,7 @@ const Library = () => {
       />
 
       {(libraryIsLoading || chaptersAreUpdating) && <FullScreenLoading />}
-    </React.Fragment>
+    </>
   );
 };
 

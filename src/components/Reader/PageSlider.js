@@ -52,7 +52,7 @@ const PageSlider = ({ classes, pageCount, page, onJumpToPage }: Props) => {
   }, [page]);
 
   return (
-    <React.Fragment>
+    <>
       <Typography className={classes.leftText}>{`Page ${page + 1}`}</Typography>
       <SliderWithTooltip
         min={1}
@@ -63,7 +63,7 @@ const PageSlider = ({ classes, pageCount, page, onJumpToPage }: Props) => {
         tipFormatter={value => `Page ${value}`}
       />
       <Typography className={classes.rightText}>{pageCount}</Typography>
-    </React.Fragment>
+    </>
   );
 };
 

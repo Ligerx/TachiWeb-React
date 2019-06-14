@@ -105,7 +105,7 @@ const RestoreCard = () => {
     acceptedFiles.length !== 1 || rejectedFiles.length > 0;
 
   return (
-    <React.Fragment>
+    <>
       <Card>
         <CardContent>
           <Typography gutterBottom variant="h5">
@@ -142,7 +142,7 @@ const RestoreCard = () => {
         onClose={handleCloseDialog}
         tryAgain={handleUpload}
       />
-    </React.Fragment>
+    </>
   );
 };
 

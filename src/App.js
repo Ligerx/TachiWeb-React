@@ -30,12 +30,12 @@ const App = () => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <Router />
 
       <ErrorNotifications />
-    </React.Fragment>
+    </>
   );
 };
 

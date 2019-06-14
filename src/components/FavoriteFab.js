@@ -51,7 +51,7 @@ const FavoriteFab = ({ mangaId }: Props) => {
     dispatch(toggleFavorite(mangaId, isFavorite));
 
   return (
-    <React.Fragment>
+    <>
       <Fab
         color="primary"
         className={classes.fab}
@@ -67,7 +67,7 @@ const FavoriteFab = ({ mangaId }: Props) => {
           />
         )}
       </Fab>
-    </React.Fragment>
+    </>
   );
 };
 

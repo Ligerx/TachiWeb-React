@@ -11,7 +11,7 @@ import RestoreCard from "components/BackupRestore/RestoreCard";
 import { Helmet } from "react-helmet";
 
 const BackupRestore = () => (
-  <React.Fragment>
+  <>
     <Helmet title="Backup and Restore - TachiWeb" />
 
     <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
@@ -30,7 +30,7 @@ const BackupRestore = () => (
         <RestoreCard />
       </Grid>
     </ResponsiveGrid>
-  </React.Fragment>
+  </>
 );
 
 export default BackupRestore;

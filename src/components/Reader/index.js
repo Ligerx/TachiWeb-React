@@ -134,7 +134,7 @@ const Reader = ({ match: { params } }: Props) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Helmet
         title={`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
           chapter.chapter_number
@@ -175,7 +175,7 @@ const Reader = ({ match: { params } }: Props) => {
 
       <ReadingStatusUpdater />
       <ImagePreloader />
-    </React.Fragment>
+    </>
   );
 };
 

@@ -39,7 +39,7 @@ const ExtensionButton = ({
 
   if (status === "INSTALLED") {
     return (
-      <React.Fragment>
+      <>
         <Button variant="outlined" onClick={() => setDialogOpen(true)}>
           Uninstall
         </Button>
@@ -50,7 +50,7 @@ const ExtensionButton = ({
           onClose={() => setDialogOpen(false)}
           onUninstall={onUninstallClick}
         />
-      </React.Fragment>
+      </>
     );
   }
 

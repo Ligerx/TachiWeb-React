@@ -36,7 +36,7 @@ const Extensions = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Extensions - TachiWeb" />
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
@@ -58,7 +58,7 @@ const Extensions = () => {
       </ResponsiveGrid>
 
       {isExtensionsLoading && <FullScreenLoading />}
-    </React.Fragment>
+    </>
   );
 };
 

@@ -77,7 +77,7 @@ class MangaInfoMore extends React.Component<Props, State> {
     const { anchorEl } = this.state;
 
     return (
-      <React.Fragment>
+      <>
         <Tooltip title="More options">
           <IconButton onClick={this.handleClick}>
             <Icon>more_vert</Icon>
@@ -121,7 +121,7 @@ class MangaInfoMore extends React.Component<Props, State> {
           options={sortingModes}
           onClose={this.handleSortTypeClose}
         />
-      </React.Fragment>
+      </>
     );
   }
 }

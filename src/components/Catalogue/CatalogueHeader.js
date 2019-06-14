@@ -70,7 +70,7 @@ const CatalogueHeader = () => {
         <MenuDrawer />
 
         {sourcesExist && (
-          <React.Fragment>
+          <>
             <Select
               value={sourceIndex}
               onChange={handleSourceChange}
@@ -89,7 +89,7 @@ const CatalogueHeader = () => {
               value={searchQuery}
               onChange={handleSearchChange}
             />
-          </React.Fragment>
+          </>
         )}
       </Toolbar>
     </AppBar>

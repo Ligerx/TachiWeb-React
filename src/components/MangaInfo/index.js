@@ -109,13 +109,13 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
     }
     if (mangaInfo && tabValue === 1) {
       return (
-        <React.Fragment>
+        <>
           <CenterHorizontally>
             <ContinueReadingButton mangaId={mangaInfo.id} />
           </CenterHorizontally>
 
           <MangaInfoChapterList chapters={chapters} mangaInfo={mangaInfo} />
-        </React.Fragment>
+        </>
       );
     }
     return null;

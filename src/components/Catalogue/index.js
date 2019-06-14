@@ -80,7 +80,7 @@ const Catalogue = () => {
     !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
 
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Catalogue - TachiWeb" />
 
       <CatalogueHeader />
@@ -109,7 +109,7 @@ const Catalogue = () => {
           No more results
         </Typography>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

@@ -83,7 +83,7 @@ class TextSettingsItem extends React.Component<
     const { schema } = this.props;
     const { dialogOpen, localValue } = this.state;
     return (
-      <React.Fragment>
+      <>
         <SettingsListItem onClick={this.handleClick} schema={schema} />
         <Dialog
           disableBackdropClick
@@ -117,7 +117,7 @@ class TextSettingsItem extends React.Component<
             </Button>
           </DialogActions>
         </Dialog>
-      </React.Fragment>
+      </>
     );
   }
 }

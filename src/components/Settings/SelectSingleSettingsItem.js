@@ -72,7 +72,7 @@ class SelectSingleSettingsItem extends React.Component<
       it => it.id === currentValueOrFallback(this.props)
     );
     return (
-      <React.Fragment>
+      <>
         <SettingsListItem
           onClick={this.handleClick}
           selectedValueLabel={current != null ? current.label : null}
@@ -113,7 +113,7 @@ class SelectSingleSettingsItem extends React.Component<
             </Button>
           </DialogActions>
         </Dialog>
-      </React.Fragment>
+      </>
     );
   }
 }

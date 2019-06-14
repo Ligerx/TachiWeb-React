@@ -80,7 +80,7 @@ const Settings = ({ match }: Props) => {
   if (info == null || info.schema == null) return null;
 
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Settings - TachiWeb" />
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
@@ -115,7 +115,7 @@ const Settings = ({ match }: Props) => {
           <FullScreenLoading />
         )}
       </List>
-    </React.Fragment>
+    </>
   );
 };
 
