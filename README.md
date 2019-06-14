@@ -4,7 +4,7 @@ React front end for [TachiWeb-Server](https://github.com/TachiWeb/TachiWeb-Serve
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app)
 
-I'm using VSCode with ESLint, Flow, and Prettier. Search for these in the VSCode extensions panel.
+There are included VSCode configuration files. VSCode will also automatically suggest installing some extensions that are important to this project. _These can also be found in the `Workplace Recommendations` section of the Extensions Tab._
 
 I also use [React DevTools](https://github.com/facebook/react-devtools) and [Redux DevTools](https://extension.remotedev.io) browser extensions, which are very useful.
 
