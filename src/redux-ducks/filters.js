@@ -7,7 +7,7 @@ import type {
   FilterGroup,
   FilterTristate
 } from "types/filters";
-import type { GlobalState } from "redux-ducks/reducers";
+import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 import { handleHTMLError } from "redux-ducks/utils";
 import {
   RESET_STATE as RESET_CATALOGUE_STATE,
@@ -74,16 +74,14 @@ type State = $ReadOnly<{
   // the benefit is that any un-searched changes will remain when you leave and return to catalogue
   currentFilters: $ReadOnlyArray<FilterAnyType> // stores changes that haven't been submitted yet
 }>;
-type Action =
+export type Action =
   | FetchRequestAction
   | FetchSuccessAction
   | FetchFailureAction
   | ResetFiltersAction
   | UpdateLastUsedFiltersAction
   | UpdateCurrentFiltersAction
-  | UpdateFilterAction
-  // external actions
-  | ResetStateAction;
+  | UpdateFilterAction;
 
 const initialState: State = {
   initialFilters: [],
@@ -92,7 +90,7 @@ const initialState: State = {
 };
 export default function filtersReducer(
   state: State = initialState,
-  action: Action
+  action: AnyAction
 ): State {
   switch (action.type) {
     case RESET_CATALOGUE_STATE:
@@ -176,14 +174,6 @@ export const selectFilterTypeAtIndex = createCachedSelector(
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => GlobalState;
-type PromiseAction = Promise<Action>;
-// eslint-disable-next-line no-use-before-define
-type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-type Dispatch = (
-  action: Action | ThunkAction | PromiseAction | Array<Action>
-) => any;
-
 export function fetchFilters(): ThunkAction {
   return (dispatch, getState) => {
     const sourceId = selectCatalogueSourceId(getState());

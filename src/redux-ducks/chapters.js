@@ -1,6 +1,6 @@
 // @flow
 import { Server } from "api";
-import type { GlobalState } from "redux-ducks/reducers";
+import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 import type { ChapterType, MangaType } from "types";
 import createCachedSelector from "re-reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
@@ -112,7 +112,7 @@ type ToggleReadFailureAction = {
 // Reducers
 // ================================================================================
 type State = $ReadOnly<{ [mangaId: number]: Array<ChapterType> }>;
-type Action =
+export type Action =
   | FetchRequestAction
   | FetchSuccessAction
   | FetchFailureAction
@@ -126,13 +126,11 @@ type Action =
   | UpdateReadingStatusNoChangeAction
   | ToggleReadRequestAction
   | ToggleReadSuccessAction
-  | ToggleReadFailureAction
-  // external actions
-  | AdjustUnreadAction;
+  | ToggleReadFailureAction;
 
 export default function chaptersReducer(
   state: State = {},
-  action: Action
+  action: AnyAction
 ): State {
   switch (action.type) {
     case FETCH_SUCCESS:
@@ -264,14 +262,6 @@ export const selectPrevChapterId = createCachedSelector(
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => GlobalState;
-type PromiseAction = Promise<Action>;
-// eslint-disable-next-line no-use-before-define
-type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-type Dispatch = (
-  action: Action | ThunkAction | PromiseAction | Array<Action>
-) => any;
-
 // Fetch the chapters that are currently cached by the server
 type Obj = { ignoreCache?: boolean };
 export function fetchChapters(

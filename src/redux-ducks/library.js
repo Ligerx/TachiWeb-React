@@ -1,6 +1,6 @@
 // @flow
 import { Server } from "api";
-import type { GlobalState } from "redux-ducks/reducers";
+import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 import type {
   MangaType,
   LibraryFlagsType,
@@ -154,7 +154,7 @@ type State = $ReadOnly<{
   flags: LibraryFlagsType,
   isFlagsLoaded: boolean
 }>;
-type Action =
+export type Action =
   | FetchLibraryRequestAction
   | FetchLibrarySuccessAction
   | FetchLibraryFailureAction
@@ -175,9 +175,7 @@ type Action =
   | UploadRestoreFailureAction
   | AddToFavoriteAction
   | RemoveFromFavoriteAction
-  | AdjustUnreadAction
-  // external actions
-  | AddMangaAction;
+  | AdjustUnreadAction;
 
 const defaultState: State = {
   mangaIds: [], // array of mangaIds that point at data loaded in mangaInfos reducer
@@ -211,7 +209,7 @@ const defaultState: State = {
 
 export default function libraryReducer(
   state: State = defaultState,
-  action: Action
+  action: AnyAction
 ): State {
   switch (action.type) {
     case FETCH_LIBRARY_SUCCESS:
@@ -339,14 +337,6 @@ const selectIsLibraryFlagsLoaded = (state: GlobalState): boolean =>
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => GlobalState;
-type PromiseAction = Promise<Action>;
-// eslint-disable-next-line no-use-before-define
-type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-type Dispatch = (
-  action: Action | ThunkAction | PromiseAction | Array<Action>
-) => any;
-
 type Options = { ignoreCache?: boolean };
 export function fetchLibrary({
   ignoreCache = false

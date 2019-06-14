@@ -3,7 +3,7 @@ import { Server } from "api";
 import type { SchemaType } from "types/settings-schema";
 import UI_SETTINGS from "ui-settings";
 import { createLoadingSelector } from "redux-ducks/loading";
-import type { GlobalState } from "redux-ducks/reducers";
+import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 
 export type PrefValue = string | Array<string> | number | boolean | null | void;
 export type PrefsType = $ReadOnly<{ [key: string]: PrefValue }>;
@@ -87,7 +87,7 @@ type State = $ReadOnly<{
   allPrefsFetched: boolean // Whether or not all preferences have been fetched, required as prefs can be fetch individually
 }>;
 
-type Action =
+export type Action =
   | FetchRequestAction
   | FetchSuccessAction
   | FetchFailureAction
@@ -107,7 +107,7 @@ export default function settingsReducers(
     prefs: {},
     allPrefsFetched: false
   },
-  action: Action
+  action: AnyAction
 ): State {
   switch (action.type) {
     case FETCH_PREFS_SUCCESS:
@@ -184,14 +184,6 @@ export const selectPrefValue = (state: GlobalState, key: string): PrefValue =>
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => GlobalState;
-type PromiseAction = Promise<Action>;
-// eslint-disable-next-line no-use-before-define
-type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-type Dispatch = (
-  action: Action | ThunkAction | PromiseAction | Array<Action>
-) => any;
-
 type FetchOptions = { ignoreCache?: boolean };
 
 export function fetchSettings({

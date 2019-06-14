@@ -1,6 +1,6 @@
 // @flow
 import { Server } from "api";
-import type { GlobalState } from "redux-ducks/reducers";
+import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 import type { FilterAnyType } from "types/filters";
 import type { MangaType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
@@ -100,7 +100,7 @@ type State = $ReadOnly<{
   hasNextPage: boolean,
   searchQuery: string
 }>;
-type Action =
+export type Action =
   | ResetStateAction
   | FetchCatalogueRequestAction
   | FetchCatalogueSuccessAction
@@ -110,9 +110,7 @@ type Action =
   | AddPageFailureAction
   | AddPageNoNextPageAction
   | UpdateSearchQueryAction
-  | ChangeSourceIdAction
-  // external actions
-  | AddMangaAction;
+  | ChangeSourceIdAction;
 
 const initialState: State = {
   sourceId: null,
@@ -124,7 +122,7 @@ const initialState: State = {
 
 export default function catalogueReducer(
   state: State = initialState,
-  action: Action
+  action: AnyAction
 ): State {
   switch (action.type) {
     case RESET_STATE:
@@ -205,14 +203,6 @@ export const selectCataloguePage = (state: GlobalState): number =>
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => GlobalState;
-type PromiseAction = Promise<Action>;
-// eslint-disable-next-line no-use-before-define
-type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-type Dispatch = (
-  action: Action | ThunkAction | PromiseAction | Array<Action>
-) => any;
-
 export function fetchCatalogue(): ThunkAction {
   return (dispatch, getState) => {
     const lastUsedFilters = selectLastUsedFilters(getState());

@@ -12,7 +12,7 @@ import {
   type RemoveFromFavoriteAction
 } from "redux-ducks/library";
 import { handleHTMLError } from "redux-ducks/utils";
-import type { GlobalState } from "redux-ducks/reducers";
+import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 
 // NOTE: for clarity, this will be called mangaInfos (with an s)
 //       Info doesn't really have a plural, so I need to differentiate somehow
@@ -123,7 +123,7 @@ type SetFlagNoChangeAction = { type: SET_FLAG_NO_CHANGE_TYPE, meta: Object };
 // Reducers
 // ================================================================================
 type State = $ReadOnly<{ [mangaId: number]: MangaType }>;
-type Action =
+export type Action =
   | FetchMangaRequestAction
   | FetchMangaSuccessAction
   | FetchMangaFailureAction
@@ -138,14 +138,11 @@ type Action =
   | SetFlagRequestAction
   | SetFlagSuccessAction
   | SetFlagFailureAction
-  | SetFlagNoChangeAction
-  // external actions
-  | AddToFavoriteAction
-  | RemoveFromFavoriteAction;
+  | SetFlagNoChangeAction;
 
 export default function mangaInfosReducer(
   state: State = {},
-  action: Action
+  action: AnyAction
 ): State {
   switch (action.type) {
     case ADD_MANGA:
@@ -227,14 +224,6 @@ const selectMangaFlagValue = (
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => GlobalState;
-type PromiseAction = Promise<Action>;
-// eslint-disable-next-line no-use-before-define
-type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-type Dispatch = (
-  action: Action | ThunkAction | PromiseAction | Array<Action>
-) => any;
-
 type FetchOptions = { ignoreCache?: boolean };
 export function fetchMangaInfo(
   mangaId: number,

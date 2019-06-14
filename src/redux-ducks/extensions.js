@@ -1,6 +1,6 @@
 // @flow
 import { Server } from "api";
-import type { GlobalState } from "redux-ducks/reducers";
+import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 import type { ExtensionType } from "types";
 import {
   RESET_STATE as RESET_CATALOGUE_STATE,
@@ -89,7 +89,7 @@ type ReloadFailureAction = {
 // Reducers
 // ================================================================================
 type State = $ReadOnlyArray<ExtensionType>;
-type Action =
+export type Action =
   | FetchRequestAction
   | FetchSuccessAction
   | FetchFailureAction
@@ -101,13 +101,11 @@ type Action =
   | UninstallFailureAction
   | ReloadRequestAction
   | ReloadSuccessAction
-  | ReloadFailureAction
-  // external actions
-  | ResetStateAction;
+  | ReloadFailureAction;
 
 export default function extensionsReducer(
   state: State = [],
-  action: Action
+  action: AnyAction
 ): State {
   switch (action.type) {
     case FETCH_SUCCESS:
@@ -174,15 +172,6 @@ export const selectNotInstalledExtensions = createSelector(
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => GlobalState;
-type PromiseAction = Promise<Action>;
-// eslint-disable-next-line no-use-before-define
-type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-// eslint-disable-next-line no-use-before-define
-type Dispatch = (
-  action: Action | ThunkAction | PromiseAction | Array<Action>
-) => any;
-
 export function fetchExtensions(): ThunkAction {
   return async dispatch => {
     dispatch({ type: FETCH_REQUEST });

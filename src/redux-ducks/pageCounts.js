@@ -1,7 +1,7 @@
 // @flow
 import { Server } from "api";
 import { handleHTMLError } from "redux-ducks/utils";
-import type { GlobalState } from "redux-ducks/reducers";
+import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 
 // ================================================================================
 // Actions
@@ -32,7 +32,7 @@ type FetchCacheAction = { type: FETCH_CACHE_TYPE };
 // Reducers
 // ================================================================================
 type State = $ReadOnly<{ [chapterId: number]: number }>;
-type Action =
+export type Action =
   | FetchRequestAction
   | FetchSuccessAction
   | FetchFailureAction
@@ -40,7 +40,7 @@ type Action =
 
 export default function pageCountsReducer(
   state: State = {},
-  action: Action
+  action: AnyAction
 ): State {
   switch (action.type) {
     case FETCH_SUCCESS:
@@ -69,14 +69,6 @@ export const selectPageCount = (
 // ================================================================================
 // Action Creators
 // ================================================================================
-type GetState = () => GlobalState;
-type PromiseAction = Promise<Action>;
-// eslint-disable-next-line no-use-before-define
-type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
-type Dispatch = (
-  action: Action | ThunkAction | PromiseAction | Array<Action>
-) => any;
-
 export function fetchPageCount(
   mangaId: number,
   chapterId: number
