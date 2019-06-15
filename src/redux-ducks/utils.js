@@ -1,5 +1,5 @@
 // @flow
-import type { MangaType } from 'types';
+import type { MangaType } from "types";
 
 // TODO: Not sure if these flow types are 100% correct
 export function handleHTMLError(res: Response): Promise<Object> {
@@ -10,7 +10,9 @@ export function handleHTMLError(res: Response): Promise<Object> {
 
   if (res.status === 500) {
     // Server Error occurred, html returned. Throw error.
-    return Promise.reject(new Error('500 Server Error encountered when trying to fetch catalogue'));
+    return Promise.reject(
+      new Error("500 Server Error encountered when trying to fetch catalogue")
+    );
   }
   return res.json();
   // handleHTMLError returns res.json() (type Promise)
@@ -25,6 +27,8 @@ export function handleHTMLError(res: Response): Promise<Object> {
   // Plus it seems safe to assume that all responses from the server are JSON format.
 }
 
-export function transformToMangaIdsArray(mangaArray: Array<MangaType>): Array<number> {
+export function transformToMangaIdsArray(
+  mangaArray: Array<MangaType>
+): Array<number> {
   return mangaArray.map(manga => manga.id);
 }

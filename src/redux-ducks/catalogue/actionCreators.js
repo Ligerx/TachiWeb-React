@@ -20,7 +20,10 @@ import {
   ADD_PAGE_SUCCESS,
   RESET_STATE,
   UPDATE_SEARCH_QUERY,
-  CHANGE_SOURCEID
+  CHANGE_SOURCEID,
+  type ResetStateAction,
+  type UpdateSearchQueryAction,
+  type ChangeSourceIdAction
 } from "./actions";
 
 // ================================================================================
@@ -57,10 +60,7 @@ export function fetchCatalogue(): ThunkAction {
           // If we get an ajax response for source A but it completes after
           // we switch to source B, don't update the store
           const currentSourceId = selectCatalogueSourceId(getState());
-          if (currentSourceId !== sourceId) {
-            dispatch({ type: FETCH_CATALOGUE_SUCCESS, sourceIdChanged: true });
-            return;
-          }
+          const didSourceIdChange = currentSourceId !== sourceId;
 
           const { content, has_next: hasNextPage } = json;
 
@@ -71,6 +71,7 @@ export function fetchCatalogue(): ThunkAction {
           dispatch({ type: ADD_MANGA, newManga: mangaArray });
           dispatch({
             type: FETCH_CATALOGUE_SUCCESS,
+            didSourceIdChange,
             mangaIds,
             page: 1,
             hasNextPage

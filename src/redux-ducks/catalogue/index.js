@@ -46,9 +46,9 @@ export default function catalogueReducer(
       return { ...state, mangaIds: [] }; // also clear manga shown when loading
 
     case FETCH_CATALOGUE_SUCCESS: {
-      const { mangaIds, hasNextPage, sourceIdChanged } = action;
+      const { didSourceIdChange, mangaIds, hasNextPage } = action;
 
-      if (sourceIdChanged) return state;
+      if (didSourceIdChange) return state;
 
       return {
         ...state,

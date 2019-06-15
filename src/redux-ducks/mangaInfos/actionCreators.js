@@ -1,5 +1,6 @@
 // @flow
 import { Server } from "api";
+import type { MangaInfoFlagsType } from "types";
 import { handleHTMLError } from "redux-ducks/utils";
 import type { ThunkAction } from "redux-ducks/reducers";
 import { selectShouldReloadLibrary } from "redux-ducks/library";
@@ -117,7 +118,7 @@ export function toggleFavorite(
 
 export function setFlag(
   mangaId: number,
-  flag: string,
+  flag: $Keys<MangaInfoFlagsType>,
   state: string
 ): ThunkAction {
   // I'm just updating the store without waiting for the server to reply

@@ -22,17 +22,14 @@ type FetchCatalogueRequestAction = {
   meta: Object
 };
 
-type FetchCatalogueSuccessAction =
-  | {
-      type: FETCH_CATALOGUE_SUCCESS_TYPE,
-      mangaIds: Array<number>,
-      page: number,
-      hasNextPage: boolean
-    }
-  | {
-      type: FETCH_CATALOGUE_SUCCESS_TYPE,
-      sourceIdChanged: boolean
-    };
+type FetchCatalogueSuccessAction = {
+  type: FETCH_CATALOGUE_SUCCESS_TYPE,
+  // If didSourceIdChange === true, don't do anything with the rest of the data
+  didSourceIdChange: boolean,
+  mangaIds: Array<number>,
+  page: number,
+  hasNextPage: boolean
+};
 
 type FetchCatalogueFailureAction = {
   type: FETCH_CATALOGUE_FAILURE_TYPE,
@@ -89,7 +86,7 @@ export type ResetStateAction = { type: RESET_STATE_TYPE };
 export const UPDATE_SEARCH_QUERY = "catalogue/UPDATE_SEARCH_QUERY";
 type UPDATE_SEARCH_QUERY_TYPE = "catalogue/UPDATE_SEARCH_QUERY";
 
-type UpdateSearchQueryAction = {
+export type UpdateSearchQueryAction = {
   type: UPDATE_SEARCH_QUERY_TYPE,
   searchQuery: string
 };
