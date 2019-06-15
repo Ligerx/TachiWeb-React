@@ -6,7 +6,7 @@ import type { MangaType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createSelector } from "reselect";
 import { selectMangaInfos, type AddMangaAction } from "redux-ducks/mangaInfos";
-import type { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
+import { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
 import { selectLastUsedFilters } from "redux-ducks/filters";
 import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 

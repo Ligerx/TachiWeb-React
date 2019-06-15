@@ -8,7 +8,7 @@
 // NOTE: the general naming you should follow when referencing this state is [thing]IsLoading
 //       e.g. catalogueIsLoading
 
-import type { GlobalState, AnyAction } from "redux-ducks/reducers";
+import type { GlobalState, Action } from "redux-ducks/reducers";
 import some from "lodash/some";
 import get from "lodash/get";
 
@@ -16,7 +16,7 @@ type State = $ReadOnly<{ [action: string]: boolean }>;
 
 export default function loadingReducer(
   state: State = {},
-  action: AnyAction
+  action: Action
 ): State {
   const { type } = action;
   const matches = /(.*)_(REQUEST|SUCCESS|FAILURE)/.exec(type);
