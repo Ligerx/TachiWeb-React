@@ -13,10 +13,12 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   selectIsExtensionsLoading,
   selectInstalledExtensions,
-  selectNotInstalledExtensions,
+  selectNotInstalledExtensions
+} from "redux-ducks/extensions";
+import {
   fetchExtensions,
   reloadExtensions
-} from "redux-ducks/extensions";
+} from "redux-ducks/extensions/actionCreators";
 
 // Currently, the buttons that appear do not completely match Tachiyomi's buttons.
 // Partially because I'm missing extension preferences,

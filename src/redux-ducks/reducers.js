@@ -15,6 +15,7 @@ import type { FiltersAction } from "./filters/actions";
 import mangaInfos from "./mangaInfos";
 import type { MangaInfosAction } from "./mangaInfos/actions";
 import extensions from "./extensions";
+import type { ExtensionsAction } from "./extensions/actions";
 import settings from "./settings";
 import type { SettingsAction } from "./settings/actions";
 
@@ -45,7 +46,7 @@ export type Action =
   // | CatalogueAction
   | FiltersAction
   | MangaInfosAction
-  // | ExtensionsAction
+  | ExtensionsAction
   | SettingsAction;
 
 type GetState = () => GlobalState;
