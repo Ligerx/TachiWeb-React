@@ -221,7 +221,7 @@ class WebtoonReader extends Component<Props, State> {
     const sources = createImageSrcArray(mangaId, chapter.id, pageCount);
 
     return (
-      <React.Fragment>
+      <>
         <ReaderOverlay
           title={title}
           chapterNum={chapterNum}
@@ -262,7 +262,7 @@ class WebtoonReader extends Component<Props, State> {
             </Button>
           </Grid>
         </ResponsiveGrid>
-      </React.Fragment>
+      </>
     );
   }
 }

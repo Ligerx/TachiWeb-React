@@ -4,8 +4,11 @@ import { makeStyles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import { useDispatch } from "react-redux";
-import { resetFilters, updateLastUsedFilters } from "redux-ducks/filters";
-import { fetchCatalogue } from "redux-ducks/catalogue";
+import {
+  resetFilters,
+  updateLastUsedFilters
+} from "redux-ducks/filters/actionCreators";
+import { fetchCatalogue } from "redux-ducks/catalogue/actionCreators";
 
 const useStyles = makeStyles({
   // TODO: Position the controls div so that it's always at the top of the viewport

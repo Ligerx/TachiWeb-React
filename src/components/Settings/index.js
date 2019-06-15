@@ -14,12 +14,14 @@ import {
   selectIsSettingsLoading,
   selectSettingsSchema,
   selectSettingsPrefs,
+} from "redux-ducks/settings";
+import type { PrefValue } from "types";
+import {
   fetchSettings,
   fetchSettingsSchema,
   setSetting
-} from "redux-ducks/settings";
+} from "redux-ducks/settings/actionCreators";
 import { Client } from "api";
-import type { PrefValue } from "redux-ducks/settings";
 import type { SchemaType } from "types/settings-schema";
 
 // The name of the path parameter describing the setting folder the user is currently viewing
@@ -80,7 +82,7 @@ const Settings = ({ match }: Props) => {
   if (info == null || info.schema == null) return null;
 
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Settings - TachiWeb" />
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
@@ -115,7 +117,7 @@ const Settings = ({ match }: Props) => {
           <FullScreenLoading />
         )}
       </List>
-    </React.Fragment>
+    </>
   );
 };
 

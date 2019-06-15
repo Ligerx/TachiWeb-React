@@ -9,7 +9,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import RestoreDialog from "components/BackupRestore/RestoreDialog";
-import { uploadRestoreFile } from "redux-ducks/library";
+import { uploadRestoreFile } from "redux-ducks/library/actionCreators";
 
 // TODO: clear all files from state when user successfully restores library
 
@@ -105,7 +105,7 @@ const RestoreCard = () => {
     acceptedFiles.length !== 1 || rejectedFiles.length > 0;
 
   return (
-    <React.Fragment>
+    <>
       <Card>
         <CardContent>
           <Typography gutterBottom variant="h5">
@@ -142,7 +142,7 @@ const RestoreCard = () => {
         onClose={handleCloseDialog}
         tryAgain={handleUpload}
       />
-    </React.Fragment>
+    </>
   );
 };
 

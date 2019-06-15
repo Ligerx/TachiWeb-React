@@ -94,7 +94,7 @@ class ImageWithLoader extends Component<Props, State> {
     };
 
     return (
-      <React.Fragment>
+      <>
         {src && (
           <img
             {...otherProps}
@@ -120,7 +120,7 @@ class ImageWithLoader extends Component<Props, State> {
             </Button>
           </div>
         )}
-      </React.Fragment>
+      </>
     );
   }
 }

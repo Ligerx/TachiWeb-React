@@ -11,17 +11,21 @@ import CenterHorizontally from "components/CenterHorizontally";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {
   selectIsMangaInfosLoading,
-  selectMangaInfo,
+  selectMangaInfo
+} from "redux-ducks/mangaInfos";
+import {
   fetchMangaInfo,
   updateMangaInfo
-} from "redux-ducks/mangaInfos";
+} from "redux-ducks/mangaInfos/actionCreators";
 import {
   selectIsChaptersLoading,
   selectFilteredSortedChapters,
-  selectChaptersForManga,
+  selectChaptersForManga
+} from "redux-ducks/chapters";
+import {
   fetchChapters,
   updateChapters
-} from "redux-ducks/chapters";
+} from "redux-ducks/chapters/actionCreators";
 import { makeStyles } from "@material-ui/styles";
 
 type Props = {
@@ -109,13 +113,13 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
     }
     if (mangaInfo && tabValue === 1) {
       return (
-        <React.Fragment>
+        <>
           <CenterHorizontally>
             <ContinueReadingButton mangaId={mangaInfo.id} />
           </CenterHorizontally>
 
           <MangaInfoChapterList chapters={chapters} mangaInfo={mangaInfo} />
-        </React.Fragment>
+        </>
       );
     }
     return null;

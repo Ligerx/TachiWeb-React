@@ -36,7 +36,7 @@ const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
   const coverUrl: string = Server.cover(mangaInfo.id);
 
   return (
-    <React.Fragment>
+    <>
       <BackgroundImage coverUrl={coverUrl}>
         <ResponsiveGrid
           className={classNames(classes.gridPadding, classes.fabParent)}
@@ -62,7 +62,7 @@ const MangaInfoDetails = ({ classes, mangaInfo, numChapters }: Props) => {
           value={mangaInfo.description || ""}
         />
       </ResponsiveGrid>
-    </React.Fragment>
+    </>
   );
 };
 

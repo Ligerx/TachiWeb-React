@@ -2,7 +2,8 @@
 import React, { memo } from "react";
 import TristateCheckbox from "components/Filters/TristateCheckbox";
 import { useSelector, useDispatch } from "react-redux";
-import { selectFilterAtIndex, updateFilterTristate } from "redux-ducks/filters";
+import { selectFilterAtIndex } from "redux-ducks/filters";
+import { updateFilterTristate } from "redux-ducks/filters/actionCreators";
 
 type Props = { index: number };
 
@@ -15,7 +16,7 @@ const FilterTristate = memo(({ index }: Props) => {
     <TristateCheckbox
       name={filter.name}
       state={filter.state}
-      onChange={dispatch(updateFilterTristate(index))}
+      onChange={() => dispatch(updateFilterTristate(index))}
     />
   );
 });

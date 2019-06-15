@@ -45,7 +45,6 @@ const ImagePreloader = ({ match: { params } }: Props) => {
   const chapterId = parseInt(params.chapterId, 10);
   const page = parseInt(params.page, 10);
 
-  // FIXME: inefficient redux design?
   const pageCount =
     useSelector(state => selectPageCount(state, chapterId)) || 0;
 

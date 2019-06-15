@@ -12,13 +12,15 @@ import MenuDrawer from "components/MenuDrawer";
 import { selectSources } from "redux-ducks/sources";
 import {
   selectCatalogueSourceId,
-  selectCatalogueSearchQuery,
+  selectCatalogueSearchQuery
+} from "redux-ducks/catalogue";
+import {
   fetchCatalogue,
   resetCatalogue,
   updateSearchQuery,
   changeSourceId
-} from "redux-ducks/catalogue";
-import { fetchFilters } from "redux-ducks/filters";
+} from "redux-ducks/catalogue/actionCreators";
+import { fetchFilters } from "redux-ducks/filters/actionCreators";
 
 const useStyles = makeStyles({
   catalogueSelect: {
@@ -70,7 +72,7 @@ const CatalogueHeader = () => {
         <MenuDrawer />
 
         {sourcesExist && (
-          <React.Fragment>
+          <>
             <Select
               value={sourceIndex}
               onChange={handleSourceChange}
@@ -89,7 +91,7 @@ const CatalogueHeader = () => {
               value={searchQuery}
               onChange={handleSearchChange}
             />
-          </React.Fragment>
+          </>
         )}
       </Toolbar>
     </AppBar>

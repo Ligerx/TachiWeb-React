@@ -52,7 +52,7 @@ class LibraryFilter extends Component<Props, State> {
     const [downloadedFilter, unreadFilter, completedFilter] = flags.filters;
 
     return (
-      <React.Fragment>
+      <>
         <Tooltip title="Filter">
           <IconButton onClick={this.handleClick}>
             <Icon>filter_list</Icon>
@@ -92,7 +92,7 @@ class LibraryFilter extends Component<Props, State> {
             />
           </MenuItem>
         </Menu>
-      </React.Fragment>
+      </>
     );
   }
 }

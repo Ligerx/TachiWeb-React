@@ -13,10 +13,12 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   selectIsExtensionsLoading,
   selectInstalledExtensions,
-  selectNotInstalledExtensions,
+  selectNotInstalledExtensions
+} from "redux-ducks/extensions";
+import {
   fetchExtensions,
   reloadExtensions
-} from "redux-ducks/extensions";
+} from "redux-ducks/extensions/actionCreators";
 
 // Currently, the buttons that appear do not completely match Tachiyomi's buttons.
 // Partially because I'm missing extension preferences,
@@ -36,7 +38,7 @@ const Extensions = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Extensions - TachiWeb" />
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
@@ -58,7 +60,7 @@ const Extensions = () => {
       </ResponsiveGrid>
 
       {isExtensionsLoading && <FullScreenLoading />}
-    </React.Fragment>
+    </>
   );
 };
 

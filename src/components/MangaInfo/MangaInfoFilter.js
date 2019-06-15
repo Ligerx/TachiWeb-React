@@ -76,7 +76,7 @@ class MangaInfoFilter extends Component<Props, State> {
     const unreadIsDisabled = flags.READ_FILTER === "READ";
 
     return (
-      <React.Fragment>
+      <>
         <Tooltip title="Filter">
           <IconButton onClick={this.handleClick}>
             <Icon>filter_list</Icon>
@@ -129,7 +129,7 @@ class MangaInfoFilter extends Component<Props, State> {
 
           <MenuItem onClick={this.handleRemoveFilters}>Remove Filters</MenuItem>
         </Menu>
-      </React.Fragment>
+      </>
     );
   }
 }

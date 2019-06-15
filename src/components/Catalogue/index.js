@@ -12,20 +12,19 @@ import ResponsiveGrid from "components/ResponsiveGrid";
 import CatalogueHeader from "components/Catalogue/CatalogueHeader";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
-import {
-  selectIsSourcesLoading,
-  selectSources,
-  fetchSources
-} from "redux-ducks/sources";
+import { selectIsSourcesLoading, selectSources } from "redux-ducks/sources";
+import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   selectIsCatalogueLoading,
   selectCatalogueSourceId,
   selectCatalogueHasNextPage,
-  selectCatalogueMangaInfos,
+  selectCatalogueMangaInfos
+} from "redux-ducks/catalogue";
+import {
   fetchCatalogue,
   fetchNextCataloguePage
-} from "redux-ducks/catalogue";
-import { fetchFilters } from "redux-ducks/filters";
+} from "redux-ducks/catalogue/actionCreators";
+import { fetchFilters } from "redux-ducks/filters/actionCreators";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 
@@ -80,7 +79,7 @@ const Catalogue = () => {
     !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
 
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Catalogue - TachiWeb" />
 
       <CatalogueHeader />
@@ -109,7 +108,7 @@ const Catalogue = () => {
           No more results
         </Typography>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

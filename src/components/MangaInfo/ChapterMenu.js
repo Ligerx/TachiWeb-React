@@ -40,8 +40,8 @@ class ChapterMenu extends Component<Props, State> {
   handleToggleRead = (read: boolean) => (event: SyntheticEvent<>) => {
     event.preventDefault();
 
-    const { chapter, toggleRead } = this.props;
-    toggleRead(chapter.id, read);
+    const { toggleRead } = this.props;
+    toggleRead(read);
 
     this.setState({ anchorEl: null });
   };
@@ -55,7 +55,7 @@ class ChapterMenu extends Component<Props, State> {
       chapter.read || (!chapter.read && chapter.last_page_read > 0);
 
     return (
-      <React.Fragment>
+      <>
         <IconButton onClick={this.handleClick}>
           <Icon>more_vert</Icon>
         </IconButton>
@@ -98,7 +98,7 @@ class ChapterMenu extends Component<Props, State> {
           <MenuItem onClick={null}>Mark previous as Read</MenuItem>
           */}
         </Menu>
-      </React.Fragment>
+      </>
     );
   }
 }

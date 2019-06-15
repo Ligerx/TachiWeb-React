@@ -8,7 +8,10 @@ import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ExtensionListItem from "components/Extensions/ExtensionListItem";
 import ExtensionButton from "components/Extensions/ExtensionButton";
-import { installExtension, uninstallExtension } from "redux-ducks/extensions";
+import {
+  installExtension,
+  uninstallExtension
+} from "redux-ducks/extensions/actionCreators";
 
 type Props = {
   title: string,

@@ -46,7 +46,7 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
 };
 
 const Router = () => (
-  <React.Fragment>
+  <>
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={Library} />
@@ -64,7 +64,7 @@ const Router = () => (
         <Route path={`/settings/:${SETTING_INDEX}*`} component={Settings} />
       </Switch>
     </BrowserRouter>
-  </React.Fragment>
+  </>
 );
 
 export default Router;

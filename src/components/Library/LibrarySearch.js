@@ -64,7 +64,7 @@ class LibrarySearch extends Component<Props, State> {
     const { searchVisible } = this.state;
 
     return (
-      <React.Fragment>
+      <>
         <Tooltip title="Search">
           <IconButton onClick={this.handleClick}>
             <Icon>search</Icon>
@@ -90,7 +90,7 @@ class LibrarySearch extends Component<Props, State> {
             />
           </FormControl>
         ) : null}
-      </React.Fragment>
+      </>
     );
   }
 }

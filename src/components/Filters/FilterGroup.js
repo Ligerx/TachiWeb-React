@@ -7,7 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import FormGroup from "@material-ui/core/FormGroup";
 import { useSelector, useDispatch } from "react-redux";
-import { selectFilterAtIndex, updateFilterGroup } from "redux-ducks/filters";
+import { selectFilterAtIndex } from "redux-ducks/filters";
+import { updateFilterGroup } from "redux-ducks/filters/actionCreators";
 import TristateCheckbox from "components/Filters/TristateCheckbox";
 
 // NOTE: This component is unoptimized. A single change will cause the entire list to rerender.

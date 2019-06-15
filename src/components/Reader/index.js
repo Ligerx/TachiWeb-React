@@ -16,16 +16,14 @@ import {
   selectChaptersForManga,
   selectChapter,
   selectNextChapterId,
-  selectPrevChapterId,
-  fetchChapters
+  selectPrevChapterId
 } from "redux-ducks/chapters";
-import {
-  selectPageCounts,
-  selectPageCount,
-  fetchPageCount
-} from "redux-ducks/pageCounts";
+import { fetchChapters } from "redux-ducks/chapters/actionCreators";
+import { selectPageCounts, selectPageCount } from "redux-ducks/pageCounts";
+import { fetchPageCount } from "redux-ducks/pageCounts/actionCreators";
 import { selectDefaultViewer } from "redux-ducks/settings";
-import { selectMangaInfo, fetchMangaInfo } from "redux-ducks/mangaInfos";
+import { selectMangaInfo } from "redux-ducks/mangaInfos";
+import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
@@ -45,7 +43,7 @@ const Reader = ({ match: { params } }: Props) => {
     selectChapter(state, mangaId, chapterId)
   );
   const pageCounts = useSelector(selectPageCounts);
-  // FIXME: inefficient redux design?
+
   const pageCount =
     useSelector(state => selectPageCount(state, chapterId)) || 0;
   const prevChapterId = useSelector(state =>
@@ -134,7 +132,7 @@ const Reader = ({ match: { params } }: Props) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Helmet
         title={`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
           chapter.chapter_number
@@ -175,7 +173,7 @@ const Reader = ({ match: { params } }: Props) => {
 
       <ReadingStatusUpdater />
       <ImagePreloader />
-    </React.Fragment>
+    </>
   );
 };
 

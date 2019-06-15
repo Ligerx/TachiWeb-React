@@ -13,7 +13,7 @@ const MenuDrawer = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <IconButton onClick={toggleDrawer(true)}>
         <Icon>menu</Icon>
       </IconButton>
@@ -28,7 +28,7 @@ const MenuDrawer = () => {
           <MenuList />
         </div>
       </Drawer>
-    </React.Fragment>
+    </>
   );
 };
 

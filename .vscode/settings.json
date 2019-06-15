@@ -1,7 +1,10 @@
 {
+  "editor.tabSize": 2,
   "files.associations": {
     "*.js": "javascriptreact"
   },
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+
   // Disable VSCode's built-in javascript formatter
   "javascript.format.enable": false,
 

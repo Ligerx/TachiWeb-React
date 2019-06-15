@@ -10,11 +10,11 @@ import LibrarySearch from "components/Library/LibrarySearch";
 import MenuDrawer from "components/MenuDrawer";
 import LibraryFilter from "components/Library/LibraryFilter";
 import LibrarySort from "components/Library/LibrarySort";
+import { selectLibraryFlags } from "redux-ducks/library";
 import {
-  selectLibraryFlags,
   setLibraryFlag,
   updateLibrary
-} from "redux-ducks/library";
+} from "redux-ducks/library/actionCreators";
 
 type Props = {
   searchQuery: string,

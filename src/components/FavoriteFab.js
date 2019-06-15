@@ -7,9 +7,9 @@ import { makeStyles } from "@material-ui/styles";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectIsFavoriteToggling,
-  selectIsFavorite,
-  toggleFavorite
+  selectIsFavorite
 } from "redux-ducks/mangaInfos";
+import { toggleFavorite } from "redux-ducks/mangaInfos/actionCreators";
 
 // TODO: Loading spinner flickers because of short delay.
 //       Would be interesting to create a spinner with a small delay before appearing.
@@ -51,7 +51,7 @@ const FavoriteFab = ({ mangaId }: Props) => {
     dispatch(toggleFavorite(mangaId, isFavorite));
 
   return (
-    <React.Fragment>
+    <>
       <Fab
         color="primary"
         className={classes.fab}
@@ -67,7 +67,7 @@ const FavoriteFab = ({ mangaId }: Props) => {
           />
         )}
       </Fab>
-    </React.Fragment>
+    </>
   );
 };
 

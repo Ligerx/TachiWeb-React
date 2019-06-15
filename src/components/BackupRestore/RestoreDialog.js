@@ -41,16 +41,16 @@ const RestoreDialog = ({ open, onClose, tryAgain }: Props) => {
   const content = () => {
     if (isRestoreLoading) {
       return (
-        <React.Fragment>
+        <>
           <DialogTitle>Restoring Library...</DialogTitle>
           <CenteredLoading />
-        </React.Fragment>
+        </>
       );
     }
 
     if (didRestoreFail) {
       return (
-        <React.Fragment>
+        <>
           <DialogTitle>Failed to Restore Library</DialogTitle>
           <DialogActions>
             <Button onClick={handleClose} color="primary">
@@ -60,12 +60,12 @@ const RestoreDialog = ({ open, onClose, tryAgain }: Props) => {
               Try Again
             </Button>
           </DialogActions>
-        </React.Fragment>
+        </>
       );
     }
 
     return (
-      <React.Fragment>
+      <>
         <DialogTitle>Restore Successful</DialogTitle>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -80,7 +80,7 @@ const RestoreDialog = ({ open, onClose, tryAgain }: Props) => {
             Go To Library
           </Button>
         </DialogActions>
-      </React.Fragment>
+      </>
     );
   };
 

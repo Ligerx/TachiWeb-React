@@ -120,7 +120,7 @@ class SinglePageReader extends Component<Props> {
     } = this.props;
 
     return (
-      <React.Fragment>
+      <>
         <ScrollToTop />
 
         <ReaderOverlay
@@ -152,7 +152,7 @@ class SinglePageReader extends Component<Props> {
             </Button>
           </Grid>
         </ResponsiveGrid>
-      </React.Fragment>
+      </>
     );
   }
 }

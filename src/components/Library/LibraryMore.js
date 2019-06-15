@@ -37,7 +37,7 @@ class LibraryMore extends Component<{}, State> {
     const { anchorEl, editing } = this.state;
 
     return (
-      <React.Fragment>
+      <>
         <Tooltip title="More">
           <IconButton onClick={this.handleClick}>
             <Icon>more_vert</Icon>
@@ -57,7 +57,7 @@ class LibraryMore extends Component<{}, State> {
             {!editing ? 'Edit Categories' : 'Exit Category Editor'}
           </MenuItem>
         </Menu>
-      </React.Fragment>
+      </>
     );
   }
 }

@@ -11,7 +11,7 @@ import UrlPrefixContext from "components/UrlPrefixContext";
 import { Client } from "api";
 import dateFnsFormat from "date-fns/format";
 import { useDispatch } from "react-redux";
-import { toggleRead } from "redux-ducks/chapters";
+import { toggleRead } from "redux-ducks/chapters/actionCreators";
 import { makeStyles } from "@material-ui/styles";
 
 type Props = {

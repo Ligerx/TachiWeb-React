@@ -55,7 +55,7 @@ const DynamicSourceFilters = () => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Button
         variant="contained"
         color="primary"
@@ -83,7 +83,7 @@ const DynamicSourceFilters = () => {
           </FormGroup>
         </div>
       </Drawer>
-    </React.Fragment>
+    </>
   );
 };
 
