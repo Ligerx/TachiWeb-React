@@ -18,7 +18,7 @@ export type PrefValue = string | Array<string> | number | boolean | null | void;
 export type PrefsType = $ReadOnly<{ [key: string]: PrefValue }>;
 
 // ================================================================================
-// Reducers
+// Reducer
 // ================================================================================
 type State = $ReadOnly<{
   schema: ?SchemaType,

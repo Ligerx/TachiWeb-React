@@ -1,4 +1,6 @@
 // @flow
+import type { SchemaType } from "types/settings-schema";
+import type { PrefValue } from ".";
 
 // ================================================================================
 // Fetch Preferences
@@ -20,21 +22,21 @@ export const FETCH_PREFS_CACHE = "settings/FETCH_CACHE";
 type FETCH_PREFS_CACHE_TYPE = "settings/FETCH_CACHE";
 
 // Action Object Types
-export type FetchRequestAction = { type: FETCH_PREFS_REQUEST_TYPE };
+type FetchRequestAction = { type: FETCH_PREFS_REQUEST_TYPE };
 
-export type FetchSuccessAction = {
+type FetchSuccessAction = {
   type: FETCH_PREFS_SUCCESS_TYPE,
   // data is passed from the server in this format, coerce it into PrefsType
   preferences: Array<{ key: string, value: PrefValue }>
 };
 
-export type FetchFailureAction = {
+type FetchFailureAction = {
   type: FETCH_PREFS_FAILURE_TYPE,
   errorMessage: string,
   meta: Object
 };
 
-export type FetchCacheAction = { type: FETCH_PREFS_CACHE_TYPE };
+type FetchCacheAction = { type: FETCH_PREFS_CACHE_TYPE };
 
 // ================================================================================
 // Set Preferences
@@ -54,21 +56,21 @@ export const SET_PREF_NO_CHANGE = "settings/SET_PREF_NO_CHANGE";
 type SET_PREF_NO_CHANGE_TYPE = "settings/SET_PREF_NO_CHANGE";
 
 // Action Object Types
-export type SetPrefRequestAction = {
+type SetPrefRequestAction = {
   type: SET_PREF_REQUEST_TYPE,
   key: string,
   newVal: PrefValue
 };
 
-export type SetPrefSuccessAction = { type: SET_PREF_SUCCESS_TYPE };
+type SetPrefSuccessAction = { type: SET_PREF_SUCCESS_TYPE };
 
-export type SetPrefFailureAction = {
+type SetPrefFailureAction = {
   type: SET_PREF_FAILURE_TYPE,
   errorMessage: string,
   meta: Object
 };
 
-export type SetPrefNoChangeAction = { type: SET_PREF_NO_CHANGE_TYPE };
+type SetPrefNoChangeAction = { type: SET_PREF_NO_CHANGE_TYPE };
 
 // ================================================================================
 // Fetch Schema
@@ -90,20 +92,20 @@ export const FETCH_SCHEMA_CACHE = "settings/FETCH_SCHEMA_CACHE";
 type FETCH_SCHEMA_CACHE_TYPE = "settings/FETCH_SCHEMA_CACHE";
 
 // Action Object Types
-export type FetchSchemaRequestAction = { type: FETCH_SCHEMA_REQUEST_TYPE };
+type FetchSchemaRequestAction = { type: FETCH_SCHEMA_REQUEST_TYPE };
 
-export type FetchSchemaSuccessAction = {
+type FetchSchemaSuccessAction = {
   type: FETCH_SCHEMA_SUCCESS_TYPE,
   schema: SchemaType
 };
 
-export type FetchSchemaFailureAction = {
+type FetchSchemaFailureAction = {
   type: FETCH_SCHEMA_FAILURE_TYPE,
   errorMessage: string,
   meta: Object
 };
 
-export type FetchSchemaCacheAction = { type: FETCH_SCHEMA_CACHE_TYPE };
+type FetchSchemaCacheAction = { type: FETCH_SCHEMA_CACHE_TYPE };
 
 // ================================================================================
 // Consolidated Action Type
