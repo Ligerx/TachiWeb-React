@@ -1,7 +1,7 @@
 // @flow
 import type { FilterAnyType } from "types/filters";
 import type { GlobalState, Action } from "redux-ducks/reducers";
-import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
+import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue/actions";
 import { createSelector } from "reselect";
 import createCachedSelector from "re-reselect";
 import {
@@ -14,7 +14,7 @@ import {
 } from "./actions";
 
 // ================================================================================
-// Reducers
+// Reducer
 // ================================================================================
 type State = $ReadOnly<{
   initialFilters: $ReadOnlyArray<FilterAnyType>,

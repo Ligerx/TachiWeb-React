@@ -12,12 +12,14 @@ import MenuDrawer from "components/MenuDrawer";
 import { selectSources } from "redux-ducks/sources";
 import {
   selectCatalogueSourceId,
-  selectCatalogueSearchQuery,
+  selectCatalogueSearchQuery
+} from "redux-ducks/catalogue";
+import {
   fetchCatalogue,
   resetCatalogue,
   updateSearchQuery,
   changeSourceId
-} from "redux-ducks/catalogue";
+} from "redux-ducks/catalogue/actionCreators";
 import { fetchFilters } from "redux-ducks/filters/actionCreators";
 
 const useStyles = makeStyles({

@@ -8,7 +8,7 @@ import {
   resetFilters,
   updateLastUsedFilters
 } from "redux-ducks/filters/actionCreators";
-import { fetchCatalogue } from "redux-ducks/catalogue";
+import { fetchCatalogue } from "redux-ducks/catalogue/actionCreators";
 
 const useStyles = makeStyles({
   // TODO: Position the controls div so that it's always at the top of the viewport

@@ -2,7 +2,7 @@
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { ExtensionType } from "types";
-import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue";
+import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue/actions";
 import {
   FETCH_REQUEST,
   FETCH_SUCCESS,

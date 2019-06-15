@@ -18,10 +18,12 @@ import {
   selectIsCatalogueLoading,
   selectCatalogueSourceId,
   selectCatalogueHasNextPage,
-  selectCatalogueMangaInfos,
+  selectCatalogueMangaInfos
+} from "redux-ducks/catalogue";
+import {
   fetchCatalogue,
   fetchNextCataloguePage
-} from "redux-ducks/catalogue";
+} from "redux-ducks/catalogue/actionCreators";
 import { fetchFilters } from "redux-ducks/filters/actionCreators";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue

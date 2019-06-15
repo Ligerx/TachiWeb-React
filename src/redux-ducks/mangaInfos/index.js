@@ -22,7 +22,7 @@ import {
 //       And mangaInfos refers to this state, which is the whole collection of mangaInfo-s
 
 // ================================================================================
-// Reducers
+// Reducer
 // ================================================================================
 type State = $ReadOnly<{ [mangaId: number]: MangaType }>;
 

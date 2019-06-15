@@ -1,12 +1,12 @@
 // @flow
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
+import type { PrefValue } from "types";
 import {
   selectIsSettingsLoaded,
   selectSettingsSchema,
   selectPrefValue
 } from ".";
-import type { PrefValue } from "types";
 import {
   FETCH_PREFS_REQUEST,
   FETCH_PREFS_SUCCESS,
