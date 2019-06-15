@@ -2,6 +2,7 @@
 import { Server } from "api";
 import type {
   FilterAnyType,
+  FilterText,
   FilterSelect,
   FilterSort,
   FilterGroup,
@@ -71,14 +72,14 @@ export function updateCurrentFilters(
 // ================================================================================
 // Action Creators - Individual filter update actions
 // ================================================================================
-export function updateFilterTextField(index: number, newState: number) {
+export function updateFilterTextField(index: number, newState: string) {
   return (dispatch: Function, getState: Function) => {
-    const currentFilter: FilterSelect = (selectFilterAtIndex(
+    const currentFilter: FilterText = (selectFilterAtIndex(
       getState(),
       index
     ): any); // forced type refinement
 
-    const updatedFilter: FilterSelect = {
+    const updatedFilter: FilterText = {
       ...currentFilter,
       state: newState
     };

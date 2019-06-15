@@ -14,7 +14,7 @@ import { updateReadingStatus } from "redux-ducks/chapters/actionCreators";
 // TODO: should I bother ignoring page jumps? (within the same chapter)
 //       One method of doing so is if the difference in page change isn't 1, ignore it
 
-const ReadingStatusUpdater = ({ match }) => {
+const ReadingStatusUpdater = ({ match }: { match: Object }) => {
   const mangaId = parseInt(match.params.mangaId, 10);
   const chapterId = parseInt(match.params.chapterId, 10);
   const page = parseInt(match.params.page, 10);

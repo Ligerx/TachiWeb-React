@@ -16,7 +16,7 @@ const FilterTristate = memo(({ index }: Props) => {
     <TristateCheckbox
       name={filter.name}
       state={filter.state}
-      onChange={dispatch(updateFilterTristate(index))}
+      onChange={() => dispatch(updateFilterTristate(index))}
     />
   );
 });
