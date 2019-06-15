@@ -19,13 +19,11 @@ import {
   selectPrevChapterId,
   fetchChapters
 } from "redux-ducks/chapters";
-import {
-  selectPageCounts,
-  selectPageCount,
-} from "redux-ducks/pageCounts";
+import { selectPageCounts, selectPageCount } from "redux-ducks/pageCounts";
 import { fetchPageCount } from "redux-ducks/pageCounts/actionCreators";
 import { selectDefaultViewer } from "redux-ducks/settings";
-import { selectMangaInfo, fetchMangaInfo } from "redux-ducks/mangaInfos";
+import { selectMangaInfo } from "redux-ducks/mangaInfos";
+import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 

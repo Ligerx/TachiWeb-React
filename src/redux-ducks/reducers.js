@@ -11,6 +11,7 @@ import type { SourcesAction } from "./sources/actions";
 import catalogue from "./catalogue";
 import filters from "./filters";
 import mangaInfos from "./mangaInfos";
+import type { MangaInfosAction } from "./mangaInfos/actions";
 import extensions from "./extensions";
 import settings from "./settings";
 import type { SettingsAction } from "./settings/actions";
@@ -41,7 +42,7 @@ export type Action =
   | SourcesAction
   // | CatalogueAction
   // | FiltersAction
-  // | MangaInfosAction
+  | MangaInfosAction
   // | ExtensionsAction
   | SettingsAction;
 

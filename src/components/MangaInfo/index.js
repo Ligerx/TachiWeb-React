@@ -11,10 +11,12 @@ import CenterHorizontally from "components/CenterHorizontally";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {
   selectIsMangaInfosLoading,
-  selectMangaInfo,
+  selectMangaInfo
+} from "redux-ducks/mangaInfos";
+import {
   fetchMangaInfo,
   updateMangaInfo
-} from "redux-ducks/mangaInfos";
+} from "redux-ducks/mangaInfos/actionCreators";
 import {
   selectIsChaptersLoading,
   selectFilteredSortedChapters,

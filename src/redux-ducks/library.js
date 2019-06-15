@@ -6,11 +6,8 @@ import type {
   LibraryFlagsType,
   LibraryFlagsPossibleValueTypes
 } from "types";
-import {
-  selectMangaInfos,
-  ADD_MANGA,
-  type AddMangaAction
-} from "redux-ducks/mangaInfos";
+import { selectMangaInfos, type AddMangaAction } from "redux-ducks/mangaInfos";
+import type { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
 import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createErrorSelector } from "redux-ducks/error";

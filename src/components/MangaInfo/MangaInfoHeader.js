@@ -13,7 +13,10 @@ import MangaInfoMore from "components/MangaInfo/MangaInfoMore";
 import Tooltip from "@material-ui/core/Tooltip";
 import MangaInfoFilter from "components/MangaInfo/MangaInfoFilter";
 import { useDispatch } from "react-redux";
-import { updateMangaInfo, setFlag } from "redux-ducks/mangaInfos";
+import {
+  updateMangaInfo,
+  setFlag
+} from "redux-ducks/mangaInfos/actionCreators";
 import { updateChapters } from "redux-ducks/chapters";
 
 // NOTE: empty href in IconButton will not render <a>
