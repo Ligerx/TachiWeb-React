@@ -4,7 +4,10 @@ import type { GlobalState, AnyAction, ThunkAction } from "redux-ducks/reducers";
 import type { ChapterType, MangaType } from "types";
 import createCachedSelector from "re-reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
-import { ADJUST_UNREAD, type AdjustUnreadAction } from "redux-ducks/library";
+import {
+  ADJUST_UNREAD,
+  type AdjustUnreadAction
+} from "redux-ducks/library/actions";
 import { handleHTMLError } from "redux-ducks/utils";
 import filterSortChapters from "redux-ducks/chapterUtils";
 import { selectMangaInfo } from "redux-ducks/mangaInfos";

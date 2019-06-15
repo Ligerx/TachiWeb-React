@@ -5,11 +5,13 @@ import { Helmet } from "react-helmet";
 import {
   selectFilteredSortedLibrary,
   selectIsLibraryLoading,
-  selectUnread,
+  selectUnread
+} from "redux-ducks/library";
+import {
   fetchLibrary,
   fetchUnread,
   fetchLibraryFlags
-} from "redux-ducks/library";
+} from "redux-ducks/library/actionCreators";
 import { selectIsChaptersLoading } from "redux-ducks/chapters";
 import LibraryHeader from "components/Library/LibraryHeader";
 import MangaGrid from "components/MangaGrid";

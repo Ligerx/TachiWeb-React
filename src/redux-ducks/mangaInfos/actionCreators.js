@@ -2,11 +2,11 @@
 import { Server } from "api";
 import { handleHTMLError } from "redux-ducks/utils";
 import type { ThunkAction } from "redux-ducks/reducers";
+import { selectShouldReloadLibrary } from "redux-ducks/library";
 import {
-  selectShouldReloadLibrary,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES
-} from "redux-ducks/library";
+} from "redux-ducks/library/actions";
 import { selectMangaFlagValue } from ".";
 import {
   FETCH_MANGA_CACHE,

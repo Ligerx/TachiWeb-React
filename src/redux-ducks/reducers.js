@@ -3,6 +3,7 @@ import { combineReducers } from "redux";
 import loading from "./loading";
 import error from "./error";
 import library from "./library";
+import type { LibraryAction } from "./library/actions";
 import chapters from "./chapters";
 import pageCounts from "./pageCounts";
 import type { PageCountsAction } from "./pageCounts/actions";
@@ -36,7 +37,7 @@ type ExtractReturnType = <V>(() => V) => V;
 export type GlobalState = $ObjMap<Reducers, ExtractReturnType>;
 
 export type Action =
-  // | LibraryAction
+  | LibraryAction
   // | ChaptersAction
   | PageCountsAction
   | SourcesAction
