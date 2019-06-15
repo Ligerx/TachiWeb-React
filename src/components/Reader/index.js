@@ -22,8 +22,8 @@ import {
 import {
   selectPageCounts,
   selectPageCount,
-  fetchPageCount
 } from "redux-ducks/pageCounts";
+import { fetchPageCount } from "redux-ducks/pageCounts/actionCreators";
 import { selectDefaultViewer } from "redux-ducks/settings";
 import { selectMangaInfo, fetchMangaInfo } from "redux-ducks/mangaInfos";
 
