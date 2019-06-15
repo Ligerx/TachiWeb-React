@@ -5,17 +5,15 @@
 // weird array explaination
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_values_from_a_regular_expression_match
 
-import type { GlobalState, AnyAction } from "redux-ducks/reducers";
+import type { GlobalState } from "redux-ducks/reducers";
 import compact from "lodash/compact";
 import some from "lodash/some";
 import get from "lodash/get";
 
 type State = $ReadOnly<{ [action: string]: string }>;
+type Action = $ReadOnly<{ type: string, errorMessage: string }>;
 
-export default function errorReducer(
-  state: State = {},
-  action: AnyAction
-): State {
+export default function errorReducer(state: State = {}, action: Action): State {
   const { type, errorMessage } = action;
   const matches = /(.*)_(REQUEST|FAILURE)/.exec(type);
 
