@@ -4,7 +4,7 @@ import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { LibraryFlagsPossibleValueTypes } from "types";
 import { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
-import { updateChapters } from "redux-ducks/chapters";
+import { updateChapters } from "redux-ducks/chapters/actionCreators";
 import {
   selectLibraryMangaInfos,
   selectShouldReloadLibrary,

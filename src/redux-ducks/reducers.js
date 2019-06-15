@@ -5,6 +5,7 @@ import error from "./error";
 import library from "./library";
 import type { LibraryAction } from "./library/actions";
 import chapters from "./chapters";
+import type { ChaptersAction } from "./chapters/actions";
 import pageCounts from "./pageCounts";
 import type { PageCountsAction } from "./pageCounts/actions";
 import sources from "./sources";
@@ -40,7 +41,7 @@ export type GlobalState = $ObjMap<Reducers, ExtractReturnType>;
 
 export type Action =
   | LibraryAction
-  // | ChaptersAction
+  | ChaptersAction
   | PageCountsAction
   | SourcesAction
   // | CatalogueAction

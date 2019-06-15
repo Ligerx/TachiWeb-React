@@ -17,7 +17,7 @@ import {
   updateMangaInfo,
   setFlag
 } from "redux-ducks/mangaInfos/actionCreators";
-import { updateChapters } from "redux-ducks/chapters";
+import { updateChapters } from "redux-ducks/chapters/actionCreators";
 
 // NOTE: empty href in IconButton will not render <a>
 

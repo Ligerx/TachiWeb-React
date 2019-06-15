@@ -20,10 +20,12 @@ import {
 import {
   selectIsChaptersLoading,
   selectFilteredSortedChapters,
-  selectChaptersForManga,
+  selectChaptersForManga
+} from "redux-ducks/chapters";
+import {
   fetchChapters,
   updateChapters
-} from "redux-ducks/chapters";
+} from "redux-ducks/chapters/actionCreators";
 import { makeStyles } from "@material-ui/styles";
 
 type Props = {

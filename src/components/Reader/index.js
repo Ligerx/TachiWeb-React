@@ -16,9 +16,9 @@ import {
   selectChaptersForManga,
   selectChapter,
   selectNextChapterId,
-  selectPrevChapterId,
-  fetchChapters
+  selectPrevChapterId
 } from "redux-ducks/chapters";
+import { fetchChapters } from "redux-ducks/chapters/actionCreators";
 import { selectPageCounts, selectPageCount } from "redux-ducks/pageCounts";
 import { fetchPageCount } from "redux-ducks/pageCounts/actionCreators";
 import { selectDefaultViewer } from "redux-ducks/settings";
