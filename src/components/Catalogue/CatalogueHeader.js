@@ -18,7 +18,7 @@ import {
   updateSearchQuery,
   changeSourceId
 } from "redux-ducks/catalogue";
-import { fetchFilters } from "redux-ducks/filters";
+import { fetchFilters } from "redux-ducks/filters/actionCreators";
 
 const useStyles = makeStyles({
   catalogueSelect: {

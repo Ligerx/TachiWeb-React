@@ -8,7 +8,8 @@ import Icon from "@material-ui/core/Icon";
 import FormGroup from "@material-ui/core/FormGroup";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { makeStyles } from "@material-ui/styles";
-import { selectFilterAtIndex, updateFilterSort } from "redux-ducks/filters";
+import { selectFilterAtIndex } from "redux-ducks/filters";
+import { updateFilterSort } from "redux-ducks/filters/actionCreators";
 import { useSelector, useDispatch } from "react-redux";
 
 // NOTE: This component is unoptimized. A single change will cause the entire list to rerender.

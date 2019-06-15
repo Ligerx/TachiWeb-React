@@ -4,7 +4,8 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { selectFilterAtIndex, updateFilterSelect } from "redux-ducks/filters";
+import { selectFilterAtIndex } from "redux-ducks/filters";
+import { updateFilterSelect } from "redux-ducks/filters/actionCreators";
 import { useSelector, useDispatch } from "react-redux";
 
 // NOTE: Odd obsevations about choosing the key (No errors though)

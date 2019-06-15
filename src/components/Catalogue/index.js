@@ -22,7 +22,7 @@ import {
   fetchCatalogue,
   fetchNextCataloguePage
 } from "redux-ducks/catalogue";
-import { fetchFilters } from "redux-ducks/filters";
+import { fetchFilters } from "redux-ducks/filters/actionCreators";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 

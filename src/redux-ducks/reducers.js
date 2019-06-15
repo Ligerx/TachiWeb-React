@@ -11,6 +11,7 @@ import sources from "./sources";
 import type { SourcesAction } from "./sources/actions";
 import catalogue from "./catalogue";
 import filters from "./filters";
+import type { FiltersAction } from "./filters/actions";
 import mangaInfos from "./mangaInfos";
 import type { MangaInfosAction } from "./mangaInfos/actions";
 import extensions from "./extensions";
@@ -42,7 +43,7 @@ export type Action =
   | PageCountsAction
   | SourcesAction
   // | CatalogueAction
-  // | FiltersAction
+  | FiltersAction
   | MangaInfosAction
   // | ExtensionsAction
   | SettingsAction;

@@ -1,9 +1,7 @@
 // @flow
 import React, { memo } from "react";
-import {
-  selectFilterAtIndex,
-  updateFilterTextField
-} from "redux-ducks/filters";
+import { selectFilterAtIndex } from "redux-ducks/filters";
+import { updateFilterTextField } from "redux-ducks/filters/actionCreators";
 import { useSelector, useDispatch } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 

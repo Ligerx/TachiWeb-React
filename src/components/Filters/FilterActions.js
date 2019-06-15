@@ -4,7 +4,10 @@ import { makeStyles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import { useDispatch } from "react-redux";
-import { resetFilters, updateLastUsedFilters } from "redux-ducks/filters";
+import {
+  resetFilters,
+  updateLastUsedFilters
+} from "redux-ducks/filters/actionCreators";
 import { fetchCatalogue } from "redux-ducks/catalogue";
 
 const useStyles = makeStyles({
