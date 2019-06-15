@@ -3,21 +3,22 @@ import { combineReducers } from "redux";
 import loading from "./loading";
 import error from "./error";
 import library from "./library";
-import type { LibraryAction } from "./library/actions";
 import chapters from "./chapters";
-import type { ChaptersAction } from "./chapters/actions";
 import pageCounts from "./pageCounts";
-import type { PageCountsAction } from "./pageCounts/actions";
 import sources from "./sources";
-import type { SourcesAction } from "./sources/actions";
 import catalogue from "./catalogue";
 import filters from "./filters";
-import type { FiltersAction } from "./filters/actions";
 import mangaInfos from "./mangaInfos";
-import type { MangaInfosAction } from "./mangaInfos/actions";
 import extensions from "./extensions";
-import type { ExtensionsAction } from "./extensions/actions";
 import settings from "./settings";
+import type { LibraryAction } from "./library/actions";
+import type { ChaptersAction } from "./chapters/actions";
+import type { PageCountsAction } from "./pageCounts/actions";
+import type { SourcesAction } from "./sources/actions";
+import type { CatalogueAction } from "./catalogue/actions";
+import type { FiltersAction } from "./filters/actions";
+import type { MangaInfosAction } from "./mangaInfos/actions";
+import type { ExtensionsAction } from "./extensions/actions";
 import type { SettingsAction } from "./settings/actions";
 
 const reducers = {
@@ -44,7 +45,7 @@ export type Action =
   | ChaptersAction
   | PageCountsAction
   | SourcesAction
-  // | CatalogueAction
+  | CatalogueAction
   | FiltersAction
   | MangaInfosAction
   | ExtensionsAction

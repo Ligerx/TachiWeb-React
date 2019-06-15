@@ -1,7 +1,8 @@
 // @flow
 import { Server } from "api";
 import { handleHTMLError } from "redux-ducks/utils";
-import { selectCatalogueSourceId, changeSourceId } from "redux-ducks/catalogue";
+import { selectCatalogueSourceId } from "redux-ducks/catalogue";
+import { changeSourceId } from "redux-ducks/catalogue/actionCreators";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { SourceType } from "types";
 import { FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE } from "./actions";
