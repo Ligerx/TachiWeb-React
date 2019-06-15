@@ -11,15 +11,17 @@ import FullScreenLoading from "components/Loading/FullScreenLoading";
 import SettingsItem from "components/Settings/SettingsItem";
 import BackButton from "components/BackButton";
 import {
+  type PrefValue,
   selectIsSettingsLoading,
   selectSettingsSchema,
   selectSettingsPrefs,
+} from "redux-ducks/settings";
+import {
   fetchSettings,
   fetchSettingsSchema,
   setSetting
-} from "redux-ducks/settings";
+} from "redux-ducks/settings/actionCreators";
 import { Client } from "api";
-import type { PrefValue } from "redux-ducks/settings";
 import type { SchemaType } from "types/settings-schema";
 
 // The name of the path parameter describing the setting folder the user is currently viewing

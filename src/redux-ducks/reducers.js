@@ -6,12 +6,13 @@ import library from "./library";
 import chapters from "./chapters";
 import pageCounts from "./pageCounts";
 import sources from "./sources";
-import { SourcesAction } from "./sources/actions";
+import type { SourcesAction } from "./sources/actions";
 import catalogue from "./catalogue";
 import filters from "./filters";
 import mangaInfos from "./mangaInfos";
 import extensions from "./extensions";
 import settings from "./settings";
+import type { SettingsAction } from "./settings/actions";
 
 const reducers = {
   loading,
@@ -36,12 +37,12 @@ export type Action =
   // | LibraryAction
   // | ChaptersAction
   // | PageCountsAction
-  SourcesAction;
-// | CatalogueAction
-// | FiltersAction
-// | MangaInfosAction
-// | ExtensionsAction
-// | SettingsAction;
+  | SourcesAction
+  // | CatalogueAction
+  // | FiltersAction
+  // | MangaInfosAction
+  // | ExtensionsAction
+  | SettingsAction;
 
 type GetState = () => GlobalState;
 type PromiseAction = Promise<Action>;

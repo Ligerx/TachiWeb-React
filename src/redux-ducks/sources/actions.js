@@ -2,8 +2,10 @@
 import type { SourceType } from "types";
 
 // ================================================================================
-// Action Constants and Types
+// Fetch Sources
 // ================================================================================
+
+// Action Constants and Types
 export const FETCH_SOURCES = "sources/FETCH";
 
 export const FETCH_REQUEST = "sources/FETCH_REQUEST";
@@ -15,9 +17,7 @@ type FETCH_SUCCESS_TYPE = "sources/FETCH_SUCCESS";
 export const FETCH_FAILURE = "sources/FETCH_FAILURE";
 type FETCH_FAILURE_TYPE = "sources/FETCH_FAILURE";
 
-// ================================================================================
 // Action Object Types
-// ================================================================================
 type FetchRequestAction = { type: FETCH_REQUEST_TYPE };
 
 type FetchSuccessAction = {
@@ -31,6 +31,9 @@ type FetchFailureAction = {
   meta: Object
 };
 
+// ================================================================================
+// Consolidated Action Type
+// ================================================================================
 export type SourcesAction =
   | FetchRequestAction
   | FetchSuccessAction
