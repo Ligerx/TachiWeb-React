@@ -2,15 +2,16 @@
 import { combineReducers } from "redux";
 import loading from "./loading";
 import error from "./error";
-import library, { type Action as LibraryAction } from "./library";
-import chapters, { type Action as ChaptersAction } from "./chapters";
-import pageCounts, { type Action as PageCountsAction } from "./pageCounts";
-import sources, { type Action as SourcesAction } from "./sources";
-import catalogue, { type Action as CatalogueAction } from "./catalogue";
-import filters, { type Action as FiltersAction } from "./filters";
-import mangaInfos, { type Action as MangaInfosAction } from "./mangaInfos";
-import extensions, { type Action as ExtensionsAction } from "./extensions";
-import settings, { type Action as SettingsAction } from "./settings";
+import library from "./library";
+import chapters from "./chapters";
+import pageCounts from "./pageCounts";
+import sources from "./sources";
+import { SourcesAction } from "./sources/actions";
+import catalogue from "./catalogue";
+import filters from "./filters";
+import mangaInfos from "./mangaInfos";
+import extensions from "./extensions";
+import settings from "./settings";
 
 const reducers = {
   loading,
@@ -31,23 +32,23 @@ type Reducers = typeof reducers;
 type ExtractReturnType = <V>(() => V) => V;
 export type GlobalState = $ObjMap<Reducers, ExtractReturnType>;
 
-export type AnyAction =
-  | LibraryAction
-  | ChaptersAction
-  | PageCountsAction
-  | SourcesAction
-  | CatalogueAction
-  | FiltersAction
-  | MangaInfosAction
-  | ExtensionsAction
-  | SettingsAction;
+export type Action =
+  // | LibraryAction
+  // | ChaptersAction
+  // | PageCountsAction
+  SourcesAction;
+// | CatalogueAction
+// | FiltersAction
+// | MangaInfosAction
+// | ExtensionsAction
+// | SettingsAction;
 
 type GetState = () => GlobalState;
-type PromiseAction = Promise<AnyAction>;
+type PromiseAction = Promise<Action>;
 // eslint-disable-next-line no-use-before-define
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
 type Dispatch = (
-  action: AnyAction | ThunkAction | PromiseAction | Array<AnyAction>
+  action: Action | ThunkAction | PromiseAction | Array<Action>
 ) => any;
 
 export default combineReducers(reducers);

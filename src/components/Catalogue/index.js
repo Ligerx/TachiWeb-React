@@ -12,11 +12,8 @@ import ResponsiveGrid from "components/ResponsiveGrid";
 import CatalogueHeader from "components/Catalogue/CatalogueHeader";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
-import {
-  selectIsSourcesLoading,
-  selectSources,
-  fetchSources
-} from "redux-ducks/sources";
+import { selectIsSourcesLoading, selectSources } from "redux-ducks/sources";
+import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   selectIsCatalogueLoading,
   selectCatalogueSourceId,
