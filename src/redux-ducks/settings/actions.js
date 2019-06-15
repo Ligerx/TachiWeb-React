@@ -1,6 +1,6 @@
 // @flow
 import type { SchemaType } from "types/settings-schema";
-import type { PrefValue } from ".";
+import type { PrefValue } from "types";
 
 // ================================================================================
 // Fetch Preferences

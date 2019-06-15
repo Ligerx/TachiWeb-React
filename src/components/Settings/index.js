@@ -11,11 +11,11 @@ import FullScreenLoading from "components/Loading/FullScreenLoading";
 import SettingsItem from "components/Settings/SettingsItem";
 import BackButton from "components/BackButton";
 import {
-  type PrefValue,
   selectIsSettingsLoading,
   selectSettingsSchema,
   selectSettingsPrefs,
 } from "redux-ducks/settings";
+import type { PrefValue } from "types";
 import {
   fetchSettings,
   fetchSettingsSchema,

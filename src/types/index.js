@@ -109,3 +109,6 @@ export type ExtensionType = {
   sources: ?Array<string>,
   has_update: ?boolean
 };
+
+export type PrefValue = string | Array<string> | number | boolean | null | void;
+export type PrefsType = $ReadOnly<{ [key: string]: PrefValue }>;

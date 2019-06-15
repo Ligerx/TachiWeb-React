@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import type { PrefsType, PrefValue } from "redux-ducks/settings";
+import type { PrefsType, PrefValue } from "types";
 import type { MutableSchemaEntry, SchemaEntry } from "types/settings-schema";
 import NestedSettingsItem from "components/Settings/NestedSettingsItem";
 import ToggleableSettingsItem from "components/Settings/ToggleableSettingsItem";

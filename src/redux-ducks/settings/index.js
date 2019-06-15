@@ -3,6 +3,7 @@ import type { SchemaType } from "types/settings-schema";
 import UI_SETTINGS from "ui-settings";
 import { createLoadingSelector } from "redux-ducks/loading";
 import type { GlobalState, Action } from "redux-ducks/reducers";
+import type { PrefValue, PrefsType } from "types";
 import {
   FETCH_PREFS,
   FETCH_PREFS_SUCCESS,
@@ -13,9 +14,6 @@ import {
   FETCH_SCHEMA_SUCCESS,
   FETCH_SCHEMA_CACHE
 } from "./actions";
-
-export type PrefValue = string | Array<string> | number | boolean | null | void;
-export type PrefsType = $ReadOnly<{ [key: string]: PrefValue }>;
 
 // ================================================================================
 // Reducer
