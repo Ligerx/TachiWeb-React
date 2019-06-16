@@ -18,7 +18,15 @@ import { selectSources } from ".";
 // eslint-disable-next-line import/prefer-default-export
 export function fetchSources(): ThunkAction {
   return (dispatch, getState) => {
-    if (!isEmpty(selectSources(getState()))) {
+    const currentSources = selectSources(getState());
+    if (!isEmpty(currentSources)) {
+      // SIDE EFFECT - set the catalogue sourceId if not found
+      if (!selectCatalogueSourceId(getState())) {
+        const firstSource = currentSources[Object.keys(currentSources)[0]];
+        dispatch(changeSourceId(firstSource.id));
+      }
+      // ----------
+
       return Promise.resolve().then(dispatch({ type: FETCH_CACHE }));
     }
 

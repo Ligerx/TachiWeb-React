@@ -2,6 +2,7 @@
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { CataloguePageRequest } from "@tachiweb/api-client";
+import type { FilterAnyType } from "types/filters";
 import { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
 import { selectLastUsedFilters } from "redux-ducks/filters";
 import { transformToMangaIdsArray } from "redux-ducks/utils";
@@ -165,8 +166,8 @@ export function changeSourceId(newSourceId: string): ChangeSourceIdAction {
 // ================================================================================
 function catalogueRequest(
   page: number,
-  query?: string,
-  filters?: Object
+  query: string,
+  filters: ?$ReadOnlyArray<FilterAnyType>
 ): CataloguePageRequest {
   const request: CataloguePageRequest = {
     page,
@@ -174,7 +175,9 @@ function catalogueRequest(
   };
 
   // filters field cannot exist in request if no filters (even null is not allowed)
-  if (filters != null) request.filters = JSON.stringify(filters);
+  if (filters != null) {
+    request.filters = JSON.stringify(filters);
+  }
 
   return request;
 }

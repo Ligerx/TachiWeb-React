@@ -7,12 +7,9 @@ import type { PrefValue, PrefsType } from "types";
 import {
   FETCH_PREFS,
   FETCH_PREFS_SUCCESS,
-  FETCH_PREFS_CACHE,
   SET_PREF_REQUEST,
-  SET_PREF_NO_CHANGE,
   FETCH_SCHEMA,
-  FETCH_SCHEMA_SUCCESS,
-  FETCH_SCHEMA_CACHE
+  FETCH_SCHEMA_SUCCESS
 } from "./actions";
 
 // ================================================================================

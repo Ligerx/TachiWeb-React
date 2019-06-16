@@ -1,6 +1,5 @@
 // @flow
 import React, { useEffect, useState, type Node } from "react";
-import type { Manga, Source } from "@tachiweb/api-client";
 import { Helmet } from "react-helmet";
 import MangaInfoHeader from "components/MangaInfo/MangaInfoHeader";
 import MangaInfoDetails from "components/MangaInfo/MangaInfoDetails";

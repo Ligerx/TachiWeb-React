@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Waypoint from "react-waypoint";
 import { Helmet } from "react-helmet";
+import isEmpty from "lodash/isEmpty";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import MangaGrid from "components/MangaGrid";
@@ -57,7 +58,7 @@ const Catalogue = () => {
 
   useEffect(() => {
     // Only reload on component mount if it's missing data, otherwise show cached data
-    if (sources.length === 0 || sourceId == null) {
+    if (isEmpty(sources) || sourceId == null) {
       dispatch(fetchSources()).then(() => {
         dispatch(fetchCatalogue());
         dispatch(fetchFilters());
