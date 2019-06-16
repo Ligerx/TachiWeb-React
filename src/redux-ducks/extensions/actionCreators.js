@@ -3,7 +3,6 @@ import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { ExtensionType } from "types";
 import { REMOVE_SOURCES } from "redux-ducks/sources/actions";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
 import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue/actions";
 import {
   FETCH_REQUEST,

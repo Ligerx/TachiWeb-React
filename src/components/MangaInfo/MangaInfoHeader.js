@@ -84,8 +84,10 @@ const MangaInfoHeader = ({
 };
 
 function handleSortClick(handleSetFlag, flags) {
-  return () =>
-    setFlag("sortDirection", flags.sortDirection === "DESC" ? "ASC" : "DESC");
+  return () => {
+    const newSortDirection = flags.sortDirection === "DESC" ? "ASC" : "DESC";
+    handleSetFlag("sortDirection", newSortDirection);
+  };
 }
 
 function handleDisplayModeChange(handleSetFlag) {

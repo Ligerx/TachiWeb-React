@@ -136,7 +136,7 @@ type SET_FLAG_NO_CHANGE_TYPE = "mangaInfos/SET_FLAG_NO_CHANGE";
 type SetFlagRequestAction = {
   type: SET_FLAG_REQUEST_TYPE,
   mangaId: number,
-  // flag and state correspond with the key value pair of MangaInfoFlagsType
+  // flag and state correspond with the key value pair of MangaFlags
   // No obvious way to automatically type this in Flow
   flag: string,
   state: string

@@ -1,6 +1,7 @@
 // @flow
 import type { GlobalState, Action } from "redux-ducks/reducers";
-import type { ChapterType, MangaType } from "types";
+import type { ChapterType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 import createCachedSelector from "re-reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { selectMangaInfo } from "redux-ducks/mangaInfos";
@@ -92,7 +93,7 @@ export const selectChapter = createCachedSelector(
 // selectFilteredSortedChapters(state, mangaId)
 export const selectFilteredSortedChapters = createCachedSelector(
   [selectMangaInfo, selectChaptersForManga],
-  (mangaInfo: ?MangaType, chapters: Array<ChapterType>) => {
+  (mangaInfo: ?Manga, chapters: Array<ChapterType>) => {
     if (!mangaInfo) return noChapters;
     return filterSortChapters(chapters, mangaInfo.flags);
   }
