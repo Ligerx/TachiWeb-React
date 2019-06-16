@@ -21,7 +21,7 @@ const sortingModes = [
 ];
 
 type Props = {
-  sourceUrl: string,
+  sourceUrl: ?string,
   flags: MangaInfoFlagsType,
   onDisplayModeChange: Function,
   onSortTypeChange: Function
@@ -75,6 +75,7 @@ class MangaInfoMore extends React.Component<Props, State> {
 
   render() {
     const { anchorEl } = this.state;
+    const { sourceUrl } = this.props;
 
     return (
       <>
@@ -98,18 +99,20 @@ class MangaInfoMore extends React.Component<Props, State> {
           <MenuItem onClick={this.handleSortTypeClick}>Sorting Mode</MenuItem>
           {/* <MenuItem>Download</MenuItem> */}
 
-          <MenuItem component="a" href={this.props.sourceUrl} target="_blank">
-            <ListItemIcon>
-              <Icon>open_in_new</Icon>
-            </ListItemIcon>
-            <ListItemText primary="Open source website" />
-          </MenuItem>
+          {sourceUrl != null ? (
+            <MenuItem component="a" href={sourceUrl} target="_blank">
+              <ListItemIcon>
+                <Icon>open_in_new</Icon>
+              </ListItemIcon>
+              <ListItemText primary="Open source website" />
+            </MenuItem>
+          ) : null}
         </Menu>
 
         <RadioOptionsDialogue
           title="Choose Display Mode"
           open={this.state.displayModeOpen}
-          value={this.props.flags.DISPLAY_MODE}
+          value={this.props.flags.displayMode}
           options={displayModes}
           onClose={this.handleDisplayModeClose}
         />
@@ -117,7 +120,7 @@ class MangaInfoMore extends React.Component<Props, State> {
         <RadioOptionsDialogue
           title="Sorting Mode"
           open={this.state.sortTypeOpen}
-          value={this.props.flags.SORT_TYPE}
+          value={this.props.flags.sortType}
           options={sortingModes}
           onClose={this.handleSortTypeClose}
         />

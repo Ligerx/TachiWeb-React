@@ -7,7 +7,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import type { MangaInfoFlagsType } from "types";
+import type { MangaFlags } from "@tachiweb/api-client";
 
 // A disabled MenuItem will not fire it's onClick event.
 
@@ -17,7 +17,7 @@ import type { MangaInfoFlagsType } from "types";
 // effectively undoing the click. I'm using event.preventDefault() to avoid this.
 
 type Props = {
-  flags: MangaInfoFlagsType,
+  flags: MangaFlags,
   onReadFilterChange: Function,
   onDownloadedFilterChange: Function
 };
@@ -36,8 +36,8 @@ class MangaInfoFilter extends Component<Props, State> {
   handleRemoveFilters = () => {
     const { onReadFilterChange, onDownloadedFilterChange } = this.props;
 
-    onReadFilterChange("ALL");
-    onDownloadedFilterChange("ALL");
+    onReadFilterChange("SHOW_ALL");
+    onDownloadedFilterChange("SHOW_ALL");
 
     this.setState({ anchorEl: null }); // Also close the menu
   };
@@ -49,14 +49,16 @@ class MangaInfoFilter extends Component<Props, State> {
   handleReadClick = (e: SyntheticEvent<>) => {
     e.preventDefault();
     const { flags, onReadFilterChange } = this.props;
-    const newReadFlag = flags.READ_FILTER === "ALL" ? "READ" : "ALL";
+    const newReadFlag =
+      flags.readFilter === "SHOW_ALL" ? "SHOW_READ" : "SHOW_ALL";
     onReadFilterChange(newReadFlag);
   };
 
   handleUnreadClick = (e: SyntheticEvent<>) => {
     e.preventDefault();
     const { flags, onReadFilterChange } = this.props;
-    const newReadFlag = flags.READ_FILTER === "ALL" ? "UNREAD" : "ALL";
+    const newReadFlag =
+      flags.readFilter === "SHOW_ALL" ? "SHOW_UNREAD" : "SHOW_ALL";
     onReadFilterChange(newReadFlag);
   };
 
@@ -64,7 +66,7 @@ class MangaInfoFilter extends Component<Props, State> {
     e.preventDefault();
     const { flags, onDownloadedFilterChange } = this.props;
     const newDownloadedFlag =
-      flags.DOWNLOADED_FILTER === "ALL" ? "DOWNLOADED" : "ALL";
+      flags.downloadedFilter === "SHOW_ALL" ? "SHOW_DOWNLOADED" : "SHOW_ALL";
     onDownloadedFilterChange(newDownloadedFlag);
   };
 
@@ -72,8 +74,8 @@ class MangaInfoFilter extends Component<Props, State> {
     const { flags } = this.props;
     const { anchorEl } = this.state;
 
-    const readIsDisabled = flags.READ_FILTER === "UNREAD";
-    const unreadIsDisabled = flags.READ_FILTER === "READ";
+    const readIsDisabled = flags.readFilter === "SHOW_UNREAD";
+    const unreadIsDisabled = flags.readFilter === "SHOW_READ";
 
     return (
       <>
@@ -94,7 +96,7 @@ class MangaInfoFilter extends Component<Props, State> {
           <MenuItem onClick={this.handleReadClick} disabled={readIsDisabled}>
             <FormControlLabel
               label="Read"
-              control={<Checkbox checked={flags.READ_FILTER === "READ"} />}
+              control={<Checkbox checked={flags.readFilter === "SHOW_READ"} />}
             />
           </MenuItem>
 
@@ -104,7 +106,9 @@ class MangaInfoFilter extends Component<Props, State> {
           >
             <FormControlLabel
               label="Unread"
-              control={<Checkbox checked={flags.READ_FILTER === "UNREAD"} />}
+              control={
+                <Checkbox checked={flags.readFilter === "SHOW_UNREAD"} />
+              }
             />
           </MenuItem>
 
@@ -112,7 +116,9 @@ class MangaInfoFilter extends Component<Props, State> {
             <FormControlLabel
               label="Downloaded"
               control={
-                <Checkbox checked={flags.DOWNLOADED_FILTER === "DOWNLOADED"} />
+                <Checkbox
+                  checked={flags.downloadedFilter === "SHOW_DOWNLOADED"}
+                />
               }
             />
           </MenuItem>

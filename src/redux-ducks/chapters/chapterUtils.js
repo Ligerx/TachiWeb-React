@@ -1,5 +1,6 @@
 // @flow
-import type { MangaInfoFlagsType, ChapterType } from "types";
+import type { ChapterType } from "types";
+import type { MangaFlags } from "@tachiweb/api-client";
 
 const sortFuncs = {
   SOURCE: (a, b) => b.source_order - a.source_order,
@@ -8,41 +9,41 @@ const sortFuncs = {
 
 // READ shows chapters you've completed, UNREAD shows uncompleted chapters
 const readFilterFuncs = {
-  ALL: () => true,
-  READ: chapter => chapter.read,
-  UNREAD: chapter => !chapter.read
+  SHOW_ALL: () => true,
+  SHOW_READ: chapter => chapter.read,
+  SHOW_UNREAD: chapter => !chapter.read
 };
 
 const downloadedFilterFuncs = {
-  ALL: () => true,
-  DOWNLOADED: chapter => chapter.download_status === "DOWNLOADED",
-  NOT_DOWNLOADED: chapter => chapter.download_status === "NOT_DOWNLOADED" // unused
+  SHOW_ALL: () => true,
+  SHOW_DOWNLOADED: chapter => chapter.download_status === "DOWNLOADED",
+  SHOW_NOT_DOWNLOADED: chapter => chapter.download_status === "NOT_DOWNLOADED" // unused
 };
 
 function filterChapters(
   chapters: Array<ChapterType>,
-  mangaInfoFlags: MangaInfoFlagsType
+  mangaInfoFlags: MangaFlags
 ) {
-  const { READ_FILTER, DOWNLOADED_FILTER } = mangaInfoFlags;
+  const { readFilter, downloadedFilter } = mangaInfoFlags;
 
   return chapters
     .slice() // clone array
-    .filter(readFilterFuncs[READ_FILTER])
-    .filter(downloadedFilterFuncs[DOWNLOADED_FILTER]);
+    .filter(readFilterFuncs[readFilter])
+    .filter(downloadedFilterFuncs[downloadedFilter]);
 }
 
 function sortChapters(
   chapters: Array<ChapterType>,
-  mangaInfoFlags: MangaInfoFlagsType
+  mangaInfoFlags: MangaFlags
 ) {
-  const { SORT_TYPE, SORT_DIRECTION } = mangaInfoFlags;
+  const { sortType, sortDirection } = mangaInfoFlags;
 
   let sortedChapters: Array<ChapterType> = chapters
     .slice() // clone array
-    .sort(sortFuncs[SORT_TYPE]);
+    .sort(sortFuncs[sortType]);
 
   // The manga chapters naturally come in ascending order
-  if (SORT_DIRECTION === "DESCENDING") {
+  if (sortDirection === "DESC") {
     sortedChapters = sortedChapters.reverse();
   }
 
@@ -51,7 +52,7 @@ function sortChapters(
 
 export default function filterSortChapters(
   chapters: Array<ChapterType>,
-  mangaInfoFlags: MangaInfoFlagsType
+  mangaInfoFlags: MangaFlags
 ) {
   const filteredChapters = filterChapters(chapters, mangaInfoFlags);
   return sortChapters(filteredChapters, mangaInfoFlags);
