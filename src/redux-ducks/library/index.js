@@ -11,6 +11,7 @@ import {
   UPDATE_SUCCESS as UPDATE_CHAPTERS_SUCCESS,
   UPDATE_READING_STATUS_SUCCESS
 } from "redux-ducks/chapters/actions";
+import { selectSources } from "redux-ducks/sources";
 import filterSortLibrary from "./libraryUtils";
 import {
   FETCH_LIBRARY,
@@ -213,7 +214,13 @@ export const selectFilteredSortedLibrary = createCachedSelector(
   [
     selectLibraryMangaInfos,
     selectLibraryFlags,
+    selectSources,
     selectUnread,
+    // [June 16, 2019] Too lazy to make individual selectors for each of these right now.
+    (state: GlobalState) => state.library.downloaded,
+    (state: GlobalState) => state.library.totalChaptersSortIndexes,
+    (state: GlobalState) => state.library.lastReadSortIndexes,
+    // ------
     (_, searchQuery) => searchQuery
   ],
   filterSortLibrary
