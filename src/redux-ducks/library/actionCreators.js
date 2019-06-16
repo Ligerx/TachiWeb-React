@@ -132,8 +132,9 @@ export function updateLibrary(): ThunkAction {
     );
 
     return serialPromiseChain(updateChapterPromises).then(() => {
+      // [June 16, 2019 -- nulldev]
+      // Will always load the unread if ignoring the cache, so no need to call fetchUnread()
       dispatch(fetchLibrary({ ignoreCache: true }));
-      dispatch(fetchUnread({ ignoreCache: true }));
     });
   };
 }

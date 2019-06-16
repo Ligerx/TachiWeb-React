@@ -17,6 +17,7 @@ import LibraryHeader from "components/Library/LibraryHeader";
 import MangaGrid from "components/MangaGrid";
 import LibraryMangaCard from "components/Library/LibraryMangaCard";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
+import { fetchSources } from "redux-ducks/sources/actionCreators";
 
 // TODO: no feedback of success/errors after clicking the library update button
 
@@ -36,9 +37,9 @@ const Library = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchLibrary());
-    dispatch(fetchUnread());
+    dispatch(fetchLibrary()).then(() => dispatch(fetchUnread()));
     dispatch(fetchLibraryFlags());
+    dispatch(fetchSources());
   }, [dispatch]);
 
   return (

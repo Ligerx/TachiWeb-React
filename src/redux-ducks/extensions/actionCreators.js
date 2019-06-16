@@ -61,10 +61,6 @@ export function installExtension(packageName: string): ThunkAction {
 
       dispatch({ type: INSTALL_SUCCESS, extension });
       dispatch({ type: RESET_CATALOGUE_STATE });
-
-      // When a new extension is installed, new sources are added and we
-      // don't know what those sources are so we have to fetch them.
-      await dispatch(fetchSources());
     } catch (error) {
       dispatch({
         type: INSTALL_FAILURE,

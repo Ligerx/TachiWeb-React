@@ -27,10 +27,6 @@ import {
 import { fetchFilters } from "redux-ducks/filters/actionCreators";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
-
-// FIXME: If you type something into the search bar,
-//        then delete everything, searching breaks (no results)
-
 // TODO: If you update search, then change it back to it's original value, don't search again?
 
 const useStyles = makeStyles({
