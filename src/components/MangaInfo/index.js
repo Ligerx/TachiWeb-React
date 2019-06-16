@@ -58,7 +58,9 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const chapters = useSelector(state =>
     selectFilteredSortedChapters(state, mangaId)
   );
-  const source = useSelector(state => selectSource(state, mangaInfo.sourceId));
+  const source = useSelector(state =>
+    selectSource(state, mangaInfo ? mangaInfo.sourceId : "")
+  );
   const isMangaInfosLoading = useSelector(selectIsMangaInfosLoading);
   const isChaptersLoading = useSelector(selectIsChaptersLoading);
 
