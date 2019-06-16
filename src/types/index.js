@@ -1,4 +1,5 @@
 // @flow
+import type { Source } from "@tachiweb/api-client";
 
 export type ChapterType = {
   date: number,
@@ -70,3 +71,5 @@ export type ExtensionType = {
 
 export type PrefValue = string | Array<string> | number | boolean | null | void;
 export type PrefsType = $ReadOnly<{ [key: string]: PrefValue }>;
+
+export type SourceMap = $ReadOnly<{ [id: string]: Source }>;

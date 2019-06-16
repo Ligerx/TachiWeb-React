@@ -2,6 +2,8 @@
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { ExtensionType } from "types";
+import { REMOVE_SOURCES } from "redux-ducks/sources/actions";
+import { fetchSources } from "redux-ducks/sources/actionCreators";
 import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue/actions";
 import {
   FETCH_REQUEST,
@@ -59,6 +61,10 @@ export function installExtension(packageName: string): ThunkAction {
 
       dispatch({ type: INSTALL_SUCCESS, extension });
       dispatch({ type: RESET_CATALOGUE_STATE });
+
+      // When a new extension is installed, new sources are added and we
+      // don't know what those sources are so we have to fetch them.
+      await dispatch(fetchSources());
     } catch (error) {
       dispatch({
         type: INSTALL_FAILURE,
@@ -69,11 +75,13 @@ export function installExtension(packageName: string): ThunkAction {
   };
 }
 
-export function uninstallExtension(packageName: string): ThunkAction {
+export function uninstallExtension(extension: ExtensionType): ThunkAction {
   return async dispatch => {
-    dispatch({ type: UNINSTALL_REQUEST, meta: { packageName } });
+    dispatch({ type: UNINSTALL_REQUEST, meta: { extension } });
 
     try {
+      const { pkg_name: packageName, sources } = extension;
+
       const response = await fetch(Server.extension(packageName), {
         method: "DELETE"
       });
@@ -83,6 +91,7 @@ export function uninstallExtension(packageName: string): ThunkAction {
 
       dispatch({ type: UNINSTALL_SUCCESS, packageName });
       dispatch({ type: RESET_CATALOGUE_STATE });
+      dispatch({ type: REMOVE_SOURCES, sourceIds: sources });
     } catch (error) {
       dispatch({
         type: UNINSTALL_FAILURE,
