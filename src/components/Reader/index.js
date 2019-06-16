@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { Server, Client } from "api";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import compact from "lodash/compact";
-import type { ChapterType, MangaType } from "types";
+import type { Manga } from "@tachiweb/api-client";
+import type { ChapterType } from "types";
 import SinglePageReader from "components/Reader/SinglePageReader";
 import WebtoonReader from "components/Reader/WebtoonReader";
 import ReadingStatusUpdater from "components/Reader/ReadingStatusUpdater";
@@ -180,7 +181,7 @@ const Reader = ({ match: { params } }: Props) => {
 // Helper methods
 function changeChapterUrl(
   urlPrefix: string,
-  mangaInfo: ?MangaType,
+  mangaInfo: ?Manga,
   newChapterId: ?number,
   chapters: Array<ChapterType>
 ): ?string {
