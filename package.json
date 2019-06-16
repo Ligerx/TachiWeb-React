@@ -31,12 +31,14 @@
     "source-map-explorer": "^1.5.0"
   },
   "scripts": {
-    "analyze": "source-map-explorer build/static/js/main.*",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "flow": "flow"
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "flow": "flow",
+    "eslint": "eslint 'src/**/*.js'",
+    "eslint-fix": "eslint 'src/**/*.js' --fix"
   },
   "devDependencies": {
     "eslint-config-airbnb": "^17.1.0",
