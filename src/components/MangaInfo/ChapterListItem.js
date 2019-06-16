@@ -4,7 +4,8 @@ import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
 import classNames from "classnames";
 import Link from "components/Link";
-import type { ChapterType, MangaType } from "types";
+import type { ChapterType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 import { chapterNumPrettyPrint } from "components/utils";
 import ChapterMenu from "components/MangaInfo/ChapterMenu";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -15,7 +16,7 @@ import { toggleRead } from "redux-ducks/chapters/actionCreators";
 import { makeStyles } from "@material-ui/styles";
 
 type Props = {
-  mangaInfo: MangaType,
+  mangaInfo: Manga,
   chapter: ChapterType
 }; // other props will be passed to the root ListItem
 
@@ -53,7 +54,7 @@ const ChapterListItem = memo(({ mangaInfo, chapter, ...otherProps }: Props) => {
     read ? classes.read : null;
   const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
   const chapterName: string =
-    mangaInfo.flags.DISPLAY_MODE === "NAME"
+    mangaInfo.flags.displayMode === "NAME"
       ? chapter.name
       : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 
