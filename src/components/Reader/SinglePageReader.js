@@ -1,16 +1,16 @@
 // @flow
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import ResponsiveGrid from 'components/ResponsiveGrid';
-import ScrollToTop from 'components/ScrollToTop';
-import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
-import ImageWithLoader from 'components/Reader/ImageWithLoader';
-import { withRouter } from 'react-router-dom';
-import Link from 'components/Link';
-import ReaderOverlay from 'components/Reader/ReaderOverlay';
-import { Client } from 'api';
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import ResponsiveGrid from "components/ResponsiveGrid";
+import ScrollToTop from "components/ScrollToTop";
+import Button from "@material-ui/core/Button";
+import Icon from "@material-ui/core/Icon";
+import ImageWithLoader from "components/Reader/ImageWithLoader";
+import { withRouter } from "react-router-dom";
+import Link from "components/Link";
+import ReaderOverlay from "components/Reader/ReaderOverlay";
+import { Client } from "api";
 
 // TODO: add some spacing around the nav buttons
 // TODO: evenly space them?
@@ -30,17 +30,17 @@ import { Client } from 'api';
 
 const styles = {
   page: {
-    width: '100%',
-    marginBottom: 80,
+    width: "100%",
+    marginBottom: 80
   },
   navButtonsParent: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: 40,
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: 40
   },
   topOffset: {
-    marginTop: 144,
-  },
+    marginTop: 144
+  }
 };
 
 type Props = {
@@ -68,25 +68,27 @@ type Props = {
 
   // react router props
   history: {
-    push: Function,
-  },
+    push: Function
+  }
 };
 
 class SinglePageReader extends Component<Props> {
   componentDidMount() {
     // flow doesn't play nice with document.addEventListener() or removeEventListener()
     // $FlowFixMe
-    document.addEventListener('keydown', this.handleArrowKeyDown);
+    document.addEventListener("keydown", this.handleArrowKeyDown);
   }
 
   componentWillUnmount() {
     // $FlowFixMe
-    document.removeEventListener('keydown', this.handleArrowKeyDown);
+    document.removeEventListener("keydown", this.handleArrowKeyDown);
   }
 
   handleJumpToPage = (newPage: number) => {
     const { urlPrefix, mangaId, chapterId } = this.props;
-    this.props.history.push(Client.page(urlPrefix, mangaId, chapterId, newPage));
+    this.props.history.push(
+      Client.page(urlPrefix, mangaId, chapterId, newPage)
+    );
   };
 
   handleArrowKeyDown = (event: SyntheticKeyboardEvent<>) => {
@@ -116,7 +118,7 @@ class SinglePageReader extends Component<Props> {
       imageSource,
       alt,
       nextPageUrl,
-      prevPageUrl,
+      prevPageUrl
     } = this.props;
 
     return (
@@ -137,7 +139,11 @@ class SinglePageReader extends Component<Props> {
         <ResponsiveGrid className={classes.topOffset}>
           <Grid item xs={12}>
             <Link to={nextPageUrl}>
-              <ImageWithLoader src={imageSource} className={classes.page} alt={alt} />
+              <ImageWithLoader
+                src={imageSource}
+                className={classes.page}
+                alt={alt}
+              />
             </Link>
           </Grid>
 

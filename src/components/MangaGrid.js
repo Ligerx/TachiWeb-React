@@ -1,11 +1,11 @@
 // @flow
-import * as React from 'react';
-import ResponsiveGrid from 'components/ResponsiveGrid';
-import type { MangaType } from 'types';
+import * as React from "react";
+import ResponsiveGrid from "components/ResponsiveGrid";
+import type { MangaType } from "types";
 
 type Props = {
   mangaLibrary: Array<MangaType>,
-  cardComponent: React.Element<any>, // single node only
+  cardComponent: React.Element<any> // single node only
 };
 
 // NOTE: You must pass a cardComponent, which is what will be rendered.
@@ -17,7 +17,9 @@ type Props = {
 
 const MangaGrid = ({ mangaLibrary, cardComponent }: Props) => (
   <ResponsiveGrid>
-    {mangaLibrary.map(manga => React.cloneElement(cardComponent, { key: manga.id, manga }))}
+    {mangaLibrary.map(manga =>
+      React.cloneElement(cardComponent, { key: manga.id, manga })
+    )}
   </ResponsiveGrid>
 );
 

@@ -1,6 +1,6 @@
 // @flow
-import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import * as React from "react";
+import { withRouter } from "react-router-dom";
 
 // https://reacttraining.com/react-router/web/guides/scroll-restoration
 
@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 
 type Props = {
   location: Object, // props injected by react-router
-  children?: React.Node,
+  children?: React.Node
 };
 
 class ScrollToTop extends React.Component<Props> {

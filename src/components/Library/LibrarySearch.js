@@ -1,12 +1,12 @@
 // @flow
-import React, { Component } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControl from '@material-ui/core/FormControl';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
+import React, { Component } from "react";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
+import Tooltip from "@material-ui/core/Tooltip";
+import FormControl from "@material-ui/core/FormControl";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import InputLabel from "@material-ui/core/InputLabel";
+import Input from "@material-ui/core/Input";
 
 // TODO: pressing ESC to clear and close the search? That would be cool.
 
@@ -47,7 +47,7 @@ class LibrarySearch extends Component<Props, State> {
     // this.formControlRef
     // this.inputRef.blur(); // Remove focus from input
     this.setState({ searchVisible: false });
-    this.props.onSearchChange('');
+    this.props.onSearchChange("");
   };
 
   handleBlur = () => {
@@ -55,7 +55,7 @@ class LibrarySearch extends Component<Props, State> {
     //       not my intended interaction, but maybe not an important fix?
     if (!this.props.searchQuery) {
       this.setState({ searchVisible: false });
-      this.props.onSearchChange('');
+      this.props.onSearchChange("");
     }
   };
 
@@ -73,7 +73,9 @@ class LibrarySearch extends Component<Props, State> {
 
         {searchVisible ? (
           <FormControl>
-            <InputLabel htmlFor="library-search-text">Search Library</InputLabel>
+            <InputLabel htmlFor="library-search-text">
+              Search Library
+            </InputLabel>
             <Input
               id="library-search-text"
               value={searchQuery}

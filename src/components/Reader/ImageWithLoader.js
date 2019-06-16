@@ -1,9 +1,9 @@
 // @flow
-import React, { Component } from 'react';
-import CenteredLoading from 'components/Loading/CenteredLoading';
-import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
-import { withStyles } from '@material-ui/core/styles';
+import React, { Component } from "react";
+import CenteredLoading from "components/Loading/CenteredLoading";
+import Button from "@material-ui/core/Button";
+import Icon from "@material-ui/core/Icon";
+import { withStyles } from "@material-ui/core/styles";
 
 // https://www.javascriptstuff.com/detect-image-load/
 
@@ -21,32 +21,32 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
   verticallyCenter: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  }
 };
 
 type Props = {
   classes: Object, // injected styles (for this component)
   src: ?string, // if src == null, <img> will not render
   alt: string,
-  notLoadedHeight?: number | string, // any valid height
+  notLoadedHeight?: number | string // any valid height
 }; // extra props will be passed to <img>
 
 type State = {
-  status: 'LOADING' | 'LOADED' | 'FAILED',
-  retries: number,
+  status: "LOADING" | "LOADED" | "FAILED",
+  retries: number
 };
 
 class ImageWithLoader extends Component<Props, State> {
   static defaultProps = {
-    notLoadedHeight: '105vh',
+    notLoadedHeight: "105vh"
   };
 
   state = {
-    status: 'LOADING',
-    retries: 0,
+    status: "LOADING",
+    retries: 0
   };
 
   /* eslint-disable react/no-did-update-set-state */
@@ -55,15 +55,15 @@ class ImageWithLoader extends Component<Props, State> {
     // status so you have to do it manually.
     if (prevProps.src !== this.props.src) {
       this.setState({
-        status: 'LOADING',
-        retries: 0,
+        status: "LOADING",
+        retries: 0
       });
     }
   }
 
-  handleImageLoad = () => this.setState({ status: 'LOADED' });
+  handleImageLoad = () => this.setState({ status: "LOADED" });
 
-  handleImageError = () => this.setState({ status: 'FAILED' });
+  handleImageError = () => this.setState({ status: "FAILED" });
 
   handleRetryClick = () => {
     const { src } = this.props;
@@ -71,8 +71,8 @@ class ImageWithLoader extends Component<Props, State> {
 
     // https://stackoverflow.com/questions/23160107/javascript-how-to-retry-loading-an-image-without-appending-query-string
     this.setState(prevState => ({
-      status: 'LOADING',
-      retries: prevState.retries + 1,
+      status: "LOADING",
+      retries: prevState.retries + 1
     }));
 
     const img = new Image();
@@ -82,15 +82,13 @@ class ImageWithLoader extends Component<Props, State> {
   };
 
   render() {
-    const {
-      classes, src, alt, notLoadedHeight, ...otherProps
-    } = this.props;
+    const { classes, src, alt, notLoadedHeight, ...otherProps } = this.props;
     const { status, retries } = this.state;
 
     const imgStyles = {
-      width: '100%',
+      width: "100%",
       // Only show when image is loaded
-      display: status === 'LOADED' ? 'block' : 'none',
+      display: status === "LOADED" ? "block" : "none"
     };
 
     return (
@@ -107,13 +105,19 @@ class ImageWithLoader extends Component<Props, State> {
           />
         )}
 
-        {status === 'LOADING' && (
-          <div className={classes.verticallyCenter} style={{ height: notLoadedHeight }}>
+        {status === "LOADING" && (
+          <div
+            className={classes.verticallyCenter}
+            style={{ height: notLoadedHeight }}
+          >
             <CenteredLoading />
           </div>
         )}
-        {status === 'FAILED' && (
-          <div className={classes.verticallyCenter} style={{ height: notLoadedHeight }}>
+        {status === "FAILED" && (
+          <div
+            className={classes.verticallyCenter}
+            style={{ height: notLoadedHeight }}
+          >
             <Button variant="contained" onClick={this.handleRetryClick}>
               <Icon>refresh</Icon>
               Retry

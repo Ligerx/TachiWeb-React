@@ -1,9 +1,9 @@
 // @flow
-import * as React from 'react';
+import * as React from "react";
 
 type Props = {
   coverUrl: string,
-  children: React.Node, // require children to be passed
+  children: React.Node // require children to be passed
 };
 
 // * backgroundImage
@@ -13,10 +13,10 @@ const BackgroundImage = ({ coverUrl, children, ...otherProps }: Props) => (
     {...otherProps}
     style={{
       backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url(${coverUrl ||
-        ''})`,
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center center',
-      backgroundSize: 'cover',
+        ""})`,
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center center",
+      backgroundSize: "cover"
     }}
   >
     {children}

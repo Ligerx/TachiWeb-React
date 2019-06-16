@@ -1,10 +1,10 @@
 // @flow
-import React from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import CenterHorizontally from 'components/CenterHorizontally';
+import React from "react";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import CenterHorizontally from "components/CenterHorizontally";
 
 type Props = {
-  className: ?string, // optional
+  className: ?string // optional
 };
 
 const CenteredLoading = ({ className }: Props) => (

@@ -1,13 +1,13 @@
 // @flow
-import React, { Component } from 'react';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Dialog from '@material-ui/core/Dialog';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
+import React, { Component } from "react";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Dialog from "@material-ui/core/Dialog";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Radio from "@material-ui/core/Radio";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
 
 // Renders a Dialogue with a RadioGroup of options.
 // onClose function should handle setting open = false.
@@ -18,12 +18,12 @@ type Props = {
   open: boolean,
   value: string,
   options: Array<{ flagState: string, label: string }>,
-  onClose: Function,
+  onClose: Function
 };
 
 type State = {
   // Keep a local copy of value for the user to edit
-  value: string,
+  value: string
 };
 
 class RadioOptionsDialogue extends Component<Props, State> {
@@ -31,7 +31,7 @@ class RadioOptionsDialogue extends Component<Props, State> {
     super(props);
 
     this.state = {
-      value: this.props.value,
+      value: this.props.value
     };
   }
 
@@ -61,12 +61,16 @@ class RadioOptionsDialogue extends Component<Props, State> {
     const { value } = this.state;
 
     return (
-      <Dialog open={open} onEntering={this.handleEntering} onClose={this.handleCancel}>
+      <Dialog
+        open={open}
+        onEntering={this.handleEntering}
+        onClose={this.handleCancel}
+      >
         <DialogTitle>{title}</DialogTitle>
 
         <DialogContent>
           <RadioGroup
-            ref={(node) => {
+            ref={node => {
               this.radioGroup = node;
             }}
             value={value}

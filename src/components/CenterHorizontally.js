@@ -1,16 +1,16 @@
 // @flow
-import * as React from 'react';
+import * as React from "react";
 
 type Props = {
   children: React.Node,
-  className: ?string, // optional
+  className: ?string // optional
 };
 
 const CenterHorizontally = ({ children, className }: Props) => {
   const centerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'flex-start', // children height auto
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-start" // children height auto
   };
 
   return (
@@ -21,7 +21,7 @@ const CenterHorizontally = ({ children, className }: Props) => {
 };
 
 CenterHorizontally.defaultProps = {
-  className: null,
+  className: null
 };
 
 export default CenterHorizontally;

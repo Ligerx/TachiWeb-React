@@ -13,7 +13,7 @@ import BackButton from "components/BackButton";
 import {
   selectIsSettingsLoading,
   selectSettingsSchema,
-  selectSettingsPrefs,
+  selectSettingsPrefs
 } from "redux-ducks/settings";
 import type { PrefValue } from "types";
 import {

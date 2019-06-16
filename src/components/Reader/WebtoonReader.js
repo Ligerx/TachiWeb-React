@@ -1,18 +1,18 @@
 /* eslint-disable react/no-unused-state */ // jumpingToPage is used internally
 // @flow
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import ResponsiveGrid from 'components/ResponsiveGrid';
-import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
-import ImageWithLoader from 'components/Reader/ImageWithLoader';
-import type { ChapterType } from 'types';
-import { Server, Client } from 'api';
-import { withRouter } from 'react-router-dom';
-import Link from 'components/Link';
-import Waypoint from 'react-waypoint';
-import ReaderOverlay from 'components/Reader/ReaderOverlay';
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import ResponsiveGrid from "components/ResponsiveGrid";
+import Button from "@material-ui/core/Button";
+import Icon from "@material-ui/core/Icon";
+import ImageWithLoader from "components/Reader/ImageWithLoader";
+import type { ChapterType } from "types";
+import { Server, Client } from "api";
+import { withRouter } from "react-router-dom";
+import Link from "components/Link";
+import Waypoint from "react-waypoint";
+import ReaderOverlay from "components/Reader/ReaderOverlay";
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>
@@ -38,7 +38,6 @@ import ReaderOverlay from 'components/Reader/ReaderOverlay';
 // Because of how quirky the events are, I don't need to check if I successfully scrolled the
 // target page to the top of the screen, requiring additional page loading logic
 
-
 // TODO: have some sort of interaction where you go to the next chapter if you keep scrolling down
 //       sort of similar to the idea of keyboard interactions, don't rely on mouse clicks
 
@@ -50,17 +49,17 @@ import ReaderOverlay from 'components/Reader/ReaderOverlay';
 
 const styles = {
   page: {
-    width: '100%',
+    width: "100%"
   },
   navButtonsParent: {
-    display: 'flex',
-    justifyContent: 'center',
+    display: "flex",
+    justifyContent: "center",
     marginTop: 40,
-    marginBottom: 40,
+    marginBottom: 40
   },
   topOffset: {
-    marginTop: 144,
-  },
+    marginTop: 144
+  }
 };
 
 type Props = {
@@ -82,13 +81,13 @@ type Props = {
 
   // React router props
   match: Object,
-  history: Object,
+  history: Object
 };
 
 type State = {
   pagesInView: Array<number>, // make sure to always keep this sorted
   pagesToLoad: Array<string>, // urls for the image, acts as a unique key
-  jumpingToPage: ?number, // using to prevent loading skipped images when jumping pages
+  jumpingToPage: ?number // using to prevent loading skipped images when jumping pages
 };
 
 const numLoadAhead = 3;
@@ -97,7 +96,7 @@ class WebtoonReader extends Component<Props, State> {
   state = {
     pagesInView: [],
     pagesToLoad: [],
-    jumpingToPage: null,
+    jumpingToPage: null
   };
 
   componentDidMount() {
@@ -115,7 +114,8 @@ class WebtoonReader extends Component<Props, State> {
 
   componentDidUpdate(prevProps, prevState) {
     const { match } = this.props;
-    const chapterChanged = match.params.chapterId !== prevProps.match.params.chapterId;
+    const chapterChanged =
+      match.params.chapterId !== prevProps.match.params.chapterId;
 
     if (chapterChanged) {
       this.resetForNewChapter();
@@ -131,15 +131,13 @@ class WebtoonReader extends Component<Props, State> {
     this.setState({ pagesInView: [], pagesToLoad: [], jumpingToPage: null });
   };
 
-  updateUrlToCurrentPage = (prevState) => {
+  updateUrlToCurrentPage = prevState => {
     // This is a helper function, call from componentDidUpdate()
     //
     // NOTE: It seems that if you rapidly scroll, page becomes undefined.
     //       Also, on hot-reload or debug mode reload, lastPage is undefined.
     //       This would cause an infinite loop when I wasn't checking if lastpage != null.
-    const {
-      urlPrefix, mangaId, chapter, history,
-    } = this.props;
+    const { urlPrefix, mangaId, chapter, history } = this.props;
     const { pagesInView } = this.state;
     const { pagesInView: prevPagesInView } = prevState;
 
@@ -159,10 +157,10 @@ class WebtoonReader extends Component<Props, State> {
     scrollToPage(newPage);
   };
 
-  handlePageEnter = (page) => {
+  handlePageEnter = page => {
     const { mangaId, chapter, pageCount } = this.props;
 
-    this.setState((prevState) => {
+    this.setState(prevState => {
       const newPagesInView = addAPageInView(prevState.pagesInView, page);
       const newPagesToLoad = addMorePagesToLoad(
         mangaId,
@@ -170,7 +168,7 @@ class WebtoonReader extends Component<Props, State> {
         numLoadAhead,
         pageCount,
         newPagesInView,
-        prevState.pagesToLoad,
+        prevState.pagesToLoad
       );
 
       // This assumes that scrollToPage() always tries to put the target image at the top
@@ -179,26 +177,27 @@ class WebtoonReader extends Component<Props, State> {
 
       if (isJumping && !targetPageIsOnTop) {
         return { pagesInView: newPagesInView };
-      } else if (isJumping && targetPageIsOnTop) {
+      }
+      if (isJumping && targetPageIsOnTop) {
         return {
           pagesInView: newPagesInView,
           pagesToLoad: newPagesToLoad,
-          jumpingToPage: null,
+          jumpingToPage: null
         };
       }
 
       return {
         pagesInView: newPagesInView,
-        pagesToLoad: newPagesToLoad,
+        pagesToLoad: newPagesToLoad
       };
     });
   };
 
-  handlePageLeave = (page) => {
-    this.setState((prevState) => {
+  handlePageLeave = page => {
+    this.setState(prevState => {
       const { pagesInView } = prevState;
       return {
-        pagesInView: pagesInView.filter(pageInView => pageInView !== page),
+        pagesInView: pagesInView.filter(pageInView => pageInView !== page)
       };
     });
   };
@@ -214,7 +213,7 @@ class WebtoonReader extends Component<Props, State> {
       chapter,
       pageCount,
       nextChapterUrl,
-      prevChapterUrl,
+      prevChapterUrl
     } = this.props;
     const { pagesToLoad } = this.state;
 
@@ -240,7 +239,9 @@ class WebtoonReader extends Component<Props, State> {
                 onEnter={() => this.handlePageEnter(index)}
                 onLeave={() => this.handlePageLeave(index)}
               >
-                <div> {/* Refer to notes on Waypoint above for why this <div> is necessary */}
+                <div>
+                  {" "}
+                  {/* Refer to notes on Waypoint above for why this <div> is necessary */}
                   <ImageWithLoader
                     src={pagesToLoad.includes(source) ? source : null}
                     className={classes.page}
@@ -252,11 +253,19 @@ class WebtoonReader extends Component<Props, State> {
           ))}
 
           <Grid item xs={12} className={classes.navButtonsParent}>
-            <Button component={Link} to={prevChapterUrl} disabled={!prevChapterUrl}>
+            <Button
+              component={Link}
+              to={prevChapterUrl}
+              disabled={!prevChapterUrl}
+            >
               <Icon>navigate_before</Icon>
               Previous Chapter
             </Button>
-            <Button component={Link} to={nextChapterUrl} disabled={!nextChapterUrl}>
+            <Button
+              component={Link}
+              to={nextChapterUrl}
+              disabled={!nextChapterUrl}
+            >
               Next Chapter
               <Icon>navigate_next</Icon>
             </Button>
@@ -283,7 +292,14 @@ function addAPageInView(oldPagesInView, newPage) {
 }
 
 // Adds the next img sources to load to the current array of img sources to load
-function addMorePagesToLoad(mangaId, chapterId, numLoadAhead, pageCount, pagesInView, oldArray) {
+function addMorePagesToLoad(
+  mangaId,
+  chapterId,
+  numLoadAhead,
+  pageCount,
+  pagesInView,
+  oldArray
+) {
   if (!pagesInView.length) return oldArray; // pages can sometimes be empty if scrolling too fast
 
   const newPages = [];

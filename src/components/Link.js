@@ -1,6 +1,6 @@
 // @flow
-import * as React from 'react';
-import { Link as ReactRouterLink } from 'react-router-dom';
+import * as React from "react";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 // React-Router Link requires a non-null prop 'to'.
 // However, there are times when you dynamically create Links that might not exist
@@ -15,11 +15,11 @@ import { Link as ReactRouterLink } from 'react-router-dom';
 // prop to allow selecting which fallback element to use.
 
 type Props = {
-  to: ?string,
+  to: ?string
 }; // all props will be passed to the <Link> or <button>
 
 const Link = (props: Props) => {
-  const Component = props.to ? ReactRouterLink : 'button';
+  const Component = props.to ? ReactRouterLink : "button";
   return <Component {...props} />;
 };
 

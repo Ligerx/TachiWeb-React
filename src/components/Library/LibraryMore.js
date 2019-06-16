@@ -1,20 +1,20 @@
 // @flow
-import React, { Component } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import Tooltip from '@material-ui/core/Tooltip';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import React, { Component } from "react";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
+import Tooltip from "@material-ui/core/Tooltip";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 
 type State = {
   anchorEl: ?HTMLElement, // don't know what to put here
-  editing: boolean,
+  editing: boolean
 };
 
 class LibraryMore extends Component<{}, State> {
   state = {
     anchorEl: null,
-    editing: false,
+    editing: false
   };
 
   handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
@@ -25,7 +25,7 @@ class LibraryMore extends Component<{}, State> {
     // Close the menu as well
     this.setState({
       anchorEl: null,
-      editing: !this.state.editing,
+      editing: !this.state.editing
     });
   };
 
@@ -48,13 +48,13 @@ class LibraryMore extends Component<{}, State> {
         {/* TODO: add transitionDuration so the changed text isn't visible too early */}
         <Menu
           anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           getContentAnchorEl={null}
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
         >
           <MenuItem onClick={this.handleEditCategories}>
-            {!editing ? 'Edit Categories' : 'Exit Category Editor'}
+            {!editing ? "Edit Categories" : "Exit Category Editor"}
           </MenuItem>
         </Menu>
       </>

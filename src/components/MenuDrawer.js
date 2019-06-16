@@ -1,9 +1,9 @@
 // @flow
-import React, { useState } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import Drawer from '@material-ui/core/Drawer';
-import MenuList from 'components/MenuList';
+import React, { useState } from "react";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
+import Drawer from "@material-ui/core/Drawer";
+import MenuList from "components/MenuList";
 
 const MenuDrawer = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
