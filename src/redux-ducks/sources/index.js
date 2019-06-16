@@ -33,7 +33,11 @@ export default function sourcesReducer(
 // ================================================================================
 
 export const selectIsSourcesLoading = createLoadingSelector([FETCH_SOURCES]);
+
 export const selectSources = (state: GlobalState): State => state.sources;
+
+export const selectSource = (state: GlobalState, sourceId: string): ?Source =>
+  state.sources[sourceId];
 
 // ================================================================================
 // Helper Functions
