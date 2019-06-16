@@ -99,7 +99,7 @@ function handleSortTypeChange(handleSetFlag) {
 }
 
 function handleReadFilterChange(handleSetFlag) {
-  return newReadFilter => handleSetFlag("sortType", newReadFilter);
+  return newReadFilter => handleSetFlag("readFilter", newReadFilter);
 }
 
 function handleDownloadedFilterChange(handleSetFlag) {
