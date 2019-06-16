@@ -1,10 +1,10 @@
 // @flow
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
-import type { FilterAnyType } from "types/filters";
+import type { CataloguePageRequest } from "@tachiweb/api-client";
 import { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
 import { selectLastUsedFilters } from "redux-ducks/filters";
-import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
+import { transformToMangaIdsArray } from "redux-ducks/utils";
 import {
   selectCatalogueSearchQuery,
   selectCatalogueSourceId,
@@ -50,25 +50,23 @@ export function fetchCatalogue(): ThunkAction {
 
     // Filters should be null if empty when requesting from the server
     const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
-    return fetch(
-      Server.catalogue(),
-      cataloguePostParameters(1, sourceId, searchQuery.trim(), filtersChecked)
-    )
-      .then(handleHTMLError)
+    return Server.api()
+      .getSourceCatalogue(
+        sourceId,
+        catalogueRequest(1, searchQuery.trim(), filtersChecked)
+      )
       .then(
-        json => {
+        page => {
           // If we get an ajax response for source A but it completes after
           // we switch to source B, don't update the store
           const currentSourceId = selectCatalogueSourceId(getState());
           const didSourceIdChange = currentSourceId !== sourceId;
 
-          const { content, has_next: hasNextPage } = json;
+          const { mangas, hasNextPage } = page;
 
-          // content is sometimes undefined. Difficult to reproduce bug from the server
-          const mangaArray = content || [];
-          const mangaIds = transformToMangaIdsArray(mangaArray);
+          const mangaIds = transformToMangaIdsArray(mangas);
 
-          dispatch({ type: ADD_MANGA, newManga: mangaArray });
+          dispatch({ type: ADD_MANGA, newManga: mangas });
           dispatch({
             type: FETCH_CATALOGUE_SUCCESS,
             didSourceIdChange,
@@ -119,25 +117,18 @@ export function fetchNextCataloguePage(): ThunkAction {
     });
 
     const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
-    return fetch(
-      Server.catalogue(),
-      cataloguePostParameters(
-        nextPage,
+    return Server.api()
+      .getSourceCatalogue(
         sourceId,
-        searchQuery.trim(),
-        filtersChecked
+        catalogueRequest(nextPage, searchQuery.trim(), filtersChecked)
       )
-    )
-      .then(handleHTMLError)
       .then(
-        json => {
-          const { content, has_next: hasNextPageUpdated } = json;
+        newPage => {
+          const { mangas, hasNextPage: hasNextPageUpdated } = newPage;
 
-          // content is sometimes undefined. Difficult to reproduce bug from the server
-          const mangaArray = content || [];
-          const mangaIds = transformToMangaIdsArray(mangaArray);
+          const mangaIds = transformToMangaIdsArray(mangas);
 
-          dispatch({ type: ADD_MANGA, newManga: mangaArray });
+          dispatch({ type: ADD_MANGA, newManga: mangas });
           dispatch({
             type: ADD_PAGE_SUCCESS,
             mangaIds,
@@ -172,22 +163,18 @@ export function changeSourceId(newSourceId: string): ChangeSourceIdAction {
 // ================================================================================
 // Helper Functions
 // ================================================================================
-function cataloguePostParameters(
+function catalogueRequest(
   page: number,
-  sourceId: string,
-  query: string,
-  filters: ?$ReadOnlyArray<FilterAnyType>
-) {
-  return {
-    method: "POST",
-    body: JSON.stringify({
-      page,
-      sourceId,
-      query,
-      filters
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json"
-    })
+  query?: string,
+  filters?: Object
+): CataloguePageRequest {
+  const request: CataloguePageRequest = {
+    page,
+    query
   };
+
+  // filters field cannot exist in request if no filters (even null is not allowed)
+  if (filters != null) request.filters = JSON.stringify(filters);
+
+  return request;
 }
