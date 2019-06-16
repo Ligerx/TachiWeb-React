@@ -1,5 +1,5 @@
 // @flow
-import type { MangaType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 
 // ================================================================================
 // Fetch Manga
@@ -25,7 +25,7 @@ type FetchMangaRequestAction = { type: FETCH_MANGA_REQUEST_TYPE, meta: Object };
 
 type FetchMangaSuccessAction = {
   type: FETCH_MANGA_SUCCESS_TYPE,
-  mangaInfo: MangaType
+  mangaInfo: Manga
 };
 
 type FetchMangaFailureAction = {
@@ -61,7 +61,7 @@ type UpdateMangaRequestAction = {
 type UpdateMangaSuccessAction = {
   // This indicates the manga has been rescraped. You should fetch it again after this.
   type: UPDATE_MANGA_SUCCESS_TYPE,
-  meta: Object
+  mangaInfo: Manga
 };
 
 type UpdateMangaFailureAction = {
@@ -112,7 +112,7 @@ type ADD_MANGA_TYPE = "mangaInfos/ADD_MANGA";
 
 export type AddMangaAction = {
   type: ADD_MANGA_TYPE,
-  newManga: Array<MangaType>
+  newManga: Array<Manga>
 };
 
 // ================================================================================
