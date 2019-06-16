@@ -1,5 +1,5 @@
 // @flow
-import type { MangaType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 
 // TODO: Not sure if these flow types are 100% correct
 export function handleHTMLError(res: Response): Promise<Object> {
@@ -28,7 +28,18 @@ export function handleHTMLError(res: Response): Promise<Object> {
 }
 
 export function transformToMangaIdsArray(
-  mangaArray: Array<MangaType>
+  mangaArray: Array<Manga>
 ): Array<number> {
   return mangaArray.map(manga => manga.id);
+}
+
+export function withDeletedKeys<K, V>(
+  obj: { [K]: V },
+  keys: Array<K>
+): { [K]: V } {
+  const copy = { ...obj };
+  keys.forEach(key => {
+    delete copy[key];
+  });
+  return copy;
 }
