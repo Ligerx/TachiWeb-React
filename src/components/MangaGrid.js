@@ -1,10 +1,10 @@
 // @flow
 import * as React from "react";
 import ResponsiveGrid from "components/ResponsiveGrid";
-import type { MangaType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 
 type Props = {
-  mangaLibrary: Array<MangaType>,
+  mangaLibrary: Array<Manga>,
   cardComponent: React.Element<any> // single node only
 };
 
