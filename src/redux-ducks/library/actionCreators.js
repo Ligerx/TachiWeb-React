@@ -1,5 +1,6 @@
 // @flow
 import { Server } from "api";
+import type { LibraryManga } from "@tachiweb/api-client";
 import { handleHTMLError, transformToMangaIdsArray } from "redux-ducks/utils";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { LibraryFlagsPossibleValueTypes } from "types";
@@ -42,20 +43,36 @@ export function fetchLibrary({
   return (dispatch, getState) => {
     // Return cached mangaLibrary if it's been loaded before
     if (!ignoreCache && !selectShouldReloadLibrary(getState())) {
-      return dispatch({ type: FETCH_LIBRARY_CACHE });
+      return Promise.resolve().then(dispatch({ type: FETCH_LIBRARY_CACHE }));
     }
 
     dispatch({ type: FETCH_LIBRARY_REQUEST });
 
-    return fetch(Server.library())
-      .then(handleHTMLError)
+    return Server.api()
+      .getLibraryMangas(true, true, true)
       .then(
-        json => {
-          const { content } = json;
-          const mangaIds = transformToMangaIdsArray(content);
+        libraryMangas => {
+          const mangas = libraryMangas.map(manga => manga.manga);
+          const mangaIds = transformToMangaIdsArray(mangas);
 
-          dispatch({ type: ADD_MANGA, newManga: content });
-          dispatch({ type: FETCH_LIBRARY_SUCCESS, mangaIds });
+          dispatch({ type: ADD_MANGA, newManga: mangas });
+          dispatch({
+            type: FETCH_LIBRARY_SUCCESS,
+            mangaIds,
+            downloaded: transformLibraryMangaField(libraryMangas, "downloaded"),
+            totalChaptersSortIndexes: transformLibraryMangaField(
+              libraryMangas,
+              "totalChaptersIndex"
+            ),
+            lastReadSortIndexes: transformLibraryMangaField(
+              libraryMangas,
+              "lastReadIndex"
+            )
+          });
+          dispatch({
+            type: FETCH_UNREAD_SUCCESS,
+            unread: transformLibraryMangaField(libraryMangas, "totalUnread")
+          });
         },
         error =>
           dispatch({
@@ -203,4 +220,15 @@ function uploadPostParameters(file: File): Object {
   formData.append("uploaded_file", file);
 
   return { method: "POST", body: formData };
+}
+
+function transformLibraryMangaField(
+  libraryMangas: Array<LibraryManga>,
+  field: string
+): Return {
+  const newMappings = {};
+  libraryMangas.forEach(libraryManga => {
+    newMappings[libraryManga.manga.id] = libraryManga[field];
+  });
+  return newMappings;
 }
