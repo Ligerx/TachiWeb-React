@@ -64,11 +64,6 @@ export default function settingsReducers(
         schema: UI_SETTINGS.concat(action.schema)
       };
 
-    case SET_PREF_NO_CHANGE:
-    case FETCH_SCHEMA_CACHE:
-    case FETCH_PREFS_CACHE:
-      return state;
-
     default:
       return state;
   }
