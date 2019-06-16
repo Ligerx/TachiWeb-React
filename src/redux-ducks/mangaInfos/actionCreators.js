@@ -1,14 +1,13 @@
 // @flow
 import { Server } from "api";
-import type { MangaInfoFlagsType } from "types";
-import { handleHTMLError } from "redux-ducks/utils";
+import type { MangaFlags } from "@tachiweb/api-client";
 import type { ThunkAction } from "redux-ducks/reducers";
 import { selectShouldReloadLibrary } from "redux-ducks/library";
 import {
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES
 } from "redux-ducks/library/actions";
-import { selectMangaFlagValue } from ".";
+import { selectMangaFlags } from ".";
 import {
   FETCH_MANGA_CACHE,
   FETCH_MANGA_REQUEST,
@@ -42,11 +41,10 @@ export function fetchMangaInfo(
 
     dispatch({ type: FETCH_MANGA_REQUEST, meta: { mangaId } });
 
-    return fetch(Server.mangaInfo(mangaId))
-      .then(handleHTMLError)
+    return Server.api()
+      .getManga(mangaId)
       .then(
-        json =>
-          dispatch({ type: FETCH_MANGA_SUCCESS, mangaInfo: json.content }),
+        manga => dispatch({ type: FETCH_MANGA_SUCCESS, mangaInfo: manga }),
         error =>
           dispatch({
             type: FETCH_MANGA_FAILURE,
@@ -61,13 +59,10 @@ export function updateMangaInfo(mangaId: number): ThunkAction {
   return dispatch => {
     dispatch({ type: UPDATE_MANGA_REQUEST, meta: { mangaId } });
 
-    return fetch(Server.updateMangaInfo(mangaId))
-      .then(handleHTMLError)
+    return Server.api()
+      .updateMangaInfo(mangaId)
       .then(
-        json => {
-          dispatch({ type: UPDATE_MANGA_SUCCESS, meta: { json } });
-          return dispatch(fetchMangaInfo(mangaId, { ignoreCache: true }));
-        },
+        manga => dispatch({ type: UPDATE_MANGA_SUCCESS, mangaInfo: manga }),
         error =>
           dispatch({
             type: UPDATE_MANGA_FAILURE,
@@ -88,16 +83,15 @@ export function toggleFavorite(
       meta: { mangaId, isCurrentlyFavorite }
     });
 
-    return fetch(Server.toggleFavorite(mangaId, isCurrentlyFavorite))
-      .then(handleHTMLError)
+    // TODO: Remove toString when https://github.com/OpenAPITools/openapi-generator/pull/2499 is merged
+    return Server.api()
+      .setMangaFavorited(mangaId, (!isCurrentlyFavorite).toString())
       .then(
-        () => {
-          const newFavoriteState = !isCurrentlyFavorite;
-
+        newFavoriteState => {
           dispatch({
             type: TOGGLE_FAVORITE_SUCCESS,
             mangaId,
-            newFavoriteState: !isCurrentlyFavorite
+            newFavoriteState
           });
 
           if (newFavoriteState) {
@@ -118,13 +112,21 @@ export function toggleFavorite(
 
 export function setFlag(
   mangaId: number,
-  flag: $Keys<MangaInfoFlagsType>,
+  flag: $Keys<MangaFlags>,
   state: string
 ): ThunkAction {
   // I'm just updating the store without waiting for the server to reply
   // And failure should just pop up a message
   return (dispatch, getState) => {
-    if (selectMangaFlagValue(getState(), mangaId, flag) === state) {
+    // [June 15, 2019] setMangaFlags() requires an updated copy of the full flag object.
+    // SET_FLAG_REQUEST is optimistically updating, so we could just call
+    // selectMangaFlags(getState(), mangaId) again to get the updated flags.
+    //
+    // However, that's potentially brittle, so save a copy of the prevFlags and
+    // manually update it here just to be safe.
+    const prevFlags = selectMangaFlags(getState(), mangaId);
+
+    if (prevFlags[flag] === state) {
       return dispatch({
         type: SET_FLAG_NO_CHANGE,
         meta: { mangaId, flag, state }
@@ -138,10 +140,9 @@ export function setFlag(
       state
     });
 
-    // TODO: It's possible that the server might respond with
-    //       { "success": false }, but I'm not checking that right now.
-    return fetch(Server.setMangaFlag(mangaId, flag, state))
-      .then(handleHTMLError)
+    // TODO: This request could fail, but I'm not checking that right now.
+    return Server.api()
+      .setMangaFlags(mangaId, { ...prevFlags, [flag]: state })
       .then(
         () => dispatch({ type: SET_FLAG_SUCCESS }),
         () => dispatch({ type: SET_FLAG_FAILURE })

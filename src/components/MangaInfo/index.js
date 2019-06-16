@@ -1,6 +1,5 @@
 // @flow
 import React, { useEffect, useState, type Node } from "react";
-import type { MangaType } from "types";
 import { Helmet } from "react-helmet";
 import MangaInfoHeader from "components/MangaInfo/MangaInfoHeader";
 import MangaInfoDetails from "components/MangaInfo/MangaInfoDetails";
@@ -27,6 +26,8 @@ import {
   updateChapters
 } from "redux-ducks/chapters/actionCreators";
 import { makeStyles } from "@material-ui/styles";
+import { fetchSources } from "redux-ducks/sources/actionCreators";
+import { selectSource } from "redux-ducks/sources";
 
 type Props = {
   backUrl: string,
@@ -57,6 +58,9 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const chapters = useSelector(state =>
     selectFilteredSortedChapters(state, mangaId)
   );
+  const source = useSelector(state =>
+    selectSource(state, mangaInfo ? mangaInfo.sourceId : "")
+  );
   const isMangaInfosLoading = useSelector(selectIsMangaInfosLoading);
   const isChaptersLoading = useSelector(selectIsChaptersLoading);
 
@@ -65,38 +69,30 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   const store = useStore();
 
   useEffect(() => {
-    dispatch(fetchChapters(mangaId))
-      .then(() => {
-        // The first time a manga is loaded by the server, it will not have any chapters scraped.
-        // So check if we found any chapters. If not, try scraping the site once.
+    dispatch(fetchChapters(mangaId)).then(() => {
+      // The first time a manga is loaded by the server, it will not have any chapters scraped.
+      // So check if we found any chapters. If not, try scraping the site once.
 
-        // Check for chapters directly in the store instead of relying on useSelector().
-        // This is because the useSelector() value doesn't update until the next render
-        // which occurs AFTER this useEffect() promise runs.
-        const chaptersInStore = selectChaptersForManga(
-          store.getState(),
-          mangaId
-        );
+      // Check for chapters directly in the store instead of relying on useSelector().
+      // This is because the useSelector() value doesn't update until the next render
+      // which occurs AFTER this useEffect() promise runs.
+      const chaptersInStore = selectChaptersForManga(store.getState(), mangaId);
 
-        if (!chaptersInStore.length) {
-          // return promise so next .then()'s wait until the data has finished fetching
-          return dispatch(updateChapters(mangaId));
-        }
-        return null;
-      })
-      .then(() => dispatch(fetchMangaInfo(mangaId)))
-      .then(() => {
-        // If we think the server hasn't had enough time to scrape the source website
-        // for this mangaInfo, wait a little while and try fetching again.
-        //
-        // NOTE: This only updates the manga being viewed. Many of your other search results are
-        //       likely missing information as well. Viewing them will then fetch the data.
-        //
-        // TODO: might try to do one additional fetch at a slightly later time. e.g. 1000 ms
-        if (mangaInfo && possiblyMissingInfo(mangaInfo)) {
-          setTimeout(() => dispatch(updateMangaInfo(mangaId)), 300);
-        }
-      });
+      if (!chaptersInStore.length) {
+        // return promise so next .then()'s wait until the data has finished fetching
+        return dispatch(updateChapters(mangaId));
+      }
+      return null;
+    });
+
+    dispatch(fetchMangaInfo(mangaId)).then(() => {
+      // Update manga manually if the server has not fetched the data for this manga yet
+      if (mangaInfo && !mangaInfo.initialized) {
+        dispatch(updateMangaInfo(mangaId));
+      }
+
+      dispatch(fetchSources());
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChangeTab = (event: SyntheticEvent<>, newValue: number) => {
@@ -108,7 +104,11 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
 
     if (mangaInfo && tabValue === 0) {
       return (
-        <MangaInfoDetails mangaInfo={mangaInfo} numChapters={numChapters} />
+        <MangaInfoDetails
+          mangaInfo={mangaInfo}
+          numChapters={numChapters}
+          source={source}
+        />
       );
     }
     if (mangaInfo && tabValue === 1) {
@@ -144,24 +144,5 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
     </div>
   );
 };
-
-// Helper methods
-function possiblyMissingInfo(manga: MangaType): boolean {
-  // mangaFields is an array of some values that mangaInfo should probably have
-  // Count the number of these fields that are missing
-  const mangaFields = ["author", "description", "genres", "categories"];
-
-  const numMissing = mangaFields.reduce((counter, field) => {
-    const value = manga[field];
-
-    if (!value || (Array.isArray(value) && !value.length)) {
-      return counter + 1;
-    }
-    return counter;
-  }, 0);
-
-  // setting the arbitrary amount of missing info at 3 to be considered missing info
-  return numMissing >= 3;
-}
 
 export default MangaInfo;

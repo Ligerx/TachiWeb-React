@@ -1,11 +1,17 @@
 // @flow
+import type { Manga } from "@tachiweb/api-client";
+import type { LibraryFlagsType } from "types";
 import type { GlobalState, Action } from "redux-ducks/reducers";
-import type { MangaType, LibraryFlagsType } from "types";
 import { selectMangaInfos } from "redux-ducks/mangaInfos";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createErrorSelector } from "redux-ducks/error";
 import { createSelector } from "reselect";
 import createCachedSelector from "re-reselect";
+import {
+  UPDATE_SUCCESS as UPDATE_CHAPTERS_SUCCESS,
+  UPDATE_READING_STATUS_SUCCESS
+} from "redux-ducks/chapters/actions";
+import { selectSources } from "redux-ducks/sources";
 import filterSortLibrary from "./libraryUtils";
 import {
   FETCH_LIBRARY,
@@ -29,7 +35,12 @@ type State = $ReadOnly<{
   mangaIds: $ReadOnlyArray<number>,
   reloadLibrary: boolean,
   unread: $ReadOnly<{ [mangaId: number]: number }>,
+  downloaded: $ReadOnly<{ [mangaId: number]: number }>,
+  totalChaptersSortIndexes: $ReadOnly<{ [index: number]: number }>,
+  lastReadSortIndexes: $ReadOnly<{ [index: number]: number }>,
   reloadUnread: boolean,
+  reloadTotalChaptersSortIndexes: boolean,
+  reloadLastReadSortIndexes: boolean,
   flags: LibraryFlagsType,
   isFlagsLoaded: boolean
 }>;
@@ -37,8 +48,14 @@ type State = $ReadOnly<{
 const defaultState: State = {
   mangaIds: [], // array of mangaIds that point at data loaded in mangaInfos reducer
   reloadLibrary: true, // Library should be loaded once on first visit
-  unread: {}, // { mangaId: int }
+  unread: {},
+  downloaded: {},
+  totalChaptersSortIndexes: {},
+  lastReadSortIndexes: {},
   reloadUnread: true, // should refresh unread for library if something new is added
+  reloadDownloaded: true,
+  reloadTotalChaptersSortIndexes: true,
+  reloadLastReadSortIndexes: true,
   flags: {
     filters: [
       {
@@ -87,7 +104,10 @@ export default function libraryReducer(
       return {
         ...state,
         mangaIds: [...state.mangaIds, action.mangaId],
-        reloadUnread: true
+        reloadUnread: true,
+        reloadDownloaded: true,
+        reloadTotalChaptersSortIndexes: true,
+        reloadLastReadSortIndexes: true
       };
 
     case REMOVE_FROM_FAVORITES: {
@@ -118,7 +138,10 @@ export default function libraryReducer(
         ...state,
         reloadLibrary: true,
         reloadUnread: true,
-        isFlagsLoaded: false
+        isFlagsLoaded: false,
+        reloadDownloaded: true,
+        reloadTotalChaptersSortIndexes: true,
+        reloadLastReadSortIndexes: true
       };
 
     case FETCH_LIBRARY_FLAGS_SUCCESS:
@@ -135,6 +158,19 @@ export default function libraryReducer(
           ...state.flags,
           [action.flag]: action.value
         }
+      };
+
+    case UPDATE_CHAPTERS_SUCCESS:
+      return {
+        ...state,
+        reloadUnread: true,
+        reloadTotalChaptersSortIndexes: true
+      };
+
+    case UPDATE_READING_STATUS_SUCCESS:
+      return {
+        ...state,
+        reloadLastReadSortIndexes: true
       };
 
     default:
@@ -168,7 +204,7 @@ export const selectLibraryFlags = (state: GlobalState): LibraryFlagsType =>
 
 export const selectLibraryMangaInfos = createSelector(
   [selectMangaInfos, selectLibraryMangaIds],
-  (mangaInfos, mangaIds): Array<MangaType> => {
+  (mangaInfos, mangaIds): Array<Manga> => {
     return mangaIds.map(mangaId => mangaInfos[mangaId]);
   }
 );
@@ -178,7 +214,13 @@ export const selectFilteredSortedLibrary = createCachedSelector(
   [
     selectLibraryMangaInfos,
     selectLibraryFlags,
+    selectSources,
     selectUnread,
+    // [June 16, 2019] Too lazy to make individual selectors for each of these right now.
+    (state: GlobalState) => state.library.downloaded,
+    (state: GlobalState) => state.library.totalChaptersSortIndexes,
+    (state: GlobalState) => state.library.lastReadSortIndexes,
+    // ------
     (_, searchQuery) => searchQuery
   ],
   filterSortLibrary

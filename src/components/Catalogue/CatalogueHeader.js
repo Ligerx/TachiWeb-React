@@ -1,5 +1,6 @@
 // @flow
 import React, { useRef } from "react";
+import isEmpty from "lodash/isEmpty";
 import { useSelector, useDispatch } from "react-redux";
 import debounce from "lodash/debounce";
 import AppBar from "@material-ui/core/AppBar";
@@ -54,8 +55,7 @@ const CatalogueHeader = () => {
   const handleSourceChange = (event: SyntheticEvent<HTMLLIElement>) => {
     // NOTE: Using LIElement because that's how my HTML is structured.
     //       Doubt it'll cause problems, but change this or the actual component if needed.
-    const newSourceIndex = parseInt(event.currentTarget.dataset.value, 10);
-    const newSourceId = sources[newSourceIndex].id;
+    const newSourceId = event.currentTarget.dataset.value;
 
     dispatch(resetCatalogue());
     dispatch(changeSourceId(newSourceId));
@@ -63,8 +63,7 @@ const CatalogueHeader = () => {
     dispatch(fetchCatalogue());
   };
 
-  const sourcesExist = sources && sources.length > 0 && sourceId != null;
-  const sourceIndex = sources.findIndex(source => source.id === sourceId);
+  const sourcesExist = sources && !isEmpty(sources) && sourceId != null;
 
   return (
     <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
@@ -74,13 +73,18 @@ const CatalogueHeader = () => {
         {sourcesExist && (
           <>
             <Select
-              value={sourceIndex}
+              value={sourceId}
               onChange={handleSourceChange}
               classes={{ select: classes.catalogueSelect }}
             >
-              {sources.map((source, index) => (
-                <MenuItem value={index} key={source.id}>
-                  {source.name}
+              {Object.keys(sources).map(itemSourceId => (
+                <MenuItem
+                  value={sources[itemSourceId].id}
+                  key={sources[itemSourceId].id}
+                >
+                  {(sources[itemSourceId].lang != null
+                    ? `(${sources[itemSourceId].lang.toUpperCase()}) `
+                    : "") + sources[itemSourceId].name}
                 </MenuItem>
               ))}
             </Select>

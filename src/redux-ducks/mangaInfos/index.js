@@ -1,5 +1,5 @@
 // @flow
-import type { MangaType, MangaInfoFlagsType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 import { createLoadingSelector } from "redux-ducks/loading";
 import createCachedSelector from "re-reselect";
 import type { GlobalState, Action } from "redux-ducks/reducers";
@@ -24,7 +24,7 @@ import {
 // ================================================================================
 // Reducer
 // ================================================================================
-type State = $ReadOnly<{ [mangaId: number]: MangaType }>;
+type State = $ReadOnly<{ [mangaId: number]: Manga }>;
 
 export default function mangaInfosReducer(
   state: State = {},
@@ -41,7 +41,7 @@ export default function mangaInfosReducer(
       return { ...state, [action.mangaInfo.id]: action.mangaInfo };
 
     case UPDATE_MANGA_SUCCESS:
-      return state;
+      return { ...state, [action.mangaInfo.id]: action.mangaInfo };
 
     case TOGGLE_FAVORITE_SUCCESS:
       return {
@@ -84,10 +84,8 @@ export const selectIsFavoriteToggling = createLoadingSelector([
 
 export const selectMangaInfos = (state: GlobalState): State => state.mangaInfos;
 
-export const selectMangaInfo = (
-  state: GlobalState,
-  mangaId: number
-): ?MangaType => state.mangaInfos[mangaId];
+export const selectMangaInfo = (state: GlobalState, mangaId: number): ?Manga =>
+  state.mangaInfos[mangaId];
 
 // selectIsFavorite(state, mangaId: number)
 // returns boolean
@@ -101,16 +99,13 @@ export const selectIsFavorite = createCachedSelector(
   // Cache Key
 )((state, mangaId) => mangaId);
 
-export const selectMangaFlagValue = (
-  state: GlobalState,
-  mangaId: number,
-  flag: $Keys<MangaInfoFlagsType>
-) => state.mangaInfos[mangaId].flags[flag];
+export const selectMangaFlags = (state: GlobalState, mangaId: number) =>
+  state.mangaInfos[mangaId].flags;
 
 // ================================================================================
 // Helper Functions
 // ================================================================================
-function mangaArrayToObject(mangaArray: Array<MangaType>): State {
+function mangaArrayToObject(mangaArray: Array<Manga>): State {
   const mangaObject = {};
   mangaArray.forEach(manga => {
     mangaObject[manga.id] = manga;

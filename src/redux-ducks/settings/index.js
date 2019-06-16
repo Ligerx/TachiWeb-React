@@ -7,12 +7,9 @@ import type { PrefValue, PrefsType } from "types";
 import {
   FETCH_PREFS,
   FETCH_PREFS_SUCCESS,
-  FETCH_PREFS_CACHE,
   SET_PREF_REQUEST,
-  SET_PREF_NO_CHANGE,
   FETCH_SCHEMA,
-  FETCH_SCHEMA_SUCCESS,
-  FETCH_SCHEMA_CACHE
+  FETCH_SCHEMA_SUCCESS
 } from "./actions";
 
 // ================================================================================
@@ -63,11 +60,6 @@ export default function settingsReducers(
         // Merge remote schema with embedded schema
         schema: UI_SETTINGS.concat(action.schema)
       };
-
-    case SET_PREF_NO_CHANGE:
-    case FETCH_SCHEMA_CACHE:
-    case FETCH_PREFS_CACHE:
-      return state;
 
     default:
       return state;

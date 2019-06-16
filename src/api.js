@@ -29,7 +29,7 @@ export const Server = {
   },
 
   cover(mangaId) {
-    return `/api/cover/${mangaId}`;
+    return `/api/v3/manga/${mangaId}/cover`;
   },
 
   pageCount(mangaId, chapterId) {

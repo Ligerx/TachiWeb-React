@@ -4,7 +4,8 @@ import Grid from "@material-ui/core/Grid";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import Paper from "@material-ui/core/Paper";
 import ChapterListItem from "components/MangaInfo/ChapterListItem";
-import type { ChapterType, MangaType } from "types";
+import type { ChapterType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 import { makeStyles } from "@material-ui/styles";
 import { FixedSizeList, areEqual } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -22,7 +23,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 // https://react-window.now.sh/#/examples/list/memoized-list-items
 
 type Props = {
-  mangaInfo: MangaType,
+  mangaInfo: Manga,
   chapters: Array<ChapterType>
 };
 

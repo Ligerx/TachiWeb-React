@@ -24,8 +24,8 @@ const ExtensionList = ({ title, extensions }: Props) => {
   const handleInstallExtension = packageName =>
     dispatch(installExtension(packageName));
 
-  const handleUninstallExtension = packageName =>
-    dispatch(uninstallExtension(packageName));
+  const handleUninstallExtension = extension =>
+    dispatch(uninstallExtension(extension));
 
   if (!extensions.length) return null;
 
@@ -54,9 +54,7 @@ const ExtensionList = ({ title, extensions }: Props) => {
                   onInstallClick={() =>
                     handleInstallExtension(extension.pkg_name)
                   }
-                  onUninstallClick={() =>
-                    handleUninstallExtension(extension.pkg_name)
-                  }
+                  onUninstallClick={() => handleUninstallExtension(extension)}
                 />
               </ExtensionListItem>
             );

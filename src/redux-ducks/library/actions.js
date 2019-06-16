@@ -25,7 +25,10 @@ type FetchLibraryRequestAction = { type: FETCH_LIBRARY_REQUEST_TYPE };
 
 type FetchLibrarySuccessAction = {
   type: FETCH_LIBRARY_SUCCESS_TYPE,
-  mangaIds: Array<number>
+  mangaIds: Array<number>,
+  downloaded: $ReadOnly<{ [index: number]: number }>,
+  totalChaptersSortIndexes: $ReadOnly<{ [index: number]: number }>,
+  lastReadSortIndexes: $ReadOnly<{ [index: number]: number }>
 };
 
 type FetchLibraryFailureAction = {

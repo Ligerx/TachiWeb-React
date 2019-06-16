@@ -1,5 +1,5 @@
 // @flow
-import type { SourceType } from "types";
+import type { Source } from "@tachiweb/api-client";
 
 // ================================================================================
 // Fetch Sources
@@ -17,12 +17,15 @@ type FETCH_SUCCESS_TYPE = "sources/FETCH_SUCCESS";
 export const FETCH_FAILURE = "sources/FETCH_FAILURE";
 type FETCH_FAILURE_TYPE = "sources/FETCH_FAILURE";
 
+export const FETCH_CACHE = "sources/FETCH_CACHE";
+type FETCH_CACHE_TYPE = "sources/FETCH_CACHE";
+
 // Action Object Types
 type FetchRequestAction = { type: FETCH_REQUEST_TYPE };
 
 type FetchSuccessAction = {
   type: FETCH_SUCCESS_TYPE,
-  payload: $ReadOnlyArray<SourceType>
+  payload: Array<Source>
 };
 
 type FetchFailureAction = {
@@ -31,10 +34,26 @@ type FetchFailureAction = {
   meta: Object
 };
 
+type FetchCacheAction = { type: FETCH_CACHE_TYPE };
+
+// ================================================================================
+// etc actions
+// ================================================================================
+
+export const REMOVE_SOURCES = "sources/REMOVE_SOURCES";
+type REMOVE_SOURCES_TYPE = "sources/REMOVE_SOURCES";
+
+type RemoveSourcesAction = {
+  type: REMOVE_SOURCES_TYPE,
+  sourceIds: ?Array<string>
+};
+
 // ================================================================================
 // Consolidated Action Type
 // ================================================================================
 export type SourcesAction =
   | FetchRequestAction
   | FetchSuccessAction
-  | FetchFailureAction;
+  | FetchFailureAction
+  | FetchCacheAction
+  | RemoveSourcesAction;

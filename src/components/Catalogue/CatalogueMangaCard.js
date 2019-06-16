@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import MangaCard from "components/MangaCard";
-import type { MangaType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 import { Server, Client } from "api";
 import Link from "components/Link";
 
@@ -22,7 +22,7 @@ const styles = {
 
 type Props = {
   classes: Object,
-  manga: MangaType
+  manga: Manga
 };
 
 const CatalogueMangaCard = ({ classes, manga }: Props) => (

@@ -7,7 +7,7 @@ import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import RefreshButton from "components/RefreshButton";
 import MangaInfoTabs from "components/MangaInfo/MangaInfoTabs";
-import type { MangaType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 import BackButton from "components/BackButton";
 import MangaInfoMore from "components/MangaInfo/MangaInfoMore";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -22,7 +22,7 @@ import { updateChapters } from "redux-ducks/chapters/actionCreators";
 // NOTE: empty href in IconButton will not render <a>
 
 type Props = {
-  mangaInfo: MangaType,
+  mangaInfo: Manga,
   tabValue: number,
   handleChangeTab: Function,
   onBackClick: string | Function
@@ -85,27 +85,26 @@ const MangaInfoHeader = ({
 
 function handleSortClick(handleSetFlag, flags) {
   return () => {
-    const newState =
-      flags.SORT_DIRECTION === "DESCENDING" ? "ASCENDING" : "DESCENDING";
-    handleSetFlag("SORT_DIRECTION", newState);
+    const newSortDirection = flags.sortDirection === "DESC" ? "ASC" : "DESC";
+    handleSetFlag("sortDirection", newSortDirection);
   };
 }
 
 function handleDisplayModeChange(handleSetFlag) {
-  return newDisplayMode => handleSetFlag("DISPLAY_MODE", newDisplayMode);
+  return newDisplayMode => handleSetFlag("displayMode", newDisplayMode);
 }
 
 function handleSortTypeChange(handleSetFlag) {
-  return newSortType => handleSetFlag("SORT_TYPE", newSortType);
+  return newSortType => handleSetFlag("sortType", newSortType);
 }
 
 function handleReadFilterChange(handleSetFlag) {
-  return newReadFilter => handleSetFlag("READ_FILTER", newReadFilter);
+  return newReadFilter => handleSetFlag("readFilter", newReadFilter);
 }
 
 function handleDownloadedFilterChange(handleSetFlag) {
   return newDownloadedFilter =>
-    handleSetFlag("DOWNLOADED_FILTER", newDownloadedFilter);
+    handleSetFlag("downloadedFilter", newDownloadedFilter);
 }
 
 export default MangaInfoHeader;

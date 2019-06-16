@@ -1,11 +1,16 @@
 // @flow
 import { Server } from "api";
-import { handleHTMLError } from "redux-ducks/utils";
+import isEmpty from "lodash/isEmpty";
 import { selectCatalogueSourceId } from "redux-ducks/catalogue";
 import { changeSourceId } from "redux-ducks/catalogue/actionCreators";
 import type { ThunkAction } from "redux-ducks/reducers";
-import type { SourceType } from "types";
-import { FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE } from "./actions";
+import {
+  FETCH_REQUEST,
+  FETCH_SUCCESS,
+  FETCH_FAILURE,
+  FETCH_CACHE
+} from "./actions";
+import { selectSources } from ".";
 
 // ================================================================================
 // Action Creators
@@ -13,18 +18,30 @@ import { FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE } from "./actions";
 // eslint-disable-next-line import/prefer-default-export
 export function fetchSources(): ThunkAction {
   return (dispatch, getState) => {
+    const currentSources = selectSources(getState());
+    if (!isEmpty(currentSources)) {
+      // SIDE EFFECT - set the catalogue sourceId if not found
+      if (!selectCatalogueSourceId(getState())) {
+        const firstSource = currentSources[Object.keys(currentSources)[0]];
+        dispatch(changeSourceId(firstSource.id));
+      }
+      // ----------
+
+      return Promise.resolve().then(dispatch({ type: FETCH_CACHE }));
+    }
+
     dispatch({ type: FETCH_REQUEST });
 
-    return fetch(Server.sources())
-      .then(handleHTMLError)
+    return Server.api()
+      .getSources()
       .then(
-        json => {
-          const sources: Array<SourceType> = json.content;
+        sources => {
           dispatch({ type: FETCH_SUCCESS, payload: sources });
 
           // SIDE EFFECT - set the catalogue sourceId on first sources load
-          if (!selectCatalogueSourceId(getState()) && sources.length > 0) {
-            dispatch(changeSourceId(sources[0].id));
+          if (!selectCatalogueSourceId(getState()) && !isEmpty(sources)) {
+            const firstSource = sources[Object.keys(sources)[0]];
+            dispatch(changeSourceId(firstSource.id));
           }
         },
         error =>

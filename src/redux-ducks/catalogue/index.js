@@ -1,6 +1,6 @@
 // @flow
 import type { GlobalState, Action } from "redux-ducks/reducers";
-import type { MangaType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { createSelector } from "reselect";
 import { selectMangaInfos } from "redux-ducks/mangaInfos";
@@ -105,7 +105,7 @@ export const selectCatalogueSearchQuery = (state: GlobalState): string =>
 
 export const selectCatalogueMangaInfos = createSelector(
   [selectMangaInfos, selectCatalogueMangaIds],
-  (mangaInfos, mangaIds): Array<MangaType> => {
+  (mangaInfos, mangaIds): Array<Manga> => {
     return mangaIds.map(mangaId => mangaInfos[mangaId]);
   }
 );

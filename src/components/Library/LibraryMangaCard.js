@@ -7,7 +7,7 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import MangaCard from "components/MangaCard";
 import Link from "components/Link";
 import { Server, Client } from "api";
-import type { MangaType } from "types";
+import type { Manga } from "@tachiweb/api-client";
 
 // TODO: Currently passing in the entire unread object, not just the corresponding number
 //       ^ Would have to rework the component tree a big to make that happen.
@@ -26,7 +26,7 @@ const styles = {
 
 type Props = {
   classes: Object,
-  manga: MangaType,
+  manga: Manga,
   unread: { [mangaId: number]: number }
 };
 
