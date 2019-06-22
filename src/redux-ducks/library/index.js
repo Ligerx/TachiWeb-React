@@ -12,6 +12,7 @@ import {
   UPDATE_READING_STATUS_SUCCESS
 } from "redux-ducks/chapters/actions";
 import { selectSources } from "redux-ducks/sources";
+import { selectCategoryMangaIds } from "redux-ducks/categories";
 import filterSortLibrary from "./libraryUtils";
 import {
   FETCH_LIBRARY,
@@ -210,14 +211,16 @@ export const selectLibraryMangaInfos = createSelector(
 );
 
 export const selectLibraryMangaInfosForCurrentCategory = createSelector(
-  [],
-  () => {}
+  [selectMangaInfos, selectCategoryMangaIds],
+  (mangaInfos, categoryMangaIds): Array<Manga> => {
+    return categoryMangaIds.map(mangaId => mangaInfos[mangaId]);
+  }
 );
 
 // selectFilteredSortedLibrary(state, searchQuery: string)
 export const selectFilteredSortedLibrary = createCachedSelector(
   [
-    selectLibraryMangaInfos,
+    selectLibraryMangaInfosForCurrentCategory,
     selectLibraryFlags,
     selectSources,
     selectUnread,

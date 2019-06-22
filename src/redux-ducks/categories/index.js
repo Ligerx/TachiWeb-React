@@ -51,15 +51,6 @@ export const selectCategoriesIsLoaded = (state: GlobalState): boolean =>
 export const selectCurrentCategoryId = (state: GlobalState): ?number =>
   state.categories.currentCategoryId;
 
-export const selectMangaIdsForCurrentCategory = createSelector(
-  [selectCategories, selectCurrentCategoryId],
-  (categories, currentCategoryId) => {
-    if (currentCategoryId === null) {
-      // viewing the default category
-    }
-  }
-);
-
 export const selectMangaIdsForDefaultCategory = createSelector(
   [selectCategories, selectLibraryMangaIds],
   (
@@ -81,4 +72,20 @@ export const selectMangaIdsForDefaultCategory = createSelector(
 export const selectDefaultCategoryHasManga = createSelector(
   [selectMangaIdsForDefaultCategory],
   mangaIds => mangaIds.length > 0
+);
+
+const noMangaIds = [];
+export const selectCategoryMangaIds = createSelector(
+  [selectCategories, selectCurrentCategoryId, selectMangaIdsForDefaultCategory],
+  (categories, currentCategoryId, mangaIdsForDefaultCategory) => {
+    if (currentCategoryId === null) {
+      // viewing the default category
+      return mangaIdsForDefaultCategory;
+    }
+
+    const currentCategory = categories.find(
+      category => category.id === currentCategoryId
+    );
+    return currentCategory ? currentCategory.manga : noMangaIds;
+  }
 );
