@@ -6,7 +6,9 @@ import {
   FETCH_REQUEST,
   FETCH_SUCCESS,
   FETCH_FAILURE,
-  FETCH_CACHE
+  FETCH_CACHE,
+  CHANGE_TAB,
+  type ChangeTabAction
 } from "./actions";
 
 // ================================================================================
@@ -16,7 +18,8 @@ import {
 export function fetchCategories(): ThunkAction {
   return async (dispatch, getState) => {
     if (selectCategoriesIsLoaded(getState())) {
-      return dispatch({ type: FETCH_CACHE });
+      dispatch({ type: FETCH_CACHE });
+      return;
     }
 
     dispatch({ type: FETCH_REQUEST });
@@ -32,4 +35,8 @@ export function fetchCategories(): ThunkAction {
       });
     }
   };
+}
+
+export function changeTab(tabValue: number): ChangeTabAction {
+  return { type: CHANGE_TAB, tabValue };
 }

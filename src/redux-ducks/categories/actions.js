@@ -35,10 +35,19 @@ type FetchFailureAction = {
 type FetchCacheAction = { type: FETCH_CACHE_TYPE };
 
 // ================================================================================
+// etc
+// ================================================================================
+export const CHANGE_TAB = "categories/CHANGE_TAB";
+type CHANGE_TAB_TYPE = "categories/CHANGE_TAB";
+
+export type ChangeTabAction = { type: CHANGE_TAB_TYPE, tabValue: number };
+
+// ================================================================================
 // Consolidated Action Type
 // ================================================================================
 export type CategoriesAction =
   | FetchRequestAction
   | FetchSuccessAction
   | FetchFailureAction
-  | FetchCacheAction;
+  | FetchCacheAction
+  | ChangeTabAction;

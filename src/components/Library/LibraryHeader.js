@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -18,10 +18,11 @@ import {
 
 type Props = {
   searchQuery: string,
-  onSearchChange: Function
+  onSearchChange: Function,
+  children: ?React.Node
 };
 
-const LibraryHeader = ({ searchQuery, onSearchChange }: Props) => {
+const LibraryHeader = ({ searchQuery, onSearchChange, children }: Props) => {
   const dispatch = useDispatch();
 
   const flags = useSelector(selectLibraryFlags);
@@ -55,6 +56,8 @@ const LibraryHeader = ({ searchQuery, onSearchChange }: Props) => {
 
         <LibraryMore />
       </Toolbar>
+
+      {children}
     </AppBar>
   );
 };
