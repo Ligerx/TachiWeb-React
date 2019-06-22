@@ -192,9 +192,14 @@ export const selectIsLibraryLoading = createLoadingSelector([
   FETCH_LIBRARY_FLAGS
 ]);
 
-export const selectLibraryMangaIds = (
+// [June 22, 2019] Was running into some circular dependency problems with library and
+// category selectors. Using functions instead of arrow functions seems to solve the problem...
+// https://github.com/reduxjs/reselect/issues/169#issuecomment-274690285
+export function selectLibraryMangaIds(
   state: GlobalState
-): $ReadOnlyArray<number> => state.library.mangaIds;
+): $ReadOnlyArray<number> {
+  return state.library.mangaIds;
+}
 
 export const selectUnread = (
   state: GlobalState
