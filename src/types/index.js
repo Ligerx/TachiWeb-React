@@ -73,3 +73,10 @@ export type PrefValue = string | Array<string> | number | boolean | null | void;
 export type PrefsType = $ReadOnly<{ [key: string]: PrefValue }>;
 
 export type SourceMap = $ReadOnly<{ [id: string]: Source }>;
+
+export type CategoriesArray = $ReadOnlyArray<{
+  id: number,
+  manga: $ReadOnlyArray<number>,
+  name: string,
+  order: number
+}>;
