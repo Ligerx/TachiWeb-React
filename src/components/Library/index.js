@@ -13,8 +13,9 @@ import {
   fetchLibraryFlags
 } from "redux-ducks/library/actionCreators";
 import { selectIsChaptersLoading } from "redux-ducks/chapters";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import LibraryHeader from "components/Library/LibraryHeader";
-import MangaGrid from "components/MangaGrid";
 import LibraryMangaCard from "components/Library/LibraryMangaCard";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import CategoriesTabs from "components/Library/CategoriesTabs";
@@ -55,10 +56,17 @@ const Library = () => {
         <CategoriesTabs />
       </LibraryHeader>
 
-      <MangaGrid
-        mangaLibrary={mangaLibrary}
-        cardComponent={<LibraryMangaCard unread={unread} />}
-      />
+      <Container>
+        <Grid container spacing={2}>
+          {mangaLibrary.map(manga => (
+            <LibraryMangaCard
+              key={manga.id}
+              manga={manga}
+              unread={unread[manga.id] || 0}
+            />
+          ))}
+        </Grid>
+      </Container>
 
       {(libraryIsLoading || chaptersAreUpdating || categoriesAreLoading) && (
         <FullScreenLoading />
