@@ -6,10 +6,8 @@ import { Helmet } from "react-helmet";
 import isEmpty from "lodash/isEmpty";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
-import MangaGrid from "components/MangaGrid";
 import CatalogueMangaCard from "components/Catalogue/CatalogueMangaCard";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
-import ResponsiveGrid from "components/ResponsiveGrid";
 import CatalogueHeader from "components/Catalogue/CatalogueHeader";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
@@ -26,6 +24,8 @@ import {
   fetchNextCataloguePage
 } from "redux-ducks/catalogue/actionCreators";
 import { fetchFilters } from "redux-ducks/filters/actionCreators";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 
 // TODO: keep previous scroll position when going back from MangaInfo -> Catalogue
 // TODO: If you update search, then change it back to it's original value, don't search again?
@@ -81,30 +81,32 @@ const Catalogue = () => {
 
       <CatalogueHeader />
 
-      <ResponsiveGrid>
+      <Container>
         <DynamicSourceFilters />
-      </ResponsiveGrid>
 
-      <MangaGrid
-        mangaLibrary={mangaLibrary}
-        cardComponent={<CatalogueMangaCard />}
-      />
-      {mangaLibrary.length > 0 && (
-        <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
-      )}
+        <Grid container spacing={2}>
+          {mangaLibrary.map(manga => (
+            <CatalogueMangaCard key={manga.id} manga={manga} />
+          ))}
+        </Grid>
 
-      {catalogueIsLoading && <CenteredLoading className={classes.loading} />}
-      {sourcesAreLoading && <FullScreenLoading />}
-      {noMoreResults && (
-        <Typography
-          variant="caption"
-          display="block"
-          align="center"
-          className={classes.noMoreResults}
-        >
-          No more results
-        </Typography>
-      )}
+        {mangaLibrary.length > 0 && (
+          <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
+        )}
+
+        {catalogueIsLoading && <CenteredLoading className={classes.loading} />}
+        {sourcesAreLoading && <FullScreenLoading />}
+        {noMoreResults && (
+          <Typography
+            variant="caption"
+            display="block"
+            align="center"
+            className={classes.noMoreResults}
+          >
+            No more results
+          </Typography>
+        )}
+      </Container>
     </>
   );
 };
