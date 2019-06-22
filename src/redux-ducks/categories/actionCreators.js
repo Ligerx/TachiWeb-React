@@ -7,8 +7,8 @@ import {
   FETCH_SUCCESS,
   FETCH_FAILURE,
   FETCH_CACHE,
-  CHANGE_TAB,
-  type ChangeTabAction
+  CHANGE_CURRENT_CATEGORY_ID,
+  type ChangeCurrentCategoryIdAction
 } from "./actions";
 
 // ================================================================================
@@ -37,6 +37,8 @@ export function fetchCategories(): ThunkAction {
   };
 }
 
-export function changeTab(tabValue: number): ChangeTabAction {
-  return { type: CHANGE_TAB, tabValue };
+export function changeCurrentCategoryId(
+  categoryId: ?number
+): ChangeCurrentCategoryIdAction {
+  return { type: CHANGE_CURRENT_CATEGORY_ID, categoryId };
 }

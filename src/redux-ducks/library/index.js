@@ -209,6 +209,11 @@ export const selectLibraryMangaInfos = createSelector(
   }
 );
 
+export const selectLibraryMangaInfosForCurrentCategory = createSelector(
+  [],
+  () => {}
+);
+
 // selectFilteredSortedLibrary(state, searchQuery: string)
 export const selectFilteredSortedLibrary = createCachedSelector(
   [

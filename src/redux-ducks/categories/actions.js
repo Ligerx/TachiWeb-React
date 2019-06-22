@@ -1,5 +1,5 @@
 // @flow
-import type { CategoriesArray } from "types";
+import type { CategoryType } from "types";
 
 // ================================================================================
 // Fetch Categories
@@ -23,7 +23,7 @@ type FetchRequestAction = { type: FETCH_REQUEST_TYPE };
 
 type FetchSuccessAction = {
   type: FETCH_SUCCESS_TYPE,
-  categories: CategoriesArray
+  categories: $ReadOnlyArray<CategoryType>
 };
 
 type FetchFailureAction = {
@@ -37,10 +37,14 @@ type FetchCacheAction = { type: FETCH_CACHE_TYPE };
 // ================================================================================
 // etc
 // ================================================================================
-export const CHANGE_TAB = "categories/CHANGE_TAB";
-type CHANGE_TAB_TYPE = "categories/CHANGE_TAB";
+export const CHANGE_CURRENT_CATEGORY_ID =
+  "categories/CHANGE_CURRENT_CATEGORY_ID";
+type CHANGE_CURRENT_CATEGORY_ID_TYPE = "categories/CHANGE_CURRENT_CATEGORY_ID";
 
-export type ChangeTabAction = { type: CHANGE_TAB_TYPE, tabValue: number };
+export type ChangeCurrentCategoryIdAction = {
+  type: CHANGE_CURRENT_CATEGORY_ID_TYPE,
+  categoryId: ?number
+};
 
 // ================================================================================
 // Consolidated Action Type
@@ -50,4 +54,4 @@ export type CategoriesAction =
   | FetchSuccessAction
   | FetchFailureAction
   | FetchCacheAction
-  | ChangeTabAction;
+  | ChangeCurrentCategoryIdAction;
