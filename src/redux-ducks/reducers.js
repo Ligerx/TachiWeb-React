@@ -11,6 +11,7 @@ import filters from "./filters";
 import mangaInfos from "./mangaInfos";
 import extensions from "./extensions";
 import settings from "./settings";
+import categories from "./categories";
 import type { LibraryAction } from "./library/actions";
 import type { ChaptersAction } from "./chapters/actions";
 import type { PageCountsAction } from "./pageCounts/actions";
@@ -20,6 +21,7 @@ import type { FiltersAction } from "./filters/actions";
 import type { MangaInfosAction } from "./mangaInfos/actions";
 import type { ExtensionsAction } from "./extensions/actions";
 import type { SettingsAction } from "./settings/actions";
+import type { CategoriesAction } from "./categories/actions";
 
 const reducers = {
   loading,
@@ -32,7 +34,8 @@ const reducers = {
   filters,
   mangaInfos,
   extensions,
-  settings
+  settings,
+  categories
 };
 
 // Get the type of the entire redux store by extracting it from the reducers' return types
@@ -49,7 +52,8 @@ export type Action =
   | FiltersAction
   | MangaInfosAction
   | ExtensionsAction
-  | SettingsAction;
+  | SettingsAction
+  | CategoriesAction;
 
 type GetState = () => GlobalState;
 type PromiseAction = Promise<Action>;
