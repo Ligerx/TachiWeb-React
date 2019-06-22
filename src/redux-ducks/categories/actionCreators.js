@@ -1,6 +1,7 @@
 // @flow
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
+import { selectCategoriesIsLoaded } from ".";
 import {
   FETCH_REQUEST,
   FETCH_SUCCESS,

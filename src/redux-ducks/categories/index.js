@@ -17,6 +17,7 @@ export default function categoriesReducer(
 ): State {
   switch (action.type) {
     case FETCH_SUCCESS:
+      return { categories: action.categories, isLoaded: true };
 
     default:
       return state;
