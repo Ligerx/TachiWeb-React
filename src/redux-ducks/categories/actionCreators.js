@@ -1,7 +1,7 @@
 // @flow
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
-import { selectCategoriesIsLoaded } from ".";
+import { selectCategoriesIsLoaded, selectDefaultCategoryHasManga } from ".";
 import {
   FETCH_REQUEST,
   FETCH_SUCCESS,
@@ -15,6 +15,12 @@ import {
 // Action Creators
 // ================================================================================
 
+export function changeCurrentCategoryId(
+  categoryId: ?number
+): ChangeCurrentCategoryIdAction {
+  return { type: CHANGE_CURRENT_CATEGORY_ID, categoryId };
+}
+
 export function fetchCategories(): ThunkAction {
   return async (dispatch, getState) => {
     if (selectCategoriesIsLoaded(getState())) {
@@ -27,6 +33,12 @@ export function fetchCategories(): ThunkAction {
     try {
       const categories = await Server.api().getCategories();
       dispatch({ type: FETCH_SUCCESS, categories });
+
+      // SIDE EFFECT
+      if (!selectDefaultCategoryHasManga(getState())) {
+        dispatch(changeCurrentCategoryId(categories[0].id));
+      }
+      // -----------
     } catch (error) {
       dispatch({
         type: FETCH_FAILURE,
@@ -35,10 +47,4 @@ export function fetchCategories(): ThunkAction {
       });
     }
   };
-}
-
-export function changeCurrentCategoryId(
-  categoryId: ?number
-): ChangeCurrentCategoryIdAction {
-  return { type: CHANGE_CURRENT_CATEGORY_ID, categoryId };
 }
