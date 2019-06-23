@@ -5,36 +5,41 @@ import Icon from "@material-ui/core/Icon";
 import Tooltip from "@material-ui/core/Tooltip";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import EditCategoriesDialog from "components/Library/EditCategoriesDialog";
 
 type State = {
   anchorEl: ?HTMLElement, // don't know what to put here
-  editing: boolean
+  editCategoriesIsOpen: boolean
 };
 
 class LibraryMore extends Component<{}, State> {
   state = {
     anchorEl: null,
-    editing: false
+    editCategoriesIsOpen: false
   };
 
   handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleEditCategories = () => {
-    // Close the menu as well
-    this.setState({
-      anchorEl: null,
-      editing: !this.state.editing
-    });
-  };
-
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
 
+  handleEditCategories = () => {
+    // Close the menu as well
+    this.setState({
+      anchorEl: null,
+      editCategoriesIsOpen: true
+    });
+  };
+
+  handleCloseEditCategories = () => {
+    this.setState({ editCategoriesIsOpen: false });
+  };
+
   render() {
-    const { anchorEl, editing } = this.state;
+    const { anchorEl, editCategoriesIsOpen } = this.state;
 
     return (
       <>
@@ -54,9 +59,14 @@ class LibraryMore extends Component<{}, State> {
           onClose={this.handleClose}
         >
           <MenuItem onClick={this.handleEditCategories}>
-            {!editing ? "Edit Categories" : "Exit Category Editor"}
+            Edit Categories
           </MenuItem>
         </Menu>
+
+        <EditCategoriesDialog
+          isOpen={editCategoriesIsOpen}
+          onClose={this.handleCloseEditCategories}
+        />
       </>
     );
   }
