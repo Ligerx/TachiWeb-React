@@ -15,6 +15,7 @@
     "rc-slider": "^8.6.1",
     "re-reselect": "^3.1.0",
     "react": "^16.8.6",
+    "react-beautiful-dnd": "^11.0.4",
     "react-dom": "^16.8.6",
     "react-dropzone": "^4.2.10",
     "react-helmet": "^5.2.0",
