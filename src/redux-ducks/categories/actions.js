@@ -35,6 +35,34 @@ type FetchFailureAction = {
 type FetchCacheAction = { type: FETCH_CACHE_TYPE };
 
 // ================================================================================
+// Create a category
+// ================================================================================
+
+// Action Constants and Types
+export const CREATE_REQUEST = "categories/CREATE_REQUEST";
+type CREATE_REQUEST_TYPE = "categories/CREATE_REQUEST";
+
+export const CREATE_SUCCESS = "categories/CREATE_SUCCESS";
+type CREATE_SUCCESS_TYPE = "categories/CREATE_SUCCESS";
+
+export const CREATE_FAILURE = "categories/CREATE_FAILURE";
+type CREATE_FAILURE_TYPE = "categories/CREATE_FAILURE";
+
+// Action Object Types
+type CreateRequestAction = { type: CREATE_REQUEST_TYPE };
+
+type CreateSuccessAction = {
+  type: CREATE_SUCCESS_TYPE,
+  newCategory: CategoryType
+};
+
+type CreateFailureAction = {
+  type: CREATE_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+// ================================================================================
 // etc
 // ================================================================================
 export const CHANGE_CURRENT_CATEGORY_ID =
@@ -54,4 +82,7 @@ export type CategoriesAction =
   | FetchSuccessAction
   | FetchFailureAction
   | FetchCacheAction
+  | CreateRequestAction
+  | CreateSuccessAction
+  | CreateFailureAction
   | ChangeCurrentCategoryIdAction;

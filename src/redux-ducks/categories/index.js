@@ -7,6 +7,7 @@ import { selectLibraryMangaIds } from "redux-ducks/library";
 import {
   FETCH_REQUEST,
   FETCH_SUCCESS,
+  CREATE_SUCCESS,
   CHANGE_CURRENT_CATEGORY_ID
 } from "./actions";
 
@@ -26,6 +27,12 @@ export default function categoriesReducer(
   switch (action.type) {
     case FETCH_SUCCESS:
       return { ...state, categories: action.categories, isLoaded: true };
+
+    case CREATE_SUCCESS:
+      return {
+        ...state,
+        categories: [...state.categories, action.newCategory]
+      };
 
     case CHANGE_CURRENT_CATEGORY_ID:
       return { ...state, currentCategoryId: action.categoryId };
