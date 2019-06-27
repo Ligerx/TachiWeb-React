@@ -28,7 +28,7 @@ const CategoriesTabs = () => {
       value={currentCategoryId}
       onChange={handleTabChange}
       indicatorColor="primary"
-      centered
+      variant="scrollable"
     >
       {defaultCategoryHasManga ? <Tab label="Default" value={null} /> : null}
 
