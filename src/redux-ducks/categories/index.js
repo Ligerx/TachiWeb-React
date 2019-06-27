@@ -8,7 +8,8 @@ import {
   FETCH_REQUEST,
   FETCH_SUCCESS,
   CREATE_SUCCESS,
-  CHANGE_CURRENT_CATEGORY_ID
+  CHANGE_CURRENT_CATEGORY_ID,
+  UPDATE_CATEGORY_NAME
 } from "./actions";
 
 // ================================================================================
@@ -36,6 +37,23 @@ export default function categoriesReducer(
 
     case CHANGE_CURRENT_CATEGORY_ID:
       return { ...state, currentCategoryId: action.categoryId };
+
+    case UPDATE_CATEGORY_NAME: {
+      const { categoryId, name } = action;
+      const categoryIndex = state.categories.findIndex(
+        category => category.id === categoryId
+      );
+      const updatedCategory = { ...state.categories[categoryIndex], name };
+
+      return {
+        ...state,
+        categories: [
+          ...state.categories.slice(0, categoryIndex),
+          updatedCategory,
+          ...state.categories.slice(categoryIndex + 1)
+        ]
+      };
+    }
 
     default:
       return state;

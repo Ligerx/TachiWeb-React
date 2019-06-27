@@ -63,6 +63,34 @@ type CreateFailureAction = {
 };
 
 // ================================================================================
+// Save new category name to server
+// ================================================================================
+
+// // Action Constants and Types
+// export const CREATE_REQUEST = "categories/CREATE_REQUEST";
+// type CREATE_REQUEST_TYPE = "categories/CREATE_REQUEST";
+
+// export const CREATE_SUCCESS = "categories/CREATE_SUCCESS";
+// type CREATE_SUCCESS_TYPE = "categories/CREATE_SUCCESS";
+
+// export const CREATE_FAILURE = "categories/CREATE_FAILURE";
+// type CREATE_FAILURE_TYPE = "categories/CREATE_FAILURE";
+
+// // Action Object Types
+// type CreateRequestAction = { type: CREATE_REQUEST_TYPE };
+
+// type CreateSuccessAction = {
+//   type: CREATE_SUCCESS_TYPE,
+//   newCategory: CategoryType
+// };
+
+// type CreateFailureAction = {
+//   type: CREATE_FAILURE_TYPE,
+//   errorMessage: string,
+//   meta: Object
+// };
+
+// ================================================================================
 // etc
 // ================================================================================
 export const CHANGE_CURRENT_CATEGORY_ID =
@@ -72,6 +100,15 @@ type CHANGE_CURRENT_CATEGORY_ID_TYPE = "categories/CHANGE_CURRENT_CATEGORY_ID";
 export type ChangeCurrentCategoryIdAction = {
   type: CHANGE_CURRENT_CATEGORY_ID_TYPE,
   categoryId: ?number
+};
+
+export const UPDATE_CATEGORY_NAME = "categories/UPDATE_CATEGORY_NAME";
+type UPDATE_CATEGORY_NAME_TYPE = "categories/UPDATE_CATEGORY_NAME";
+
+export type UpdateCategoryNameAction = {
+  type: UPDATE_CATEGORY_NAME_TYPE,
+  categoryId: number,
+  name: string
 };
 
 // ================================================================================
@@ -85,4 +122,5 @@ export type CategoriesAction =
   | CreateRequestAction
   | CreateSuccessAction
   | CreateFailureAction
-  | ChangeCurrentCategoryIdAction;
+  | ChangeCurrentCategoryIdAction
+  | UpdateCategoryNameAction;

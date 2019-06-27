@@ -12,7 +12,9 @@ import {
   CREATE_SUCCESS,
   CREATE_FAILURE,
   CHANGE_CURRENT_CATEGORY_ID,
-  type ChangeCurrentCategoryIdAction
+  type ChangeCurrentCategoryIdAction,
+  UPDATE_CATEGORY_NAME,
+  type UpdateCategoryNameAction
 } from "./actions";
 
 // ================================================================================
@@ -23,6 +25,14 @@ export function changeCurrentCategoryId(
   categoryId: ?number
 ): ChangeCurrentCategoryIdAction {
   return { type: CHANGE_CURRENT_CATEGORY_ID, categoryId };
+}
+
+// Updating the redux state directly without updating on the server
+export function updateCategoryName(
+  categoryId: number,
+  name: string
+): UpdateCategoryNameAction {
+  return { type: UPDATE_CATEGORY_NAME, categoryId, name };
 }
 
 export function fetchCategories(): ThunkAction {
