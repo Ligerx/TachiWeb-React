@@ -57,7 +57,7 @@ export function createCategory(): ThunkAction {
   return async dispatch => {
     dispatch({ type: CREATE_REQUEST });
 
-    const name = `New Category ${format(new Date(), "YYYY-MM-DD HH:mm:ss")}`;
+    const name = `New Category ${format(new Date(), "MM-DD HH:mm:ss")}`;
 
     try {
       const newCategory = await Server.api().createCategory({ name });
