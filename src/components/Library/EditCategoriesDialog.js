@@ -21,7 +21,7 @@ const EditCategoriesDialog = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} fullWidth>
+    <Dialog open={isOpen} onClose={onClose} fullWidth scroll="body">
       <DialogTitle>Edit Categories</DialogTitle>
 
       <EditCategoriesDraggableList />
