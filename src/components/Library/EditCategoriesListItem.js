@@ -33,6 +33,7 @@ const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
   };
 
   const handleBlur = () => {
+    if (tempName === name) return;
     if (tempName === "") {
       // empty name is not valid, reset value
       setTempName(name);
