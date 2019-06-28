@@ -22,7 +22,8 @@ const useStyles = makeStyles({
     background: "white"
   },
   deleteIcon: {
-    "flex-direction": "row-reverse"
+    marginLeft: "auto",
+    cursor: "pointer"
   }
 });
 
@@ -49,6 +50,7 @@ const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
   };
 
   const handleDelete = () => {
+    setDeleteOpen(false);
     // dispatch(deleteCategory(id));
   };
 
@@ -73,11 +75,13 @@ const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
               variant="outlined"
               margin="dense"
             />
-            <ListItemIcon
-              className={classes.deleteIcon}
-              onClick={() => setDeleteOpen(true)}
-            >
-              <Icon>delete</Icon>
+            <ListItemIcon>
+              <Icon
+                onClick={() => setDeleteOpen(true)}
+                className={classes.deleteIcon}
+              >
+                delete
+              </Icon>
             </ListItemIcon>
           </ListItem>
         )}
