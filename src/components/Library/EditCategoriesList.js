@@ -13,7 +13,7 @@ const EditCategoriesList = memo(() => {
       {categories.map((category, index) => (
         <EditCategoriesListItem
           key={category.id}
-          value={category.name}
+          name={category.name}
           id={category.id}
           index={index}
         />

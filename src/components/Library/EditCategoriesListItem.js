@@ -11,7 +11,7 @@ import { useDerivedStateFromProps } from "components/hooks";
 import { updateCategoryName } from "redux-ducks/categories/actionCreators";
 
 type Props = {
-  value: string,
+  name: string,
   id: number,
   index: number
 };
@@ -22,24 +22,24 @@ const useStyles = makeStyles({
   }
 });
 
-const EditCategoriesListItem = memo(({ value, id, index }: Props) => {
+const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const [tempValue, setTempValue] = useDerivedStateFromProps(value);
+  const [tempName, setTempName] = useDerivedStateFromProps(name);
 
   const handleChange = (event: SyntheticInputEvent<>) => {
-    setTempValue(event.target.value);
+    setTempName(event.target.value);
   };
 
   const handleBlur = () => {
-    if (tempValue === "") {
+    if (tempName === "") {
       // empty name is not valid, reset value
-      setTempValue(value);
+      setTempName(name);
       return;
     }
 
-    dispatch(updateCategoryName(id, tempValue));
+    dispatch(updateCategoryName(id, tempName));
   };
 
   return (
@@ -54,7 +54,7 @@ const EditCategoriesListItem = memo(({ value, id, index }: Props) => {
             <Icon {...provided.dragHandleProps}>drag_handle</Icon>
           </ListItemIcon>
           <TextField
-            value={tempValue}
+            value={tempName}
             onChange={handleChange}
             onBlur={handleBlur}
             fullWidth
