@@ -12,7 +12,7 @@ import { updateCategoryName } from "redux-ducks/categories/actionCreators";
 
 type Props = {
   value: string,
-  id: string,
+  id: number,
   index: number
 };
 
@@ -32,11 +32,18 @@ const EditCategoriesListItem = memo(({ value, id, index }: Props) => {
     setTempValue(event.target.value);
   };
 
-  // TODO: handleBlur
-  //       also handle the edge case where the tempValue is empty when onBlur is called
+  const handleBlur = () => {
+    if (tempValue === "") {
+      // empty name is not valid, reset value
+      setTempValue(value);
+      return;
+    }
+
+    dispatch(updateCategoryName(id, tempValue));
+  };
 
   return (
-    <Draggable draggableId={id} index={index}>
+    <Draggable draggableId={id.toString()} index={index}>
       {provided => (
         <ListItem
           className={classes.listItem}
@@ -49,8 +56,9 @@ const EditCategoriesListItem = memo(({ value, id, index }: Props) => {
           <TextField
             value={tempValue}
             onChange={handleChange}
-            inputProps={{ "aria-label": "bare" }}
+            onBlur={handleBlur}
             fullWidth
+            inputProps={{ "aria-label": "bare" }}
             variant="outlined"
             margin="dense"
           />

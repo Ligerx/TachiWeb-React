@@ -14,7 +14,7 @@ const EditCategoriesList = memo(() => {
         <EditCategoriesListItem
           key={category.id}
           value={category.name}
-          id={category.id.toString()}
+          id={category.id}
           index={index}
         />
       ))}
