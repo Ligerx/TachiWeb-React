@@ -1,5 +1,5 @@
 // @flow
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Draggable } from "react-beautiful-dnd";
 import { makeStyles } from "@material-ui/core/styles";
@@ -9,6 +9,7 @@ import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
 import { useDerivedStateFromProps } from "components/hooks";
 import { updateCategoryName } from "redux-ducks/categories/actionCreators";
+import DeleteCategoryDialog from "components/Library/DeleteCategoryDialog";
 
 type Props = {
   name: string,
@@ -19,6 +20,9 @@ type Props = {
 const useStyles = makeStyles({
   listItem: {
     background: "white"
+  },
+  deleteIcon: {
+    "flex-direction": "row-reverse"
   }
 });
 
@@ -27,6 +31,7 @@ const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
   const dispatch = useDispatch();
 
   const [tempName, setTempName] = useDerivedStateFromProps(name);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const handleChange = (event: SyntheticInputEvent<>) => {
     setTempName(event.target.value);
@@ -43,29 +48,47 @@ const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
     dispatch(updateCategoryName(id, tempName));
   };
 
+  const handleDelete = () => {
+    // dispatch(deleteCategory(id));
+  };
+
   return (
-    <Draggable draggableId={id.toString()} index={index}>
-      {provided => (
-        <ListItem
-          className={classes.listItem}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-        >
-          <ListItemIcon>
-            <Icon {...provided.dragHandleProps}>drag_handle</Icon>
-          </ListItemIcon>
-          <TextField
-            value={tempName}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            fullWidth
-            inputProps={{ "aria-label": "bare" }}
-            variant="outlined"
-            margin="dense"
-          />
-        </ListItem>
-      )}
-    </Draggable>
+    <>
+      <Draggable draggableId={id.toString()} index={index}>
+        {provided => (
+          <ListItem
+            className={classes.listItem}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+          >
+            <ListItemIcon>
+              <Icon {...provided.dragHandleProps}>drag_handle</Icon>
+            </ListItemIcon>
+            <TextField
+              value={tempName}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              fullWidth
+              inputProps={{ "aria-label": "bare" }}
+              variant="outlined"
+              margin="dense"
+            />
+            <ListItemIcon
+              className={classes.deleteIcon}
+              onClick={() => setDeleteOpen(true)}
+            >
+              <Icon>delete</Icon>
+            </ListItemIcon>
+          </ListItem>
+        )}
+      </Draggable>
+
+      <DeleteCategoryDialog
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onDelete={handleDelete}
+      />
+    </>
   );
 });
 
