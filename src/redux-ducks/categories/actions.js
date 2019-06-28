@@ -66,29 +66,38 @@ type CreateFailureAction = {
 // Save new category name to server
 // ================================================================================
 
-// // Action Constants and Types
-// export const CREATE_REQUEST = "categories/CREATE_REQUEST";
-// type CREATE_REQUEST_TYPE = "categories/CREATE_REQUEST";
+// Action Constants and Types
+export const UPDATE_CATEGORY_NAME_REQUEST =
+  "categories/UPDATE_CATEGORY_NAME_REQUEST";
+type UPDATE_CATEGORY_NAME_REQUEST_TYPE =
+  "categories/UPDATE_CATEGORY_NAME_REQUEST";
 
-// export const CREATE_SUCCESS = "categories/CREATE_SUCCESS";
-// type CREATE_SUCCESS_TYPE = "categories/CREATE_SUCCESS";
+export const UPDATE_CATEGORY_NAME_SUCCESS =
+  "categories/UPDATE_CATEGORY_NAME_SUCCESS";
+type UPDATE_CATEGORY_NAME_SUCCESS_TYPE =
+  "categories/UPDATE_CATEGORY_NAME_SUCCESS";
 
-// export const CREATE_FAILURE = "categories/CREATE_FAILURE";
-// type CREATE_FAILURE_TYPE = "categories/CREATE_FAILURE";
+export const UPDATE_CATEGORY_NAME_FAILURE =
+  "categories/UPDATE_CATEGORY_NAME_FAILURE";
+type UPDATE_CATEGORY_NAME_FAILURE_TYPE =
+  "categories/UPDATE_CATEGORY_NAME_FAILURE";
 
-// // Action Object Types
-// type CreateRequestAction = { type: CREATE_REQUEST_TYPE };
+// Action Object Types
+type UpdateCategoryNameRequestAction = {
+  type: UPDATE_CATEGORY_NAME_REQUEST_TYPE,
+  categoryId: number,
+  name: string
+};
 
-// type CreateSuccessAction = {
-//   type: CREATE_SUCCESS_TYPE,
-//   newCategory: CategoryType
-// };
+type UpdateCategoryNameSuccessAction = {
+  type: UPDATE_CATEGORY_NAME_SUCCESS_TYPE
+};
 
-// type CreateFailureAction = {
-//   type: CREATE_FAILURE_TYPE,
-//   errorMessage: string,
-//   meta: Object
-// };
+type UpdateCategoryNameFailureAction = {
+  type: UPDATE_CATEGORY_NAME_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
 
 // ================================================================================
 // etc
@@ -102,15 +111,6 @@ export type ChangeCurrentCategoryIdAction = {
   categoryId: ?number
 };
 
-export const UPDATE_CATEGORY_NAME = "categories/UPDATE_CATEGORY_NAME";
-type UPDATE_CATEGORY_NAME_TYPE = "categories/UPDATE_CATEGORY_NAME";
-
-export type UpdateCategoryNameAction = {
-  type: UPDATE_CATEGORY_NAME_TYPE,
-  categoryId: number,
-  name: string
-};
-
 // ================================================================================
 // Consolidated Action Type
 // ================================================================================
@@ -122,5 +122,7 @@ export type CategoriesAction =
   | CreateRequestAction
   | CreateSuccessAction
   | CreateFailureAction
-  | ChangeCurrentCategoryIdAction
-  | UpdateCategoryNameAction;
+  | UpdateCategoryNameRequestAction
+  | UpdateCategoryNameSuccessAction
+  | UpdateCategoryNameFailureAction
+  | ChangeCurrentCategoryIdAction;

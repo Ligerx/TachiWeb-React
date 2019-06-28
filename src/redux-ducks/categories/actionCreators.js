@@ -11,10 +11,11 @@ import {
   CREATE_REQUEST,
   CREATE_SUCCESS,
   CREATE_FAILURE,
+  UPDATE_CATEGORY_NAME_REQUEST,
+  UPDATE_CATEGORY_NAME_SUCCESS,
+  UPDATE_CATEGORY_NAME_FAILURE,
   CHANGE_CURRENT_CATEGORY_ID,
-  type ChangeCurrentCategoryIdAction,
-  UPDATE_CATEGORY_NAME,
-  type UpdateCategoryNameAction
+  type ChangeCurrentCategoryIdAction
 } from "./actions";
 
 // ================================================================================
@@ -25,14 +26,6 @@ export function changeCurrentCategoryId(
   categoryId: ?number
 ): ChangeCurrentCategoryIdAction {
   return { type: CHANGE_CURRENT_CATEGORY_ID, categoryId };
-}
-
-// Updating the redux state directly without updating on the server
-export function updateCategoryName(
-  categoryId: number,
-  name: string
-): UpdateCategoryNameAction {
-  return { type: UPDATE_CATEGORY_NAME, categoryId, name };
 }
 
 export function fetchCategories(): ThunkAction {
@@ -76,6 +69,26 @@ export function createCategory(): ThunkAction {
       dispatch({
         type: CREATE_FAILURE,
         errorMessage: "Failed to create a new category.",
+        meta: { error }
+      });
+    }
+  };
+}
+
+export function updateCategoryName(
+  categoryId: number,
+  name: string
+): ThunkAction {
+  return async dispatch => {
+    dispatch({ type: UPDATE_CATEGORY_NAME_REQUEST, categoryId, name });
+
+    try {
+      await Server.api().editCategory(categoryId, { name });
+      dispatch({ type: UPDATE_CATEGORY_NAME_SUCCESS });
+    } catch (error) {
+      dispatch({
+        type: UPDATE_CATEGORY_NAME_FAILURE,
+        errorMessage: "Failed to update the category name.",
         meta: { error }
       });
     }
