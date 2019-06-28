@@ -1,5 +1,5 @@
 // @flow
-import { useState, useEffect, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // https://reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
 export function usePrevious<T>(value: T): T {
@@ -14,9 +14,9 @@ export function usePrevious<T>(value: T): T {
 export function useDerivedStateFromProps<T>(props: T): [T, (state: T) => void] {
   const [state, setState] = useState(props);
 
-   useEffect(() => {
-       setState(props);
-   }, [props]);
+  useEffect(() => {
+    setState(props);
+  }, [props]);
 
-   return [state, setState];
+  return [state, setState];
 }
