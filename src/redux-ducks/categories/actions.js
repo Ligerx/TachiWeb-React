@@ -63,6 +63,31 @@ type CreateFailureAction = {
 };
 
 // ================================================================================
+// Delete a category
+// ================================================================================
+
+// Action Constants and Types
+export const DELETE_REQUEST = "categories/DELETE_REQUEST";
+type DELETE_REQUEST_TYPE = "categories/DELETE_REQUEST";
+
+export const DELETE_SUCCESS = "categories/DELETE_SUCCESS";
+type DELETE_SUCCESS_TYPE = "categories/DELETE_SUCCESS";
+
+export const DELETE_FAILURE = "categories/DELETE_FAILURE";
+type DELETE_FAILURE_TYPE = "categories/DELETE_FAILURE";
+
+// Action Object Types
+type DeleteRequestAction = { type: DELETE_REQUEST_TYPE, categoryId: number };
+
+type DeleteSuccessAction = { type: DELETE_SUCCESS_TYPE };
+
+type DeleteFailureAction = {
+  type: DELETE_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+// ================================================================================
 // Save new category name to server
 // ================================================================================
 
@@ -122,6 +147,9 @@ export type CategoriesAction =
   | CreateRequestAction
   | CreateSuccessAction
   | CreateFailureAction
+  | DeleteRequestAction
+  | DeleteSuccessAction
+  | DeleteFailureAction
   | UpdateCategoryNameRequestAction
   | UpdateCategoryNameSuccessAction
   | UpdateCategoryNameFailureAction

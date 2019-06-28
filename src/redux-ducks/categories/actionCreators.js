@@ -11,6 +11,9 @@ import {
   CREATE_REQUEST,
   CREATE_SUCCESS,
   CREATE_FAILURE,
+  DELETE_REQUEST,
+  DELETE_SUCCESS,
+  DELETE_FAILURE,
   UPDATE_CATEGORY_NAME_REQUEST,
   UPDATE_CATEGORY_NAME_SUCCESS,
   UPDATE_CATEGORY_NAME_FAILURE,
@@ -69,6 +72,23 @@ export function createCategory(): ThunkAction {
       dispatch({
         type: CREATE_FAILURE,
         errorMessage: "Failed to create a new category.",
+        meta: { error }
+      });
+    }
+  };
+}
+
+export function deleteCategory(categoryId: number): ThunkAction {
+  return async dispatch => {
+    dispatch({ type: DELETE_REQUEST, categoryId });
+
+    try {
+      await Server.api().deleteCategory(categoryId);
+      dispatch({ type: DELETE_SUCCESS });
+    } catch (error) {
+      dispatch({
+        type: DELETE_FAILURE,
+        errorMessage: "Failed to delete category.",
         meta: { error }
       });
     }

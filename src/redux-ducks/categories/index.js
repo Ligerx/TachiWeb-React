@@ -8,6 +8,7 @@ import {
   FETCH_REQUEST,
   FETCH_SUCCESS,
   CREATE_SUCCESS,
+  DELETE_REQUEST,
   UPDATE_CATEGORY_NAME_REQUEST,
   CHANGE_CURRENT_CATEGORY_ID
 } from "./actions";
@@ -50,6 +51,21 @@ export default function categoriesReducer(
         categories: [
           ...state.categories.slice(0, categoryIndex),
           updatedCategory,
+          ...state.categories.slice(categoryIndex + 1)
+        ]
+      };
+    }
+
+    case DELETE_REQUEST: {
+      const { categoryId } = action;
+      const categoryIndex = state.categories.findIndex(
+        category => category.id === categoryId
+      );
+
+      return {
+        ...state,
+        categories: [
+          ...state.categories.slice(0, categoryIndex),
           ...state.categories.slice(categoryIndex + 1)
         ]
       };

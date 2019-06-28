@@ -8,7 +8,10 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
 import { useDerivedStateFromProps } from "components/hooks";
-import { updateCategoryName } from "redux-ducks/categories/actionCreators";
+import {
+  updateCategoryName,
+  deleteCategory
+} from "redux-ducks/categories/actionCreators";
 import DeleteCategoryDialog from "components/Library/DeleteCategoryDialog";
 
 type Props = {
@@ -51,7 +54,7 @@ const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
 
   const handleDelete = () => {
     setDeleteOpen(false);
-    // dispatch(deleteCategory(id));
+    dispatch(deleteCategory(id));
   };
 
   return (
