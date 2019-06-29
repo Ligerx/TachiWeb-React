@@ -45,7 +45,7 @@
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react-hooks": "^1.5.0",
-    "flow-bin": "0.72.0",
+    "flow-bin": "0.102.0",
     "prettier": "^1.16.4",
     "redux-devtools-extension": "^2.13.2"
   },
