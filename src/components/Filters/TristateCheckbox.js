@@ -17,7 +17,7 @@ type Props = {
 // | 2     | EXCLUDE |
 // +-------+---------+
 
-const TristateCheckbox = memo(({ name, state, onChange }: Props) => {
+const TristateCheckbox = memo<Props>(({ name, state, onChange }: Props) => {
   const checked: boolean = state === 1;
   const indeterminate: boolean = state === 0;
 

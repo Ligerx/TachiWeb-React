@@ -33,7 +33,7 @@ const useStyles = makeStyles({
 
 type Props = { index: number };
 
-const FilterSort = memo(({ index }: Props) => {
+const FilterSort = memo<Props>(({ index }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 

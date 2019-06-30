@@ -34,7 +34,7 @@ type RowProps = {
   style: Object,
   data: ChapterType
 };
-const Row = memo(({ index, style, data }: RowProps) => {
+const Row = memo<RowProps>(({ index, style, data }: RowProps) => {
   const mangaInfo = useContext(RowContext);
   return (
     <ChapterListItem

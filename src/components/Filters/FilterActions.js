@@ -33,7 +33,7 @@ type Props = {
   onSearchClick: Function // for any additional actions that fire
 };
 
-const FilterActions = memo(({ onSearchClick }: Props) => {
+const FilterActions = memo<Props>(({ onSearchClick }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 

@@ -28,24 +28,27 @@ type Props = {
   children: React.Node,
 
   // Optional props
-  spacing: number,
-  maxWidth: number | "xs" | "sm" | "md" | "lg" | "xl",
+  spacing?: number,
+  maxWidth?: number | "xs" | "sm" | "md" | "lg" | "xl",
 
-  parentProps: Object
+  parentProps?: Object
 }; // other props get passed to the inner grid
 
 const ResponsiveGrid = ({
   children,
   spacing,
   maxWidth,
-  parentProps,
+  parentProps = {},
   ...otherProps
 }: Props) => {
   const calcMaxWidth =
     typeof maxWidth === "string" ? breakpoints[maxWidth] : maxWidth;
   const maxWidthStyle = { maxWidth: calcMaxWidth };
 
-  const padding = Math.max(8, spacing / 2); // at least 8px on each side
+  // spacing has a defaultProp but flow is complaining about it
+  const spacing2 = spacing || 2;
+
+  const padding = Math.max(8, spacing2 / 2); // at least 8px on each side
   const fixXOverflow = {
     paddingLeft: padding,
     paddingRight: padding
@@ -53,7 +56,7 @@ const ResponsiveGrid = ({
 
   return (
     <Grid container justify="center" style={fixXOverflow} {...parentProps}>
-      <Grid container {...otherProps} spacing={spacing} style={maxWidthStyle}>
+      <Grid container {...otherProps} spacing={spacing2} style={maxWidthStyle}>
         {children}
       </Grid>
     </Grid>
@@ -62,7 +65,8 @@ const ResponsiveGrid = ({
 
 ResponsiveGrid.defaultProps = {
   spacing: 2,
-  maxWidth: "md"
+  maxWidth: "md",
+  parentProps: {}
 };
 
 export default ResponsiveGrid;
