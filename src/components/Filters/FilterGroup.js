@@ -20,7 +20,7 @@ import TristateCheckbox from "components/Filters/TristateCheckbox";
 
 type Props = { index: number };
 
-const FilterGroup = memo(({ index }: Props) => {
+const FilterGroup = memo<Props>(({ index }: Props) => {
   const dispatch = useDispatch();
 
   const filter = useSelector(state => selectFilterAtIndex(state, index));

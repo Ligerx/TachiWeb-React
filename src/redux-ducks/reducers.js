@@ -59,7 +59,7 @@ type Dispatch = (
   action: Action | ThunkAction | PromiseAction | Array<Action>
 ) => any;
 
-export default combineReducers(reducers);
+export default combineReducers<Reducers, Action>(reducers);
 
 // NOTE: some Thunks (asynchronous calls) may escape early
 //       (e.g. return cached data) instead of returning a promise.

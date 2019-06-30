@@ -41,55 +41,57 @@ const useStyles = makeStyles({
   lastReadPage: { color: "rgba(0, 0, 0, 0.87)" }
 });
 
-const ChapterListItem = memo(({ mangaInfo, chapter, ...otherProps }: Props) => {
-  const classes = useStyles();
-  const dispatch = useDispatch();
+const ChapterListItem = memo<Props>(
+  ({ mangaInfo, chapter, ...otherProps }: Props) => {
+    const classes = useStyles();
+    const dispatch = useDispatch();
 
-  const handleToggleRead = (read: boolean) =>
-    dispatch(toggleRead(mangaInfo.id, chapter.id, read));
+    const handleToggleRead = (read: boolean) =>
+      dispatch(toggleRead(mangaInfo.id, chapter.id, read));
 
-  const urlPrefix = useContext(UrlPrefixContext);
+    const urlPrefix = useContext(UrlPrefixContext);
 
-  const dimIfRead: Function = (read: boolean): ?String =>
-    read ? classes.read : null;
-  const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
-  const chapterName: string =
-    mangaInfo.flags.displayMode === "NAME"
-      ? chapter.name
-      : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
+    const dimIfRead: Function = (read: boolean): ?String =>
+      read ? classes.read : null;
+    const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
+    const chapterName: string =
+      mangaInfo.flags.displayMode === "NAME"
+        ? chapter.name
+        : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 
-  return (
-    <ListItem
-      {...otherProps}
-      button
-      divider
-      component={Link}
-      to={Client.page(urlPrefix, mangaInfo.id, chapter.id, goToPage)}
-      className={classes.listItem}
-    >
-      <div className={classes.chapterInfo}>
-        <Typography variant="subtitle1" className={dimIfRead(chapter.read)}>
-          {chapterName}
-        </Typography>
-
-        <div className={classes.extraInfo}>
-          <Typography
-            variant="caption"
-            className={classNames(classes.date, dimIfRead(chapter.read))}
-          >
-            {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
+    return (
+      <ListItem
+        {...otherProps}
+        button
+        divider
+        component={Link}
+        to={Client.page(urlPrefix, mangaInfo.id, chapter.id, goToPage)}
+        className={classes.listItem}
+      >
+        <div className={classes.chapterInfo}>
+          <Typography variant="subtitle1" className={dimIfRead(chapter.read)}>
+            {chapterName}
           </Typography>
 
-          <Typography variant="caption" className={classes.lastReadPage}>
-            {chapterText(chapter.read, chapter.last_page_read)}
-          </Typography>
+          <div className={classes.extraInfo}>
+            <Typography
+              variant="caption"
+              className={classNames(classes.date, dimIfRead(chapter.read))}
+            >
+              {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
+            </Typography>
+
+            <Typography variant="caption" className={classes.lastReadPage}>
+              {chapterText(chapter.read, chapter.last_page_read)}
+            </Typography>
+          </div>
         </div>
-      </div>
 
-      <ChapterMenu chapter={chapter} toggleRead={handleToggleRead} />
-    </ListItem>
-  );
-});
+        <ChapterMenu chapter={chapter} toggleRead={handleToggleRead} />
+      </ListItem>
+    );
+  }
+);
 
 // Helper Functions
 /* eslint-disable camelcase */

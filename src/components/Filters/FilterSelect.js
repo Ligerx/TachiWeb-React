@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 type Props = { index: number };
 
-const FilterSelect = memo(({ index }: Props) => {
+const FilterSelect = memo<Props>(({ index }: Props) => {
   const dispatch = useDispatch();
 
   const filter = useSelector(state => selectFilterAtIndex(state, index));

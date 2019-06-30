@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 
 type Props = { index: number };
 
-const FilterTextField = memo(({ index }: Props) => {
+const FilterTextField = memo<Props>(({ index }: Props) => {
   const dispatch = useDispatch();
 
   const filter = useSelector(state => selectFilterAtIndex(state, index));

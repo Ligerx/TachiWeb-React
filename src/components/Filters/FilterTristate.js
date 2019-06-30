@@ -7,7 +7,7 @@ import { updateFilterTristate } from "redux-ducks/filters/actionCreators";
 
 type Props = { index: number };
 
-const FilterTristate = memo(({ index }: Props) => {
+const FilterTristate = memo<Props>(({ index }: Props) => {
   const dispatch = useDispatch();
 
   const filter = useSelector(state => selectFilterAtIndex(state, index));
