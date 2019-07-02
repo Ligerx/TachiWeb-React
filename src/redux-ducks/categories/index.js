@@ -82,15 +82,20 @@ export default function categoriesReducer(
 
 export const selectIsCategoriesLoading = createLoadingSelector([FETCH_REQUEST]);
 
-export const selectCategories = (
-  state: GlobalState
-): $ReadOnlyArray<CategoryType> => state.categories.categories;
-
 export const selectCategoriesIsLoaded = (state: GlobalState): boolean =>
   state.categories.isLoaded;
 
 export const selectCurrentCategoryId = (state: GlobalState): ?number =>
   state.categories.currentCategoryId;
+
+// Currently sorting the categories via this selector and not in the reducer.
+// This is less efficient but it's easier to maintain because this should be the
+// single access point to state.categories.categories.
+export const selectCategories = createSelector(
+  [state => state.categories.categories],
+  (categories): $ReadOnlyArray<CategoryType> =>
+    categories.sort((a, b) => a.order - b.order)
+);
 
 export const selectMangaIdsForDefaultCategory = createSelector(
   [selectCategories, selectLibraryMangaIds],
