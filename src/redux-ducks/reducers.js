@@ -1,5 +1,9 @@
 // @flow
-import { combineReducers } from "redux";
+import {
+  combineReducers,
+  type Store as ReduxStore,
+  type Dispatch as ReduxDispatch
+} from "redux";
 import loading from "./loading";
 import error from "./error";
 import library from "./library";
@@ -43,7 +47,9 @@ type Reducers = typeof reducers;
 type ExtractReturnType = <V>((any, any) => V) => V;
 export type GlobalState = $ObjMap<Reducers, ExtractReturnType>;
 
+type ReduxInitAction = { type: "@@INIT" };
 export type Action =
+  | ReduxInitAction
   | LibraryAction
   | ChaptersAction
   | PageCountsAction
@@ -78,3 +84,5 @@ export default combineReducers<Reducers, Action>(reducers);
 // https://flow.org/en/docs/react/redux/
 // https://blog.callstack.io/type-checking-react-and-redux-thunk-with-flow-part-2-206ce5f6e705
 // https://engineering.wework.com/adventures-in-static-typing-react-redux-flow-oh-my-284c5f74adac#cbfa
+// https://github.com/reduxjs/redux/tree/master/examples/todos-flow
+// https://github.com/hmeerlo/redux-thunk-flow
