@@ -99,7 +99,14 @@ export function createCategory(): ThunkAction {
 
 export function deleteCategory(categoryId: number): ThunkAction {
   return async (dispatch, getState) => {
-    // Change the category being viewed if it's about to be deleted
+    dispatch({ type: DELETE_REQUEST, categoryId });
+
+    // Change the category being viewed if it was just deleted.
+    //
+    // NOTE: Material-UI may throw an error because we're deleting the currentCategoryId's
+    //       category before we have set a new one.
+    //       But that's okay since it makes finding the new currentCategoryId simpler because
+    //       getState() will no longer have the deleted category stored.
     const state = getState();
     if (categoryId === selectCurrentCategoryId(state)) {
       const categories = selectCategories(state);
@@ -107,14 +114,9 @@ export function deleteCategory(categoryId: number): ThunkAction {
       if (categories.length === 1 || selectDefaultCategoryHasManga(state)) {
         dispatch(changeCurrentCategoryId(null));
       } else {
-        // FIXME: It's possible that you're changing the current category id to the same one you're
-        //        deleting because deletion is currently happening after this change of id.
         dispatch(changeCurrentCategoryId(categories[0].id));
       }
     }
-    // ---------------------------
-
-    dispatch({ type: DELETE_REQUEST, categoryId });
 
     try {
       await Server.api().deleteCategory(categoryId);
