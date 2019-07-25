@@ -15,10 +15,12 @@ import {
 import { selectIsChaptersLoading } from "redux-ducks/chapters";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import LibraryHeader from "components/Library/LibraryHeader";
 import LibraryMangaCard from "components/Library/LibraryMangaCard";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import CategoriesTabs from "components/Library/CategoriesTabs";
+import AppBar from "@material-ui/core/AppBar";
+import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
+import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import { selectIsCategoriesLoading } from "redux-ducks/categories";
 import { fetchCategories } from "redux-ducks/categories/actionCreators";
@@ -53,14 +55,20 @@ const Library = () => {
     <>
       <Helmet title="Library - TachiWeb" />
 
-      <LibraryHeader
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        selectedManga={selectedMangaIds}
-        setSelectedManga={setSelectedMangaIds}
-      >
+      <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+        {selectedMangaIds.length > 0 ? (
+          <LibraryHasSelectionsToolbar
+            selectedManga={selectedMangaIds}
+            setSelectedManga={setSelectedMangaIds}
+          />
+        ) : (
+          <LibraryDefaultToolbar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
+        )}
         <CategoriesTabs />
-      </LibraryHeader>
+      </AppBar>
 
       <Container>
         <Grid container spacing={2}>
