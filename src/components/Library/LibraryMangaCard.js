@@ -4,6 +4,8 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/styles";
 import Badge from "@material-ui/core/Badge";
 import ButtonBase from "@material-ui/core/ButtonBase";
+import Checkbox from "@material-ui/core/Checkbox";
+import Icon from "@material-ui/core/Icon";
 import MangaCard from "components/MangaCard";
 import Link from "components/Link";
 import { Server, Client } from "api";
@@ -18,15 +20,23 @@ const useStyles = makeStyles({
   badge: {
     top: 8,
     right: 8 // Fixes badge overflowing on the x-axis
+  },
+  checkbox: {
+    position: "absolute",
+    zIndex: 1,
+    top: 0,
+    left: 0,
+    padding: 0
   }
 });
 
 type Props = {
   manga: Manga,
-  unread: number
+  unread: number,
+  isSelected: boolean
 };
 
-const LibraryMangaCard = ({ manga, unread }: Props) => {
+const LibraryMangaCard = ({ manga, unread, isSelected }: Props) => {
   const classes = useStyles();
 
   return (
@@ -38,6 +48,25 @@ const LibraryMangaCard = ({ manga, unread }: Props) => {
         className={classes.fullWidth}
         classes={{ badge: classes.badge }}
       >
+        {/* FIXME: I wrapped the icons in a div so that there's enough contrast between the checkbox
+           and manga card. I spent an hour or two trying to find a non-hacky way with no success. */}
+        <Checkbox
+          className={classes.checkbox}
+          checked={isSelected}
+          onChange={() => {}}
+          color="primary"
+          icon={
+            <div style={{ backgroundColor: "white", height: 24, width: 24 }}>
+              <Icon>check_box_outline_blank</Icon>
+            </div>
+          }
+          checkedIcon={
+            <div style={{ backgroundColor: "white", height: 24, width: 24 }}>
+              <Icon>check_box</Icon>
+            </div>
+          }
+        />
+
         <ButtonBase
           className={classes.fullWidth}
           component={Link}
