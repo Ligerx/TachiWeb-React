@@ -30,7 +30,7 @@ import { fetchCategories } from "redux-ducks/categories/actionCreators";
 
 const Library = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedManga, setSelectedManga] = useState<number[]>([]);
+  const [selectedMangaIds, setSelectedMangaIds] = useState<number[]>([]);
 
   const mangaLibrary = useSelector(state =>
     selectFilteredSortedLibrary(state, searchQuery)
@@ -56,8 +56,8 @@ const Library = () => {
       <LibraryHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        selectedManga={selectedManga}
-        setSelectedManga={setSelectedManga}
+        selectedManga={selectedMangaIds}
+        setSelectedManga={setSelectedMangaIds}
       >
         <CategoriesTabs />
       </LibraryHeader>

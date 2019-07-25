@@ -110,6 +110,14 @@ export function toggleFavorite(
   };
 }
 
+// TODO:
+// [July 24, 2019] There's no batch method for setting a manga's favorite status. Currently just
+// looping over toggleFavorite(), but should probably refactor these 2 methods at some point.
+export function unfavoriteMultiple(mangaIds: Array<number>) {
+  // not sure if I need to chain promises instead of doing them all at once
+  mangaIds.forEach(mangaId => toggleFavorite(mangaId, true));
+}
+
 export function setFlag(
   mangaId: number,
   flag: $Keys<MangaFlags>,

@@ -17,6 +17,7 @@ import {
   setLibraryFlag,
   updateLibrary
 } from "redux-ducks/library/actionCreators";
+import { unfavoriteMultiple } from "redux-ducks/mangaInfos/actionCreators";
 
 type Props = {
   searchQuery: string,
@@ -91,7 +92,7 @@ const HasSelectionsToolbar = ({
   };
 
   const handleDeleteClick = () => {
-    // TODO
+    dispatch(unfavoriteMultiple(selectedManga));
     setSelectedManga([]);
   };
 
