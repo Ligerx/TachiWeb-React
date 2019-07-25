@@ -1,5 +1,5 @@
 // @flow
-import * as React from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -8,28 +8,28 @@ import Icon from "@material-ui/core/Icon";
 import { unfavoriteMultiple } from "redux-ducks/mangaInfos/actionCreators";
 
 type Props = {
-  selectedManga: Array<number>,
-  setSelectedManga: Function
+  selectedMangaIds: Array<number>,
+  setSelectedMangaIds: Function
 };
 
 const LibraryHasSelectionsToolbar = ({
-  selectedManga,
-  setSelectedManga
+  selectedMangaIds,
+  setSelectedMangaIds
 }: Props) => {
   const dispatch = useDispatch();
 
   const handleBackClick = () => {
-    setSelectedManga([]);
+    setSelectedMangaIds([]);
   };
 
   const handleEditCategoriesClick = () => {
     // TODO
-    setSelectedManga([]);
+    setSelectedMangaIds([]);
   };
 
   const handleDeleteClick = () => {
-    dispatch(unfavoriteMultiple(selectedManga));
-    setSelectedManga([]);
+    dispatch(unfavoriteMultiple(selectedMangaIds));
+    setSelectedMangaIds([]);
   };
 
   return (
@@ -43,7 +43,7 @@ const LibraryHasSelectionsToolbar = ({
       </Typography>
 
       {/* TODO: implement changing manga cover image */}
-      {selectedManga.length === 1 && (
+      {selectedMangaIds.length === 1 && (
         <IconButton onClick={() => {}}>
           <Icon>edit</Icon>
         </IconButton>

@@ -1,5 +1,5 @@
 // @flow
-import * as React from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";

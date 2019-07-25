@@ -58,8 +58,8 @@ const Library = () => {
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
         {selectedMangaIds.length > 0 ? (
           <LibraryHasSelectionsToolbar
-            selectedManga={selectedMangaIds}
-            setSelectedManga={setSelectedMangaIds}
+            selectedMangaIds={selectedMangaIds}
+            setSelectedMangaIds={setSelectedMangaIds}
           />
         ) : (
           <LibraryDefaultToolbar
