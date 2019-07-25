@@ -59,7 +59,7 @@ const Library = () => {
         {selectedMangaIds.length > 0 ? (
           <LibraryHasSelectionsToolbar
             selectedMangaIds={selectedMangaIds}
-            setSelectedMangaIds={setSelectedMangaIds}
+            deselectMangaIds={() => setSelectedMangaIds([])}
           />
         ) : (
           <LibraryDefaultToolbar

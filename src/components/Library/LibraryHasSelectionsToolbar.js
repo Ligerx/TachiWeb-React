@@ -9,27 +9,27 @@ import { unfavoriteMultiple } from "redux-ducks/mangaInfos/actionCreators";
 
 type Props = {
   selectedMangaIds: Array<number>,
-  setSelectedMangaIds: Function
+  deselectMangaIds: Function
 };
 
 const LibraryHasSelectionsToolbar = ({
   selectedMangaIds,
-  setSelectedMangaIds
+  deselectMangaIds
 }: Props) => {
   const dispatch = useDispatch();
 
   const handleBackClick = () => {
-    setSelectedMangaIds([]);
+    deselectMangaIds();
   };
 
   const handleEditCategoriesClick = () => {
     // TODO
-    setSelectedMangaIds([]);
+    deselectMangaIds();
   };
 
   const handleDeleteClick = () => {
     dispatch(unfavoriteMultiple(selectedMangaIds));
-    setSelectedMangaIds([]);
+    deselectMangaIds();
   };
 
   return (
