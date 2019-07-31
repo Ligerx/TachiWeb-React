@@ -51,6 +51,15 @@ const Library = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
+  const handleSelectManga = (mangaId: number, isSelected: boolean) => {
+    setSelectedMangaIds(prevState => {
+      if (isSelected) {
+        return [...prevState, mangaId];
+      }
+      return prevState.filter(id => id !== mangaId);
+    });
+  };
+
   return (
     <>
       <Helmet title="Library - TachiWeb" />
@@ -77,6 +86,9 @@ const Library = () => {
               key={manga.id}
               manga={manga}
               unread={unread[manga.id] || 0}
+              isSelected={selectedMangaIds.includes(manga.id)}
+              showSelectedCheckbox={selectedMangaIds.length > 0}
+              onSelectedToggle={handleSelectManga}
             />
           ))}
         </Grid>

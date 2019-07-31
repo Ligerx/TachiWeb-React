@@ -39,7 +39,7 @@ const LibraryHasSelectionsToolbar = ({
       </IconButton>
 
       <Typography variant="h6" style={{ flex: 1 }}>
-        Selected: {null}
+        Selected: {selectedMangaIds.length}
       </Typography>
 
       {/* TODO: implement changing manga cover image */}
