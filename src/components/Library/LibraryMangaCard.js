@@ -14,52 +14,40 @@ type Props = {
   manga: Manga,
   unread: number,
   isSelected: boolean,
-  showSelectedCheckbox: boolean, // will always be shown on hover at least
+  showSelectedCheckbox: boolean, // show unselected checkbox if any other manga is selected
   onSelectedToggle: (number, boolean) => any
 };
 
 const useStyles = makeStyles({
   // While the grid item is full width, it's children aren't.
   // Need to apply width 100% multiple levels down to make things stretch correctly.
-
-  root: {
-    "&:hover $testParent": {
-      visibility: "visible"
-    }
-  },
   card: {
     width: "100%"
   },
   badgeRoot: {
     width: "100%"
   },
+
   badge: {
     top: 8,
-    right: 8 // Fixes badge overflowing on the x-axis
+    right: 8 // Mostly fixes badge overflowing on the x-axis
   },
-  checkbox: showSelectedCheckbox => ({
-    visibility: showSelectedCheckbox ? "visible" : "hidden",
 
-    position: "absolute",
-    zIndex: 1,
-    top: 0,
-    left: 0,
-    padding: 0
-  }),
-
-  testParent: {
+  root: {
+    "&:hover $checkboxWrapper": {
+      visibility: "visible"
+    }
+  },
+  checkboxWrapper: showSelectedCheckbox => ({
     backgroundColor: "white",
     position: "absolute",
     zIndex: 1,
     top: 0,
     left: 0,
 
-    visibility: "hidden"
-    // "&:hover": {
-    //   visibility: "visible"
-    // }
-  },
-  testChild: {
+    visibility: showSelectedCheckbox ? "visible" : "hidden"
+  }),
+  checkbox: {
     padding: 0
   }
 });
@@ -88,9 +76,9 @@ const LibraryMangaCard = ({
       >
         {/* FIXME: I wrapped the Checkbox in a div so that there's enough contrast between the checkbox
            and manga card. I spent an hour or two trying to find a non-hacky way with no success. */}
-        <div className={classes.testParent}>
+        <div className={classes.checkboxWrapper}>
           <Checkbox
-            className={classes.testChild}
+            className={classes.checkbox}
             checked={isSelected}
             onChange={handleSelectedToggle}
             color="primary"
