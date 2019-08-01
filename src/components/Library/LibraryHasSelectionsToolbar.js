@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import UnfavoriteMultipleMangaDialog from "components/Library/UnfavoriteMultipleMangaDialog";
+import MoveToCategoriesDialog from "components/Library/MoveToCategoriesDialog";
 import { unfavoriteMultiple } from "redux-ducks/mangaInfos/actionCreators";
 
 type Props = {
@@ -20,6 +21,10 @@ const LibraryHasSelectionsToolbar = ({
   const dispatch = useDispatch();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [
+    isMoveToCategoriesDialogOpen,
+    setMoveToCategoriesDialogOpen
+  ] = useState(false);
 
   const handleBackClick = () => {
     deselectMangaIds();
@@ -27,6 +32,10 @@ const LibraryHasSelectionsToolbar = ({
 
   const handleEditCategoriesClick = () => {
     // TODO
+    setMoveToCategoriesDialogOpen(true);
+  };
+
+  const handleMoveToCategories = () => {
     deselectMangaIds();
   };
 
@@ -65,6 +74,13 @@ const LibraryHasSelectionsToolbar = ({
           <Icon>delete</Icon>
         </IconButton>
       </Toolbar>
+
+      <MoveToCategoriesDialog
+        mangaIds={selectedMangaIds}
+        open={isMoveToCategoriesDialogOpen}
+        onClose={() => setMoveToCategoriesDialogOpen(false)}
+        onDelete={() => {}}
+      />
 
       <UnfavoriteMultipleMangaDialog
         open={isDeleteDialogOpen}
