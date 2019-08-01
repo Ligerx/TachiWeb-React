@@ -65,6 +65,14 @@ const LibraryMangaCard = ({
     onSelectedToggle(manga.id, event.target.checked);
   };
 
+  // When selecting manga, hijack the card's click to select instead of navigating
+  const handleClick = event => {
+    if (showSelectedCheckbox) {
+      event.preventDefault();
+      onSelectedToggle(manga.id, !isSelected);
+    }
+  };
+
   return (
     <Grid item xs={6} sm={3} className={classes.root}>
       <Badge
@@ -89,6 +97,7 @@ const LibraryMangaCard = ({
           className={classes.card}
           component={Link}
           to={Client.manga("/library", manga.id)}
+          onClick={handleClick}
         >
           <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
         </ButtonBase>
