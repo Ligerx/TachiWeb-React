@@ -38,15 +38,16 @@ const useStyles = makeStyles({
       visibility: "visible"
     }
   },
-  checkboxWrapper: showSelectedCheckbox => ({
+  checkboxWrapper: {
     backgroundColor: "white",
     position: "absolute",
     zIndex: 1,
     top: 0,
     left: 0,
 
-    visibility: showSelectedCheckbox ? "visible" : "hidden"
-  }),
+    visibility: ({ showSelectedCheckbox }) =>
+      showSelectedCheckbox ? "visible" : "hidden"
+  },
   checkbox: {
     padding: 0
   }
@@ -59,7 +60,7 @@ const LibraryMangaCard = ({
   showSelectedCheckbox,
   onSelectedToggle
 }: Props) => {
-  const classes = useStyles(showSelectedCheckbox);
+  const classes = useStyles({ showSelectedCheckbox });
 
   const handleSelectedToggle = event => {
     onSelectedToggle(manga.id, event.target.checked);
