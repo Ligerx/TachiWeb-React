@@ -1,10 +1,11 @@
 // @flow
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
+import UnfavoriteMultipleMangaDialog from "components/Library/UnfavoriteMultipleMangaDialog";
 import { unfavoriteMultiple } from "redux-ducks/mangaInfos/actionCreators";
 
 type Props = {
@@ -18,6 +19,8 @@ const LibraryHasSelectionsToolbar = ({
 }: Props) => {
   const dispatch = useDispatch();
 
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const handleBackClick = () => {
     deselectMangaIds();
   };
@@ -28,35 +31,47 @@ const LibraryHasSelectionsToolbar = ({
   };
 
   const handleDeleteClick = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleUnfavoriteManga = () => {
     dispatch(unfavoriteMultiple(selectedMangaIds));
     deselectMangaIds();
   };
 
   return (
-    <Toolbar>
-      <IconButton onClick={handleBackClick}>
-        <Icon>arrow_back</Icon>
-      </IconButton>
-
-      <Typography variant="h6" style={{ flex: 1 }}>
-        Selected: {selectedMangaIds.length}
-      </Typography>
-
-      {/* TODO: implement changing manga cover image */}
-      {selectedMangaIds.length === 1 && (
-        <IconButton onClick={() => {}}>
-          <Icon>edit</Icon>
+    <>
+      <Toolbar>
+        <IconButton onClick={handleBackClick}>
+          <Icon>arrow_back</Icon>
         </IconButton>
-      )}
 
-      <IconButton onClick={handleEditCategoriesClick}>
-        <Icon>label</Icon>
-      </IconButton>
+        <Typography variant="h6" style={{ flex: 1 }}>
+          Selected: {selectedMangaIds.length}
+        </Typography>
 
-      <IconButton onClick={handleDeleteClick}>
-        <Icon>delete</Icon>
-      </IconButton>
-    </Toolbar>
+        {/* TODO: implement changing manga cover image */}
+        {selectedMangaIds.length === 1 && (
+          <IconButton onClick={() => {}}>
+            <Icon>edit</Icon>
+          </IconButton>
+        )}
+
+        <IconButton onClick={handleEditCategoriesClick}>
+          <Icon>label</Icon>
+        </IconButton>
+
+        <IconButton onClick={handleDeleteClick}>
+          <Icon>delete</Icon>
+        </IconButton>
+      </Toolbar>
+
+      <UnfavoriteMultipleMangaDialog
+        open={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onDelete={handleUnfavoriteManga}
+      />
+    </>
   );
 };
 
