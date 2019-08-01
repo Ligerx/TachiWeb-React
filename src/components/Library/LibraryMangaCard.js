@@ -82,8 +82,12 @@ const LibraryMangaCard = ({
         className={classes.badgeRoot}
         classes={{ badge: classes.badge }}
       >
-        {/* FIXME: I wrapped the Checkbox in a div so that there's enough contrast between the checkbox
-           and manga card. I spent an hour or two trying to find a non-hacky way with no success. */}
+        {/* FIXME: Fit element size to checkbox icon size, give icon a fill background
+            color, remove white background div.
+            Material-UI checkboxes are vector lines with no background fill color. They also take up
+            a bunch of space instead of hugging the side of the checkbox icon.
+            Given how much time I put into figuring out the current hacky white background,
+            fixing this will probably be very tedious */}
         <div className={classes.checkboxWrapper}>
           <Checkbox
             className={classes.checkbox}
