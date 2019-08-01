@@ -218,7 +218,11 @@ export const selectLibraryMangaInfos = createSelector(
 export const selectLibraryMangaInfosForCurrentCategory = createSelector(
   [selectMangaInfos, selectCategoryMangaIds],
   (mangaInfos, categoryMangaIds): Array<Manga> => {
-    return categoryMangaIds.map(mangaId => mangaInfos[mangaId]);
+    // Categories don't delete unfavorited mangas, so there may be category mangaIds that don't exist in mangaInfos
+    const existingMangaIds = categoryMangaIds.filter(
+      mangaId => mangaInfos[mangaId] != null
+    );
+    return existingMangaIds.map(mangaId => mangaInfos[mangaId]);
   }
 );
 
