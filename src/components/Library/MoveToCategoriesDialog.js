@@ -19,12 +19,6 @@ type Props = {
   onClose: Function
 };
 
-type StateElement = {
-  id: number,
-  name: string,
-  selected: boolean
-};
-
 const useStyles = makeStyles({
   row: { display: "block" }
 });
@@ -35,8 +29,9 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
 
   const categories = useSelector(selectCategories);
 
-  const [selectedCategories, setSelectedCategories] = useState<
-    Array<StateElement>
+  // Array of booleans that tracks if a checkbox is selected. This is ordered 1:1 with categories.
+  const [selectedCategoriesList, setSelectedCategoriesList] = useState<
+    Array<boolean>
   >(() => {
     // Lazyily initializing state as a tiny optimization. This function was getting called
     // multiple times every time props changed even though it should only be called once.
@@ -44,7 +39,7 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
   });
 
   useEffect(() => {
-    setSelectedCategories(deriveState(categories, mangaIds));
+    setSelectedCategoriesList(deriveState(categories, mangaIds));
   }, [categories, mangaIds]);
 
   const handleMoveCategoryManga = () => {
@@ -56,12 +51,15 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Move to categories</DialogTitle>
       <DialogContent>
-        {selectedCategories.map(category => (
+        {categories.map((category, index) => (
           <FormControlLabel
             key={category.id}
             className={classes.row}
             control={
-              <Checkbox checked={category.selected} onChange={() => {}} />
+              <Checkbox
+                checked={selectedCategoriesList[index]}
+                onChange={() => {}}
+              />
             }
             label={category.name}
           />
@@ -82,7 +80,7 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
 function deriveState(
   categories: Array<CategoryType>,
   mangaIds: Array<number>
-): Array<StateElement> {
+): Array<boolean> {
   const state = categories.map(category => {
     let selected = false;
 
@@ -94,11 +92,7 @@ function deriveState(
       selected = true;
     }
 
-    return {
-      id: category.id,
-      name: category.name,
-      selected
-    };
+    return selected;
   });
   return state;
 }
