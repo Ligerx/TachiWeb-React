@@ -17,14 +17,15 @@ import { updateMultipleCategoryManga } from "redux-ducks/categories/actionCreato
 type Props = {
   mangaIds: Array<number>,
   open: boolean,
-  onClose: Function
+  onClose: Function,
+  onMove: Function
 };
 
 const useStyles = makeStyles({
   row: { display: "block" }
 });
 
-const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
+const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -56,6 +57,7 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
 
     dispatch(updateMultipleCategoryManga(categorySelections, mangaIds));
     onClose();
+    onMove();
   };
 
   return (

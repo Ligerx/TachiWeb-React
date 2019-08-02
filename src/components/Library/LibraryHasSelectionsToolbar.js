@@ -31,7 +31,6 @@ const LibraryHasSelectionsToolbar = ({
   };
 
   const handleEditCategoriesClick = () => {
-    // TODO
     setMoveToCategoriesDialogOpen(true);
   };
 
@@ -79,7 +78,7 @@ const LibraryHasSelectionsToolbar = ({
         mangaIds={selectedMangaIds}
         open={isMoveToCategoriesDialogOpen}
         onClose={() => setMoveToCategoriesDialogOpen(false)}
-        onDelete={() => {}}
+        onMove={handleMoveToCategories}
       />
 
       <UnfavoriteMultipleMangaDialog
