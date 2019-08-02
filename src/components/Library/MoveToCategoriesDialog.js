@@ -34,13 +34,13 @@ const MoveToCategoriesDialog = ({
 
   const categories = useSelector(selectCategories);
 
-  // FIXME: This seems to be causing a lot of lag.
-  // Need to do further investigation, but it seems like deriving the state is
-  // a somewhat expensive operation. Additionally, I need to figure out when this component gets
-  // mounted and rerendered/updated. I believe there's a bunch of unnecessary rerenders happening.
   const [selectedCategories, setSelectedCategories] = useState<
     Array<StateElement>
-  >(deriveState(categories, mangaIds));
+  >(() => {
+    // Lazyily initializing state as a tiny optimization. This function was getting called
+    // multiple times every time props changed even though it should only be called once.
+    return deriveState(categories, mangaIds);
+  });
 
   useEffect(() => {
     setSelectedCategories(deriveState(categories, mangaIds));
