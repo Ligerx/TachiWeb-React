@@ -83,7 +83,7 @@ export default function categoriesReducer(
 
         let updatedManga;
         updatedManga = category.manga.filter(
-          mangaId => mangaId !== mangaToRemove
+          mangaId => !mangaToRemove.includes(mangaId)
         );
         updatedManga = [...updatedManga, ...mangaToAdd];
 
