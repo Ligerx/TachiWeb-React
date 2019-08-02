@@ -42,6 +42,13 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
     setSelectedCategoriesList(deriveState(categories, mangaIds));
   }, [categories, mangaIds]);
 
+  const handleToggleCategory = (index: number) => {
+    const stateCopy = selectedCategoriesList.slice();
+    stateCopy[index] = !stateCopy[index];
+
+    setSelectedCategoriesList(stateCopy);
+  };
+
   const handleMoveCategoryManga = () => {
     // TODO: Update the state structure so that the data is more in parallel with the actionCreator.
     // dispatch(updateMultipleCategoryManga(selectedCategories,));
@@ -58,7 +65,7 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
             control={
               <Checkbox
                 checked={selectedCategoriesList[index]}
-                onChange={() => {}}
+                onChange={() => handleToggleCategory(index)}
               />
             }
             label={category.name}
