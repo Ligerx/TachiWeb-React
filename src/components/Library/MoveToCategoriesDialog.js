@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { CategoryType } from "types";
+import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -10,12 +11,12 @@ import DialogContent from "@material-ui/core/DialogContent";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import { selectCategories } from "redux-ducks/categories";
+import { updateMultipleCategoryManga } from "redux-ducks/categories/actionCreators";
 
 type Props = {
   mangaIds: Array<number>,
   open: boolean,
-  onClose: Function,
-  onDelete: Function
+  onClose: Function
 };
 
 type StateElement = {
@@ -24,13 +25,13 @@ type StateElement = {
   selected: boolean
 };
 
-const MoveToCategoriesDialog = ({
-  mangaIds,
-  open,
-  onClose,
-  onDelete
-}: Props) => {
+const useStyles = makeStyles({
+  row: { display: "block" }
+});
+
+const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const categories = useSelector(selectCategories);
 
@@ -46,7 +47,10 @@ const MoveToCategoriesDialog = ({
     setSelectedCategories(deriveState(categories, mangaIds));
   }, [categories, mangaIds]);
 
-  // TODO: Implement the actual move logic
+  const handleMoveCategoryManga = () => {
+    // TODO: Update the state structure so that the data is more in parallel with the actionCreator.
+    // dispatch(updateMultipleCategoryManga(selectedCategories,));
+  };
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -55,6 +59,7 @@ const MoveToCategoriesDialog = ({
         {selectedCategories.map(category => (
           <FormControlLabel
             key={category.id}
+            className={classes.row}
             control={
               <Checkbox checked={category.selected} onChange={() => {}} />
             }
@@ -66,7 +71,7 @@ const MoveToCategoriesDialog = ({
         <Button onClick={onClose} color="primary" autoFocus>
           Go Back
         </Button>
-        <Button onClick={onDelete} color="primary">
+        <Button onClick={handleMoveCategoryManga} color="primary">
           Move
         </Button>
       </DialogActions>
