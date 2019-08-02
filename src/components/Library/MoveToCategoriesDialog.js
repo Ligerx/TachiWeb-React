@@ -1,6 +1,7 @@
 // @flow
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import zipObject from "lodash/zipObject";
 import type { CategoryType } from "types";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
@@ -50,8 +51,11 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose }: Props) => {
   };
 
   const handleMoveCategoryManga = () => {
-    // TODO: Update the state structure so that the data is more in parallel with the actionCreator.
-    // dispatch(updateMultipleCategoryManga(selectedCategories,));
+    const categoryIds = categories.map(category => category.id);
+    const categorySelections = zipObject(categoryIds, selectedCategoriesList);
+
+    dispatch(updateMultipleCategoryManga(categorySelections, mangaIds));
+    onClose();
   };
 
   return (

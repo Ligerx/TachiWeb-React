@@ -184,19 +184,24 @@ function updateCategoryManga(
 }
 
 export function updateMultipleCategoryManga(
-  categorySelections: Array<{ categoryId: number, selected: boolean }>,
+  categorySelections: { [categoryId: number]: boolean },
   mangaIds: Array<number>
 ): ThunkAction {
   return (dispatch, getState) => {
     const categories = selectCategories(getState());
 
-    categorySelections.forEach(categorySelection => {
-      const category = categories[categorySelection.categoryId];
+    // Object.keys returns strings. Converting them back to numbers for consistency.
+    const categoryIds = Object.keys(categorySelections).map(string =>
+      parseInt(string, 10)
+    );
+
+    categoryIds.forEach(categoryId => {
+      const category = categories.find(cat => cat.id === categoryId);
 
       const [mangaToAdd, mangaToRemove] = getMangaToAddOrRemoveFromCategory(
         category,
         mangaIds,
-        categorySelection.selected
+        categorySelections[categoryId]
       );
 
       if (mangaToAdd.length > 0 || mangaToRemove.length > 0) {
