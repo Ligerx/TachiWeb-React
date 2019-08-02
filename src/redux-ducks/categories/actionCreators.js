@@ -22,6 +22,9 @@ import {
   UPDATE_CATEGORY_NAME_REQUEST,
   UPDATE_CATEGORY_NAME_SUCCESS,
   UPDATE_CATEGORY_NAME_FAILURE,
+  UPDATE_CATEGORY_MANGA_REQUEST,
+  UPDATE_CATEGORY_MANGA_SUCCESS,
+  UPDATE_CATEGORY_MANGA_FAILURE,
   CHANGE_CURRENT_CATEGORY_ID,
   type ChangeCurrentCategoryIdAction
 } from "./actions";
@@ -149,4 +152,77 @@ export function updateCategoryName(
       });
     }
   };
+}
+
+function updateCategoryManga(
+  categoryId: number,
+  mangaToAdd: Array<number>,
+  mangaToRemove: Array<number>
+): ThunkAction {
+  return async dispatch => {
+    dispatch({
+      type: UPDATE_CATEGORY_MANGA_REQUEST,
+      categoryId,
+      mangaToAdd,
+      mangaToRemove
+    });
+
+    try {
+      await Server.api().editCategoryManga(categoryId, {
+        add: mangaToAdd,
+        remove: mangaToRemove
+      });
+      dispatch({ type: UPDATE_CATEGORY_MANGA_SUCCESS });
+    } catch (error) {
+      dispatch({
+        type: UPDATE_CATEGORY_MANGA_FAILURE,
+        errorMessage: "Failed to add orremove manga from category.",
+        meta: { error }
+      });
+    }
+  };
+}
+
+export function updateMultipleCategoryManga(
+  categorySelections: Array<{ categoryId: number, selected: boolean }>,
+  mangaIds: Array<number>
+): ThunkAction {
+  return (dispatch, getState) => {
+    const categories = selectCategories(getState());
+
+    categorySelections.forEach(categorySelection => {
+      const category = categories[categorySelection.categoryId];
+
+      const [mangaToAdd, mangaToRemove] = getMangaToAddOrRemoveFromCategory(
+        category,
+        mangaIds,
+        categorySelection.selected
+      );
+
+      if (mangaToAdd.length > 0 || mangaToRemove.length > 0) {
+        dispatch(updateCategoryManga(category.id, mangaToAdd, mangaToRemove));
+      }
+    });
+  };
+}
+// Helper Function
+function getMangaToAddOrRemoveFromCategory(
+  category,
+  mangaIds,
+  isAdding
+): [Array<number>, Array<number>] {
+  const mangaToAdd = [];
+  const mangaToRemove = [];
+
+  mangaIds.forEach(mangaId => {
+    const isInCategory = category.manga.includes(mangaId);
+
+    if (isAdding && !isInCategory) {
+      mangaToAdd.push(mangaId);
+    } else if (!isAdding && isInCategory) {
+      mangaToRemove.push(mangaId);
+    }
+  });
+
+  return [mangaToAdd, mangaToRemove];
 }

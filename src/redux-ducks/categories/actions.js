@@ -125,6 +125,44 @@ type UpdateCategoryNameFailureAction = {
 };
 
 // ================================================================================
+// Edit the manga in a category
+// ================================================================================
+
+// Action Constants and Types
+export const UPDATE_CATEGORY_MANGA_REQUEST =
+  "categories/UPDATE_CATEGORY_MANGA_REQUEST";
+type UPDATE_CATEGORY_MANGA_REQUEST_TYPE =
+  "categories/UPDATE_CATEGORY_MANGA_REQUEST";
+
+export const UPDATE_CATEGORY_MANGA_SUCCESS =
+  "categories/UPDATE_CATEGORY_MANGA_SUCCESS";
+type UPDATE_CATEGORY_MANGA_SUCCESS_TYPE =
+  "categories/UPDATE_CATEGORY_MANGA_SUCCESS";
+
+export const UPDATE_CATEGORY_MANGA_FAILURE =
+  "categories/UPDATE_CATEGORY_MANGA_FAILURE";
+type UPDATE_CATEGORY_MANGA_FAILURE_TYPE =
+  "categories/UPDATE_CATEGORY_MANGA_FAILURE";
+
+// Action Object Types
+type UpdateCategoryMangaRequestAction = {
+  type: UPDATE_CATEGORY_MANGA_REQUEST_TYPE,
+  categoryId: number,
+  mangaToAdd: Array<number>,
+  mangaToRemove: Array<number>
+};
+
+type UpdateCategoryMangaSuccessAction = {
+  type: UPDATE_CATEGORY_MANGA_SUCCESS_TYPE
+};
+
+type UpdateCategoryMangaFailureAction = {
+  type: UPDATE_CATEGORY_MANGA_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+// ================================================================================
 // etc
 // ================================================================================
 export const CHANGE_CURRENT_CATEGORY_ID =
@@ -153,4 +191,7 @@ export type CategoriesAction =
   | UpdateCategoryNameRequestAction
   | UpdateCategoryNameSuccessAction
   | UpdateCategoryNameFailureAction
+  | UpdateCategoryMangaRequestAction
+  | UpdateCategoryMangaSuccessAction
+  | UpdateCategoryMangaFailureAction
   | ChangeCurrentCategoryIdAction;

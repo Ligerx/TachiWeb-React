@@ -10,6 +10,7 @@ import {
   CREATE_SUCCESS,
   DELETE_REQUEST,
   UPDATE_CATEGORY_NAME_REQUEST,
+  UPDATE_CATEGORY_MANGA_REQUEST,
   CHANGE_CURRENT_CATEGORY_ID
 } from "./actions";
 
@@ -68,6 +69,33 @@ export default function categoriesReducer(
           ...state.categories.slice(0, categoryIndex),
           ...state.categories.slice(categoryIndex + 1)
         ]
+      };
+    }
+
+    case UPDATE_CATEGORY_MANGA_REQUEST: {
+      const { categoryId, mangaToAdd, mangaToRemove } = action;
+      const categoryIndex = state.categories.findIndex(
+        category => category.id === categoryId
+      );
+
+      const updatedCategories = state.categories.map((category, index) => {
+        if (index !== categoryIndex) return category;
+
+        let updatedManga;
+        updatedManga = category.manga.filter(
+          mangaId => mangaId !== mangaToRemove
+        );
+        updatedManga = [...updatedManga, ...mangaToAdd];
+
+        return {
+          ...category,
+          manga: updatedManga
+        };
+      });
+
+      return {
+        ...state,
+        categories: updatedCategories
       };
     }
 
