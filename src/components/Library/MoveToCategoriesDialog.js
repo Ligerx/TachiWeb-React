@@ -44,7 +44,7 @@ const MoveToCategoriesDialog = ({
 
   useEffect(() => {
     setSelectedCategories(deriveState(categories, mangaIds));
-  });
+  }, [categories, mangaIds]);
 
   // TODO: Implement the actual move logic
 
