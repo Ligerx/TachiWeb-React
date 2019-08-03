@@ -103,7 +103,7 @@ export const selectCatalogueHasNextPage = (state: GlobalState): boolean =>
 export const selectCatalogueSearchQuery = (state: GlobalState): string =>
   state.catalogue.searchQuery;
 
-export const selectCatalogueMangaInfos = createSelector(
+export const selectCatalogueMangaInfos: GlobalState => $ReadOnlyArray<Manga> = createSelector(
   [selectMangaInfos, selectCatalogueMangaIds],
   (mangaInfos, mangaIds): Array<Manga> => {
     return mangaIds.map(mangaId => mangaInfos[mangaId]);
