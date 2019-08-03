@@ -6,6 +6,8 @@ import type { CategoryType } from "types";
 // ================================================================================
 
 // Action Constants and Types
+export const FETCH_CATEGORIES = "categories/FETCH";
+
 export const FETCH_REQUEST = "categories/FETCH_REQUEST";
 type FETCH_REQUEST_TYPE = "categories/FETCH_REQUEST";
 

@@ -5,7 +5,7 @@ import type { CategoryType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { selectLibraryMangaIds } from "redux-ducks/library";
 import {
-  FETCH_REQUEST,
+  FETCH_CATEGORIES,
   FETCH_SUCCESS,
   CREATE_SUCCESS,
   DELETE_REQUEST,
@@ -108,7 +108,9 @@ export default function categoriesReducer(
 // Selectors
 // ================================================================================
 
-export const selectIsCategoriesLoading = createLoadingSelector([FETCH_REQUEST]);
+export const selectIsCategoriesLoading = createLoadingSelector([
+  FETCH_CATEGORIES
+]);
 
 export const selectCategoriesIsLoaded = (state: GlobalState): boolean =>
   state.categories.isLoaded;

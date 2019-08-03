@@ -22,7 +22,10 @@ import AppBar from "@material-ui/core/AppBar";
 import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
-import { selectIsCategoriesLoading } from "redux-ducks/categories";
+import {
+  selectIsCategoriesLoading,
+  selectCategoriesIsLoaded
+} from "redux-ducks/categories";
 import { fetchCategories } from "redux-ducks/categories/actionCreators";
 
 // TODO: no feedback of success/errors after clicking the library update button
@@ -41,6 +44,7 @@ const Library = () => {
   const libraryIsLoading = useSelector(selectIsLibraryLoading);
   const chaptersAreUpdating = useSelector(selectIsChaptersLoading);
   const categoriesAreLoading = useSelector(selectIsCategoriesLoading);
+  const categoriesIsLoaded = useSelector(selectCategoriesIsLoaded);
 
   const dispatch = useDispatch();
 
@@ -79,20 +83,23 @@ const Library = () => {
         <CategoriesTabs />
       </AppBar>
 
-      <Container>
-        <Grid container spacing={2}>
-          {mangaLibrary.map(manga => (
-            <LibraryMangaCard
-              key={manga.id}
-              manga={manga}
-              unread={unread[manga.id] || 0}
-              isSelected={selectedMangaIds.includes(manga.id)}
-              showSelectedCheckbox={selectedMangaIds.length > 0}
-              onSelectedToggle={handleSelectManga}
-            />
-          ))}
-        </Grid>
-      </Container>
+      {/* Prevent library manga from flashing on screen before organizing them into categories */}
+      {categoriesIsLoaded && (
+        <Container>
+          <Grid container spacing={2}>
+            {mangaLibrary.map(manga => (
+              <LibraryMangaCard
+                key={manga.id}
+                manga={manga}
+                unread={unread[manga.id] || 0}
+                isSelected={selectedMangaIds.includes(manga.id)}
+                showSelectedCheckbox={selectedMangaIds.length > 0}
+                onSelectedToggle={handleSelectManga}
+              />
+            ))}
+          </Grid>
+        </Container>
+      )}
 
       {(libraryIsLoading || chaptersAreUpdating || categoriesAreLoading) && (
         <FullScreenLoading />
