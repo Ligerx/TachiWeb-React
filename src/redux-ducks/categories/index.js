@@ -121,18 +121,15 @@ export const selectCurrentCategoryId = (state: GlobalState): ?number =>
 // Currently sorting the categories via this selector and not in the reducer.
 // This is less efficient but it's easier to maintain because this should be the
 // single access point to state.categories.categories.
-export const selectCategories = createSelector(
+export const selectCategories: GlobalState => $ReadOnlyArray<CategoryType> = createSelector(
   [state => state.categories.categories],
   (categories): $ReadOnlyArray<CategoryType> =>
-    categories.sort((a, b) => a.order - b.order)
+    categories.slice().sort((a, b) => a.order - b.order)
 );
 
-export const selectMangaIdsForDefaultCategory = createSelector(
+export const selectMangaIdsForDefaultCategory: GlobalState => $ReadOnlyArray<number> = createSelector(
   [selectCategories, selectLibraryMangaIds],
-  (
-    categories: $ReadOnlyArray<CategoryType>,
-    libraryMangaIds: $ReadOnlyArray<number>
-  ) => {
+  (categories, libraryMangaIds): $ReadOnlyArray<number> => {
     let mangaNotInACategory = [...libraryMangaIds];
 
     categories.forEach(category => {
@@ -145,15 +142,19 @@ export const selectMangaIdsForDefaultCategory = createSelector(
   }
 );
 
-export const selectDefaultCategoryHasManga = createSelector(
+export const selectDefaultCategoryHasManga: GlobalState => boolean = createSelector(
   [selectMangaIdsForDefaultCategory],
-  mangaIds => mangaIds.length > 0
+  (mangaIds): boolean => mangaIds.length > 0
 );
 
 const noMangaIds = [];
-export const selectCategoryMangaIds = createSelector(
+export const selectCategoryMangaIds: GlobalState => $ReadOnlyArray<number> = createSelector(
   [selectCategories, selectCurrentCategoryId, selectMangaIdsForDefaultCategory],
-  (categories, currentCategoryId, mangaIdsForDefaultCategory) => {
+  (
+    categories,
+    currentCategoryId,
+    mangaIdsForDefaultCategory
+  ): $ReadOnlyArray<number> => {
     if (currentCategoryId === null) {
       // viewing the default category
       return mangaIdsForDefaultCategory;
