@@ -66,7 +66,7 @@ export function fetchCategories(): ThunkAction {
 
       dispatch({ type: FETCH_SUCCESS, categories });
 
-      // SIDE EFFECT
+      // SIDE EFFECT - after state is updated from _SUCCESS
       if (!selectDefaultCategoryHasManga(getState())) {
         dispatch(changeCurrentCategoryId(categories[0].id));
       }
@@ -159,13 +159,19 @@ function updateCategoryManga(
   mangaToAdd: Array<number>,
   mangaToRemove: Array<number>
 ): ThunkAction {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     dispatch({
       type: UPDATE_CATEGORY_MANGA_REQUEST,
       categoryId,
       mangaToAdd,
       mangaToRemove
     });
+    // SIDE EFFECT - after state is optimistically updated from _REQUEST
+    if (!selectDefaultCategoryHasManga(getState())) {
+      const categories = selectCategories(getState());
+      dispatch(changeCurrentCategoryId(categories[0].id));
+    }
+    // -----------
 
     try {
       await Server.api().editCategoryManga(categoryId, {
