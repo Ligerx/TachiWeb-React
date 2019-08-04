@@ -208,16 +208,16 @@ export const selectUnread = (
 export const selectLibraryFlags = (state: GlobalState): LibraryFlagsType =>
   state.library.flags;
 
-export const selectLibraryMangaInfos = createSelector(
+export const selectLibraryMangaInfos: GlobalState => $ReadOnlyArray<Manga> = createSelector(
   [selectMangaInfos, selectLibraryMangaIds],
-  (mangaInfos, mangaIds): Array<Manga> => {
+  (mangaInfos, mangaIds): $ReadOnlyArray<Manga> => {
     return mangaIds.map(mangaId => mangaInfos[mangaId]);
   }
 );
 
-export const selectLibraryMangaInfosForCurrentCategory = createSelector(
+export const selectLibraryMangaInfosForCurrentCategory: GlobalState => $ReadOnlyArray<Manga> = createSelector(
   [selectMangaInfos, selectCategoryMangaIds, selectLibraryMangaIds],
-  (mangaInfos, categoryMangaIds, libraryMangaIds): Array<Manga> => {
+  (mangaInfos, categoryMangaIds, libraryMangaIds): $ReadOnlyArray<Manga> => {
     // Categories don't delete unfavorited mangas, so there may be category mangaIds that don't exist
     // in library. So compare category and library mangaIds before pulling from mangaInfos.
     const categoryMangaIdsInLibrary = categoryMangaIds.filter(categoryMangaId =>
@@ -227,8 +227,10 @@ export const selectLibraryMangaInfosForCurrentCategory = createSelector(
   }
 );
 
-// selectFilteredSortedLibrary(state, searchQuery: string)
-export const selectFilteredSortedLibrary = createCachedSelector(
+export const selectFilteredSortedLibrary: (
+  state: GlobalState,
+  searchQuery: string
+) => $ReadOnlyArray<Manga> = createCachedSelector(
   [
     selectLibraryMangaInfosForCurrentCategory,
     selectLibraryFlags,
