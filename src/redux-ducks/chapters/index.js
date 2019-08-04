@@ -1,7 +1,6 @@
 // @flow
 import type { GlobalState, Action } from "redux-ducks/reducers";
 import type { ChapterType } from "types";
-import type { Manga } from "@tachiweb/api-client";
 import createCachedSelector from "re-reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
 import { selectMangaInfo } from "redux-ducks/mangaInfos";
@@ -80,29 +79,36 @@ export const selectChaptersForManga = (
   mangaId: number
 ): Array<ChapterType> => state.chapters[mangaId] || noChapters;
 
-// Example call - selectChapter(state, mangaId, chapterId)
-// Using re-reselector because of the way chapters are stored as arrays inside a map
+// Using re-reselect because of the way chapters are stored as arrays inside a map.
 // You can't find the chapter directly without calling chapters.find()
-export const selectChapter = createCachedSelector(
+export const selectChapter: (
+  state: GlobalState,
+  mangaId: number,
+  chapterId: number
+) => ?ChapterType = createCachedSelector(
   [selectChaptersForManga, (_, __, chapterId: number) => chapterId],
   (chapters, chapterId): ?ChapterType =>
     chapters.find(chapter => chapter.id === chapterId)
   // Cache Key
 )((state, mangaId, chapterId) => `${mangaId}-${chapterId}`);
 
-// selectFilteredSortedChapters(state, mangaId)
-export const selectFilteredSortedChapters = createCachedSelector(
+export const selectFilteredSortedChapters: (
+  state: GlobalState,
+  mangaId: number
+) => $ReadOnlyArray<ChapterType> = createCachedSelector(
   [selectMangaInfo, selectChaptersForManga],
-  (mangaInfo: ?Manga, chapters: Array<ChapterType>) => {
+  (mangaInfo, chapters): $ReadOnlyArray<ChapterType> => {
     if (!mangaInfo) return noChapters;
     return filterSortChapters(chapters, mangaInfo.flags);
   }
 )((_, mangaId) => mangaId);
 
-// selectFirstUnreadChapter(state, mangaId)
-export const selectFirstUnreadChapter = createCachedSelector(
+export const selectFirstUnreadChapter: (
+  state: GlobalState,
+  mangaId: number
+) => ?ChapterType = createCachedSelector(
   [selectChaptersForManga],
-  chapters => {
+  (chapters): ?ChapterType => {
     // Currently just relying on the default sort order
     let firstUnreadChapter = null;
 
@@ -120,8 +126,11 @@ export const selectFirstUnreadChapter = createCachedSelector(
   // Cache Key
 )((_, mangaId) => mangaId);
 
-// selectNextChapterId(state, mangaId, thisChapterId)
-export const selectNextChapterId = createCachedSelector(
+export const selectNextChapterId: (
+  state: GlobalState,
+  mangaId: Number,
+  thisChapterId: number
+) => ?number = createCachedSelector(
   [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],
   (chapters, thisChapterId): ?number => {
     const thisChapterIndex = chapters.findIndex(
@@ -136,8 +145,11 @@ export const selectNextChapterId = createCachedSelector(
   // Cache Key
 )((state, mangaId, thisChapterId) => `${mangaId}-${thisChapterId}`);
 
-// selectPrevChapterId(state, mangaId, thisChapterId)
-export const selectPrevChapterId = createCachedSelector(
+export const selectPrevChapterId: (
+  state: GlobalState,
+  mangaId: number,
+  thisChapterId: number
+) => ?number = createCachedSelector(
   [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],
   (chapters, thisChapterId): ?number => {
     const thisChapterIndex = chapters.findIndex(
