@@ -97,15 +97,17 @@ export const selectFilterAtIndex = (
   index: number
 ): FilterAnyType => state.filters.currentFilters[index];
 
-export const selectFiltersLength = createSelector(
+export const selectFiltersLength: GlobalState => number = createSelector(
   // Optimization
   // The length of filters is constant, so we can look outside of currentFilters
   [selectInitialFilters],
   (filters): number => filters.length
 );
 
-// selectFilterTypeAtIndex(state, index)
-export const selectFilterTypeAtIndex = createCachedSelector(
+export const selectFilterTypeAtIndex: (
+  state: GlobalState,
+  index: number
+) => string = createCachedSelector(
   // Optimization
   // The type and position of a filter is constant, so we can look outside of currentFilters
   [selectInitialFilters, (_, index) => index],
