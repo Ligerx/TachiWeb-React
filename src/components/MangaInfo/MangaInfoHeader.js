@@ -52,7 +52,7 @@ const MangaInfoHeader = ({
     <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
       <Toolbar>
         <BackButton onBackClick={onBackClick} />
-        <Typography variant="h6" style={{ flex: 1 }}>
+        <Typography variant="h6" noWrap style={{ flex: 1 }}>
           {mangaInfo.title}
         </Typography>
 
