@@ -7,6 +7,7 @@ import compact from "lodash/compact";
 import type { Manga } from "@tachiweb/api-client";
 import type { ChapterType } from "types";
 import SinglePageReader from "components/Reader/SinglePageReader";
+import SinglePageReader2 from "components/Reader/SinglePageReader2";
 import WebtoonReader from "components/Reader/WebtoonReader";
 import ReadingStatusUpdater from "components/Reader/ReadingStatusUpdater";
 import ImagePreloader from "components/Reader/ImagePreloader";
