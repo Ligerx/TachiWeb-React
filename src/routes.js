@@ -29,8 +29,9 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
   return (
     <UrlPrefixContext.Provider value={match.path}>
       <Switch>
+        {/* TODO: Update this route so it doesn't need page anymore */}
         <Route
-          path={`${match.path}/:mangaId/:chapterId/:page`}
+          path={`${match.path}/:mangaId/:chapterId/:page?`}
           component={Reader}
         />
 

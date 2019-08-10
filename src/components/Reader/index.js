@@ -155,22 +155,23 @@ const Reader = ({ match: { params } }: Props) => {
           prevChapterUrl={prevChapterUrl()}
         />
       ) : (
-        <SinglePageReader
-          title={mangaInfo.title}
-          chapterNum={chapter.chapter_number}
-          pageCount={pageCount}
-          page={page}
-          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-          prevChapterUrl={prevChapterUrl()}
-          nextChapterUrl={nextChapterUrl()}
-          urlPrefix={urlPrefix}
-          mangaId={mangaInfo.id}
-          chapterId={chapterId}
-          imageSource={Server.image(mangaInfo.id, chapterId, page)}
-          alt={`${chapter.name} - Page ${page + 1}`}
-          nextPageUrl={nextPageUrl()}
-          prevPageUrl={prevPageUrl()}
-        />
+        <SinglePageReader2 />
+        // <SinglePageReader
+        //   title={mangaInfo.title}
+        //   chapterNum={chapter.chapter_number}
+        //   pageCount={pageCount}
+        //   page={page}
+        //   backUrl={Client.manga(urlPrefix, mangaInfo.id)}
+        //   prevChapterUrl={prevChapterUrl()}
+        //   nextChapterUrl={nextChapterUrl()}
+        //   urlPrefix={urlPrefix}
+        //   mangaId={mangaInfo.id}
+        //   chapterId={chapterId}
+        //   imageSource={Server.image(mangaInfo.id, chapterId, page)}
+        //   alt={`${chapter.name} - Page ${page + 1}`}
+        //   nextPageUrl={nextPageUrl()}
+        //   prevPageUrl={prevPageUrl()}
+        // />
       )}
 
       <ReadingStatusUpdater />

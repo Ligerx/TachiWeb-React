@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Helmet } from "react-helmet";
@@ -36,6 +36,9 @@ import { selectMangaInfo } from "redux-ducks/mangaInfos";
 import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
 
 // TODO: get rid of routing param for page
+// TODO: update last read page
+// TODO: read in state when linking/pushing to this component
+// TODO: how do I handle jumping on initial load?
 
 type RouterProps = {
   match: {
@@ -43,6 +46,9 @@ type RouterProps = {
       mangaId: string,
       chapterId: string
     }
+  },
+  history: {
+    push: Function
   }
 };
 
@@ -61,82 +67,12 @@ const useStyles = makeStyles({
   }
 });
 
-// handleArrowKeyDown = (event: SyntheticKeyboardEvent<>) => {
-//   const LEFT_ARROW = 37;
-//   const RIGHT_ARROW = 39;
+const SinglePageReader2 = ({
+  match: { params },
+  history: { push }
+}: RouterProps) => {
+  const classes = useStyles();
 
-//   const { nextPageUrl, prevPageUrl } = this.props;
-
-//   // TODO: is this the expected direction the arrows should take you?
-//   if (event.keyCode === LEFT_ARROW && prevPageUrl) {
-//     this.props.history.push(prevPageUrl);
-//   } else if (event.keyCode === RIGHT_ARROW && nextPageUrl) {
-//     this.props.history.push(nextPageUrl);
-//   }
-// };
-
-function getChapterUrl(
-  urlPrefix: string,
-  mangaInfo: ?Manga,
-  chapterId: number,
-  chapters: ?Array<ChapterType>
-): ?string {
-  if (!chapters) return null;
-
-  const chapter: ?ChapterType = chapters.find(chap => chap.id === chapterId);
-
-  if (!mangaInfo || !chapter) return null;
-
-  // Links to the chapter's last page read
-  const goToPage = chapter.read ? 0 : chapter.last_page_read;
-
-  return Client.page(urlPrefix, mangaInfo.id, chapterId, goToPage);
-}
-
-// TODO: include the pageCounts type
-function getPrevPageUrl(
-  urlPrefix: string,
-  mangaInfo: ?Manga,
-  chapterId: number,
-  prevChapterId: number,
-  page: number,
-  pageCounts
-): ?string {
-  if (!mangaInfo) return null;
-
-  if (page > 0) {
-    return Client.page(urlPrefix, mangaInfo.id, chapterId, page - 1);
-  }
-  if (page === 0 && prevChapterId) {
-    // If on the first page, link to the previous chapter's last page (if info available)
-    const prevPageCount: ?number = pageCounts[prevChapterId];
-    const lastPage = prevPageCount ? prevPageCount - 1 : 0;
-
-    return Client.page(urlPrefix, mangaInfo.id, prevChapterId, lastPage);
-  }
-  return null;
-}
-
-function getNextPageUrl(
-  urlPrefix: string,
-  mangaInfo: ?Manga,
-  chapterId: number,
-  nextChapterId: number,
-  page: number,
-  pageCount: number
-): ?string {
-  if (!mangaInfo) return null;
-
-  if (page < pageCount - 1) {
-    return Client.page(urlPrefix, mangaInfo.id, chapterId, page + 1);
-  }
-  if (page === pageCount - 1 && nextChapterId) {
-    return Client.page(urlPrefix, mangaInfo.id, nextChapterId, 0);
-  }
-  return null;
-}
-
-const SinglePageReader2 = ({ match: { params } }: RouterProps) => {
   const mangaId = parseInt(params.mangaId, 10);
   const chapterId = parseInt(params.chapterId, 10);
 
@@ -147,7 +83,6 @@ const SinglePageReader2 = ({ match: { params } }: RouterProps) => {
 
   const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
 
-  const chapters = useSelector(state => selectChaptersForManga(state, mangaId));
   const chapter = useSelector(state =>
     selectChapter(state, mangaId, chapterId)
   );
@@ -163,51 +98,79 @@ const SinglePageReader2 = ({ match: { params } }: RouterProps) => {
     selectNextChapterId(state, mangaId, chapterId)
   );
 
-  const prevChapterUrl = getChapterUrl(
-    urlPrefix,
-    mangaInfo,
-    prevChapterId,
-    chapters
-  );
-  const nextChapterUrl = getChapterUrl(
-    urlPrefix,
-    mangaInfo,
-    nextChapterId,
-    chapters
-  );
+  const prevChapterUrl =
+    prevChapterId != null
+      ? Client.chapter(urlPrefix, mangaInfo.id, prevChapterId)
+      : null;
 
-  const prevPageUrl = getPrevPageUrl(
-    urlPrefix,
-    mangaInfo,
-    chapterId,
-    prevChapterId,
-    page,
-    pageCounts
-  );
-  const nextPageUrl = getNextPageUrl(
-    urlPrefix,
-    mangaInfo,
-    chapterId,
-    nextChapterId,
-    page,
-    pageCount
-  );
+  const nextChapterUrl =
+    nextChapterId != null
+      ? Client.chapter(urlPrefix, mangaInfo.id, nextChapterId)
+      : null;
 
-  const classes = useStyles();
+  const handleJumpToPage = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const hasNextPage =
+    page < pageCount - 1 || (page === pageCount - 1 && nextChapterId != null);
+
+  const handleNextPage = useCallback(() => {
+    // Wrapping function in useCallback so it can be used in useEffect.
+    // Otherwise, this function reference changes on every render.
+    if (!mangaInfo) return;
+
+    if (page < pageCount - 1) {
+      setPage(page + 1);
+    }
+    if (page === pageCount - 1 && nextChapterId) {
+      push(nextChapterUrl);
+    }
+  }, [mangaInfo, nextChapterId, nextChapterUrl, page, pageCount, push]);
+
+  const hasPrevPage = page > 0 || (page === 0 && prevChapterId != null);
+
+  const handlePrevPage = useCallback(() => {
+    // Wrapping function in useCallback so it can be used in useEffect.
+    // Otherwise, this function reference changes on every render.
+    if (!mangaInfo) return;
+
+    if (page > 0) {
+      setPage(page - 1);
+    }
+    if (page === 0 && prevChapterId) {
+      // If on the first page, go to the previous chapter's last page (if info available)
+      const prevPageCount: ?number = pageCounts[prevChapterId];
+      const lastPage = prevPageCount ? prevPageCount - 1 : 0;
+
+      push(prevChapterUrl);
+      // TODO: pass lastPage as state when pushing
+    }
+  }, [mangaInfo, page, pageCounts, prevChapterId, prevChapterUrl, push]);
 
   useEffect(() => {
-    document.addEventListener("keydown", this.handleArrowKeyDown);
+    function handleKeyDown(event: SyntheticKeyboardEvent<>) {
+      const LEFT_ARROW = 37;
+      const RIGHT_ARROW = 39;
+
+      // TODO: is this the expected direction the arrows should take you?
+      if (event.keyCode === LEFT_ARROW) {
+        handlePrevPage();
+      } else if (event.keyCode === RIGHT_ARROW) {
+        handleNextPage();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
 
     return function cleanup() {
-      document.removeEventListener("keydown", this.handleArrowKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [handleNextPage, handlePrevPage]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [mangaId, chapterId, page]);
-
-  const handleJumpToPage = () => {};
 
   return (
     <>
@@ -229,22 +192,20 @@ const SinglePageReader2 = ({ match: { params } }: RouterProps) => {
       />
 
       <ResponsiveGrid className={classes.topOffset}>
-        <Grid item xs={12}>
-          <Link to={nextPageUrl}>
-            <ImageWithLoader
-              src={Server.image(mangaInfo.id, chapterId, page)}
-              className={classes.page}
-              alt={`${chapter.name} - Page ${page + 1}`}
-            />
-          </Link>
+        <Grid item xs={12} onClick={handleNextPage}>
+          <ImageWithLoader
+            src={Server.image(mangaInfo.id, chapterId, page)}
+            className={classes.page}
+            alt={`${chapter.name} - Page ${page + 1}`}
+          />
         </Grid>
 
         <Grid item xs={12} className={classes.navButtonsParent}>
-          <Button component={Link} to={prevPageUrl} disabled={!prevPageUrl}>
+          <Button onClick={handlePrevPage} disabled={hasPrevPage}>
             <Icon>navigate_before</Icon>
             Previous Page
           </Button>
-          <Button component={Link} to={nextPageUrl} disabled={!nextPageUrl}>
+          <Button onClick={handleNextPage} disabled={hasNextPage}>
             Next Page
             <Icon>navigate_next</Icon>
           </Button>
