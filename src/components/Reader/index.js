@@ -9,8 +9,6 @@ import type { ChapterType } from "types";
 import SinglePageReader from "components/Reader/SinglePageReader";
 import SinglePageReader2 from "components/Reader/SinglePageReader2";
 import WebtoonReader from "components/Reader/WebtoonReader";
-import ReadingStatusUpdater from "components/Reader/ReadingStatusUpdater";
-import ImagePreloader from "components/Reader/ImagePreloader";
 import { Helmet } from "react-helmet";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -34,9 +32,6 @@ type Props = { match: { params: Object } };
 const Reader = ({ match: { params } }: Props) => {
   const mangaId = parseInt(params.mangaId, 10);
   const chapterId = parseInt(params.chapterId, 10);
-  const page = parseInt(params.page, 10);
-
-  const urlPrefix = useContext(UrlPrefixContext);
 
   const defaultViewer = useSelector(selectDefaultViewer);
   const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
@@ -46,8 +41,7 @@ const Reader = ({ match: { params } }: Props) => {
   );
   const pageCounts = useSelector(selectPageCounts);
 
-  const pageCount =
-    useSelector(state => selectPageCount(state, chapterId)) || 0;
+  const pageCount = useSelector(state => selectPageCount(state, chapterId));
   const prevChapter = useSelector(state =>
     selectPrevChapter(state, mangaId, chapterId)
   );
@@ -75,107 +69,41 @@ const Reader = ({ match: { params } }: Props) => {
     });
   }, [dispatch, mangaId, chapterId, prevChapter, nextChapter]);
 
-  const prevPageUrl = (): ?string => {
-    if (!mangaInfo) return null;
-
-    if (page > 0) {
-      return Client.page(urlPrefix, mangaInfo.id, chapterId, page - 1);
-    }
-    if (page === 0 && prevChapter) {
-      // If on the first page, link to the previous chapter's last page (if info available)
-      const prevPageCount: ?number = pageCounts[prevChapter.id];
-      const lastPage = prevPageCount ? prevPageCount - 1 : 0;
-
-      return Client.page(urlPrefix, mangaInfo.id, prevChapter.id, lastPage);
-    }
-    return null;
-  };
-
-  const nextPageUrl = (): ?string => {
-    if (!mangaInfo) return null;
-
-    if (page < pageCount - 1) {
-      return Client.page(urlPrefix, mangaInfo.id, chapterId, page + 1);
-    }
-    if (page === pageCount - 1 && nextChapter) {
-      return Client.page(urlPrefix, mangaInfo.id, nextChapter.id, 0);
-    }
-    return null;
-  };
-
-  const prevChapterUrl = (): ?string => {
-    // Links to the previous chapter's last page read
-    const prevUrl = changeChapterUrl(
-      urlPrefix,
-      mangaInfo,
-      prevChapter.id,
-      chapters
-    );
-
-    if (!prevUrl) return null;
-    return prevUrl;
-  };
-
-  const nextChapterUrl = (): ?string => {
-    // Links to the next chapter's last page read
-    const nextUrl = changeChapterUrl(
-      urlPrefix,
-      mangaInfo,
-      nextChapter.id,
-      chapters
-    );
-
-    if (!nextUrl) return null;
-    return nextUrl;
-  };
-
-  if (!mangaInfo || !chapters.length || !chapter || !pageCount) {
+  if (mangaInfo == null || chapter == null || pageCount == null) {
     return <FullScreenLoading />;
   }
 
   return (
     <>
-      <Helmet
+      {/* <Helmet
         title={`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
           chapter.chapter_number
         )}, Pg. ${page + 1} TachiWeb`}
-      />
+      /> */}
 
       {defaultViewer === "webtoon" ? (
-        <WebtoonReader
-          title={mangaInfo.title}
-          chapterNum={chapter.chapter_number}
-          page={page}
-          backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-          urlPrefix={urlPrefix}
-          mangaId={mangaInfo.id}
-          pageCount={pageCount}
-          chapter={chapter}
-          nextChapterUrl={nextChapterUrl()}
-          prevChapterUrl={prevChapterUrl()}
-        />
+        <div />
       ) : (
-        <SinglePageReader2 />
-        // <SinglePageReader
+        // <WebtoonReader
         //   title={mangaInfo.title}
         //   chapterNum={chapter.chapter_number}
-        //   pageCount={pageCount}
         //   page={page}
         //   backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-        //   prevChapterUrl={prevChapterUrl()}
-        //   nextChapterUrl={nextChapterUrl()}
         //   urlPrefix={urlPrefix}
         //   mangaId={mangaInfo.id}
-        //   chapterId={chapterId}
-        //   imageSource={Server.image(mangaInfo.id, chapterId, page)}
-        //   alt={`${chapter.name} - Page ${page + 1}`}
-        //   nextPageUrl={nextPageUrl()}
-        //   prevPageUrl={prevPageUrl()}
+        //   pageCount={pageCount}
+        //   chapter={chapter}
+        //   nextChapterUrl={nextChapterUrl()}
+        //   prevChapterUrl={prevChapterUrl()}
         // />
+        <SinglePageReader2
+          mangaInfo={mangaInfo}
+          chapter={chapter}
+          pageCount={pageCount}
+          prevChapter={prevChapter}
+          nextChapter={nextChapter}
+        />
       )}
-
-      <ReadingStatusUpdater />
-      <ImagePreloader />
     </>
   );
 };

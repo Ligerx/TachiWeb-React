@@ -23,6 +23,10 @@ import ResponsiveGrid from "components/ResponsiveGrid";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import {
+  usePagePreloader,
+  useUpdateReadingStatus
+} from "components/Reader/utils";
+import {
   selectChaptersForManga,
   selectChapter,
   selectNextChapter,
@@ -40,16 +44,19 @@ import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
 // TODO: read in state when linking/pushing to this component
 // TODO: how do I handle jumping on initial load?
 
+// Because hooks rely on call order, it's easier to have the parent component guarantee
+// that props passed to this component are non-null.
+
+type Props = {
+  mangaInfo: Manga,
+  chapter: ChapterType,
+  pageCount: number,
+  prevChapter: ?ChapterType,
+  nextChapter: ?ChapterType
+};
+
 type RouterProps = {
-  match: {
-    params: {
-      mangaId: string,
-      chapterId: string
-    }
-  },
-  history: {
-    push: Function
-  }
+  history: { push: Function }
 };
 
 const useStyles = makeStyles({
@@ -68,35 +75,20 @@ const useStyles = makeStyles({
 });
 
 const SinglePageReader2 = ({
-  match: { params },
+  mangaInfo,
+  chapter,
+  pageCount,
+  prevChapter,
+  nextChapter,
   history: { push }
-}: RouterProps) => {
+}: Props & RouterProps) => {
   const classes = useStyles();
-
-  const mangaId = parseInt(params.mangaId, 10);
-  const chapterId = parseInt(params.chapterId, 10);
+  const urlPrefix = useContext(UrlPrefixContext);
 
   // TODO: when do you account jumping page / initial page jump?
   const [page, setPage] = useState(0);
 
-  const urlPrefix = useContext(UrlPrefixContext);
-
-  const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
-
-  const chapter = useSelector(state =>
-    selectChapter(state, mangaId, chapterId)
-  );
-
   const pageCounts = useSelector(selectPageCounts);
-  const pageCount =
-    useSelector(state => selectPageCount(state, chapterId)) || 0;
-
-  const prevChapter = useSelector(state =>
-    selectPrevChapter(state, mangaId, chapterId)
-  );
-  const nextChapter = useSelector(state =>
-    selectNextChapter(state, mangaId, chapterId)
-  );
 
   const prevChapterUrl =
     prevChapter != null
@@ -118,23 +110,19 @@ const SinglePageReader2 = ({
   const handleNextPage = useCallback(() => {
     // Wrapping function in useCallback so it can be used in useEffect.
     // Otherwise, this function reference changes on every render.
-    if (!mangaInfo) return;
-
     if (page < pageCount - 1) {
       setPage(page + 1);
     }
     if (page === pageCount - 1 && nextChapter) {
       push(nextChapterUrl);
     }
-  }, [mangaInfo, nextChapter, nextChapterUrl, page, pageCount, push]);
+  }, [nextChapter, nextChapterUrl, page, pageCount, push]);
 
   const hasPrevPage = page > 0 || (page === 0 && prevChapter != null);
 
   const handlePrevPage = useCallback(() => {
     // Wrapping function in useCallback so it can be used in useEffect.
     // Otherwise, this function reference changes on every render.
-    if (!mangaInfo) return;
-
     if (page > 0) {
       setPage(page - 1);
     }
@@ -146,7 +134,7 @@ const SinglePageReader2 = ({
       push(prevChapterUrl);
       // TODO: pass lastPage as state when pushing
     }
-  }, [mangaInfo, page, pageCounts, prevChapter, prevChapterUrl, push]);
+  }, [page, pageCounts, prevChapter, prevChapterUrl, push]);
 
   useEffect(() => {
     function handleKeyDown(event: SyntheticKeyboardEvent<>) {
@@ -170,7 +158,17 @@ const SinglePageReader2 = ({
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [mangaId, chapterId, page]);
+  }, [mangaInfo.id, chapter.id, page]);
+
+  usePagePreloader(
+    mangaInfo.id,
+    chapter.id,
+    page,
+    pageCount,
+    nextChapter ? nextChapter.id : null
+  );
+
+  useUpdateReadingStatus(mangaInfo.id, chapter.id, page);
 
   return (
     <>
@@ -194,7 +192,7 @@ const SinglePageReader2 = ({
       <ResponsiveGrid className={classes.topOffset}>
         <Grid item xs={12} onClick={handleNextPage}>
           <ImageWithLoader
-            src={Server.image(mangaInfo.id, chapterId, page)}
+            src={Server.image(mangaInfo.id, chapter.id, page)}
             className={classes.page}
             alt={`${chapter.name} - Page ${page + 1}`}
           />
