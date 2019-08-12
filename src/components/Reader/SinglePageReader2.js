@@ -15,10 +15,6 @@ import Link from "components/Link";
 import ImageWithLoader from "components/Reader/ImageWithLoader";
 import ReaderOverlay from "components/Reader/ReaderOverlay";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
-import SinglePageReader from "components/Reader/SinglePageReader";
-import WebtoonReader from "components/Reader/WebtoonReader";
-import ReadingStatusUpdater from "components/Reader/ReadingStatusUpdater";
-import ImagePreloader from "components/Reader/ImagePreloader";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -85,10 +81,10 @@ const SinglePageReader2 = ({
   const classes = useStyles();
   const urlPrefix = useContext(UrlPrefixContext);
 
+  const pageCounts = useSelector(selectPageCounts);
+
   // TODO: when do you account jumping page / initial page jump?
   const [page, setPage] = useState(0);
-
-  const pageCounts = useSelector(selectPageCounts);
 
   const prevChapterUrl =
     prevChapter != null
@@ -159,6 +155,12 @@ const SinglePageReader2 = ({
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [mangaInfo.id, chapter.id, page]);
+
+  // FIXME: This probably isn't the correct way to handle this
+  // If I'm trying to use the link/push state, I need to figure out a way to rely on that.
+  useEffect(() => {
+    setPage(0);
+  }, [mangaInfo.id, chapter.id]);
 
   usePagePreloader(
     mangaInfo.id,

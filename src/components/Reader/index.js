@@ -108,32 +108,4 @@ const Reader = ({ match: { params } }: Props) => {
   );
 };
 
-// Helper methods
-function changeChapterUrl(
-  urlPrefix: string,
-  mangaInfo: ?Manga,
-  newChapterId: ?number,
-  chapters: Array<ChapterType>
-): ?string {
-  if (!mangaInfo || !newChapterId) return null;
-
-  const newChapter: ?ChapterType = findChapter(chapters, newChapterId);
-  let goToPage = newChapter ? newChapter.last_page_read : 0;
-
-  if (newChapter && newChapter.read) {
-    goToPage = 0;
-  }
-
-  return Client.page(urlPrefix, mangaInfo.id, newChapterId, goToPage);
-}
-
-function findChapter(
-  chapters: Array<ChapterType>,
-  chapterId: number
-): ?ChapterType {
-  if (!chapters || chapters.length === 0) return null;
-
-  return chapters.find(chapter => chapter.id === chapterId);
-}
-
 export default Reader;
