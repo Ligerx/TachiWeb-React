@@ -126,11 +126,11 @@ export const selectFirstUnreadChapter: (
   // Cache Key
 )((_, mangaId) => mangaId);
 
-export const selectNextChapterId: (
+export const selectNextChapter: (
   state: GlobalState,
-  mangaId: Number,
+  mangaId: number,
   thisChapterId: number
-) => ?number = createCachedSelector(
+) => ?ChapterType = createCachedSelector(
   [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],
   (chapters, thisChapterId): ?number => {
     const thisChapterIndex = chapters.findIndex(
@@ -140,16 +140,16 @@ export const selectNextChapterId: (
     if (thisChapterIndex === chapters.length - 1 || thisChapterIndex === -1) {
       return null;
     }
-    return chapters[thisChapterIndex + 1].id;
+    return chapters[thisChapterIndex + 1];
   }
   // Cache Key
 )((state, mangaId, thisChapterId) => `${mangaId}-${thisChapterId}`);
 
-export const selectPrevChapterId: (
+export const selectPrevChapter: (
   state: GlobalState,
   mangaId: number,
   thisChapterId: number
-) => ?number = createCachedSelector(
+) => ?ChapterType = createCachedSelector(
   [selectChaptersForManga, (_, __, thisChapterId: number) => thisChapterId],
   (chapters, thisChapterId): ?number => {
     const thisChapterIndex = chapters.findIndex(
@@ -159,7 +159,7 @@ export const selectPrevChapterId: (
     if (thisChapterIndex === 0 || thisChapterIndex === -1) {
       return null;
     }
-    return chapters[thisChapterIndex - 1].id;
+    return chapters[thisChapterIndex - 1];
   }
   // Cache Key
 )((state, mangaId, thisChapterId) => `${mangaId}-${thisChapterId}`);

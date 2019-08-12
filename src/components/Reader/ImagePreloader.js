@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Server } from "api";
 import { selectPageCount } from "redux-ducks/pageCounts";
-import { selectNextChapterId } from "redux-ducks/chapters";
+import { selectNextChapter } from "redux-ducks/chapters";
 
 // This expects whatever component is using it to load pageCount for the current chapter
 
@@ -48,13 +48,13 @@ const ImagePreloader = ({ match: { params } }: Props) => {
   const pageCount =
     useSelector(state => selectPageCount(state, chapterId)) || 0;
 
-  const nextChapterId = useSelector(state =>
-    selectNextChapterId(state, mangaId, chapterId)
+  const nextChapter = useSelector(state =>
+    selectNextChapter(state, mangaId, chapterId)
   );
 
   useEffect(() => {
-    preloadImages(page, pageCount, mangaId, chapterId, nextChapterId);
-  }, [mangaId, chapterId, nextChapterId, page, pageCount]);
+    preloadImages(page, pageCount, mangaId, chapterId, nextChapter.id);
+  }, [mangaId, chapterId, page, pageCount, nextChapter]);
 
   return null;
 };

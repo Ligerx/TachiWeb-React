@@ -17,8 +17,8 @@ import UrlPrefixContext from "components/UrlPrefixContext";
 import {
   selectChaptersForManga,
   selectChapter,
-  selectNextChapterId,
-  selectPrevChapterId
+  selectNextChapter,
+  selectPrevChapter
 } from "redux-ducks/chapters";
 import { fetchChapters } from "redux-ducks/chapters/actionCreators";
 import { selectPageCounts, selectPageCount } from "redux-ducks/pageCounts";
@@ -48,11 +48,11 @@ const Reader = ({ match: { params } }: Props) => {
 
   const pageCount =
     useSelector(state => selectPageCount(state, chapterId)) || 0;
-  const prevChapterId = useSelector(state =>
-    selectPrevChapterId(state, mangaId, chapterId)
+  const prevChapter = useSelector(state =>
+    selectPrevChapter(state, mangaId, chapterId)
   );
-  const nextChapterId = useSelector(state =>
-    selectNextChapterId(state, mangaId, chapterId)
+  const nextChapter = useSelector(state =>
+    selectNextChapter(state, mangaId, chapterId)
   );
 
   const dispatch = useDispatch();
@@ -66,14 +66,14 @@ const Reader = ({ match: { params } }: Props) => {
     // Get adjacent chapter page counts
     const chapterIds: Array<number> = compact([
       chapterId,
-      prevChapterId,
-      nextChapterId
+      prevChapter ? prevChapter.id : null,
+      nextChapter ? nextChapter.id : null
     ]);
 
     chapterIds.forEach(thisChapterId => {
       dispatch(fetchPageCount(mangaId, thisChapterId));
     });
-  }, [dispatch, mangaId, chapterId, nextChapterId, prevChapterId]);
+  }, [dispatch, mangaId, chapterId, prevChapter, nextChapter]);
 
   const prevPageUrl = (): ?string => {
     if (!mangaInfo) return null;
@@ -81,12 +81,12 @@ const Reader = ({ match: { params } }: Props) => {
     if (page > 0) {
       return Client.page(urlPrefix, mangaInfo.id, chapterId, page - 1);
     }
-    if (page === 0 && prevChapterId) {
+    if (page === 0 && prevChapter) {
       // If on the first page, link to the previous chapter's last page (if info available)
-      const prevPageCount: ?number = pageCounts[prevChapterId];
+      const prevPageCount: ?number = pageCounts[prevChapter.id];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
-      return Client.page(urlPrefix, mangaInfo.id, prevChapterId, lastPage);
+      return Client.page(urlPrefix, mangaInfo.id, prevChapter.id, lastPage);
     }
     return null;
   };
@@ -97,8 +97,8 @@ const Reader = ({ match: { params } }: Props) => {
     if (page < pageCount - 1) {
       return Client.page(urlPrefix, mangaInfo.id, chapterId, page + 1);
     }
-    if (page === pageCount - 1 && nextChapterId) {
-      return Client.page(urlPrefix, mangaInfo.id, nextChapterId, 0);
+    if (page === pageCount - 1 && nextChapter) {
+      return Client.page(urlPrefix, mangaInfo.id, nextChapter.id, 0);
     }
     return null;
   };
@@ -108,7 +108,7 @@ const Reader = ({ match: { params } }: Props) => {
     const prevUrl = changeChapterUrl(
       urlPrefix,
       mangaInfo,
-      prevChapterId,
+      prevChapter.id,
       chapters
     );
 
@@ -121,7 +121,7 @@ const Reader = ({ match: { params } }: Props) => {
     const nextUrl = changeChapterUrl(
       urlPrefix,
       mangaInfo,
-      nextChapterId,
+      nextChapter.id,
       chapters
     );
 

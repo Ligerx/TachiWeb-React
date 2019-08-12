@@ -25,8 +25,8 @@ import UrlPrefixContext from "components/UrlPrefixContext";
 import {
   selectChaptersForManga,
   selectChapter,
-  selectNextChapterId,
-  selectPrevChapterId
+  selectNextChapter,
+  selectPrevChapter
 } from "redux-ducks/chapters";
 import { fetchChapters } from "redux-ducks/chapters/actionCreators";
 import { selectPageCounts, selectPageCount } from "redux-ducks/pageCounts";
@@ -91,21 +91,21 @@ const SinglePageReader2 = ({
   const pageCount =
     useSelector(state => selectPageCount(state, chapterId)) || 0;
 
-  const prevChapterId = useSelector(state =>
-    selectPrevChapterId(state, mangaId, chapterId)
+  const prevChapter = useSelector(state =>
+    selectPrevChapter(state, mangaId, chapterId)
   );
-  const nextChapterId = useSelector(state =>
-    selectNextChapterId(state, mangaId, chapterId)
+  const nextChapter = useSelector(state =>
+    selectNextChapter(state, mangaId, chapterId)
   );
 
   const prevChapterUrl =
-    prevChapterId != null
-      ? Client.chapter(urlPrefix, mangaInfo.id, prevChapterId)
+    prevChapter != null
+      ? Client.chapter(urlPrefix, mangaInfo.id, prevChapter.id)
       : null;
 
   const nextChapterUrl =
-    nextChapterId != null
-      ? Client.chapter(urlPrefix, mangaInfo.id, nextChapterId)
+    nextChapter != null
+      ? Client.chapter(urlPrefix, mangaInfo.id, nextChapter.id)
       : null;
 
   const handleJumpToPage = (newPage: number) => {
@@ -113,7 +113,7 @@ const SinglePageReader2 = ({
   };
 
   const hasNextPage =
-    page < pageCount - 1 || (page === pageCount - 1 && nextChapterId != null);
+    page < pageCount - 1 || (page === pageCount - 1 && nextChapter != null);
 
   const handleNextPage = useCallback(() => {
     // Wrapping function in useCallback so it can be used in useEffect.
@@ -123,12 +123,12 @@ const SinglePageReader2 = ({
     if (page < pageCount - 1) {
       setPage(page + 1);
     }
-    if (page === pageCount - 1 && nextChapterId) {
+    if (page === pageCount - 1 && nextChapter) {
       push(nextChapterUrl);
     }
-  }, [mangaInfo, nextChapterId, nextChapterUrl, page, pageCount, push]);
+  }, [mangaInfo, nextChapter, nextChapterUrl, page, pageCount, push]);
 
-  const hasPrevPage = page > 0 || (page === 0 && prevChapterId != null);
+  const hasPrevPage = page > 0 || (page === 0 && prevChapter != null);
 
   const handlePrevPage = useCallback(() => {
     // Wrapping function in useCallback so it can be used in useEffect.
@@ -138,15 +138,15 @@ const SinglePageReader2 = ({
     if (page > 0) {
       setPage(page - 1);
     }
-    if (page === 0 && prevChapterId) {
+    if (page === 0 && prevChapter) {
       // If on the first page, go to the previous chapter's last page (if info available)
-      const prevPageCount: ?number = pageCounts[prevChapterId];
+      const prevPageCount: ?number = pageCounts[prevChapter.id];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
       push(prevChapterUrl);
       // TODO: pass lastPage as state when pushing
     }
-  }, [mangaInfo, page, pageCounts, prevChapterId, prevChapterUrl, push]);
+  }, [mangaInfo, page, pageCounts, prevChapter, prevChapterUrl, push]);
 
   useEffect(() => {
     function handleKeyDown(event: SyntheticKeyboardEvent<>) {
