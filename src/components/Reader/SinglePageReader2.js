@@ -201,11 +201,11 @@ const SinglePageReader2 = ({
         </Grid>
 
         <Grid item xs={12} className={classes.navButtonsParent}>
-          <Button onClick={handlePrevPage} disabled={hasPrevPage}>
+          <Button onClick={handlePrevPage} disabled={!hasPrevPage}>
             <Icon>navigate_before</Icon>
             Previous Page
           </Button>
-          <Button onClick={handleNextPage} disabled={hasNextPage}>
+          <Button onClick={handleNextPage} disabled={!hasNextPage}>
             Next Page
             <Icon>navigate_next</Icon>
           </Button>
