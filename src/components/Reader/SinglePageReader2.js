@@ -43,6 +43,11 @@ import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
 // Because hooks rely on call order, it's easier to have the parent component guarantee
 // that props passed to this component are non-null.
 
+// ~~~~ 3 cases for determining a chapter's initial page ~~~~
+// 1. On initial load, jump to this chapter's last read page.
+// 2. Clicking previous page when on page 0. Jump to the previous chapter's last page.
+// 3. Going to next chapter and skipping to next/previous chapter, go to page 0.
+
 type Props = {
   mangaInfo: Manga,
   chapter: ChapterType,
@@ -52,7 +57,12 @@ type Props = {
 };
 
 type RouterProps = {
-  history: { push: Function }
+  history: {
+    push: Function,
+    location: {
+      state: any // TODO: update this
+    }
+  }
 };
 
 const useStyles = makeStyles({
@@ -76,15 +86,19 @@ const SinglePageReader2 = ({
   pageCount,
   prevChapter,
   nextChapter,
-  history: { push }
+  history: {
+    push,
+    location: { state }
+  }
 }: Props & RouterProps) => {
   const classes = useStyles();
   const urlPrefix = useContext(UrlPrefixContext);
 
   const pageCounts = useSelector(selectPageCounts);
 
-  // TODO: when do you account jumping page / initial page jump?
-  const [page, setPage] = useState(0);
+  // Initialize starting page. This only runs once on first mount.
+  const initialPage = chapter.read ? 0 : chapter.last_page_read;
+  const [page, setPage] = useState(initialPage);
 
   const prevChapterUrl =
     prevChapter != null
@@ -95,10 +109,6 @@ const SinglePageReader2 = ({
     nextChapter != null
       ? Client.chapter(urlPrefix, mangaInfo.id, nextChapter.id)
       : null;
-
-  const handleJumpToPage = (newPage: number) => {
-    setPage(newPage);
-  };
 
   const hasNextPage =
     page < pageCount - 1 || (page === pageCount - 1 && nextChapter != null);
@@ -127,8 +137,7 @@ const SinglePageReader2 = ({
       const prevPageCount: ?number = pageCounts[prevChapter.id];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
-      push(prevChapterUrl);
-      // TODO: pass lastPage as state when pushing
+      push(prevChapterUrl, lastPage);
     }
   }, [page, pageCounts, prevChapter, prevChapterUrl, push]);
 
@@ -156,12 +165,6 @@ const SinglePageReader2 = ({
     window.scrollTo(0, 0);
   }, [mangaInfo.id, chapter.id, page]);
 
-  // FIXME: This probably isn't the correct way to handle this
-  // If I'm trying to use the link/push state, I need to figure out a way to rely on that.
-  useEffect(() => {
-    setPage(0);
-  }, [mangaInfo.id, chapter.id]);
-
   usePagePreloader(
     mangaInfo.id,
     chapter.id,
@@ -188,7 +191,7 @@ const SinglePageReader2 = ({
         backUrl={Client.manga(urlPrefix, mangaInfo.id)}
         prevChapterUrl={prevChapterUrl}
         nextChapterUrl={nextChapterUrl}
-        onJumpToPage={handleJumpToPage}
+        onJumpToPage={setPage}
       />
 
       <ResponsiveGrid className={classes.topOffset}>
