@@ -1,9 +1,8 @@
 // @flow
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { withRouter } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
-import compact from "lodash/compact";
 import type { Manga } from "@tachiweb/api-client";
 import type { ChapterType } from "types";
 import { Server, Client } from "api";
@@ -11,10 +10,8 @@ import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
-import Link from "components/Link";
 import ImageWithLoader from "components/Reader/ImageWithLoader";
 import ReaderOverlay from "components/Reader/ReaderOverlay";
-import FullScreenLoading from "components/Loading/FullScreenLoading";
 import ResponsiveGrid from "components/ResponsiveGrid";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -22,23 +19,11 @@ import {
   usePagePreloader,
   useUpdateReadingStatus
 } from "components/Reader/utils";
-import {
-  selectChaptersForManga,
-  selectChapter,
-  selectNextChapter,
-  selectPrevChapter
-} from "redux-ducks/chapters";
-import { fetchChapters } from "redux-ducks/chapters/actionCreators";
-import { selectPageCounts, selectPageCount } from "redux-ducks/pageCounts";
-import { fetchPageCount } from "redux-ducks/pageCounts/actionCreators";
-import { selectDefaultViewer } from "redux-ducks/settings";
-import { selectMangaInfo } from "redux-ducks/mangaInfos";
-import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
+import { selectPageCounts } from "redux-ducks/pageCounts";
 
 // TODO: get rid of routing param for page
 // TODO: update last read page
 // TODO: read in state when linking/pushing to this component
-// TODO: how do I handle jumping on initial load?
 
 // Because hooks rely on call order, it's easier to have the parent component guarantee
 // that props passed to this component are non-null.
@@ -47,6 +32,10 @@ import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
 // 1. On initial load, jump to this chapter's last read page.
 // 2. Clicking previous page when on page 0. Jump to the previous chapter's last page.
 // 3. Going to next chapter and skipping to next/previous chapter, go to page 0.
+
+// react-router history.location.state observations:
+// state only changes when you <Link> or push() to change routes.
+// The returned state is the same object between renders, so === equality checks work.
 
 type Props = {
   mangaInfo: Manga,
@@ -60,7 +49,7 @@ type RouterProps = {
   history: {
     push: Function,
     location: {
-      state: any // TODO: update this
+      state: ?{ chapterId: number, jumpToPage: number }
     }
   }
 };
@@ -100,6 +89,16 @@ const SinglePageReader2 = ({
   const initialPage = chapter.read ? 0 : chapter.last_page_read;
   const [page, setPage] = useState(initialPage);
 
+  useEffect(() => {
+    if (state != null) {
+      // react-router link state changes when the URL (ie. chapter) changes
+      // Jumping to the last page of the prev chapter if the link state exists
+      setPage(state.jumpToPage);
+    } else {
+      setPage(0);
+    }
+  }, [chapter.id, state]);
+
   const prevChapterUrl =
     prevChapter != null
       ? Client.chapter(urlPrefix, mangaInfo.id, prevChapter.id)
@@ -137,9 +136,9 @@ const SinglePageReader2 = ({
       const prevPageCount: ?number = pageCounts[prevChapter.id];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
-      push(prevChapterUrl, lastPage);
+      push(prevChapterUrl, { chapterId: chapter.id, jumpToPage: lastPage });
     }
-  }, [page, pageCounts, prevChapter, prevChapterUrl, push]);
+  }, [chapter.id, page, pageCounts, prevChapter, prevChapterUrl, push]);
 
   useEffect(() => {
     function handleKeyDown(event: SyntheticKeyboardEvent<>) {
