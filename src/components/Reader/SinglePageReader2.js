@@ -1,5 +1,11 @@
 // @flow
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useRef
+} from "react";
 import { withRouter } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
@@ -21,12 +27,8 @@ import {
 } from "components/Reader/utils";
 import { selectPageCounts } from "redux-ducks/pageCounts";
 
-// TODO: get rid of routing param for page
-// TODO: update last read page
-// TODO: read in state when linking/pushing to this component
-
-// Because hooks rely on call order, it's easier to have the parent component guarantee
-// that props passed to this component are non-null.
+// Because hooks rely on call order, it's easier to have the parent component pass non-null props.
+// This removes the need for null checking which makes using hooks less painful.
 
 // ~~~~ 3 cases for determining a chapter's initial page ~~~~
 // 1. On initial load, jump to this chapter's last read page.
@@ -45,11 +47,13 @@ type Props = {
   nextChapter: ?ChapterType
 };
 
+type LinkState = { chapterId: number, jumpToPage: number };
+
 type RouterProps = {
   history: {
     push: Function,
     location: {
-      state: ?{ chapterId: number, jumpToPage: number }
+      state: ?LinkState
     }
   }
 };
@@ -85,12 +89,18 @@ const SinglePageReader2 = ({
 
   const pageCounts = useSelector(selectPageCounts);
 
-  // Initialize starting page. This only runs once on first mount.
-  const initialPage = chapter.read ? 0 : chapter.last_page_read;
-  const [page, setPage] = useState(initialPage);
+  // Initialize the starting page. This only runs once on first mount.
+  const lastReadPage = chapter.read ? 0 : chapter.last_page_read;
+  const [page, setPage] = useState(lastReadPage);
 
+  const firstRender = useRef(true);
+
+  // Handle setting the starting page when chapter changes
   useEffect(() => {
-    if (state != null) {
+    if (firstRender.current) {
+      // Prevent this useEffect from overwriting the useState initialized value on first mount
+      firstRender.current = false;
+    } else if (state != null) {
       // react-router link state changes when the URL (ie. chapter) changes
       // Jumping to the last page of the prev chapter if the link state exists
       setPage(state.jumpToPage);
@@ -136,7 +146,12 @@ const SinglePageReader2 = ({
       const prevPageCount: ?number = pageCounts[prevChapter.id];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
-      push(prevChapterUrl, { chapterId: chapter.id, jumpToPage: lastPage });
+      const linkState: LinkState = {
+        chapterId: chapter.id,
+        jumpToPage: lastPage
+      };
+
+      push(prevChapterUrl, linkState);
     }
   }, [chapter.id, page, pageCounts, prevChapter, prevChapterUrl, push]);
 
