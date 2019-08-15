@@ -10,7 +10,7 @@ import { withRouter } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 import type { Manga } from "@tachiweb/api-client";
-import type { ChapterType } from "types";
+import type { ChapterType, ChapterPageLinkState } from "types";
 import { Server, Client } from "api";
 import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
@@ -47,13 +47,11 @@ type Props = {
   nextChapter: ?ChapterType
 };
 
-type LinkState = { chapterId: number, jumpToPage: number };
-
 type RouterProps = {
   history: {
     push: Function,
     location: {
-      state: ?LinkState
+      state: ?ChapterPageLinkState
     }
   }
 };
@@ -146,7 +144,7 @@ const SinglePageReader2 = ({
       const prevPageCount: ?number = pageCounts[prevChapter.id];
       const lastPage = prevPageCount ? prevPageCount - 1 : 0;
 
-      const linkState: LinkState = {
+      const linkState: ChapterPageLinkState = {
         chapterId: chapter.id,
         jumpToPage: lastPage
       };

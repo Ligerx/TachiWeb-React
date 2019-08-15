@@ -80,3 +80,5 @@ export type CategoryType = {
   name: string,
   order: number
 };
+
+export type ChapterPageLinkState = { chapterId: number, jumpToPage: number };
