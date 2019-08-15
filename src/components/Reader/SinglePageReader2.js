@@ -7,7 +7,6 @@ import React, {
   useRef
 } from "react";
 import { withRouter } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 import type { Manga } from "@tachiweb/api-client";
 import type { ChapterType, ChapterPageLinkState } from "types";
@@ -25,7 +24,6 @@ import {
   usePagePreloader,
   useUpdateReadingStatus
 } from "components/Reader/utils";
-import { selectPageCounts } from "redux-ducks/pageCounts";
 
 // Because hooks rely on call order, it's easier to have the parent component pass non-null props.
 // This removes the need for null checking which makes using hooks less painful.
@@ -44,7 +42,8 @@ type Props = {
   chapter: ChapterType,
   pageCount: number,
   prevChapter: ?ChapterType,
-  nextChapter: ?ChapterType
+  nextChapter: ?ChapterType,
+  prevChapterPageCount: ?number
 };
 
 type RouterProps = {
@@ -77,6 +76,7 @@ const SinglePageReader2 = ({
   pageCount,
   prevChapter,
   nextChapter,
+  prevChapterPageCount,
   history: {
     push,
     location: { state }
@@ -84,8 +84,6 @@ const SinglePageReader2 = ({
 }: Props & RouterProps) => {
   const classes = useStyles();
   const urlPrefix = useContext(UrlPrefixContext);
-
-  const pageCounts = useSelector(selectPageCounts);
 
   // Initialize the starting page. This only runs once on first mount.
   const lastReadPage = chapter.read ? 0 : chapter.last_page_read;
@@ -120,18 +118,18 @@ const SinglePageReader2 = ({
   const hasNextPage =
     page < pageCount - 1 || (page === pageCount - 1 && nextChapter != null);
 
+  const hasPrevPage = page > 0 || (page === 0 && prevChapter != null);
+
   const handleNextPage = useCallback(() => {
     // Wrapping function in useCallback so it can be used in useEffect.
     // Otherwise, this function reference changes on every render.
     if (page < pageCount - 1) {
       setPage(page + 1);
     }
-    if (page === pageCount - 1 && nextChapter) {
+    if (page === pageCount - 1 && nextChapterUrl) {
       push(nextChapterUrl);
     }
-  }, [nextChapter, nextChapterUrl, page, pageCount, push]);
-
-  const hasPrevPage = page > 0 || (page === 0 && prevChapter != null);
+  }, [nextChapterUrl, page, pageCount, push]);
 
   const handlePrevPage = useCallback(() => {
     // Wrapping function in useCallback so it can be used in useEffect.
@@ -139,10 +137,9 @@ const SinglePageReader2 = ({
     if (page > 0) {
       setPage(page - 1);
     }
-    if (page === 0 && prevChapter) {
-      // If on the first page, go to the previous chapter's last page (if info available)
-      const prevPageCount: ?number = pageCounts[prevChapter.id];
-      const lastPage = prevPageCount ? prevPageCount - 1 : 0;
+    if (page === 0 && prevChapterUrl) {
+      // If on the first page, go to the previous chapter's last page (if info is available)
+      const lastPage = prevChapterPageCount ? prevChapterPageCount - 1 : 0;
 
       const linkState: ChapterPageLinkState = {
         chapterId: chapter.id,
@@ -151,7 +148,7 @@ const SinglePageReader2 = ({
 
       push(prevChapterUrl, linkState);
     }
-  }, [chapter.id, page, pageCounts, prevChapter, prevChapterUrl, push]);
+  }, [chapter.id, page, prevChapterPageCount, prevChapterUrl, push]);
 
   useEffect(() => {
     function handleKeyDown(event: SyntheticKeyboardEvent<>) {

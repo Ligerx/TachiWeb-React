@@ -35,19 +35,23 @@ const Reader = ({ match: { params } }: Props) => {
 
   const defaultViewer = useSelector(selectDefaultViewer);
   const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
-  const chapters = useSelector(state => selectChaptersForManga(state, mangaId));
   const chapter = useSelector(state =>
     selectChapter(state, mangaId, chapterId)
   );
-  const pageCounts = useSelector(selectPageCounts);
-
-  const pageCount = useSelector(state => selectPageCount(state, chapterId));
   const prevChapter = useSelector(state =>
     selectPrevChapter(state, mangaId, chapterId)
   );
   const nextChapter = useSelector(state =>
     selectNextChapter(state, mangaId, chapterId)
   );
+
+  const pageCount = useSelector(state => selectPageCount(state, chapterId));
+  const prevChapterPageCount = useSelector(state => {
+    // This should be fine since null === null so it's a pure function still,
+    // plus the extra logic shouldn't be very expensive
+    if (prevChapter == null) return null;
+    return selectPageCount(state, prevChapter.id);
+  });
 
   const dispatch = useDispatch();
 
@@ -102,6 +106,7 @@ const Reader = ({ match: { params } }: Props) => {
           pageCount={pageCount}
           prevChapter={prevChapter}
           nextChapter={nextChapter}
+          prevChapterPageCount={prevChapterPageCount}
         />
       )}
     </>
