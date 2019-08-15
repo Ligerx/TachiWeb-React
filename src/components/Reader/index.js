@@ -7,7 +7,7 @@ import compact from "lodash/compact";
 import type { Manga } from "@tachiweb/api-client";
 import type { ChapterType } from "types";
 import SinglePageReader from "components/Reader/SinglePageReader";
-import WebtoonReader from "components/Reader/WebtoonReader";
+import WebtoonReader2 from "components/Reader/WebtoonReader2";
 import { Helmet } from "react-helmet";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -76,39 +76,27 @@ const Reader = ({ match: { params } }: Props) => {
     return <FullScreenLoading />;
   }
 
-  return (
-    <>
-      {/* <Helmet
-        title={`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
-          chapter.chapter_number
-        )}, Pg. ${page + 1} TachiWeb`}
-      /> */}
+  if (defaultViewer === "webtoon") {
+    return (
+      <WebtoonReader2
+        mangaInfo={mangaInfo}
+        chapter={chapter}
+        pageCount={pageCount}
+        prevChapter={prevChapter}
+        nextChapter={nextChapter}
+      />
+    );
+  }
 
-      {defaultViewer === "webtoon" ? (
-        <div />
-      ) : (
-        // <WebtoonReader
-        //   title={mangaInfo.title}
-        //   chapterNum={chapter.chapter_number}
-        //   page={page}
-        //   backUrl={Client.manga(urlPrefix, mangaInfo.id)}
-        //   urlPrefix={urlPrefix}
-        //   mangaId={mangaInfo.id}
-        //   pageCount={pageCount}
-        //   chapter={chapter}
-        //   nextChapterUrl={nextChapterUrl()}
-        //   prevChapterUrl={prevChapterUrl()}
-        // />
-        <SinglePageReader
-          mangaInfo={mangaInfo}
-          chapter={chapter}
-          pageCount={pageCount}
-          prevChapter={prevChapter}
-          nextChapter={nextChapter}
-          prevChapterPageCount={prevChapterPageCount}
-        />
-      )}
-    </>
+  return (
+    <SinglePageReader
+      mangaInfo={mangaInfo}
+      chapter={chapter}
+      pageCount={pageCount}
+      prevChapter={prevChapter}
+      nextChapter={nextChapter}
+      prevChapterPageCount={prevChapterPageCount}
+    />
   );
 };
 

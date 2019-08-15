@@ -6,10 +6,10 @@ import React, {
   useCallback,
   useRef
 } from "react";
-import { withRouter } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { times } from "lodash";
 import type { Manga } from "@tachiweb/api-client";
-import type { ChapterType, ChapterPageLinkState } from "types";
+import type { ChapterType } from "types";
 import { Server, Client } from "api";
 import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
@@ -35,9 +35,14 @@ import {
 // TODO: still need to update reading status behavior
 // TODO: reading status follows top page in view, but if bottom page comes into view, use that instead
 // TODO: update reading status hook to support the above behavior?
+// TODO: try to keep an array of refs instead of using #ids
 
 // It's easier to have the parent component pass non-null props to avoid null checking.
 // Hooks rely on call order which makes null checking somewhat painful.
+
+// Waypoints that wrap around components require special code
+// However, it automatically works with normal elements like <div>
+// https://github.com/brigade/react-waypoint#children
 
 type Props = {
   mangaInfo: Manga,
@@ -72,9 +77,10 @@ const WebtoonReader = ({
   const classes = useStyles();
   const urlPrefix = useContext(UrlPrefixContext);
 
-  // Initialize the starting page. This only runs once on first mount.
-  const lastReadPage = chapter.read ? 0 : chapter.last_page_read;
-  const [page, setPage] = useState(lastReadPage);
+  // Keep pagesInView sorted
+  const [pagesInView, setPagesInView] = useState<Array<number>>([]);
+
+  const topPageInView = pagesInView[0];
 
   const prevChapterUrl =
     prevChapter != null
@@ -86,35 +92,87 @@ const WebtoonReader = ({
       ? Client.chapter(urlPrefix, mangaInfo.id, nextChapter.id)
       : null;
 
-  const handleJumpToPage = (page: number) => {
+  const handleJumpToPage = (jumpToPage: number) => {
     // TODO
   };
+
+  const handlePageEnter = (index: number) => {
+    return () => {
+      setPagesInView(prevPagesInView => [...prevPagesInView, index].sort());
+    };
+    // const { mangaId, chapter, pageCount } = this.props;
+    // this.setState(prevState => {
+    //   const newPagesInView = addAPageInView(prevState.pagesInView, page);
+    //   const newPagesToLoad = addMorePagesToLoad(
+    //     mangaId,
+    //     chapter.id,
+    //     numLoadAhead,
+    //     pageCount,
+    //     newPagesInView,
+    //     prevState.pagesToLoad
+    //   );
+    //   // This assumes that scrollToPage() always tries to put the target image at the top
+    //   const isJumping = prevState.jumpingToPage !== null;
+    //   const targetPageIsOnTop = newPagesInView[0] === prevState.jumpingToPage;
+    //   if (isJumping && !targetPageIsOnTop) {
+    //     return { pagesInView: newPagesInView };
+    //   }
+    //   if (isJumping && targetPageIsOnTop) {
+    //     return {
+    //       pagesInView: newPagesInView,
+    //       pagesToLoad: newPagesToLoad,
+    //       jumpingToPage: null
+    //     };
+    //   }
+    //   return {
+    //     pagesInView: newPagesInView,
+    //     pagesToLoad: newPagesToLoad
+    //   };
+    // });
+  };
+
+  const handlePageLeave = (index: number) => {
+    return () => {
+      setPagesInView(prevPagesInView =>
+        prevPagesInView.filter(page => page !== index).sort()
+      );
+    };
+  };
+
+  useEffect(() => {
+    if (chapter.read || chapter.last_page_read === 0) return;
+
+    // Initialize the starting page. This only runs once on first mount.
+    handleJumpToPage(chapter.last_page_read);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useReaderScrollToTop(mangaInfo.id, chapter.id);
 
   usePagePreloader(
     mangaInfo.id,
     chapter.id,
-    page,
+    0,
+    // page,
     pageCount,
     nextChapter ? nextChapter.id : null
   );
 
-  useUpdateReadingStatus(mangaInfo.id, chapter.id, page);
+  useUpdateReadingStatus(mangaInfo.id, chapter.id, 0);
+  // useUpdateReadingStatus(mangaInfo.id, chapter.id, page);
 
   return (
     <>
       <Helmet
         title={`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
           chapter.chapter_number
-        )}, Pg. ${page + 1} TachiWeb`}
+        )}, Pg. ${topPageInView + 1} TachiWeb`}
       />
 
       <ReaderOverlay
         title={mangaInfo.title}
         chapterNum={chapter.chapter_number}
         pageCount={pageCount}
-        page={page}
+        page={topPageInView}
         backUrl={Client.manga(urlPrefix, mangaInfo.id)}
         prevChapterUrl={prevChapterUrl}
         nextChapterUrl={nextChapterUrl}
@@ -122,17 +180,21 @@ const WebtoonReader = ({
       />
 
       <ResponsiveGrid spacing={0} className={classes.topOffset}>
-        {sources.map((source, index) => (
-          <Grid item xs={12} key={source} id={index}>
+        {times(pageCount).map((_, index) => (
+          <Grid
+            item
+            xs={12}
+            key={`${mangaInfo.id}-${chapter.id}-${index}`}
+            id={index}
+          >
             <Waypoint
-              onEnter={() => this.handlePageEnter(index)}
-              onLeave={() => this.handlePageLeave(index)}
+              onEnter={handlePageEnter(index)}
+              onLeave={handlePageLeave(index)}
             >
               <div>
-                {" "}
                 {/* Refer to notes on Waypoint above for why this <div> is necessary */}
                 <ImageWithLoader
-                  src={pagesToLoad.includes(source) ? source : null}
+                  src={Server.image(mangaInfo.id, chapter.id, index)}
                   className={classes.page}
                   alt={`${chapter.name} - Page ${index + 1}`}
                 />
@@ -164,4 +226,4 @@ const WebtoonReader = ({
   );
 };
 
-export default withRouter(WebtoonReader);
+export default WebtoonReader;
