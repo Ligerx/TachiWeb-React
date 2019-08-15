@@ -81,4 +81,9 @@ export type CategoryType = {
   order: number
 };
 
-export type ChapterPageLinkState = { chapterId: number, jumpToPage: number };
+export type ChapterPageLinkState = $ReadOnly<{
+  chapterId: number,
+  jumpToPage: number
+}>;
+
+export type PageCounts = $ReadOnly<{ [chapterId: number]: number }>;

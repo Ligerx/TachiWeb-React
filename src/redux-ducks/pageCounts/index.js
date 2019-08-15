@@ -1,11 +1,12 @@
 // @flow
 import type { GlobalState, Action } from "redux-ducks/reducers";
+import type { PageCounts } from "types";
 import { FETCH_SUCCESS, FETCH_CACHE } from "./actions";
 
 // ================================================================================
 // Reducer
 // ================================================================================
-type State = $ReadOnly<{ [chapterId: number]: number }>;
+type State = PageCounts;
 
 export default function pageCountsReducer(
   state: State = {},
@@ -28,7 +29,8 @@ export default function pageCountsReducer(
 // Selectors
 // ================================================================================
 
-export const selectPageCounts = (state: GlobalState): State => state.pageCounts;
+export const selectPageCounts = (state: GlobalState): PageCounts =>
+  state.pageCounts;
 
 export const selectPageCount = (
   state: GlobalState,
