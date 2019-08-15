@@ -65,3 +65,13 @@ export function useUpdateReadingStatus(
     dispatch(updateReadingStatus(mangaId, chapterId, page));
   }, [dispatch, mangaId, chapterId, page]);
 }
+
+export function useReaderScrollToTop(
+  mangaId: number,
+  chapterId: number,
+  page?: number // used by SinglePageReader but not WebtoonReader
+) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [mangaId, chapterId, page]);
+}

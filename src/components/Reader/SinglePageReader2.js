@@ -22,20 +22,16 @@ import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import {
   usePagePreloader,
-  useUpdateReadingStatus
+  useUpdateReadingStatus,
+  useReaderScrollToTop
 } from "components/Reader/utils";
 
-// Because hooks rely on call order, it's easier to have the parent component pass non-null props.
-// This removes the need for null checking which makes using hooks less painful.
-
-// ~~~~ 3 cases for determining a chapter's initial page ~~~~
-// 1. On initial load, jump to this chapter's last read page.
-// 2. Clicking previous page when on page 0. Jump to the previous chapter's last page.
-// 3. Going to next chapter and skipping to next/previous chapter, go to page 0.
+// It's easier to have the parent component pass non-null props to avoid null checking.
+// Hooks rely on call order which makes null checking somewhat painful.
 
 // react-router history.location.state observations:
 // state only changes when you <Link> or push() to change routes.
-// The returned state is the same object between renders, so === equality checks work.
+// Otherwise, the state is the same object between renders, so shallow equality checks work.
 
 type Props = {
   mangaInfo: Manga,
@@ -70,6 +66,36 @@ const useStyles = makeStyles({
   }
 });
 
+/**
+ * Side effect that sets which page the user starts on initially and after changing chapters.
+ *
+ * 3 cases for determining a chapter's initial page.
+ * 1. On initial load, jump to this chapter's last read page.
+ * 2. Clicking previous page when on page 0. Jump to the previous chapter's last page.
+ * 3. Going to next chapter or skipping to next/previous chapter, go to page 0.
+ */
+function useJumpToChapterInitialPage(
+  chapterId: number, // only used to trigger useEffect when it changes
+  state: ?ChapterPageLinkState,
+  setPage: Function
+) {
+  const firstRender = useRef(true);
+
+  // Handle setting the starting page when chapter changes
+  useEffect(() => {
+    if (firstRender.current) {
+      // Prevent this useEffect from overwriting the useState initialized value on first mount
+      firstRender.current = false;
+    } else if (state != null) {
+      // react-router link state changes when the URL (ie. chapter) changes
+      // Jumping to the last page of the prev chapter if the link state exists
+      setPage(state.jumpToPage);
+    } else {
+      setPage(0);
+    }
+  }, [chapterId, state, setPage]);
+}
+
 const SinglePageReader2 = ({
   mangaInfo,
   chapter,
@@ -89,21 +115,7 @@ const SinglePageReader2 = ({
   const lastReadPage = chapter.read ? 0 : chapter.last_page_read;
   const [page, setPage] = useState(lastReadPage);
 
-  const firstRender = useRef(true);
-
-  // Handle setting the starting page when chapter changes
-  useEffect(() => {
-    if (firstRender.current) {
-      // Prevent this useEffect from overwriting the useState initialized value on first mount
-      firstRender.current = false;
-    } else if (state != null) {
-      // react-router link state changes when the URL (ie. chapter) changes
-      // Jumping to the last page of the prev chapter if the link state exists
-      setPage(state.jumpToPage);
-    } else {
-      setPage(0);
-    }
-  }, [chapter.id, state]);
+  useJumpToChapterInitialPage(chapter.id, state, setPage);
 
   const prevChapterUrl =
     prevChapter != null
@@ -170,9 +182,7 @@ const SinglePageReader2 = ({
     };
   }, [handleNextPage, handlePrevPage]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [mangaInfo.id, chapter.id, page]);
+  useReaderScrollToTop(mangaInfo.id, chapter.id, page);
 
   usePagePreloader(
     mangaInfo.id,
