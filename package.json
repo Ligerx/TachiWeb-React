@@ -5,7 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.0.1",
     "@material-ui/styles": "^4.0.1",
-    "@tachiweb/api-client": "3.2.0",
+    "@tachiweb/api-client": "3.2.8",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
     "iso-639-1": "^2.0.3",
