@@ -51,19 +51,6 @@ export function fetchCategories(): ThunkAction {
     try {
       const categories = await Server.api().getCategories();
 
-      // [July 1, 2019]
-      // On June 22, 2019, nulldev added a dummy default category to the payload at my request.
-      // However, this is actually a bad idea because the front end needs to derive the data on every
-      // update regardless. The dummy default category is at best useless and at worst causes bugs.
-      // I'm manually removing this data from the payload.
-      //
-      // If nulldev updates the api to get rid of this dummy default data, then the below code
-      // can safely be deleted as well.
-      if (categories[0].id === -1) {
-        categories.shift();
-      }
-      // ---------------------------
-
       dispatch({ type: FETCH_SUCCESS, categories });
 
       // SIDE EFFECT - after state is updated from _SUCCESS
