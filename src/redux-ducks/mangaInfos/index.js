@@ -87,9 +87,10 @@ export const selectMangaInfos = (state: GlobalState): State => state.mangaInfos;
 export const selectMangaInfo = (state: GlobalState, mangaId: number): ?Manga =>
   state.mangaInfos[mangaId];
 
-// selectIsFavorite(state, mangaId: number)
-// returns boolean
-export const selectIsFavorite = createCachedSelector(
+export const selectIsFavorite: (
+  state: GlobalState,
+  mangaId: number
+) => boolean = createCachedSelector(
   [selectMangaInfos, (_, mangaId: number) => mangaId],
   (mangaInfos, mangaId): boolean => {
     if (!mangaInfos[mangaId]) return false;

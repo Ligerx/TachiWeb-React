@@ -66,18 +66,18 @@ export const selectExtensions = (
   state: GlobalState
 ): $ReadOnlyArray<ExtensionType> => state.extensions;
 
-export const selectInstalledExtensions = createSelector(
+export const selectInstalledExtensions: GlobalState => $ReadOnlyArray<ExtensionType> = createSelector(
   [selectExtensions],
-  extensions => {
+  (extensions): $ReadOnlyArray<ExtensionType> => {
     return extensions
       .filter(extension => extension.status === "INSTALLED")
       .sort(extensionSort);
   }
 );
 
-export const selectNotInstalledExtensions = createSelector(
+export const selectNotInstalledExtensions: GlobalState => $ReadOnlyArray<ExtensionType> = createSelector(
   [selectExtensions],
-  extensions => {
+  (extensions): $ReadOnlyArray<ExtensionType> => {
     return extensions
       .filter(extension => extension.status !== "INSTALLED")
       .sort(extensionSort);

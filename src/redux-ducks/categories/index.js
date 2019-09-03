@@ -138,18 +138,15 @@ export const selectCurrentCategoryId = (state: GlobalState): ?number =>
 export const selectCategoryIds = (state: GlobalState): Array<number> =>
   state.categories.allIds;
 
-export const selectCategories = createSelector(
+export const selectCategories: GlobalState => $ReadOnlyArray<CategoryType> = createSelector(
   [state => state.categories.byId, selectCategoryIds],
   (categories, categoryIds): $ReadOnlyArray<CategoryType> =>
     categoryIds.map(id => categories[id])
 );
 
-export const selectMangaIdsForDefaultCategory = createSelector(
+export const selectMangaIdsForDefaultCategory: GlobalState => $ReadOnlyArray<number> = createSelector(
   [selectCategories, selectLibraryMangaIds],
-  (
-    categories: $ReadOnlyArray<CategoryType>,
-    libraryMangaIds: $ReadOnlyArray<number>
-  ) => {
+  (categories, libraryMangaIds): $ReadOnlyArray<number> => {
     let mangaNotInACategory = [...libraryMangaIds];
 
     categories.forEach(category => {
@@ -162,15 +159,19 @@ export const selectMangaIdsForDefaultCategory = createSelector(
   }
 );
 
-export const selectDefaultCategoryHasManga = createSelector(
+export const selectDefaultCategoryHasManga: GlobalState => boolean = createSelector(
   [selectMangaIdsForDefaultCategory],
-  mangaIds => mangaIds.length > 0
+  (mangaIds): boolean => mangaIds.length > 0
 );
 
 const noMangaIds = [];
-export const selectCategoryMangaIds = createSelector(
+export const selectCategoryMangaIds: GlobalState => $ReadOnlyArray<number> = createSelector(
   [selectCategories, selectCurrentCategoryId, selectMangaIdsForDefaultCategory],
-  (categories, currentCategoryId, mangaIdsForDefaultCategory) => {
+  (
+    categories,
+    currentCategoryId,
+    mangaIdsForDefaultCategory
+  ): $ReadOnlyArray<number> => {
     if (currentCategoryId === null) {
       // viewing the default category
       return mangaIdsForDefaultCategory;
