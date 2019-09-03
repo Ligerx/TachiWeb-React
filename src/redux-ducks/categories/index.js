@@ -108,8 +108,12 @@ export default function categoriesReducer(
         break;
       }
 
-      // case REORDER_CATEGORY_REQUEST: {
-      // }
+      case REORDER_CATEGORY_REQUEST: {
+        const { sourceIndex, destinationIndex } = action;
+
+        arrayMove(draft.allIds, sourceIndex, destinationIndex);
+        break;
+      }
 
       default:
         break;
@@ -131,8 +135,11 @@ export const selectCategoriesIsLoaded = (state: GlobalState): boolean =>
 export const selectCurrentCategoryId = (state: GlobalState): ?number =>
   state.categories.currentCategoryId;
 
+export const selectCategoryIds = (state: GlobalState): Array<number> =>
+  state.categories.allIds;
+
 export const selectCategories = createSelector(
-  [state => state.categories.byId, state => state.categories.allIds],
+  [state => state.categories.byId, selectCategoryIds],
   (categories, categoryIds): $ReadOnlyArray<CategoryType> =>
     categoryIds.map(id => categories[id])
 );
@@ -175,3 +182,15 @@ export const selectCategoryMangaIds = createSelector(
     return currentCategory ? currentCategory.manga : noMangaIds;
   }
 );
+
+// ================================================================================
+// Helper functions
+// ================================================================================
+
+// warning - mutable function
+// https://stackoverflow.com/a/6470794
+function arrayMove(arr, fromIndex, toIndex) {
+  const element = arr[fromIndex];
+  arr.splice(fromIndex, 1);
+  arr.splice(toIndex, 0, element);
+}
