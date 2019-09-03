@@ -58,7 +58,7 @@ export function fetchCategories(): ThunkAction {
       dispatch({ type: FETCH_SUCCESS, categories });
 
       // SIDE EFFECT - after state is updated from _SUCCESS
-      if (!selectDefaultCategoryHasManga(getState())) {
+      if (categories.length > 0 && !selectDefaultCategoryHasManga(getState())) {
         dispatch(changeCurrentCategoryId(categories[0].id));
       }
       // -----------
