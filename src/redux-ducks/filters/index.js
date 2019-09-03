@@ -111,6 +111,6 @@ export const selectFilterTypeAtIndex: (
   // Optimization
   // The type and position of a filter is constant, so we can look outside of currentFilters
   [selectInitialFilters, (_, index) => index],
-  (filters, index) => filters[index]._type // eslint-disable-line no-underscore-dangle
+  (filters, index): string => filters[index]._type // eslint-disable-line no-underscore-dangle
   // Cache Key
 )((_, index) => index);

@@ -165,6 +165,37 @@ type UpdateCategoryMangaFailureAction = {
 };
 
 // ================================================================================
+// Reorder category
+// ================================================================================
+
+// Action Constants and Types
+export const REORDER_CATEGORY_REQUEST = "categories/REORDER_CATEGORY_REQUEST";
+type REORDER_CATEGORY_REQUEST_TYPE = "categories/REORDER_CATEGORY_REQUEST";
+
+export const REORDER_CATEGORY_SUCCESS = "categories/REORDER_CATEGORY_SUCCESS";
+type REORDER_CATEGORY_SUCCESS_TYPE = "categories/REORDER_CATEGORY_SUCCESS";
+
+export const REORDER_CATEGORY_FAILURE = "categories/REORDER_CATEGORY_FAILURE";
+type REORDER_CATEGORY_FAILURE_TYPE = "categories/REORDER_CATEGORY_FAILURE";
+
+// Action Object Types
+type ReorderCategoryRequestAction = {
+  type: REORDER_CATEGORY_REQUEST_TYPE,
+  sourceIndex: number,
+  destinationIndex: number
+};
+
+type ReorderCategorySuccessAction = {
+  type: REORDER_CATEGORY_SUCCESS_TYPE
+};
+
+type ReorderCategoryFailureAction = {
+  type: REORDER_CATEGORY_FAILURE_TYPE,
+  errorMessage: string,
+  meta: Object
+};
+
+// ================================================================================
 // etc
 // ================================================================================
 export const CHANGE_CURRENT_CATEGORY_ID =
@@ -196,4 +227,7 @@ export type CategoriesAction =
   | UpdateCategoryMangaRequestAction
   | UpdateCategoryMangaSuccessAction
   | UpdateCategoryMangaFailureAction
+  | ReorderCategoryRequestAction
+  | ReorderCategorySuccessAction
+  | ReorderCategoryFailureAction
   | ChangeCurrentCategoryIdAction;
