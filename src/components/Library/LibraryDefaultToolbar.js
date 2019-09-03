@@ -1,7 +1,6 @@
 // @flow
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import LibraryMore from "components/Library/LibraryMore";
@@ -21,7 +20,7 @@ type Props = {
   onSearchChange: Function
 };
 
-const LibraryHeader = ({ searchQuery, onSearchChange }: Props) => {
+const LibraryDefaultToolbar = ({ searchQuery, onSearchChange }: Props) => {
   const dispatch = useDispatch();
 
   const flags = useSelector(selectLibraryFlags);
@@ -34,29 +33,27 @@ const LibraryHeader = ({ searchQuery, onSearchChange }: Props) => {
     dispatch(setLibraryFlag(flag, state));
 
   return (
-    <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
-      <Toolbar>
-        <MenuDrawer />
+    <Toolbar>
+      <MenuDrawer />
 
-        <Typography variant="h6" style={{ flex: 1 }}>
-          Library
-        </Typography>
+      <Typography variant="h6" style={{ flex: 1 }}>
+        Library
+      </Typography>
 
-        <LibrarySearch
-          searchQuery={searchQuery}
-          onSearchChange={onSearchChange}
-        />
+      <LibrarySearch
+        searchQuery={searchQuery}
+        onSearchChange={onSearchChange}
+      />
 
-        <RefreshButton onClick={handleRefreshClick} />
+      <RefreshButton onClick={handleRefreshClick} />
 
-        <LibraryFilter flags={flags} setLibraryFlag={handleSetLibraryFlag} />
+      <LibraryFilter flags={flags} setLibraryFlag={handleSetLibraryFlag} />
 
-        <LibrarySort flags={flags} setLibraryFlag={handleSetLibraryFlag} />
+      <LibrarySort flags={flags} setLibraryFlag={handleSetLibraryFlag} />
 
-        <LibraryMore />
-      </Toolbar>
-    </AppBar>
+      <LibraryMore />
+    </Toolbar>
   );
 };
 
-export default LibraryHeader;
+export default LibraryDefaultToolbar;

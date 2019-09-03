@@ -1,5 +1,9 @@
 // @flow
-import { combineReducers } from "redux";
+import {
+  combineReducers,
+  type Store as ReduxStore,
+  type Dispatch as ReduxDispatch
+} from "redux";
 import loading from "./loading";
 import error from "./error";
 import library from "./library";
@@ -11,6 +15,7 @@ import filters from "./filters";
 import mangaInfos from "./mangaInfos";
 import extensions from "./extensions";
 import settings from "./settings";
+import categories from "./categories";
 import type { LibraryAction } from "./library/actions";
 import type { ChaptersAction } from "./chapters/actions";
 import type { PageCountsAction } from "./pageCounts/actions";
@@ -20,6 +25,7 @@ import type { FiltersAction } from "./filters/actions";
 import type { MangaInfosAction } from "./mangaInfos/actions";
 import type { ExtensionsAction } from "./extensions/actions";
 import type { SettingsAction } from "./settings/actions";
+import type { CategoriesAction } from "./categories/actions";
 
 const reducers = {
   loading,
@@ -32,7 +38,8 @@ const reducers = {
   filters,
   mangaInfos,
   extensions,
-  settings
+  settings,
+  categories
 };
 
 // Get the type of the entire redux store by extracting it from the reducers' return types
@@ -40,7 +47,9 @@ type Reducers = typeof reducers;
 type ExtractReturnType = <V>((any, any) => V) => V;
 export type GlobalState = $ObjMap<Reducers, ExtractReturnType>;
 
+type ReduxInitAction = { type: "@@INIT" };
 export type Action =
+  | ReduxInitAction
   | LibraryAction
   | ChaptersAction
   | PageCountsAction
@@ -49,7 +58,8 @@ export type Action =
   | FiltersAction
   | MangaInfosAction
   | ExtensionsAction
-  | SettingsAction;
+  | SettingsAction
+  | CategoriesAction;
 
 type GetState = () => GlobalState;
 type PromiseAction = Promise<Action>;
@@ -74,3 +84,5 @@ export default combineReducers<Reducers, Action>(reducers);
 // https://flow.org/en/docs/react/redux/
 // https://blog.callstack.io/type-checking-react-and-redux-thunk-with-flow-part-2-206ce5f6e705
 // https://engineering.wework.com/adventures-in-static-typing-react-redux-flow-oh-my-284c5f74adac#cbfa
+// https://github.com/reduxjs/redux/tree/master/examples/todos-flow
+// https://github.com/hmeerlo/redux-thunk-flow

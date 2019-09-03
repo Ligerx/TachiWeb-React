@@ -12,6 +12,7 @@ import {
   UPDATE_READING_STATUS_SUCCESS
 } from "redux-ducks/chapters/actions";
 import { selectSources } from "redux-ducks/sources";
+import { selectCategoryMangaIds } from "redux-ducks/categories";
 import filterSortLibrary from "./libraryUtils";
 import {
   FETCH_LIBRARY,
@@ -191,9 +192,14 @@ export const selectIsLibraryLoading = createLoadingSelector([
   FETCH_LIBRARY_FLAGS
 ]);
 
-export const selectLibraryMangaIds = (
+// [June 22, 2019] Was running into some circular dependency problems with library and
+// category selectors. Using functions instead of arrow functions seems to solve the problem...
+// https://github.com/reduxjs/reselect/issues/169#issuecomment-274690285
+export function selectLibraryMangaIds(
   state: GlobalState
-): $ReadOnlyArray<number> => state.library.mangaIds;
+): $ReadOnlyArray<number> {
+  return state.library.mangaIds;
+}
 
 export const selectUnread = (
   state: GlobalState
@@ -209,10 +215,22 @@ export const selectLibraryMangaInfos = createSelector(
   }
 );
 
+export const selectLibraryMangaInfosForCurrentCategory = createSelector(
+  [selectMangaInfos, selectCategoryMangaIds, selectLibraryMangaIds],
+  (mangaInfos, categoryMangaIds, libraryMangaIds): Array<Manga> => {
+    // Categories don't delete unfavorited mangas, so there may be category mangaIds that don't exist
+    // in library. So compare category and library mangaIds before pulling from mangaInfos.
+    const categoryMangaIdsInLibrary = categoryMangaIds.filter(categoryMangaId =>
+      libraryMangaIds.includes(categoryMangaId)
+    );
+    return categoryMangaIdsInLibrary.map(mangaId => mangaInfos[mangaId]);
+  }
+);
+
 // selectFilteredSortedLibrary(state, searchQuery: string)
 export const selectFilteredSortedLibrary = createCachedSelector(
   [
-    selectLibraryMangaInfos,
+    selectLibraryMangaInfosForCurrentCategory,
     selectLibraryFlags,
     selectSources,
     selectUnread,

@@ -17,6 +17,7 @@ const useStyles = makeStyles({
     marginBottom: 24,
     // Kinda hacking the UI for this together right now (right align)
     // https://stackoverflow.com/questions/6507014/how-to-space-the-children-of-a-div-with-css
+    display: "block",
     marginLeft: "auto",
     marginRight: 8
   },

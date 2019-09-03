@@ -79,7 +79,7 @@ const UninstallConfirmationDialog = ({
 }: DialogProps) => {
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Uninstall Extension - {name}</DialogTitle>
+      <DialogTitle>Uninstall Extension - {name}?</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           Manga that rely on this extension will not be deleted. However, you
@@ -88,10 +88,10 @@ const UninstallConfirmationDialog = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="primary" autoFocus>
           Go Back
         </Button>
-        <Button onClick={onUninstall} color="primary" autoFocus>
+        <Button onClick={onUninstall} color="primary">
           Uninstall
         </Button>
       </DialogActions>
