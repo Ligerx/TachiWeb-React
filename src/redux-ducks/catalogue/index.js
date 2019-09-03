@@ -105,7 +105,7 @@ export const selectCatalogueSearchQuery = (state: GlobalState): string =>
 
 export const selectCatalogueMangaInfos: GlobalState => $ReadOnlyArray<Manga> = createSelector(
   [selectMangaInfos, selectCatalogueMangaIds],
-  (mangaInfos, mangaIds): Array<Manga> => {
+  (mangaInfos, mangaIds): $ReadOnlyArray<Manga> => {
     return mangaIds.map(mangaId => mangaInfos[mangaId]);
   }
 );
