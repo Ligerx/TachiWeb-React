@@ -1,5 +1,7 @@
 // @flow
+/* eslint-disable no-param-reassign */ // immer draft is meant to be mutated
 import { createSelector } from "reselect";
+import produce from "immer";
 import type { GlobalState, Action } from "redux-ducks/reducers";
 import type { CategoryType } from "types";
 import { createLoadingSelector } from "redux-ducks/loading";
@@ -11,97 +13,109 @@ import {
   DELETE_REQUEST,
   UPDATE_CATEGORY_NAME_REQUEST,
   UPDATE_CATEGORY_MANGA_REQUEST,
+  REORDER_CATEGORY_REQUEST,
   CHANGE_CURRENT_CATEGORY_ID
 } from "./actions";
+
+// For consistency, ignore the order category.order property.
+// state.allIds should be the source of truth.
+//
+// I'm not removing the category.order property in case we move the category type
+// over to the api types which I have no control over.
+
+// Using immer here, so mutable state is encouraged
 
 // ================================================================================
 // Reducer
 // ================================================================================
-type State = $ReadOnly<{
-  categories: $ReadOnlyArray<CategoryType>,
+type State = {
+  byId: { [categoryId: number]: CategoryType },
+  allIds: Array<number>, // ordered
   isLoaded: boolean,
   currentCategoryId: ?number // null = default category
-}>;
+};
 
 export default function categoriesReducer(
-  state: State = { categories: [], isLoaded: false, currentCategoryId: null },
+  state: State = {
+    byId: {},
+    allIds: [],
+    isLoaded: false,
+    currentCategoryId: null
+  },
   action: Action
 ): State {
-  switch (action.type) {
-    case FETCH_SUCCESS:
-      return { ...state, categories: action.categories, isLoaded: true };
+  return produce(state, draft => {
+    switch (action.type) {
+      case FETCH_SUCCESS: {
+        // Sorting just in case
+        const sortedCategories = action.categories
+          .slice()
+          .sort((a, b) => a.order - b.order);
 
-    case CREATE_SUCCESS:
-      return {
-        ...state,
-        categories: [...state.categories, action.newCategory]
-      };
+        draft.byId = sortedCategories.reduce((accumulator, category) => {
+          accumulator[category.id] = category;
+          return accumulator;
+        }, {});
 
-    case CHANGE_CURRENT_CATEGORY_ID:
-      return { ...state, currentCategoryId: action.categoryId };
+        draft.allIds = sortedCategories.map(category => category.id);
 
-    case UPDATE_CATEGORY_NAME_REQUEST: {
-      const { categoryId, name } = action;
-      const categoryIndex = state.categories.findIndex(
-        category => category.id === categoryId
-      );
-      const updatedCategory = { ...state.categories[categoryIndex], name };
+        draft.isLoaded = true;
 
-      return {
-        ...state,
-        categories: [
-          ...state.categories.slice(0, categoryIndex),
-          updatedCategory,
-          ...state.categories.slice(categoryIndex + 1)
-        ]
-      };
-    }
+        break;
+      }
 
-    case DELETE_REQUEST: {
-      const { categoryId } = action;
-      const categoryIndex = state.categories.findIndex(
-        category => category.id === categoryId
-      );
+      case CREATE_SUCCESS: {
+        const { newCategory } = action;
 
-      return {
-        ...state,
-        categories: [
-          ...state.categories.slice(0, categoryIndex),
-          ...state.categories.slice(categoryIndex + 1)
-        ]
-      };
-    }
+        draft.byId[newCategory.id] = newCategory;
+        draft.allIds.push(newCategory.id);
 
-    case UPDATE_CATEGORY_MANGA_REQUEST: {
-      const { categoryId, mangaToAdd, mangaToRemove } = action;
-      const categoryIndex = state.categories.findIndex(
-        category => category.id === categoryId
-      );
+        break;
+      }
 
-      const updatedCategories = state.categories.map((category, index) => {
-        if (index !== categoryIndex) return category;
+      case CHANGE_CURRENT_CATEGORY_ID: {
+        draft.currentCategoryId = action.categoryId;
+        break;
+      }
 
-        let updatedManga;
-        updatedManga = category.manga.filter(
+      case UPDATE_CATEGORY_NAME_REQUEST: {
+        const { categoryId, name } = action;
+
+        draft.byId[categoryId].name = name;
+
+        break;
+      }
+
+      case DELETE_REQUEST: {
+        const { categoryId } = action;
+
+        delete draft.byId[categoryId];
+        draft.allIds = draft.allIds.filter(id => id !== categoryId);
+
+        break;
+      }
+
+      case UPDATE_CATEGORY_MANGA_REQUEST: {
+        const { categoryId, mangaToAdd, mangaToRemove } = action;
+
+        const category = draft.byId[categoryId];
+
+        category.manga = category.manga.filter(
           mangaId => !mangaToRemove.includes(mangaId)
         );
-        updatedManga = [...updatedManga, ...mangaToAdd];
 
-        return {
-          ...category,
-          manga: updatedManga
-        };
-      });
+        category.manga.push(...mangaToAdd);
 
-      return {
-        ...state,
-        categories: updatedCategories
-      };
+        break;
+      }
+
+      // case REORDER_CATEGORY_REQUEST: {
+      // }
+
+      default:
+        break;
     }
-
-    default:
-      return state;
-  }
+  });
 }
 
 // ================================================================================
