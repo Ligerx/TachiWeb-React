@@ -3,6 +3,7 @@ import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
 import format from "date-fns/format";
 import {
+  selectCategoryIds,
   selectCategories,
   selectCategoriesIsLoaded,
   selectDefaultCategoryHasManga,
@@ -25,6 +26,9 @@ import {
   UPDATE_CATEGORY_MANGA_REQUEST,
   UPDATE_CATEGORY_MANGA_SUCCESS,
   UPDATE_CATEGORY_MANGA_FAILURE,
+  REORDER_CATEGORY_REQUEST,
+  REORDER_CATEGORY_SUCCESS,
+  REORDER_CATEGORY_FAILURE,
   CHANGE_CURRENT_CATEGORY_ID,
   type ChangeCurrentCategoryIdAction
 } from "./actions";
@@ -50,19 +54,6 @@ export function fetchCategories(): ThunkAction {
 
     try {
       const categories = await Server.api().getCategories();
-
-      // [July 1, 2019]
-      // On June 22, 2019, nulldev added a dummy default category to the payload at my request.
-      // However, this is actually a bad idea because the front end needs to derive the data on every
-      // update regardless. The dummy default category is at best useless and at worst causes bugs.
-      // I'm manually removing this data from the payload.
-      //
-      // If nulldev updates the api to get rid of this dummy default data, then the below code
-      // can safely be deleted as well.
-      if (categories[0].id === -1) {
-        categories.shift();
-      }
-      // ---------------------------
 
       dispatch({ type: FETCH_SUCCESS, categories });
 
@@ -182,7 +173,7 @@ function updateCategoryManga(
     } catch (error) {
       dispatch({
         type: UPDATE_CATEGORY_MANGA_FAILURE,
-        errorMessage: "Failed to add orremove manga from category.",
+        errorMessage: "Failed to add or remove manga from category.",
         meta: { error }
       });
     }
@@ -236,4 +227,35 @@ function getMangaToAddOrRemoveFromCategory(
   });
 
   return [mangaToAdd, mangaToRemove];
+}
+
+export function reorderCategory(
+  sourceIndex: number,
+  destinationIndex: number
+): ThunkAction {
+  return async (dispatch, getState) => {
+    // First, optimistically and synchronously reorder the categories in state
+    dispatch({
+      type: REORDER_CATEGORY_REQUEST,
+      sourceIndex,
+      destinationIndex
+    });
+
+    try {
+      // category order uses 1-based indexing
+      // sending all categories because it's simpler
+      const allIds = selectCategoryIds(getState());
+      const request = allIds.map((id, index) => ({ id, order: index + 1 }));
+
+      await Server.api().editCategories(request);
+
+      dispatch({ type: REORDER_CATEGORY_SUCCESS });
+    } catch (error) {
+      dispatch({
+        type: REORDER_CATEGORY_FAILURE,
+        errorMessage: "Failed to add change category order.",
+        meta: { error }
+      });
+    }
+  };
 }
