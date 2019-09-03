@@ -52,10 +52,9 @@ export default function categoriesReducer(
           .slice()
           .sort((a, b) => a.order - b.order);
 
-        draft.byId = sortedCategories.reduce((accumulator, category) => {
-          accumulator[category.id] = category;
-          return accumulator;
-        }, {});
+        sortedCategories.forEach(category => {
+          draft.byId[category.id] = category;
+        });
 
         draft.allIds = sortedCategories.map(category => category.id);
 
