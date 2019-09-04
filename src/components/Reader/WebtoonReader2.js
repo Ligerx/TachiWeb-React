@@ -102,6 +102,9 @@ const WebtoonReader = ({
   // Keep pagesInView sorted
   const [pagesInView, setPagesInView] = useState<Array<number>>([]);
 
+  // Use jumpToPageRef to know when you are jumping and when you reached your destination
+  const jumpToPageRef = useRef<?number>(null);
+
   const prevChapterUrl =
     prevChapter != null
       ? Client.chapter(urlPrefix, mangaInfo.id, prevChapter.id)
@@ -113,12 +116,17 @@ const WebtoonReader = ({
       : null;
 
   const handleJumpToPage = (pageNum: number) => {
-    // TODO: prevent lazy loading while jumping
+    jumpToPageRef.current = pageNum;
     scrollToPage(pageNum);
   };
 
   const handlePageEnter = (index: number) => {
     return () => {
+      // Clear page jump ref when we've reached our destination page
+      if (jumpToPageRef.current === index) {
+        jumpToPageRef.current = null;
+      }
+
       setPagesInView(prevPagesInView => [...prevPagesInView, index].sort());
     };
   };
