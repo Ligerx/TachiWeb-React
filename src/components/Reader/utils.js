@@ -7,7 +7,7 @@ import { updateReadingStatus } from "redux-ducks/chapters/actionCreators";
 export function usePagePreloader(
   mangaId: number,
   chapterId: number,
-  page: number,
+  page: ?number, // possibly null on WebtoonReader init
   pageCount: number,
   nextChapterId: ?number
 ) {
@@ -20,6 +20,8 @@ export function usePagePreloader(
   // prevChapterId and prev chapter pageCount.
 
   useEffect(() => {
+    if (page == null) return;
+
     const numPreloadAhead = 3;
 
     for (let i = 1; i <= numPreloadAhead; i += 1) {
@@ -41,11 +43,13 @@ export function usePagePreloader(
 export function useUpdateReadingStatus(
   mangaId: number,
   chapterId: number,
-  page: number
+  page: ?number // possibly null on WebtoonReader init
 ) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (page == null) return;
+
     // updateReadingStatus() is handling whether or not an update should be made
     dispatch(updateReadingStatus(mangaId, chapterId, page));
   }, [dispatch, mangaId, chapterId, page]);

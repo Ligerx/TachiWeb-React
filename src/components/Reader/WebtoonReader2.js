@@ -28,14 +28,18 @@ import {
   useReaderScrollToTop
 } from "components/Reader/utils";
 
-// TODO: lazy loading images, account for page jumps
-// TODO: state should hold an array of pages
+// //////////////////////////
+
+// TODO: try to keep an array of refs instead of using #ids
+
 // TODO: jumping should be put the target page to the top of the viewport
 // TODO: initializing start page should only jump if non 0
-// TODO: still need to update reading status behavior
-// TODO: reading status follows top page in view, but if bottom page comes into view, use that instead
-// TODO: update reading status hook to support the above behavior?
-// TODO: try to keep an array of refs instead of using #ids
+
+// TODO: lazy loading images, account for page jumps
+
+// TODO: Double check that usePagePreloader() is behaving correctly after implementing lazy load
+
+// //////////////////////////
 
 // It's easier to have the parent component pass non-null props to avoid null checking.
 // Hooks rely on call order which makes null checking somewhat painful.
@@ -79,8 +83,6 @@ const WebtoonReader = ({
 
   // Keep pagesInView sorted
   const [pagesInView, setPagesInView] = useState<Array<number>>([]);
-
-  const topPageInView = pagesInView[0];
 
   const prevChapterUrl =
     prevChapter != null
@@ -148,17 +150,24 @@ const WebtoonReader = ({
 
   useReaderScrollToTop(mangaInfo.id, chapter.id);
 
+  const topPageInView: ?number = pagesInView[0];
+  const lastPageInView: ?number = pagesInView[pagesInView.length - 1];
+
   usePagePreloader(
     mangaInfo.id,
     chapter.id,
-    0,
-    // page,
+    lastPageInView, // Currently not preloading other in view pages
     pageCount,
     nextChapter ? nextChapter.id : null
   );
 
-  useUpdateReadingStatus(mangaInfo.id, chapter.id, 0);
-  // useUpdateReadingStatus(mangaInfo.id, chapter.id, page);
+  // useUpdateReadingStatus() only takes 1 page currently
+  // The intended behavior is if the final page comes into view, mark the chapter as
+  // complete, but otherwise track reading status based on the topPageInView.
+  const readingStatusPage =
+    lastPageInView === pageCount - 1 ? lastPageInView : topPageInView;
+
+  useUpdateReadingStatus(mangaInfo.id, chapter.id, readingStatusPage);
 
   return (
     <>
