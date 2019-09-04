@@ -30,8 +30,6 @@ import {
 
 // //////////////////////////
 
-// TODO: try to keep an array of refs instead of using #ids
-
 // TODO: jumping should be put the target page to the top of the viewport
 // TODO: initializing start page should only jump if non 0
 
@@ -43,6 +41,15 @@ import {
 
 // It's easier to have the parent component pass non-null props to avoid null checking.
 // Hooks rely on call order which makes null checking somewhat painful.
+
+// I considered using refs to store all images to scroll to.
+// However, this seems to be quite complicated because I'd have to somehow update the
+// data when chapter (and thus the page count) changes if I use useRef(). This seems quite annoying because
+// child components only update refs on mount and unmount, so I can't just have an array of refs update outside of useRef().
+// Sticking with ids is a much easier to write and understand solution.
+// https://stackoverflow.com/questions/54940399/how-target-dom-with-react-useref-in-map
+// https://stackoverflow.com/questions/55995760/how-to-add-refs-dynamically-with-react-hooks
+// https://dev.to/ajsharp/-an-array-of-react-refs-pnf
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>
