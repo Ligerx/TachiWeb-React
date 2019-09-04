@@ -30,8 +30,10 @@ import {
 
 // //////////////////////////
 
-// TODO: jumping should be put the target page to the top of the viewport
-// TODO: initializing start page should only jump if non 0
+// TODO: when jumping, ignore unwanted side effects:
+//       - page preloading
+//       - reading status
+//       - image lazy loading
 
 // TODO: lazy loading images, account for page jumps
 
@@ -78,6 +80,15 @@ const useStyles = makeStyles({
   }
 });
 
+function scrollToPage(pageNum: number) {
+  console.error("inside scrollToPage", pageNum);
+  const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
+  if (!page) return;
+  console.error("past the null check", page);
+  // Adding extra pixels to ensure the previous page isn't still in view. (browser quirk)
+  window.scrollTo(0, page.offsetTop + 1);
+}
+
 const WebtoonReader = ({
   mangaInfo,
   chapter,
@@ -101,43 +112,15 @@ const WebtoonReader = ({
       ? Client.chapter(urlPrefix, mangaInfo.id, nextChapter.id)
       : null;
 
-  const handleJumpToPage = (jumpToPage: number) => {
-    // TODO
+  const handleJumpToPage = (pageNum: number) => {
+    // TODO: prevent lazy loading while jumping
+    scrollToPage(pageNum);
   };
 
   const handlePageEnter = (index: number) => {
     return () => {
       setPagesInView(prevPagesInView => [...prevPagesInView, index].sort());
     };
-    // const { mangaId, chapter, pageCount } = this.props;
-    // this.setState(prevState => {
-    //   const newPagesInView = addAPageInView(prevState.pagesInView, page);
-    //   const newPagesToLoad = addMorePagesToLoad(
-    //     mangaId,
-    //     chapter.id,
-    //     numLoadAhead,
-    //     pageCount,
-    //     newPagesInView,
-    //     prevState.pagesToLoad
-    //   );
-    //   // This assumes that scrollToPage() always tries to put the target image at the top
-    //   const isJumping = prevState.jumpingToPage !== null;
-    //   const targetPageIsOnTop = newPagesInView[0] === prevState.jumpingToPage;
-    //   if (isJumping && !targetPageIsOnTop) {
-    //     return { pagesInView: newPagesInView };
-    //   }
-    //   if (isJumping && targetPageIsOnTop) {
-    //     return {
-    //       pagesInView: newPagesInView,
-    //       pagesToLoad: newPagesToLoad,
-    //       jumpingToPage: null
-    //     };
-    //   }
-    //   return {
-    //     pagesInView: newPagesInView,
-    //     pagesToLoad: newPagesToLoad
-    //   };
-    // });
   };
 
   const handlePageLeave = (index: number) => {
@@ -148,14 +131,15 @@ const WebtoonReader = ({
     };
   };
 
+  useReaderScrollToTop(mangaInfo.id, chapter.id);
+
+  // Order matters, this useEffect should happen after useReaderScrollToTop()
   useEffect(() => {
     if (chapter.read || chapter.last_page_read === 0) return;
 
     // Initialize the starting page. This only runs once on first mount.
     handleJumpToPage(chapter.last_page_read);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useReaderScrollToTop(mangaInfo.id, chapter.id);
 
   const topPageInView: ?number = pagesInView[0];
   const lastPageInView: ?number = pagesInView[pagesInView.length - 1];
