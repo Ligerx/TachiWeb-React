@@ -9,7 +9,8 @@ export function usePagePreloader(
   chapterId: number,
   page: ?number, // possibly null on WebtoonReader init
   pageCount: number,
-  nextChapterId: ?number
+  nextChapterId: ?number,
+  skipEffect?: boolean = false
 ) {
   // https://www.photo-mark.com/notes/image-preloading/
   // https://stackoverflow.com/questions/1787319/preload-hidden-css-images?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
@@ -20,7 +21,10 @@ export function usePagePreloader(
   // prevChapterId and prev chapter pageCount.
 
   useEffect(() => {
+    if (skipEffect) return;
     if (page == null) return;
+
+    console.error(`running usePagePreloader() with page ${page}`);
 
     const numPreloadAhead = 3;
 
@@ -37,22 +41,26 @@ export function usePagePreloader(
         image.src = Server.image(mangaId, nextChapterId, page + i - pageCount);
       }
     }
-  }, [chapterId, mangaId, nextChapterId, page, pageCount]);
+  }, [chapterId, mangaId, nextChapterId, page, pageCount, skipEffect]);
 }
 
 export function useUpdateReadingStatus(
   mangaId: number,
   chapterId: number,
-  page: ?number // possibly null on WebtoonReader init
+  page: ?number, // possibly null on WebtoonReader init
+  skipEffect?: boolean = false
 ) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (skipEffect) return;
     if (page == null) return;
+
+    console.error(`running useUpdateReadingStatus() with page ${page}`);
 
     // updateReadingStatus() is handling whether or not an update should be made
     dispatch(updateReadingStatus(mangaId, chapterId, page));
-  }, [dispatch, mangaId, chapterId, page]);
+  }, [dispatch, mangaId, chapterId, page, skipEffect]);
 }
 
 export function useReaderScrollToTop(

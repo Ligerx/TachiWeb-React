@@ -35,6 +35,14 @@ import {
 //       - reading status
 //       - image lazy loading
 
+// I was considering wrapping my existing utils hooks, but that doesn't work
+// because I'm moving the conditional outside of useEffect, which breaks hooks.
+// =( have to rethink how I'm going to handle this... Will probably have to enhance
+// the hook even more
+//
+// This is not working as expected when jumping backwards. I think it may have to do
+// with useEffect queueing events sequentially in increasing order...
+
 // TODO: lazy loading images, account for page jumps
 
 // TODO: Double check that usePagePreloader() is behaving correctly after implementing lazy load
@@ -81,10 +89,9 @@ const useStyles = makeStyles({
 });
 
 function scrollToPage(pageNum: number) {
-  console.error("inside scrollToPage", pageNum);
   const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
   if (!page) return;
-  console.error("past the null check", page);
+
   // Adding extra pixels to ensure the previous page isn't still in view. (browser quirk)
   window.scrollTo(0, page.offsetTop + 1);
 }
@@ -117,11 +124,18 @@ const WebtoonReader = ({
 
   const handleJumpToPage = (pageNum: number) => {
     jumpToPageRef.current = pageNum;
+    console.error(
+      "handleJumpToPage - pageNum is",
+      pageNum,
+      "ref is",
+      jumpToPageRef.current
+    );
     scrollToPage(pageNum);
   };
 
   const handlePageEnter = (index: number) => {
     return () => {
+      console.error("handlePageEnter - index ", index);
       // Clear page jump ref when we've reached our destination page
       if (jumpToPageRef.current === index) {
         jumpToPageRef.current = null;
@@ -157,7 +171,8 @@ const WebtoonReader = ({
     chapter.id,
     lastPageInView, // Currently not preloading other in view pages
     pageCount,
-    nextChapter ? nextChapter.id : null
+    nextChapter ? nextChapter.id : null,
+    jumpToPageRef.current != null
   );
 
   // useUpdateReadingStatus() only takes 1 page currently
@@ -165,8 +180,13 @@ const WebtoonReader = ({
   // complete, but otherwise track reading status based on the topPageInView.
   const readingStatusPage =
     lastPageInView === pageCount - 1 ? lastPageInView : topPageInView;
-
-  useUpdateReadingStatus(mangaInfo.id, chapter.id, readingStatusPage);
+  console.error(jumpToPageRef.current);
+  useUpdateReadingStatus(
+    mangaInfo.id,
+    chapter.id,
+    readingStatusPage,
+    jumpToPageRef.current != null
+  );
 
   return (
     <>
