@@ -30,20 +30,9 @@ import {
 
 // //////////////////////////
 
+// TODO: lazy loading images
 // TODO: when jumping, ignore unwanted side effects:
-//       - page preloading
-//       - reading status
 //       - image lazy loading
-
-// I was considering wrapping my existing utils hooks, but that doesn't work
-// because I'm moving the conditional outside of useEffect, which breaks hooks.
-// =( have to rethink how I'm going to handle this... Will probably have to enhance
-// the hook even more
-//
-// This is not working as expected when jumping backwards. I think it may have to do
-// with useEffect queueing events sequentially in increasing order...
-
-// TODO: lazy loading images, account for page jumps
 
 // TODO: Double check that usePagePreloader() is behaving correctly after implementing lazy load
 
@@ -60,6 +49,17 @@ import {
 // https://stackoverflow.com/questions/54940399/how-target-dom-with-react-useref-in-map
 // https://stackoverflow.com/questions/55995760/how-to-add-refs-dynamically-with-react-hooks
 // https://dev.to/ajsharp/-an-array-of-react-refs-pnf
+
+// https://github.com/civiccc/react-waypoint/issues/202
+// Jumping backwards does not fire waypoint events in the expected order. See the above issue ^
+// The consequence of this is since I'm expecting the destination page entering to resume normal
+// side effects, these effects will run on every page going backwards (possibly out of order).
+//
+// It TECHNICALLY works, but it feels wrong...
+//
+// One way around this is to use smooth scrolling. This seems to slow down scrolling enough
+// that events fire in the expected order. Not sure if this is desirable.
+// This works in normal usage, but if you use debugging breakpoints the above issue appears again.
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>
@@ -93,7 +93,7 @@ function scrollToPage(pageNum: number) {
   if (!page) return;
 
   // Adding extra pixels to ensure the previous page isn't still in view. (browser quirk)
-  window.scrollTo(0, page.offsetTop + 1);
+  window.scrollTo({ top: page.offsetTop + 1, behavior: "smooth" });
 }
 
 const WebtoonReader = ({
@@ -124,18 +124,11 @@ const WebtoonReader = ({
 
   const handleJumpToPage = (pageNum: number) => {
     jumpToPageRef.current = pageNum;
-    console.error(
-      "handleJumpToPage - pageNum is",
-      pageNum,
-      "ref is",
-      jumpToPageRef.current
-    );
     scrollToPage(pageNum);
   };
 
   const handlePageEnter = (index: number) => {
     return () => {
-      console.error("handlePageEnter - index ", index);
       // Clear page jump ref when we've reached our destination page
       if (jumpToPageRef.current === index) {
         jumpToPageRef.current = null;
@@ -180,7 +173,7 @@ const WebtoonReader = ({
   // complete, but otherwise track reading status based on the topPageInView.
   const readingStatusPage =
     lastPageInView === pageCount - 1 ? lastPageInView : topPageInView;
-  console.error(jumpToPageRef.current);
+
   useUpdateReadingStatus(
     mangaInfo.id,
     chapter.id,

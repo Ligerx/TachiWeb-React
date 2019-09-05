@@ -24,8 +24,6 @@ export function usePagePreloader(
     if (skipEffect) return;
     if (page == null) return;
 
-    console.error(`running usePagePreloader() with page ${page}`);
-
     const numPreloadAhead = 3;
 
     for (let i = 1; i <= numPreloadAhead; i += 1) {
@@ -55,8 +53,6 @@ export function useUpdateReadingStatus(
   useEffect(() => {
     if (skipEffect) return;
     if (page == null) return;
-
-    console.error(`running useUpdateReadingStatus() with page ${page}`);
 
     // updateReadingStatus() is handling whether or not an update should be made
     dispatch(updateReadingStatus(mangaId, chapterId, page));
