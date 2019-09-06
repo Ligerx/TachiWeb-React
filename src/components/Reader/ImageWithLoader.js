@@ -19,6 +19,13 @@ import { makeStyles } from "@material-ui/styles";
 //      It instead shows the image error placeholder as if it failed.
 //      I'm guessing React is confused that it's image (in cache) changed, but the src/key didn't.
 
+type Props = {
+  src: string,
+  alt: string // requiring alt so eslint doesn't yell at me
+}; // extra props will be passed to <img>
+
+type StatusType = "LOADING" | "LOADED" | "FAILED";
+
 const useStyles = makeStyles({
   placeholder: {
     height: "105vh",
@@ -28,23 +35,21 @@ const useStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center"
   },
+
   img: {
-    width: "100%"
+    width: "100%",
+
+    // Visible only after image is loaded to prevent the image-not-found visual from appearing
+    display: ({ status }: { status: StatusType }) =>
+      status === "LOADED" ? "block" : "none"
   }
 });
 
-type Props = {
-  src: string,
-  alt: string // requiring alt so eslint doesn't yell at me
-}; // extra props will be passed to <img>
-
-type StatusType = "LOADING" | "LOADED" | "FAILED";
-
 const ImageWithLoader = ({ src, alt, ...otherProps }: Props) => {
-  const classes = useStyles();
-
   const [status, setStatus] = useState<StatusType>("LOADING");
   const [retries, setRetries] = useState(0);
+
+  const classes = useStyles({ status });
 
   const handleImageLoad = () => setStatus("LOADED");
   const handleImageError = () => setStatus("FAILED");
