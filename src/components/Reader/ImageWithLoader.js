@@ -1,9 +1,10 @@
 // @flow
 import React, { useState } from "react";
-import CenteredLoading from "components/Loading/CenteredLoading";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/styles";
+import LazyLoad from "react-lazyload";
+import CenteredLoading from "components/Loading/CenteredLoading";
 
 // https://www.javascriptstuff.com/detect-image-load/
 
@@ -21,7 +22,8 @@ import { makeStyles } from "@material-ui/styles";
 
 type Props = {
   src: string,
-  alt: string // requiring alt so eslint doesn't yell at me
+  alt: string, // requiring alt so eslint doesn't yell at me
+  preventLoading?: boolean
 }; // extra props will be passed to <img>
 
 type StatusType = "LOADING" | "LOADED" | "FAILED";
@@ -45,7 +47,12 @@ const useStyles = makeStyles({
   }
 });
 
-const ImageWithLoader = ({ src, alt, ...otherProps }: Props) => {
+const ImageWithLoader = ({
+  src,
+  alt,
+  preventLoading = false,
+  ...otherProps
+}: Props) => {
   const [status, setStatus] = useState<StatusType>("LOADING");
   const [retries, setRetries] = useState(0);
 
@@ -67,15 +74,17 @@ const ImageWithLoader = ({ src, alt, ...otherProps }: Props) => {
   return (
     <>
       {/* img should occupy no space before it loads */}
-      <img
-        {...otherProps}
-        className={classes.img}
-        onLoad={handleImageLoad}
-        onError={handleImageError}
-        src={src}
-        alt={alt}
-        key={`${src}-${retries}`}
-      />
+      <LazyLoad offset={100} once preventLoading={preventLoading}>
+        <img
+          {...otherProps}
+          className={classes.img}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          src={src}
+          alt={alt}
+          key={`${src}-${retries}`}
+        />
+      </LazyLoad>
 
       {(status === "LOADING" || status === "FAILED") && (
         <div className={classes.placeholder}>

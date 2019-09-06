@@ -215,9 +215,10 @@ const WebtoonReader = ({
               <div>
                 {/* Refer to notes on Waypoint above for why this <div> is necessary */}
                 <ImageWithLoader
-                  src={Server.image(mangaInfo.id, chapter.id, index)}
                   className={classes.page}
+                  src={Server.image(mangaInfo.id, chapter.id, index)}
                   alt={`${chapter.name} - Page ${index + 1}`}
+                  preventLoading={jumpToPageRef.current != null}
                 />
               </div>
             </Waypoint>
