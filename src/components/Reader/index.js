@@ -1,24 +1,17 @@
 // @flow
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Server, Client } from "api";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import compact from "lodash/compact";
-import type { Manga } from "@tachiweb/api-client";
-import type { ChapterType } from "types";
 import SinglePageReader from "components/Reader/SinglePageReader";
 import WebtoonReader from "components/Reader/WebtoonReader";
-import { Helmet } from "react-helmet";
-import { chapterNumPrettyPrint } from "components/utils";
-import UrlPrefixContext from "components/UrlPrefixContext";
 import {
-  selectChaptersForManga,
   selectChapter,
   selectNextChapter,
   selectPrevChapter
 } from "redux-ducks/chapters";
 import { fetchChapters } from "redux-ducks/chapters/actionCreators";
-import { selectPageCounts, selectPageCount } from "redux-ducks/pageCounts";
+import { selectPageCount } from "redux-ducks/pageCounts";
 import { fetchPageCount } from "redux-ducks/pageCounts/actionCreators";
 import { selectDefaultViewer } from "redux-ducks/settings";
 import { selectMangaInfo } from "redux-ducks/mangaInfos";
