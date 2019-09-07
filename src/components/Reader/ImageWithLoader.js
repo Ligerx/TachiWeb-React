@@ -4,6 +4,11 @@ import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/styles";
 import CenteredLoading from "components/Loading/CenteredLoading";
+import LazyLoad from "components/Reader/LazyLoad";
+
+// NOTE: Currently, the LazyLoad component is placed here, not in the reader.
+// The consequence of this is that even when lazy loading isn't needed, it's being used.
+// This doesn't seem like a performance hit, so I'm not really worried about it right now.
 
 // https://www.javascriptstuff.com/detect-image-load/
 
@@ -73,15 +78,17 @@ const ImageWithLoader = ({
   return (
     <>
       {/* img should occupy no space before it loads */}
-      <img
-        {...otherProps}
-        className={classes.img}
-        onLoad={handleImageLoad}
-        onError={handleImageError}
-        src={src}
-        alt={alt}
-        key={`${src}-${retries}`}
-      />
+      <LazyLoad topThreshhold={200} preventLoading={preventLoading}>
+        <img
+          {...otherProps}
+          className={classes.img}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          src={src}
+          alt={alt}
+          key={`${src}-${retries}`}
+        />
+      </LazyLoad>
 
       {(status === "LOADING" || status === "FAILED") && (
         <div className={classes.placeholder}>
