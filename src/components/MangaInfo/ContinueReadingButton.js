@@ -44,12 +44,7 @@ const ContinueReadingButton = ({ mangaId }: Props) => {
         variant="contained"
         color="primary"
         component={Link}
-        to={Client.page(
-          urlPrefix,
-          mangaId,
-          firstUnreadChapter.id,
-          firstUnreadChapter.last_page_read
-        )}
+        to={Client.chapter(urlPrefix, mangaId, firstUnreadChapter.id)}
       >
         <Icon>play_arrow</Icon>
         {`Continue Reading Ch. ${chapterNumPrettyPrint(
