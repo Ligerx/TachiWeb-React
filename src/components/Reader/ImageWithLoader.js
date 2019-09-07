@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/styles";
-import LazyLoad from "react-lazyload";
 import CenteredLoading from "components/Loading/CenteredLoading";
 
 // https://www.javascriptstuff.com/detect-image-load/
@@ -74,17 +73,15 @@ const ImageWithLoader = ({
   return (
     <>
       {/* img should occupy no space before it loads */}
-      <LazyLoad offset={100} once preventLoading={preventLoading}>
-        <img
-          {...otherProps}
-          className={classes.img}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-          src={src}
-          alt={alt}
-          key={`${src}-${retries}`}
-        />
-      </LazyLoad>
+      <img
+        {...otherProps}
+        className={classes.img}
+        onLoad={handleImageLoad}
+        onError={handleImageError}
+        src={src}
+        alt={alt}
+        key={`${src}-${retries}`}
+      />
 
       {(status === "LOADING" || status === "FAILED") && (
         <div className={classes.placeholder}>
