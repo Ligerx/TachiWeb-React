@@ -15,6 +15,11 @@ import Settings, { SETTING_INDEX } from "components/Settings";
 // match.path is the url prefix. i.e. '/library' '/catalogue'
 type MangaRouterProps = { match: Object }; // react router prop
 const MangaRouter = ({ match }: MangaRouterProps) => {
+  // TODO: make Reader and MangaInfo consistent by moving MangaInfo backUrl info
+  // to using context instead of directly passing it here
+
+  // TODO: possibly also create a context for the MangaInfo defaultTab?
+
   let backUrl = "";
   let defaultTab = 0;
 
@@ -29,11 +34,7 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
   return (
     <UrlPrefixContext.Provider value={match.path}>
       <Switch>
-        {/* TODO: Update this route so it doesn't need page anymore */}
-        <Route
-          path={`${match.path}/:mangaId/:chapterId/:page?`}
-          component={Reader}
-        />
+        <Route path={`${match.path}/:mangaId/:chapterId`} component={Reader} />
 
         <Route
           path={`${match.path}/:mangaId`}
