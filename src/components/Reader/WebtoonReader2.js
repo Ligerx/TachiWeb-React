@@ -218,6 +218,7 @@ const WebtoonReader = ({
                   className={classes.page}
                   src={Server.image(mangaInfo.id, chapter.id, index)}
                   alt={`${chapter.name} - Page ${index + 1}`}
+                  lazyLoad
                   preventLoading={jumpToPageRef.current != null}
                 />
               </div>
