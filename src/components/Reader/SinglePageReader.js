@@ -214,11 +214,12 @@ const SinglePageReader = ({
       />
 
       <ResponsiveGrid className={classes.topOffset}>
-        <Grid item xs={12} onClick={handleNextPage}>
+        <Grid item xs={12}>
           <ImageWithLoader
             src={Server.image(mangaInfo.id, chapter.id, page)}
             className={classes.page}
             alt={`${chapter.name} - Page ${page + 1}`}
+            onClick={handleNextPage}
           />
         </Grid>
 
