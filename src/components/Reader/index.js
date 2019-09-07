@@ -7,7 +7,7 @@ import compact from "lodash/compact";
 import type { Manga } from "@tachiweb/api-client";
 import type { ChapterType } from "types";
 import SinglePageReader from "components/Reader/SinglePageReader";
-import WebtoonReader2 from "components/Reader/WebtoonReader2";
+import WebtoonReader from "components/Reader/WebtoonReader";
 import { Helmet } from "react-helmet";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -78,7 +78,7 @@ const Reader = ({ match: { params } }: Props) => {
 
   if (defaultViewer === "webtoon") {
     return (
-      <WebtoonReader2
+      <WebtoonReader
         mangaInfo={mangaInfo}
         chapter={chapter}
         pageCount={pageCount}
