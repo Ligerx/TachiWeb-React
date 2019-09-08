@@ -30,9 +30,16 @@ type Props = {
 type StatusType = "LOADING" | "LOADED" | "FAILED";
 
 const useStyles = makeStyles({
-  placeholder: {
-    height: "105vh",
-
+  placeholderChild: {
+    // https://stackoverflow.com/questions/11535827/responsive-height-proportional-to-width
+    // Doing some quick research, the average manga page seems to have a height/width
+    // ratio of ~1.43. Setting that ratio for the placeholder here.
+    // But since it's relying on padding, this div has no actual height. So instead I'm
+    // relying on a parent wrapper div to have actual height and vertically position the buttons.
+    height: 0,
+    paddingTop: "143%"
+  },
+  placeholderParent: {
     // vertically center children
     display: "flex",
     justifyContent: "center",
@@ -97,7 +104,9 @@ const ImageWithLoader = ({
       )}
 
       {(status === "LOADING" || status === "FAILED") && (
-        <div className={classes.placeholder}>
+        <div className={classes.placeholderParent}>
+          <div className={classes.placeholderChild} />
+
           {status === "LOADING" && <CenteredLoading />}
           {status === "FAILED" && (
             <Button variant="contained" onClick={handleRetryClick}>
