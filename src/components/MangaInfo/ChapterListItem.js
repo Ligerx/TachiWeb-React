@@ -53,7 +53,7 @@ const ChapterListItem = memo<Props>(
 
     const dimIfRead: Function = (read: boolean): ?String =>
       read ? classes.read : null;
-    const goToPage: number = chapter.read ? 0 : chapter.last_page_read;
+
     const chapterName: string =
       mangaInfo.flags.displayMode === "NAME"
         ? chapter.name
@@ -65,7 +65,7 @@ const ChapterListItem = memo<Props>(
         button
         divider
         component={Link}
-        to={Client.page(urlPrefix, mangaInfo.id, chapter.id, goToPage)}
+        to={Client.chapter(urlPrefix, mangaInfo.id, chapter.id)}
         className={classes.listItem}
       >
         <div className={classes.chapterInfo}>

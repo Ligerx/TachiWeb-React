@@ -157,9 +157,8 @@ export const Client = {
     return `${urlPrefix}/${mangaId}`;
   },
 
-  page(urlPrefix, mangaId, chapterId, page) {
-    // URL of the manga page on the client
-    return `${urlPrefix}/${mangaId}/${chapterId}/${page}`;
+  chapter(urlPrefix, mangaId, chapterId) {
+    return `${urlPrefix}/${mangaId}/${chapterId}`;
   },
 
   settings(settingIndexes: Array<number> = []) {

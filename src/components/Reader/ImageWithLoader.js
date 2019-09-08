@@ -1,9 +1,10 @@
 // @flow
-import React, { Component } from "react";
-import CenteredLoading from "components/Loading/CenteredLoading";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/styles";
+import CenteredLoading from "components/Loading/CenteredLoading";
+import LazyLoad from "components/Reader/LazyLoad";
 
 // https://www.javascriptstuff.com/detect-image-load/
 
@@ -19,114 +20,104 @@ import { withStyles } from "@material-ui/core/styles";
 //      It instead shows the image error placeholder as if it failed.
 //      I'm guessing React is confused that it's image (in cache) changed, but the src/key didn't.
 
-const styles = {
-  verticallyCenter: {
+type Props = {
+  src: string,
+  alt: string, // requiring alt so eslint doesn't yell at me
+  lazyLoad?: boolean,
+  preventLoading?: boolean // used to have control over lazyLoad
+}; // extra props will be passed to <img>
+
+type StatusType = "LOADING" | "LOADED" | "FAILED";
+
+const useStyles = makeStyles({
+  placeholderChild: {
+    // https://stackoverflow.com/questions/11535827/responsive-height-proportional-to-width
+    // Doing some quick research, the average manga page seems to have a height/width
+    // ratio of ~1.43. Setting that ratio for the placeholder here.
+    // But since it's relying on padding, this div has no actual height. So instead I'm
+    // relying on a parent wrapper div to have actual height and vertically position the buttons.
+    height: 0,
+    paddingTop: "143%"
+  },
+  placeholderParent: {
+    // vertically center children
     display: "flex",
     justifyContent: "center",
     alignItems: "center"
+  },
+
+  img: {
+    width: "100%",
+
+    // Visible only after image is loaded to prevent the image-not-found visual from appearing
+    display: ({ status }: { status: StatusType }) =>
+      status === "LOADED" ? "block" : "none"
   }
-};
+});
 
-type Props = {
-  classes: Object, // injected styles (for this component)
-  src: ?string, // if src == null, <img> will not render
-  alt: string,
-  notLoadedHeight?: number | string // any valid height
-}; // extra props will be passed to <img>
+const ImageWithLoader = ({
+  src,
+  alt,
+  lazyLoad = false,
+  preventLoading = false,
+  ...otherProps
+}: Props) => {
+  const [status, setStatus] = useState<StatusType>("LOADING");
+  const [retries, setRetries] = useState(0);
 
-type State = {
-  status: "LOADING" | "LOADED" | "FAILED",
-  retries: number
-};
+  const classes = useStyles({ status });
 
-class ImageWithLoader extends Component<Props, State> {
-  static defaultProps = {
-    notLoadedHeight: "105vh"
-  };
-
-  state = {
-    status: "LOADING",
-    retries: 0
-  };
-
-  /* eslint-disable react/no-did-update-set-state */
-  componentDidUpdate(prevProps: Props) {
-    // Changing the img src doesn't trigger any event to update
-    // status so you have to do it manually.
-    if (prevProps.src !== this.props.src) {
-      this.setState({
-        status: "LOADING",
-        retries: 0
-      });
-    }
-  }
-
-  handleImageLoad = () => this.setState({ status: "LOADED" });
-
-  handleImageError = () => this.setState({ status: "FAILED" });
-
-  handleRetryClick = () => {
-    const { src } = this.props;
-    if (!src) return;
+  const handleImageLoad = () => setStatus("LOADED");
+  const handleImageError = () => setStatus("FAILED");
+  const handleRetryClick = () => {
+    setStatus("LOADING");
+    setRetries(prevRetries => prevRetries + 1);
 
     // https://stackoverflow.com/questions/23160107/javascript-how-to-retry-loading-an-image-without-appending-query-string
-    this.setState(prevState => ({
-      status: "LOADING",
-      retries: prevState.retries + 1
-    }));
-
     const img = new Image();
-    img.onload = this.handleImageLoad;
-    img.onerror = this.handleImageError;
+    img.onload = handleImageLoad;
+    img.onerror = handleImageError;
     img.src = src;
   };
 
-  render() {
-    const { classes, src, alt, notLoadedHeight, ...otherProps } = this.props;
-    const { status, retries } = this.state;
+  const image = (
+    <img
+      {...otherProps}
+      className={classes.img}
+      onLoad={handleImageLoad}
+      onError={handleImageError}
+      src={src}
+      alt={alt}
+      key={`${src}-${retries}`}
+    />
+  );
 
-    const imgStyles = {
-      width: "100%",
-      // Only show when image is loaded
-      display: status === "LOADED" ? "block" : "none"
-    };
+  return (
+    <>
+      {/* img should occupy no space before it loads */}
+      {lazyLoad ? (
+        <LazyLoad topThreshhold={200} preventLoading={preventLoading}>
+          {image}
+        </LazyLoad>
+      ) : (
+        image
+      )}
 
-    return (
-      <>
-        {src && (
-          <img
-            {...otherProps}
-            onLoad={this.handleImageLoad}
-            onError={this.handleImageError}
-            src={src}
-            alt={alt}
-            style={imgStyles}
-            key={`${src}-${retries}`}
-          />
-        )}
+      {(status === "LOADING" || status === "FAILED") && (
+        <div className={classes.placeholderParent}>
+          <div className={classes.placeholderChild} />
 
-        {status === "LOADING" && (
-          <div
-            className={classes.verticallyCenter}
-            style={{ height: notLoadedHeight }}
-          >
-            <CenteredLoading />
-          </div>
-        )}
-        {status === "FAILED" && (
-          <div
-            className={classes.verticallyCenter}
-            style={{ height: notLoadedHeight }}
-          >
-            <Button variant="contained" onClick={this.handleRetryClick}>
+          {status === "LOADING" && <CenteredLoading />}
+          {status === "FAILED" && (
+            <Button variant="contained" onClick={handleRetryClick}>
               <Icon>refresh</Icon>
               Retry
             </Button>
-          </div>
-        )}
-      </>
-    );
-  }
-}
+          )}
+        </div>
+      )}
+    </>
+  );
+};
 
-export default withStyles(styles)(ImageWithLoader);
+export default ImageWithLoader;

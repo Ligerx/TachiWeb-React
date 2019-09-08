@@ -1,34 +1,57 @@
 // @flow
-import React, { Component } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useRef
+} from "react";
+import { withRouter } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import type { Manga } from "@tachiweb/api-client";
+import type { ChapterType, ChapterPageLinkState } from "types";
+import { Server, Client } from "api";
+import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
-import ResponsiveGrid from "components/ResponsiveGrid";
-import ScrollToTop from "components/ScrollToTop";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import ImageWithLoader from "components/Reader/ImageWithLoader";
-import { withRouter } from "react-router-dom";
-import Link from "components/Link";
 import ReaderOverlay from "components/Reader/ReaderOverlay";
-import { Client } from "api";
+import ResponsiveGrid from "components/ResponsiveGrid";
+import { chapterNumPrettyPrint } from "components/utils";
+import UrlPrefixContext from "components/UrlPrefixContext";
+import {
+  usePagePreloader,
+  useUpdateReadingStatus,
+  useReaderScrollToTop
+} from "components/Reader/utils";
 
-// TODO: add some spacing around the nav buttons
-// TODO: evenly space them?
+// It's easier to have the parent component pass non-null props to avoid null checking.
+// Hooks rely on call order which makes null checking somewhat painful.
 
-// TODO: add instructions on how to use reader
-//       e.g. keyboard actions, clicking on the image
+// react-router history.location.state observations:
+// state only changes when you <Link> or push() to change routes.
+// Otherwise, the state is the same object between renders, so shallow equality checks work.
 
-// TODO: add a way to go back via keyboard? I'm thinking esc key would be good.
+type Props = {
+  mangaInfo: Manga,
+  chapter: ChapterType,
+  pageCount: number,
+  prevChapter: ?ChapterType,
+  nextChapter: ?ChapterType,
+  prevChapterPageCount: ?number
+};
 
-// TODO: what's a good maxWidth for the image?
+type RouterProps = {
+  history: {
+    push: Function,
+    location: {
+      state: ?ChapterPageLinkState
+    }
+  }
+};
 
-// Left and right arrow key press will change the page
-//
-// References for key press events
-// https://stackoverflow.com/questions/29069639/listen-to-keypress-for-document-in-reactjs
-// https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
-
-const styles = {
+const useStyles = makeStyles({
   page: {
     width: "100%",
     marginBottom: 80
@@ -41,126 +64,178 @@ const styles = {
   topOffset: {
     marginTop: 144
   }
-};
+});
 
-type Props = {
-  classes: Object, // styles
+/**
+ * Side effect that sets which page the user starts on initially and after changing chapters.
+ *
+ * 3 cases for determining a chapter's initial page.
+ * 1. On initial load, jump to this chapter's last read page.
+ * 2. Clicking previous page when on page 0. Jump to the previous chapter's last page.
+ * 3. Going to next chapter or skipping to next/previous chapter, go to page 0.
+ */
+function useJumpToChapterInitialPage(
+  chapterId: number, // only used to trigger useEffect when it changes
+  state: ?ChapterPageLinkState,
+  setPage: Function
+) {
+  const firstRender = useRef(true);
 
-  // overlay props
-  title: string,
-  chapterNum: number,
-  pageCount: number,
-  page: number,
-  backUrl: string,
-  prevChapterUrl: ?string,
-  nextChapterUrl: ?string,
-
-  // overlap jump page props
-  urlPrefix: string,
-  mangaId: number,
-  chapterId: number,
-
-  // reader props
-  imageSource: string,
-  alt: string,
-  nextPageUrl: ?string,
-  prevPageUrl: ?string,
-
-  // react router props
-  history: {
-    push: Function
-  }
-};
-
-class SinglePageReader extends Component<Props> {
-  componentDidMount() {
-    // flow doesn't play nice with document.addEventListener() or removeEventListener()
-    // $FlowFixMe
-    document.addEventListener("keydown", this.handleArrowKeyDown);
-  }
-
-  componentWillUnmount() {
-    // $FlowFixMe
-    document.removeEventListener("keydown", this.handleArrowKeyDown);
-  }
-
-  handleJumpToPage = (newPage: number) => {
-    const { urlPrefix, mangaId, chapterId } = this.props;
-    this.props.history.push(
-      Client.page(urlPrefix, mangaId, chapterId, newPage)
-    );
-  };
-
-  handleArrowKeyDown = (event: SyntheticKeyboardEvent<>) => {
-    const LEFT_ARROW = 37;
-    const RIGHT_ARROW = 39;
-
-    const { nextPageUrl, prevPageUrl } = this.props;
-
-    // TODO: is this the expected direction the arrows should take you?
-    if (event.keyCode === LEFT_ARROW && prevPageUrl) {
-      this.props.history.push(prevPageUrl);
-    } else if (event.keyCode === RIGHT_ARROW && nextPageUrl) {
-      this.props.history.push(nextPageUrl);
+  // Handle setting the starting page when chapter changes
+  useEffect(() => {
+    if (firstRender.current) {
+      // Prevent this useEffect from overwriting the useState initialized value on first mount
+      firstRender.current = false;
+    } else if (state != null) {
+      // react-router link state changes when the URL (ie. chapter) changes
+      // Jumping to the last page of the prev chapter if the link state exists
+      setPage(state.jumpToPage);
+    } else {
+      setPage(0);
     }
-  };
-
-  render() {
-    const {
-      classes,
-      title,
-      chapterNum,
-      pageCount,
-      page,
-      backUrl,
-      prevChapterUrl,
-      nextChapterUrl,
-      imageSource,
-      alt,
-      nextPageUrl,
-      prevPageUrl
-    } = this.props;
-
-    return (
-      <>
-        <ScrollToTop />
-
-        <ReaderOverlay
-          title={title}
-          chapterNum={chapterNum}
-          pageCount={pageCount}
-          page={page}
-          backUrl={backUrl}
-          prevChapterUrl={prevChapterUrl}
-          nextChapterUrl={nextChapterUrl}
-          onJumpToPage={this.handleJumpToPage}
-        />
-
-        <ResponsiveGrid className={classes.topOffset}>
-          <Grid item xs={12}>
-            <Link to={nextPageUrl}>
-              <ImageWithLoader
-                src={imageSource}
-                className={classes.page}
-                alt={alt}
-              />
-            </Link>
-          </Grid>
-
-          <Grid item xs={12} className={classes.navButtonsParent}>
-            <Button component={Link} to={prevPageUrl} disabled={!prevPageUrl}>
-              <Icon>navigate_before</Icon>
-              Previous Page
-            </Button>
-            <Button component={Link} to={nextPageUrl} disabled={!nextPageUrl}>
-              Next Page
-              <Icon>navigate_next</Icon>
-            </Button>
-          </Grid>
-        </ResponsiveGrid>
-      </>
-    );
-  }
+  }, [chapterId, state, setPage]);
 }
 
-export default withRouter(withStyles(styles)(SinglePageReader));
+const SinglePageReader = ({
+  mangaInfo,
+  chapter,
+  pageCount,
+  prevChapter,
+  nextChapter,
+  prevChapterPageCount,
+  history: {
+    push,
+    location: { state }
+  }
+}: Props & RouterProps) => {
+  const classes = useStyles();
+  const urlPrefix = useContext(UrlPrefixContext);
+
+  // Initialize the starting page. This only runs once on first mount.
+  const lastReadPage = chapter.read ? 0 : chapter.last_page_read;
+  const [page, setPage] = useState(lastReadPage);
+
+  useJumpToChapterInitialPage(chapter.id, state, setPage);
+
+  const prevChapterUrl =
+    prevChapter != null
+      ? Client.chapter(urlPrefix, mangaInfo.id, prevChapter.id)
+      : null;
+
+  const nextChapterUrl =
+    nextChapter != null
+      ? Client.chapter(urlPrefix, mangaInfo.id, nextChapter.id)
+      : null;
+
+  const hasNextPage =
+    page < pageCount - 1 || (page === pageCount - 1 && nextChapter != null);
+
+  const hasPrevPage = page > 0 || (page === 0 && prevChapter != null);
+
+  const handleNextPage = useCallback(() => {
+    // Wrapping function in useCallback so it can be used in useEffect.
+    // Otherwise, this function reference changes on every render.
+    if (page < pageCount - 1) {
+      setPage(page + 1);
+    }
+    if (page === pageCount - 1 && nextChapterUrl) {
+      push(nextChapterUrl);
+    }
+  }, [nextChapterUrl, page, pageCount, push]);
+
+  const handlePrevPage = useCallback(() => {
+    // Wrapping function in useCallback so it can be used in useEffect.
+    // Otherwise, this function reference changes on every render.
+    if (page > 0) {
+      setPage(page - 1);
+    }
+    if (page === 0 && prevChapterUrl) {
+      // If on the first page, go to the previous chapter's last page (if info is available)
+      const lastPage = prevChapterPageCount ? prevChapterPageCount - 1 : 0;
+
+      const linkState: ChapterPageLinkState = {
+        chapterId: chapter.id,
+        jumpToPage: lastPage
+      };
+
+      push(prevChapterUrl, linkState);
+    }
+  }, [chapter.id, page, prevChapterPageCount, prevChapterUrl, push]);
+
+  useEffect(() => {
+    function handleKeyDown(event: SyntheticKeyboardEvent<>) {
+      const LEFT_ARROW = 37;
+      const RIGHT_ARROW = 39;
+
+      // TODO: is this the expected direction the arrows should take you?
+      if (event.keyCode === LEFT_ARROW) {
+        handlePrevPage();
+      } else if (event.keyCode === RIGHT_ARROW) {
+        handleNextPage();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return function cleanup() {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNextPage, handlePrevPage]);
+
+  useReaderScrollToTop(mangaInfo.id, chapter.id, page);
+
+  usePagePreloader(
+    mangaInfo.id,
+    chapter.id,
+    page,
+    pageCount,
+    nextChapter ? nextChapter.id : null
+  );
+
+  useUpdateReadingStatus(mangaInfo.id, chapter.id, page);
+
+  return (
+    <>
+      <Helmet
+        title={`${mangaInfo.title} - Ch. ${chapterNumPrettyPrint(
+          chapter.chapter_number
+        )}, Pg. ${page + 1} TachiWeb`}
+      />
+
+      <ReaderOverlay
+        title={mangaInfo.title}
+        chapterNum={chapter.chapter_number}
+        pageCount={pageCount}
+        page={page}
+        backUrl={Client.manga(urlPrefix, mangaInfo.id)}
+        prevChapterUrl={prevChapterUrl}
+        nextChapterUrl={nextChapterUrl}
+        onJumpToPage={setPage}
+      />
+
+      <ResponsiveGrid className={classes.topOffset}>
+        <Grid item xs={12}>
+          <ImageWithLoader
+            src={Server.image(mangaInfo.id, chapter.id, page)}
+            className={classes.page}
+            alt={`${chapter.name} - Page ${page + 1}`}
+            onClick={handleNextPage}
+          />
+        </Grid>
+
+        <Grid item xs={12} className={classes.navButtonsParent}>
+          <Button onClick={handlePrevPage} disabled={!hasPrevPage}>
+            <Icon>navigate_before</Icon>
+            Previous Page
+          </Button>
+          <Button onClick={handleNextPage} disabled={!hasNextPage}>
+            Next Page
+            <Icon>navigate_next</Icon>
+          </Button>
+        </Grid>
+      </ResponsiveGrid>
+    </>
+  );
+};
+
+export default withRouter(SinglePageReader);

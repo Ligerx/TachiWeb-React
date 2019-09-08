@@ -102,19 +102,19 @@ export function updateReadingStatus(
   readPage: number
 ): ThunkAction {
   return (dispatch, getState) => {
-    // Handle checking if no update needs to happen. Escape early if so.
     const chapter = selectChapter(getState(), mangaId, chapterId);
     const pageCount = selectPageCount(getState(), chapterId);
 
-    if (pageCount == null) {
+    if (chapter == null || pageCount == null) {
       return dispatch({
         type: UPDATE_READING_STATUS_FAILURE,
-        errorMessage: "Couldn't find page count for this chapter.",
+        errorMessage: "Couldn't update the reading status for this chapter.",
         meta: { mangaId, chapterId, readPage }
       });
     }
 
-    if (!chapter || chapter.read || readPage <= chapter.last_page_read) {
+    // Escape early if no update is needed
+    if (chapter.read || readPage === chapter.last_page_read) {
       return dispatch({
         type: UPDATE_READING_STATUS_NO_CHANGE,
         meta: {
