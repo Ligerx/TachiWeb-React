@@ -1,13 +1,13 @@
 // @flow
 import * as React from "react";
+import { makeStyles } from "@material-ui/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Link from "components/Link";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
-import { withStyles } from "@material-ui/core/styles";
 import PageSlider from "components/Reader/PageSlider";
+import Link from "components/Link";
 import { chapterNumPrettyPrint } from "components/utils";
 
 // TODO: using two toolbars currently, but it might be too big. Consider changing/customizing later.
@@ -16,7 +16,18 @@ import { chapterNumPrettyPrint } from "components/utils";
 //       When it is added to Material-UI, consider using that instead.
 //       https://github.com/mui-org/material-ui/issues/4793
 
-const styles = {
+type Props = {
+  title: string,
+  chapterNum: number,
+  pageCount: number,
+  page: number,
+  backUrl: string,
+  prevChapterUrl: ?string,
+  nextChapterUrl: ?string,
+  onJumpToPage: number => any
+};
+
+const useStyles = makeStyles({
   overlay: {
     // Overlay it above the image
     width: "100%",
@@ -30,22 +41,9 @@ const styles = {
       opacity: 1
     }
   }
-};
-
-type Props = {
-  classes: Object, // injected styles
-  title: string,
-  chapterNum: number,
-  pageCount: number,
-  page: number,
-  backUrl: string,
-  prevChapterUrl: ?string,
-  nextChapterUrl: ?string,
-  onJumpToPage: Function
-};
+});
 
 const ReaderOverlay = ({
-  classes,
   title,
   chapterNum,
   pageCount,
@@ -54,46 +52,50 @@ const ReaderOverlay = ({
   prevChapterUrl,
   nextChapterUrl,
   onJumpToPage
-}: Props) => (
-  <AppBar position="static" color="default" className={classes.overlay}>
-    <Toolbar>
-      <IconButton component={Link} to={backUrl}>
-        <Icon>arrow_back</Icon>
-      </IconButton>
+}: Props) => {
+  const classes = useStyles();
 
-      <Typography variant="h6" style={{ flex: 1 }}>
-        {title}
-      </Typography>
+  return (
+    <AppBar position="static" color="default" className={classes.overlay}>
+      <Toolbar>
+        <IconButton component={Link} to={backUrl}>
+          <Icon>arrow_back</Icon>
+        </IconButton>
 
-      <Typography variant="subtitle1">
-        Chapter {chapterNumPrettyPrint(chapterNum)}
-      </Typography>
-    </Toolbar>
+        <Typography variant="h6" style={{ flex: 1 }}>
+          {title}
+        </Typography>
 
-    <Toolbar>
-      <IconButton
-        component={Link}
-        to={prevChapterUrl}
-        disabled={!prevChapterUrl}
-      >
-        <Icon>skip_previous</Icon>
-      </IconButton>
+        <Typography variant="subtitle1">
+          Chapter {chapterNumPrettyPrint(chapterNum)}
+        </Typography>
+      </Toolbar>
 
-      <PageSlider
-        pageCount={pageCount}
-        page={page}
-        onJumpToPage={onJumpToPage}
-      />
+      <Toolbar>
+        <IconButton
+          component={Link}
+          to={prevChapterUrl}
+          disabled={!prevChapterUrl}
+        >
+          <Icon>skip_previous</Icon>
+        </IconButton>
 
-      <IconButton
-        component={Link}
-        to={nextChapterUrl}
-        disabled={!nextChapterUrl}
-      >
-        <Icon>skip_next</Icon>
-      </IconButton>
-    </Toolbar>
-  </AppBar>
-);
+        <PageSlider
+          pageCount={pageCount}
+          page={page}
+          onJumpToPage={onJumpToPage}
+        />
 
-export default withStyles(styles)(ReaderOverlay);
+        <IconButton
+          component={Link}
+          to={nextChapterUrl}
+          disabled={!nextChapterUrl}
+        >
+          <Icon>skip_next</Icon>
+        </IconButton>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default ReaderOverlay;
