@@ -44,6 +44,8 @@ import {
 // One way around this is to use smooth scrolling. This seems to slow down scrolling enough
 // that events fire in the expected order. Not sure if this is desirable.
 // This works in normal usage, but if you use debugging breakpoints the above issue appears again.
+//
+// But using 'behavior: auto' on initial scroll because it is guaranteed to only scroll down.
 
 // Waypoints that wrap around components require special code
 // However, it automatically works with normal elements like <div>
@@ -72,12 +74,17 @@ const useStyles = makeStyles({
   }
 });
 
-function scrollToPage(pageNum: number) {
+type ScrollBehavior = { behavior: "smooth" | "auto" };
+
+function scrollToPage(
+  pageNum: number,
+  options?: ScrollBehavior = { behavior: "smooth" }
+) {
   const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
   if (!page) return;
 
   // Adding extra pixels to ensure the previous page isn't still in view. (browser quirk)
-  window.scrollTo({ top: page.offsetTop + 1, behavior: "smooth" });
+  window.scrollTo({ top: page.offsetTop + 1, ...options });
 }
 
 const WebtoonReader = ({
@@ -106,9 +113,9 @@ const WebtoonReader = ({
       ? Client.chapter(urlPrefix, mangaInfo.id, nextChapter.id)
       : null;
 
-  const handleJumpToPage = (pageNum: number) => {
+  const handleJumpToPage = (pageNum: number, options?: ScrollBehavior) => {
     jumpToPageRef.current = pageNum;
-    scrollToPage(pageNum);
+    scrollToPage(pageNum, options);
   };
 
   const handlePageEnter = (index: number) => {
@@ -137,7 +144,7 @@ const WebtoonReader = ({
     if (chapter.read || chapter.last_page_read === 0) return;
 
     // Initialize the starting page. This only runs once on first mount.
-    handleJumpToPage(chapter.last_page_read);
+    handleJumpToPage(chapter.last_page_read, { behavior: "auto" });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const topPageInView: ?number = pagesInView[0];
