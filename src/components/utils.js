@@ -1,6 +1,5 @@
 // @flow
-
-/* eslint-disable import/prefer-default-export */
+import ISO6391 from "iso-639-1";
 
 // Sometimes chapter.chapter_number is a float.
 // This function dynamically rounds those floats for easier display.
@@ -24,4 +23,9 @@ function roundFloat(num, decimalPlace = 0) {
   }
 
   return roundFloat(num, decimalPlace + 1);
+}
+
+export function langPrettyPrint(lang: string) {
+  if (lang === "all") return "All";
+  return ISO6391.getNativeName(lang);
 }

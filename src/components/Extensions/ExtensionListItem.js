@@ -8,7 +8,7 @@ import { Server } from "api";
 import { withStyles } from "@material-ui/core/styles";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ISO6391 from "iso-639-1";
+import { langPrettyPrint } from "components/utils";
 
 const styles = () => ({
   avatar: { borderRadius: 0 },
@@ -43,11 +43,5 @@ const ExtensionListItem = ({
     </ListItem>
   );
 };
-
-// Helper functions
-function langPrettyPrint(lang: string) {
-  if (lang === "all") return "All";
-  return ISO6391.getNativeName(lang);
-}
 
 export default withStyles(styles)(ExtensionListItem);
