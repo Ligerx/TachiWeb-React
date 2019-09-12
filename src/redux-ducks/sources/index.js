@@ -1,4 +1,5 @@
 // @flow
+import { createSelector } from "reselect";
 import { createLoadingSelector } from "redux-ducks/loading";
 import type { SourceMap } from "types";
 import type { Source } from "@tachiweb/api-client";
@@ -38,6 +39,54 @@ export const selectSources = (state: GlobalState): State => state.sources;
 
 export const selectSource = (state: GlobalState, sourceId: string): ?Source =>
   state.sources[sourceId];
+
+/**
+ * Language keys have not been sorted.
+ * Each array of sources is sorted alphabetically by source.name
+ */
+export const selectSourcesByLanguage: GlobalState => $ReadOnly<{
+  [lang: string]: Array<Source>
+}> = createSelector(
+  [selectSources],
+  (sources): $ReadOnly<{ [lang: string]: Array<Source> }> => {
+    const sourcesByLanguage = {};
+
+    // Create object { [lang]: [...sources] }
+    Object.values(sources).forEach((source: Source) => {
+      const lang = source.lang == null ? "noLang" : source.lang;
+
+      if (sourcesByLanguage[lang] == null) {
+        sourcesByLanguage[lang] = [];
+      }
+      sourcesByLanguage[lang].push(source);
+    });
+
+    // Sort each of the individual arrays by source name
+    Object.values(sourcesByLanguage).forEach((sources: Array<Source>) => {
+      sources.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
+    });
+
+    return sourcesByLanguage;
+  }
+);
+
+/**
+ * Languages are sorted alphabetically
+ */
+export const selectLanguages: GlobalState => $ReadOnlyArray<string> = createSelector(
+  [selectSourcesByLanguage],
+  (sourcesByLanguage): $ReadOnlyArray<string> => {
+    return Object.keys(sourcesByLanguage).sort();
+  }
+);
 
 // ================================================================================
 // Helper Functions
