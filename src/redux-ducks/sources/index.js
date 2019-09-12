@@ -81,7 +81,7 @@ export const selectSourcesByLanguage: GlobalState => $ReadOnly<{
 /**
  * Languages are sorted alphabetically
  */
-export const selectLanguages: GlobalState => $ReadOnlyArray<string> = createSelector(
+export const selectSourceLanguages: GlobalState => $ReadOnlyArray<string> = createSelector(
   [selectSourcesByLanguage],
   (sourcesByLanguage): $ReadOnlyArray<string> => {
     return Object.keys(sourcesByLanguage).sort();
