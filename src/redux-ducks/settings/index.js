@@ -96,14 +96,16 @@ export type DefaultViewer =
 export const selectDefaultViewer = (state: GlobalState): DefaultViewer =>
   state.settings.prefs.pref_default_viewer_key;
 
-const emptyArray = []; // caching an empty array to keep selectors pure
+// caching arrays to keep selectors pure
+const initialEnabledLanguages = ["en"];
+const emptyArray = [];
 
 export const selectSourcesEnabledLanguages = (
   state: GlobalState
 ): $ReadOnlyArray<string> => {
   const { enabledLanguages } = state.settings.prefs;
 
-  if (enabledLanguages == null) return emptyArray;
+  if (enabledLanguages == null) return initialEnabledLanguages;
   return state.settings.prefs.enabledLanguages;
 };
 
