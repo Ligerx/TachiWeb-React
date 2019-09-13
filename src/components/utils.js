@@ -1,6 +1,5 @@
 // @flow
-
-/* eslint-disable import/prefer-default-export */
+import ISO6391 from "iso-639-1";
 
 // Sometimes chapter.chapter_number is a float.
 // This function dynamically rounds those floats for easier display.
@@ -24,4 +23,22 @@ function roundFloat(num, decimalPlace = 0) {
   }
 
   return roundFloat(num, decimalPlace + 1);
+}
+
+export function langPrettyPrint(lang: string) {
+  // [Comment written on Sept 12, 2019]
+  // Extensions include an ISO6391 coded lang property. This function is needed to
+  // pretty print extension.lang
+  //
+  // Sources include a lang (ISO6391 coded), langDisplayName (native), and langName (english)
+  // so it's not strictly necessary. However, I'm still using this function since it simplifies
+  // the code a lot.
+
+  if (lang === "all") return "All";
+
+  const prettyPrint = ISO6391.getNativeName(lang);
+
+  // ISO6391.getNativeName() returns "" if it can't find the native name.
+  // Returning the original lang string seems like a more predictable outcome instead.
+  return prettyPrint || lang;
 }

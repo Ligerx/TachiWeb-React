@@ -9,6 +9,7 @@ import Extensions from "components/Extensions";
 import BackupRestore from "components/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import Settings, { SETTING_INDEX } from "components/Settings";
+import Sources from "components/Sources";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
@@ -55,6 +56,8 @@ const Router = () => (
 
         <Route exact path="/catalogue" component={Catalogue} />
         <Route path="/catalogue" component={MangaRouter} />
+
+        <Route exact path="/sources" component={Sources} />
 
         <Route exact path="/library" component={Library} />
         <Route path="/library" component={MangaRouter} />

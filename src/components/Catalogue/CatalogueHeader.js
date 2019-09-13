@@ -3,11 +3,16 @@ import React, { useRef } from "react";
 import isEmpty from "lodash/isEmpty";
 import { useSelector, useDispatch } from "react-redux";
 import debounce from "lodash/debounce";
+import { Client } from "api";
+import Link from "components/Link";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Input from "@material-ui/core/Input";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
+import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/styles";
 import MenuDrawer from "components/MenuDrawer";
 import { selectSources } from "redux-ducks/sources";
@@ -97,6 +102,12 @@ const CatalogueHeader = () => {
             />
           </>
         )}
+
+        <Tooltip title="Sources">
+          <IconButton component={Link} to={Client.sources()}>
+            <Icon>settings</Icon>
+          </IconButton>
+        </Tooltip>
       </Toolbar>
     </AppBar>
   );

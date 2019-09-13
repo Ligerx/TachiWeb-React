@@ -171,5 +171,9 @@ export const Client = {
 
   extensions() {
     return "/extensions";
+  },
+
+  sources() {
+    return "/sources";
   }
 };
