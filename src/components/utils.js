@@ -26,6 +26,14 @@ function roundFloat(num, decimalPlace = 0) {
 }
 
 export function langPrettyPrint(lang: string) {
+  // [Comment written on Sept 12, 2019]
+  // Extensions include an ISO6391 coded lang property. This function is needed to
+  // pretty print extension.lang
+  //
+  // Sources include a lang (ISO6391 coded), langDisplayName (native), and langName (english)
+  // so it's not strictly necessary. However, I'm still using this function since it simplifies
+  // the code a lot.
+
   if (lang === "all") return "All";
 
   const prettyPrint = ISO6391.getNativeName(lang);
