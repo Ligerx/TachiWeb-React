@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Helmet } from "react-helmet";
 import Typography from "@material-ui/core/Typography";
@@ -37,6 +37,12 @@ const Sources = () => {
     dispatch(fetchSources());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Move enabled languages to the top, but only on initial load
+  const reorderedSourceLanguages = useEnabledLangFirstOnLoad(
+    sourceLanguages,
+    enabledLanguages
+  );
+
   return (
     <>
       <Helmet title="Sources - TachiWeb" />
@@ -52,7 +58,7 @@ const Sources = () => {
       </AppBar>
 
       <Container maxWidth="sm">
-        {sourceLanguages.map(lang => (
+        {reorderedSourceLanguages.map(lang => (
           <SourcesByLanguage
             key={lang}
             lang={lang}
@@ -67,5 +73,36 @@ const Sources = () => {
     </>
   );
 };
+
+function useEnabledLangFirstOnLoad(
+  sourceLanguages: $ReadOnlyArray<string>,
+  enabledLanguages: $ReadOnlyArray<string>
+) {
+  // starting with an empty array to mimic sourceLanguages's type
+  const [reorderedLang, setReorderedLang] = useState<$ReadOnlyArray<string>>(
+    []
+  );
+  const alreadySortedRef = useRef(false);
+
+  useEffect(() => {
+    if (alreadySortedRef.current) return;
+
+    const sortedEnabledLanguages = sourceLanguages.filter(lang =>
+      enabledLanguages.includes(lang)
+    );
+    const sortedDisabledLanguages = sourceLanguages.filter(
+      lang => !enabledLanguages.includes(lang)
+    );
+
+    setReorderedLang([...sortedEnabledLanguages, ...sortedDisabledLanguages]);
+
+    // prevent any further changes of order, but only if we're sure sources were loaded
+    if (reorderedLang.length > 0) {
+      alreadySortedRef.current = true;
+    }
+  }, [sourceLanguages, enabledLanguages, reorderedLang.length]);
+
+  return reorderedLang;
+}
 
 export default Sources;
