@@ -27,5 +27,10 @@ function roundFloat(num, decimalPlace = 0) {
 
 export function langPrettyPrint(lang: string) {
   if (lang === "all") return "All";
-  return ISO6391.getNativeName(lang);
+
+  const prettyPrint = ISO6391.getNativeName(lang);
+
+  // ISO6391.getNativeName() returns "" if it can't find the native name.
+  // Returning the original lang string seems like a more predictable outcome instead.
+  return prettyPrint || lang;
 }
