@@ -9,7 +9,7 @@ import Container from "@material-ui/core/Container";
 import { Client } from "api";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import BackButton from "components/BackButton";
-import SourceLanguage from "components/Sources/SourceLanguage";
+import SourcesByLanguage from "components/Sources/SourcesByLanguage";
 import {
   selectSourcesByLanguage,
   selectSourceLanguages,
@@ -53,7 +53,7 @@ const Sources = () => {
 
       <Container maxWidth="sm">
         {sourceLanguages.map(lang => (
-          <SourceLanguage
+          <SourcesByLanguage
             key={lang}
             lang={lang}
             sources={sourcesByLanguage[lang]}
