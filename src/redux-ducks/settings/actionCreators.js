@@ -5,7 +5,9 @@ import type { PrefValue } from "types";
 import {
   selectIsSettingsLoaded,
   selectSettingsSchema,
-  selectPrefValue
+  selectPrefValue,
+  selectSourcesEnabledLanguages,
+  selectHiddenSources
 } from ".";
 import {
   FETCH_PREFS_REQUEST,
@@ -51,6 +53,30 @@ export function fetchSettings({
   };
 }
 
+export function fetchSettingsSchema({
+  ignoreCache = false
+}: FetchOptions = {}): ThunkAction {
+  return (dispatch, getState) => {
+    if (!ignoreCache && selectSettingsSchema(getState()))
+      return Promise.resolve(dispatch({ type: FETCH_SCHEMA_CACHE }));
+
+    dispatch({ type: FETCH_SCHEMA_REQUEST });
+
+    return Server.api()
+      .getPreferencesSchema()
+      .then(response => response.json())
+      .then(
+        response => dispatch({ type: FETCH_SCHEMA_SUCCESS, schema: response }),
+        error =>
+          dispatch({
+            type: FETCH_SCHEMA_FAILURE,
+            errorMessage: "Failed to fetch preference schema",
+            meta: { error }
+          })
+      );
+  };
+}
+
 export function setSetting(key: string, newValue: PrefValue): ThunkAction {
   return (dispatch, getState) => {
     // TODO: replace this getState() check with a selector
@@ -73,26 +99,42 @@ export function setSetting(key: string, newValue: PrefValue): ThunkAction {
   };
 }
 
-export function fetchSettingsSchema({
-  ignoreCache = false
-}: FetchOptions = {}): ThunkAction {
+export function updateSourcesEnabledLanguages(
+  lang: string,
+  enable: boolean
+): ThunkAction {
   return (dispatch, getState) => {
-    if (!ignoreCache && selectSettingsSchema(getState()))
-      return Promise.resolve(dispatch({ type: FETCH_SCHEMA_CACHE }));
+    let enabledLanguages = selectSourcesEnabledLanguages(getState());
 
-    dispatch({ type: FETCH_SCHEMA_REQUEST });
-
-    return Server.api()
-      .getPreferencesSchema()
-      .then(response => response.json())
-      .then(
-        response => dispatch({ type: FETCH_SCHEMA_SUCCESS, schema: response }),
-        error =>
-          dispatch({
-            type: FETCH_SCHEMA_FAILURE,
-            errorMessage: "Failed to fetch preference schema",
-            meta: { error }
-          })
+    if (enable) {
+      enabledLanguages = [...enabledLanguages, lang];
+    } else {
+      enabledLanguages = enabledLanguages.filter(
+        enabledLang => enabledLang !== lang
       );
+    }
+
+    const key = "enabledLanguages";
+    return dispatch(setSetting(key, enabledLanguages));
+  };
+}
+
+export function updateHiddenSources(
+  sourceId: string,
+  hide: boolean
+): ThunkAction {
+  return (dispatch, getState) => {
+    let hiddenSources = selectHiddenSources(getState());
+
+    if (hide) {
+      hiddenSources = [...hiddenSources, sourceId];
+    } else {
+      hiddenSources = hiddenSources.filter(
+        hiddenSource => hiddenSource !== sourceId
+      );
+    }
+
+    const key = "hiddenSources";
+    return dispatch(setSetting(key, hiddenSources));
   };
 }
