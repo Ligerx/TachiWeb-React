@@ -82,6 +82,9 @@ export const selectSettingsSchema = (state: GlobalState) =>
   state.settings.schema;
 export const selectSettingsPrefs = (state: GlobalState) => state.settings.prefs;
 
+export const selectPrefValue = (state: GlobalState, key: string): PrefValue =>
+  state.settings.prefs[key];
+
 // [Written 5/10/2019] default viewer could be missing from the prefs object
 // also, there is no typing for prefs currently, so manually typing this
 export type DefaultViewer =
@@ -93,5 +96,22 @@ export type DefaultViewer =
 export const selectDefaultViewer = (state: GlobalState): DefaultViewer =>
   state.settings.prefs.pref_default_viewer_key;
 
-export const selectPrefValue = (state: GlobalState, key: string): PrefValue =>
-  state.settings.prefs[key];
+const emptyArray = []; // caching an empty array to keep selectors pure
+
+export const selectSourcesEnabledLanguages = (
+  state: GlobalState
+): $ReadOnlyArray<string> => {
+  const { enabledLanguages } = state.settings.prefs;
+
+  if (enabledLanguages == null) return emptyArray;
+  return state.settings.prefs.enabledLanguages;
+};
+
+export const selectHiddenSources = (
+  state: GlobalState
+): $ReadOnlyArray<string> => {
+  const { hiddenSources } = state.settings.prefs;
+
+  if (hiddenSources == null) return emptyArray;
+  return state.settings.prefs.hiddenSources;
+};
