@@ -10,16 +10,26 @@ import { Client } from "api";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import BackButton from "components/BackButton";
 import SourceLanguage from "components/Sources/SourceLanguage";
-import { langPrettyPrint } from "components/utils";
 import {
   selectSourcesByLanguage,
-  selectSourceLanguages
+  selectSourceLanguages,
+  selectIsSourcesLoading
 } from "redux-ducks/sources";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
+import {
+  selectSourcesEnabledLanguages,
+  selectHiddenSources
+} from "redux-ducks/settings";
 
 const Sources = () => {
+  // Sources
   const sourceLanguages = useSelector(selectSourceLanguages);
   const sourcesByLanguage = useSelector(selectSourcesByLanguage);
+  const sourcesAreLoading = useSelector(selectIsSourcesLoading);
+
+  // Preferences
+  const enabledLanguages = useSelector(selectSourcesEnabledLanguages);
+  const hiddenSources = useSelector(selectHiddenSources);
 
   const dispatch = useDispatch();
 
@@ -47,12 +57,13 @@ const Sources = () => {
             key={lang}
             lang={lang}
             sources={sourcesByLanguage[lang]}
-            isEnabled={false}
+            isEnabled={enabledLanguages.includes(lang)}
+            hiddenSources={hiddenSources}
           />
         ))}
       </Container>
 
-      {/* {isExtensionsLoading && <FullScreenLoading />} */}
+      {sourcesAreLoading && <FullScreenLoading />}
     </>
   );
 };

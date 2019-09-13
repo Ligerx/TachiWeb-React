@@ -10,10 +10,11 @@ import { langPrettyPrint } from "components/utils";
 type Props = {
   lang: string,
   sources: $ReadOnlyArray<Source>,
-  isEnabled: boolean
+  isEnabled: boolean,
+  hiddenSources: $ReadOnlyArray<string> // a bit hacky to include the whole array here
 };
 
-const SourceLanguage = ({ lang, sources, isEnabled }: Props) => {
+const SourceLanguage = ({ lang, sources, isEnabled, hiddenSources }: Props) => {
   const dispatch = useDispatch();
 
   return (
@@ -22,9 +23,13 @@ const SourceLanguage = ({ lang, sources, isEnabled }: Props) => {
 
       <Switch checked={isEnabled} onChange={() => {}} />
 
-      {sources.map(source => (
-        <SourceRow source={source} />
-      ))}
+      {isEnabled &&
+        sources.map(source => (
+          <SourceRow
+            source={source}
+            isEnabled={!hiddenSources.includes(source.id)}
+          />
+        ))}
     </>
   );
 };
