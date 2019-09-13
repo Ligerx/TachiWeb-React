@@ -9,6 +9,7 @@ import Container from "@material-ui/core/Container";
 import { Client } from "api";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import BackButton from "components/BackButton";
+import SourceLanguage from "components/Sources/SourceLanguage";
 import { langPrettyPrint } from "components/utils";
 import {
   selectSourcesByLanguage,
@@ -40,14 +41,14 @@ const Sources = () => {
         </Toolbar>
       </AppBar>
 
-      <Container>
+      <Container maxWidth="sm">
         {sourceLanguages.map(lang => (
-          <>
-            <Typography variant="h5">{langPrettyPrint(lang)}</Typography>
-            {sourcesByLanguage[lang].map(source => (
-              <div>{source.name}</div>
-            ))}
-          </>
+          <SourceLanguage
+            key={lang}
+            lang={lang}
+            sources={sourcesByLanguage[lang]}
+            isEnabled={false}
+          />
         ))}
       </Container>
 
