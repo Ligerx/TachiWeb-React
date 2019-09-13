@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Switch from "@material-ui/core/Switch";
 import SourceRow from "components/Sources/SourceRow";
 import { langPrettyPrint } from "components/utils";
+import { updateSourcesEnabledLanguages } from "redux-ducks/settings/actionCreators";
 
 type Props = {
   lang: string,
@@ -17,11 +18,15 @@ type Props = {
 const SourceLanguage = ({ lang, sources, isEnabled, hiddenSources }: Props) => {
   const dispatch = useDispatch();
 
+  const handleChange = event => {
+    dispatch(updateSourcesEnabledLanguages(lang, event.target.checked));
+  };
+
   return (
     <>
       <Typography variant="h5">{langPrettyPrint(lang)}</Typography>
 
-      <Switch checked={isEnabled} onChange={() => {}} />
+      <Switch checked={isEnabled} onChange={handleChange} />
 
       {isEnabled &&
         sources.map(source => (
