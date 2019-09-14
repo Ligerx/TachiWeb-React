@@ -34,7 +34,12 @@ const Router = () => (
         <Route exact path="/" component={Library} />
 
         <Route exact path="/catalogues" component={Catalogue} />
-        <Route path="/catalogues" component={MangaRouter} />
+
+        <Route exact path="/catalogues/searchAll" component={null} />
+        <Route path="/catalogues/searchAll" component={MangaRouter} />
+
+        <Route exact path="/catalogues/:sourceId" component={null} />
+        <Route path="/catalogues/:sourceId" component={MangaRouter} />
 
         <Route exact path="/sources" component={Sources} />
 
