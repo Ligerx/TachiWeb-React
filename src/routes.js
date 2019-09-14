@@ -4,7 +4,7 @@ import { Client } from "api";
 import Library from "components/Library";
 import MangaInfo from "components/MangaInfo";
 import Reader from "components/Reader";
-import Catalogue from "components/Catalogue";
+import Catalogue from "components/Catalogues";
 import Extensions from "components/Extensions";
 import BackupRestore from "components/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
