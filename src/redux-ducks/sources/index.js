@@ -5,6 +5,10 @@ import type { SourceMap } from "types";
 import type { Source } from "@tachiweb/api-client";
 import type { GlobalState, Action } from "redux-ducks/reducers";
 import { withDeletedKeys } from "redux-ducks/utils";
+import {
+  selectSourcesEnabledLanguagesSorted,
+  selectHiddenSources
+} from "redux-ducks/settings";
 import { FETCH_SOURCES, FETCH_SUCCESS, REMOVE_SOURCES } from "./actions";
 
 // ================================================================================
@@ -62,8 +66,8 @@ export const selectSourcesByLanguage: GlobalState => $ReadOnly<{
     });
 
     // Sort each of the individual arrays by source name
-    Object.values(sourcesByLanguage).forEach((sources: Array<Source>) => {
-      sources.sort((a, b) => {
+    Object.values(sourcesByLanguage).forEach((s: Array<Source>) => {
+      s.sort((a, b) => {
         if (a.name < b.name) {
           return -1;
         }
@@ -85,6 +89,39 @@ export const selectSourceLanguages: GlobalState => $ReadOnlyArray<string> = crea
   [selectSourcesByLanguage],
   (sourcesByLanguage): $ReadOnlyArray<string> => {
     return Object.keys(sourcesByLanguage).sort();
+  }
+);
+
+// Re-exporting this selector from settings since it makes more sense in context of sources
+export { selectSourcesEnabledLanguagesSorted };
+
+/**
+ * While language keys are sorted alphabetically, you should probably still rely on
+ * `selectSourcesEnabledLanguagesSorted()` just in case the browser doesn't guarantee
+ * key order is retained.
+ */
+export const selectEnabledSourcesByLanguage: GlobalState => $ReadOnly<{
+  [lang: string]: Array<Source>
+}> = createSelector(
+  [
+    selectSourcesByLanguage,
+    selectSourcesEnabledLanguagesSorted,
+    selectHiddenSources
+  ],
+  (
+    sourcesByLanguage,
+    enabledLanguages,
+    hiddenSources
+  ): $ReadOnly<{ [lang: string]: Array<Source> }> => {
+    enabledLanguages.reduce((obj, lang) => {
+      const sources = sourcesByLanguage[lang];
+      const enabledSources = sources.filter(
+        source => !hiddenSources.includes(source)
+      );
+      return { ...obj, [lang]: enabledSources };
+    }, {});
+
+    return sourcesByLanguage;
   }
 );
 

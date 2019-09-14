@@ -1,5 +1,6 @@
 // @flow
 import type { SchemaType } from "types/settings-schema";
+import { createSelector } from "reselect";
 import UI_SETTINGS from "ui-settings";
 import { createLoadingSelector } from "redux-ducks/loading";
 import type { GlobalState, Action } from "redux-ducks/reducers";
@@ -108,6 +109,13 @@ export const selectSourcesEnabledLanguages = (
   if (enabledLanguages == null) return initialEnabledLanguages;
   return state.settings.prefs.enabledLanguages;
 };
+
+export const selectSourcesEnabledLanguagesSorted: GlobalState => $ReadOnlyArray<string> = createSelector(
+  [selectSourcesEnabledLanguages],
+  (enabledLanguages): $ReadOnlyArray<string> => {
+    return enabledLanguages.slice().sort();
+  }
+);
 
 export const selectHiddenSources = (
   state: GlobalState
