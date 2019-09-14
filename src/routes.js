@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import { Client } from "api";
 import Library from "components/Library";
 import MangaInfo from "components/MangaInfo";
 import Reader from "components/Reader";
@@ -13,36 +12,16 @@ import Sources from "components/Sources";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
-// match.path is the url prefix. i.e. '/library' '/catalogue'
-type MangaRouterProps = { match: Object }; // react router prop
+type MangaRouterProps = { match: Object }; // props  passed by react router
 const MangaRouter = ({ match }: MangaRouterProps) => {
-  // TODO: make Reader and MangaInfo consistent by moving MangaInfo backUrl info
-  // to using context instead of directly passing it here
-
-  // TODO: possibly also create a context for the MangaInfo defaultTab?
-
-  let backUrl = "";
-  let defaultTab = 0;
-
-  if (match.path === Client.library()) {
-    backUrl = Client.library();
-    defaultTab = 1;
-  } else if (match.path === Client.catalogue()) {
-    backUrl = Client.catalogue();
-    defaultTab = 0;
-  }
-
+  // match.path is the url prefix and back url.
+  // For example: library, a catalogue, and searching all catalogues use these components
   return (
     <UrlPrefixContext.Provider value={match.path}>
       <Switch>
         <Route path={`${match.path}/:mangaId/:chapterId`} component={Reader} />
 
-        <Route
-          path={`${match.path}/:mangaId`}
-          render={props => (
-            <MangaInfo {...props} backUrl={backUrl} defaultTab={defaultTab} />
-          )}
-        />
+        <Route path={`${match.path}/:mangaId`} component={MangaInfo} />
       </Switch>
     </UrlPrefixContext.Provider>
   );

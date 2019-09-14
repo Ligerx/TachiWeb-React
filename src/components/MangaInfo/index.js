@@ -1,6 +1,8 @@
 // @flow
-import React, { useEffect, useState, type Node } from "react";
+import React, { useEffect, useState, useContext, type Node } from "react";
 import { Helmet } from "react-helmet";
+import { Client } from "api";
+import UrlPrefixContext from "components/UrlPrefixContext";
 import MangaInfoHeader from "components/MangaInfo/MangaInfoHeader";
 import MangaInfoDetails from "components/MangaInfo/MangaInfoDetails";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
@@ -29,13 +31,7 @@ import { makeStyles } from "@material-ui/styles";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import { selectSource } from "redux-ducks/sources";
 
-type Props = {
-  backUrl: string,
-  defaultTab: number,
-
-  // react router props
-  match: { params: Object }
-};
+type RouterProps = { match: { params: Object } };
 
 const useStyles = makeStyles({
   // use flexbox to allow virtualized chapter list fill the remaining
@@ -47,12 +43,16 @@ const useStyles = makeStyles({
   }
 });
 
-const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
+const MangaInfo = ({ match: { params } }: RouterProps) => {
   const classes = useStyles();
 
-  const mangaId = parseInt(params.mangaId, 10);
+  // it is safe to consider this the back URL
+  const urlPrefix = useContext(UrlPrefixContext);
 
-  const [tabValue, setTabValue] = useState(defaultTab);
+  // initialTab only sets the state on initialization
+  const [tabValue, setTabValue] = useState(initialTab(urlPrefix));
+
+  const mangaId = parseInt(params.mangaId, 10);
 
   const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
   const chapters = useSelector(state =>
@@ -100,9 +100,11 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
   };
 
   const tabContent = (): Node => {
+    if (mangaInfo == null) return null;
+
     const numChapters: number = chapters ? chapters.length : 0;
 
-    if (mangaInfo && tabValue === 0) {
+    if (tabValue === 0) {
       return (
         <MangaInfoDetails
           mangaInfo={mangaInfo}
@@ -111,7 +113,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
         />
       );
     }
-    if (mangaInfo && tabValue === 1) {
+    if (tabValue === 1) {
       return (
         <>
           <CenterHorizontally>
@@ -135,7 +137,7 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
         mangaInfo={mangaInfo}
         tabValue={tabValue}
         handleChangeTab={handleChangeTab}
-        onBackClick={backUrl}
+        onBackClick={urlPrefix}
       />
 
       {tabContent()}
@@ -144,5 +146,17 @@ const MangaInfo = ({ backUrl, defaultTab, match: { params } }: Props) => {
     </div>
   );
 };
+
+// Helper function
+function initialTab(urlPrefix) {
+  if (urlPrefix === Client.library()) {
+    return 1;
+  }
+  if (urlPrefix === Client.catalogue()) {
+    return 0;
+  }
+  // fallback just in case
+  return 0;
+}
 
 export default MangaInfo;
