@@ -29,7 +29,7 @@ const MenuList = ({ classes }: Props) => (
         <ListItemText primary="Library" />
       </ListItem>
       <ListItem button component={Link} to={Client.catalogue()}>
-        <ListItemText primary="Catalogue" />
+        <ListItemText primary="Catalogues" />
       </ListItem>
       <ListItem button component={Link} to={Client.extensions()}>
         <ListItemText primary="Extensions" />
