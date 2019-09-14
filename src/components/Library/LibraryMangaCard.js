@@ -101,7 +101,7 @@ const LibraryMangaCard = ({
         <ButtonBase
           className={classes.card}
           component={Link}
-          to={Client.manga("/library", manga.id)}
+          to={Client.manga(Client.library(), manga.id)}
           onClick={handleClick}
         >
           <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />

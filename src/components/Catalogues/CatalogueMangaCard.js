@@ -35,7 +35,7 @@ const CatalogueMangaCard = ({ classes, manga }: Props) => (
     <ButtonBase
       className={classes.fullWidth}
       component={Link}
-      to={Client.manga("/catalogue", manga.id)}
+      to={Client.manga(Client.catalogues(), manga.id)}
     >
       <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
     </ButtonBase>

@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Client } from "api";
 import Library from "components/Library";
 import MangaInfo from "components/MangaInfo";
 import Reader from "components/Reader";
@@ -19,9 +20,15 @@ const MangaRouter = ({ match }: MangaRouterProps) => {
   return (
     <UrlPrefixContext.Provider value={match.path}>
       <Switch>
-        <Route path={`${match.path}/:mangaId/:chapterId`} component={Reader} />
+        <Route
+          path={Client.chapter(match.path, ":mangaId", ":chapterId")}
+          component={Reader}
+        />
 
-        <Route path={`${match.path}/:mangaId`} component={MangaInfo} />
+        <Route
+          path={Client.manga(match.path, ":mangaId")}
+          component={MangaInfo}
+        />
       </Switch>
     </UrlPrefixContext.Provider>
   );
@@ -33,22 +40,22 @@ const Router = () => (
       <Switch>
         <Route exact path="/" component={Library} />
 
-        <Route exact path="/catalogues" component={Catalogue} />
+        <Route exact path={Client.catalogues()} component={Catalogue} />
 
-        <Route exact path="/catalogues/searchAll" component={null} />
-        <Route path="/catalogues/searchAll" component={MangaRouter} />
+        <Route exact path={Client.cataloguesSearchAll()} component={null} />
+        <Route path={Client.cataloguesSearchAll()} component={MangaRouter} />
 
-        <Route exact path="/catalogues/:sourceId" component={null} />
-        <Route path="/catalogues/:sourceId" component={MangaRouter} />
+        <Route exact path={Client.catalogue(":sourceId")} component={null} />
+        <Route path={Client.catalogue(":sourceId")} component={MangaRouter} />
 
-        <Route exact path="/sources" component={Sources} />
+        <Route exact path={Client.sources()} component={Sources} />
 
-        <Route exact path="/library" component={Library} />
-        <Route path="/library" component={MangaRouter} />
+        <Route exact path={Client.library()} component={Library} />
+        <Route path={Client.library()} component={MangaRouter} />
 
-        <Route exact path="/extensions" component={Extensions} />
+        <Route exact path={Client.extensions()} component={Extensions} />
 
-        <Route exact path="/backup_restore" component={BackupRestore} />
+        <Route exact path={Client.backupRestore()} component={BackupRestore} />
 
         <Route path={`/settings/:${SETTING_INDEX}*`} component={Settings} />
       </Switch>
