@@ -1,5 +1,6 @@
 // @flow
 import { createSelector } from "reselect";
+import isEmpty from "lodash/isEmpty";
 import { createLoadingSelector } from "redux-ducks/loading";
 import type { SourceMap } from "types";
 import type { Source } from "@tachiweb/api-client";
@@ -113,8 +114,16 @@ export const selectEnabledSourcesByLanguage: GlobalState => $ReadOnly<{
     enabledLanguages,
     hiddenSources
   ): $ReadOnly<{ [lang: string]: Array<Source> }> => {
+    // selectSourcesByLanguage() is derived from source data
+    // selectSourcesEnabledLanguagesSorted() and selectHiddenSources() are derived from settings data
+    // Since these are fetched at separate times, there is a small 'race condition' where settings
+    // seletors data is available but sourcesByLanguage() could return {}.
+    // But it SHOULD be safe to assume that once source data is loaded, everything should run smooth.
+    if (isEmpty(sourcesByLanguage)) return sourcesByLanguage; // return {}
+
     enabledLanguages.reduce((obj, lang) => {
       const sources = sourcesByLanguage[lang];
+
       const enabledSources = sources.filter(
         source => !hiddenSources.includes(source)
       );

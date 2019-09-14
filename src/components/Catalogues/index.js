@@ -61,9 +61,8 @@ const Catalogues = () => {
         {sourceLanguages.map(lang => (
           <div key={lang}>
             <h1>{lang}</h1>
-            {sourcesByLanguage[lang].map(source => (
-              <div>{source.name}</div>
-            ))}
+            {sourcesByLanguage[lang] &&
+              sourcesByLanguage[lang].map(source => <div>{source.name}</div>)}
           </div>
         ))}
         {/* </Grid> */}
