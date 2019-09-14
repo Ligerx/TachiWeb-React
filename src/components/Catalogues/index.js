@@ -77,7 +77,7 @@ const Catalogue = () => {
 
   return (
     <>
-      <Helmet title="Catalogue - TachiWeb" />
+      <Helmet title="Catalogues - TachiWeb" />
 
       <CatalogueHeader />
 
