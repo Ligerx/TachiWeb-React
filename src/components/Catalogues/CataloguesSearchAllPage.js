@@ -41,7 +41,7 @@ const useStyles = makeStyles({
   }
 });
 
-const CataloguesPage = () => {
+const CataloguesSearchAllPage = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -111,4 +111,4 @@ const CataloguesPage = () => {
   );
 };
 
-export default CataloguesPage;
+export default CataloguesSearchAllPage;
