@@ -33,8 +33,8 @@ const Router = () => (
       <Switch>
         <Route exact path="/" component={Library} />
 
-        <Route exact path="/catalogue" component={Catalogue} />
-        <Route path="/catalogue" component={MangaRouter} />
+        <Route exact path="/catalogues" component={Catalogue} />
+        <Route path="/catalogues" component={MangaRouter} />
 
         <Route exact path="/sources" component={Sources} />
 

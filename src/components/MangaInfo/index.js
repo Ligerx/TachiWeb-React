@@ -152,7 +152,7 @@ function initialTab(urlPrefix) {
   if (urlPrefix === Client.library()) {
     return 1;
   }
-  if (urlPrefix === Client.catalogue()) {
+  if (urlPrefix === Client.catalogues()) {
     return 0;
   }
   // fallback just in case

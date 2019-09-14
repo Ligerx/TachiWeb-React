@@ -149,8 +149,8 @@ export const Client = {
     return "/library";
   },
 
-  catalogue() {
-    return "/catalogue";
+  catalogues() {
+    return "/catalogues";
   },
 
   manga(urlPrefix, mangaId) {
