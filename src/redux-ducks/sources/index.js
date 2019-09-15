@@ -58,7 +58,7 @@ export const selectSourcesByLanguage: GlobalState => $ReadOnly<{
 
     // Create object { [lang]: [...sources] }
     Object.values(sources).forEach((source: Source) => {
-      const lang = source.lang == null ? "noLang" : source.lang;
+      const lang = source.lang == null ? "Other" : source.lang;
 
       if (sourcesByLanguage[lang] == null) {
         sourcesByLanguage[lang] = [];
