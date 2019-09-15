@@ -7,7 +7,6 @@ import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
@@ -15,6 +14,8 @@ import { Client } from "api";
 import Link from "components/Link";
 import MenuDrawer from "components/MenuDrawer";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
+import SourceList from "components/Catalogues/SourceList";
+import { langPrettyPrint } from "components/utils";
 import {
   selectIsSourcesLoading,
   selectSourcesEnabledLanguagesSorted,
@@ -57,15 +58,14 @@ const Catalogues = () => {
       </AppBar>
 
       <Container maxWidth="sm">
-        {/* <Grid container spacing={2}> */}
         {sourceLanguages.map(lang => (
           <div key={lang}>
-            <h1>{lang}</h1>
-            {sourcesByLanguage[lang] &&
-              sourcesByLanguage[lang].map(source => <div>{source.name}</div>)}
+            <Typography variant="h5" gutterBottom>
+              {langPrettyPrint(lang)}
+            </Typography>
+            <SourceList sources={sourcesByLanguage[lang]} />
           </div>
         ))}
-        {/* </Grid> */}
       </Container>
 
       {sourcesAreLoading && <FullScreenLoading />}
