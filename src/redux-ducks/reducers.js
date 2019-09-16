@@ -11,6 +11,7 @@ import chapters from "./chapters";
 import pageCounts from "./pageCounts";
 import sources from "./sources";
 import catalogue from "./catalogue";
+import catalogues from "./catalogues";
 import filters from "./filters";
 import mangaInfos from "./mangaInfos";
 import extensions from "./extensions";
@@ -21,6 +22,7 @@ import type { ChaptersAction } from "./chapters/actions";
 import type { PageCountsAction } from "./pageCounts/actions";
 import type { SourcesAction } from "./sources/actions";
 import type { CatalogueAction } from "./catalogue/actions";
+import type { CataloguesAction } from "./catalogues/actions";
 import type { FiltersAction } from "./filters/actions";
 import type { MangaInfosAction } from "./mangaInfos/actions";
 import type { ExtensionsAction } from "./extensions/actions";
@@ -35,6 +37,7 @@ const reducers = {
   pageCounts,
   sources,
   catalogue,
+  catalogues,
   filters,
   mangaInfos,
   extensions,
@@ -55,6 +58,7 @@ export type Action =
   | PageCountsAction
   | SourcesAction
   | CatalogueAction
+  | CataloguesAction
   | FiltersAction
   | MangaInfosAction
   | ExtensionsAction

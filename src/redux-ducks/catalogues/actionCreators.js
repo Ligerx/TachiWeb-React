@@ -30,27 +30,28 @@ import {
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchCatalogue(): ThunkAction {
+export function fetchCatalogue(sourceId: string): ThunkAction {
   return (dispatch, getState) => {
-    const lastUsedFilters = selectLastUsedFilters(getState());
     const searchQuery = selectCatalogueSearchQuery(getState());
-    const sourceId = selectCatalogueSourceId(getState());
+    // Expected to be [] when searching all and on first load for individual catalogue
+    const lastUsedFilters = selectLastUsedFilters(getState());
 
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
       meta: { sourceId, searchQuery, lastUsedFilters }
     });
 
-    if (sourceId == null) {
+    if (sourceId == null || sourceId === "") {
       return dispatch({
         type: FETCH_CATALOGUE_FAILURE,
-        errorMessage: "No source selected",
-        meta: { error: "fetchCatalogue() sourceId is null" }
+        errorMessage: "Can't get catalogue because no source was selected",
+        meta: { error: sourceId }
       });
     }
 
     // Filters should be null if empty when requesting from the server
-    const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
+    const filtersChecked = lastUsedFilters.length > 0 ? lastUsedFilters : null;
+
     return Server.api()
       .getSourceCatalogue(
         sourceId,
@@ -58,22 +59,16 @@ export function fetchCatalogue(): ThunkAction {
       )
       .then(
         page => {
-          // If we get an ajax response for source A but it completes after
-          // we switch to source B, don't update the store
-          const currentSourceId = selectCatalogueSourceId(getState());
-          const didSourceIdChange = currentSourceId !== sourceId;
-
           const { mangas, hasNextPage } = page;
-
-          const mangaIds = transformToMangaIdsArray(mangas);
 
           dispatch({ type: ADD_MANGA, newManga: mangas });
           dispatch({
             type: FETCH_CATALOGUE_SUCCESS,
-            didSourceIdChange,
-            mangaIds,
-            page: 1,
-            hasNextPage
+            payload: {
+              mangaIds: mangas.map(manga => manga.id),
+              page: 1,
+              hasNextPage
+            }
           });
         },
         error =>

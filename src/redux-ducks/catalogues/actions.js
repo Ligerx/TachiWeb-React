@@ -24,11 +24,11 @@ type FetchCatalogueRequestAction = {
 
 type FetchCatalogueSuccessAction = {
   type: FETCH_CATALOGUE_SUCCESS_TYPE,
-  // If didSourceIdChange === true, don't do anything with the rest of the data
-  didSourceIdChange: boolean,
-  mangaIds: Array<number>,
-  page: number,
-  hasNextPage: boolean
+  payload: {
+    mangaIds: Array<number>,
+    page: number,
+    hasNextPage: boolean
+  }
 };
 
 type FetchCatalogueFailureAction = {
