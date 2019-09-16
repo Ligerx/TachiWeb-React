@@ -16,6 +16,11 @@ type FETCH_CATALOGUE_SUCCESS_TYPE = "catalogue/FETCH_SUCCESS";
 export const FETCH_CATALOGUE_FAILURE = "catalogue/FETCH_FAILURE";
 type FETCH_CATALOGUE_FAILURE_TYPE = "catalogue/FETCH_FAILURE";
 
+export const FETCH_CATALOGUE_NO_NEXT_PAGE =
+  "catalogue/FETCH_CATALOGUE_NO_NEXT_PAGE";
+type FETCH_CATALOGUE_NO_NEXT_PAGE_TYPE =
+  "catalogue/FETCH_CATALOGUE_NO_NEXT_PAGE";
+
 // Action Object Types
 type FetchCatalogueRequestAction = {
   type: FETCH_CATALOGUE_REQUEST_TYPE,
@@ -25,8 +30,9 @@ type FetchCatalogueRequestAction = {
 type FetchCatalogueSuccessAction = {
   type: FETCH_CATALOGUE_SUCCESS_TYPE,
   payload: {
-    mangaIds: Array<number>,
+    sourceId: string,
     page: number,
+    mangaIds: Array<number>,
     hasNextPage: boolean
   }
 };
@@ -37,79 +43,39 @@ type FetchCatalogueFailureAction = {
   meta: Object
 };
 
-// ================================================================================
-// Fetch the next catalogue page
-// ================================================================================
-
-// Action Constants and Types
-export const CATALOGUE_ADD_PAGE = "catalogue/ADD_PAGE";
-
-export const ADD_PAGE_REQUEST = "catalogue/ADD_PAGE_REQUEST";
-type ADD_PAGE_REQUEST_TYPE = "catalogue/ADD_PAGE_REQUEST";
-
-export const ADD_PAGE_SUCCESS = "catalogue/ADD_PAGE_SUCCESS";
-type ADD_PAGE_SUCCESS_TYPE = "catalogue/ADD_PAGE_SUCCESS";
-
-export const ADD_PAGE_FAILURE = "catalogue/ADD_PAGE_FAILURE";
-type ADD_PAGE_FAILURE_TYPE = "catalogue/ADD_PAGE_FAILURE";
-
-// failsafe, don't use
-export const ADD_PAGE_NO_NEXT_PAGE = "catalogue/ADD_PAGE_NO_NEXT_PAGE";
-type ADD_PAGE_NO_NEXT_PAGE_TYPE = "catalogue/ADD_PAGE_NO_NEXT_PAGE";
-
-type AddPageRequestAction = { type: ADD_PAGE_REQUEST_TYPE, meta: Object };
-
-type AddPageSuccessAction = {
-  type: ADD_PAGE_SUCCESS_TYPE,
-  mangaIds: Array<number>,
-  page: number,
-  hasNextPage: boolean
+type FetchCatalogueNoNextPageAction = {
+  type: FETCH_CATALOGUE_NO_NEXT_PAGE_TYPE
 };
-
-type AddPageFailureAction = {
-  type: ADD_PAGE_FAILURE_TYPE,
-  errorMessage: string,
-  meta: Object
-};
-
-type AddPageNoNextPageAction = { type: ADD_PAGE_NO_NEXT_PAGE_TYPE };
 
 // ================================================================================
 // etc actions
 // ================================================================================
 
-export const RESET_STATE = "catalogue/RESET_STATE";
-type RESET_STATE_TYPE = "catalogue/RESET_STATE";
+export const RESET_CATALOGUE = "catalogue/RESET_CATALOGUE";
+type RESET_CATALOGUE_TYPE = "catalogue/RESET_CATALOGUE";
 
-export type ResetStateAction = { type: RESET_STATE_TYPE };
+export type ResetCatalogueAction = {
+  type: RESET_CATALOGUE_TYPE,
+  payload: { sourceId: string }
+};
 
 export const UPDATE_SEARCH_QUERY = "catalogue/UPDATE_SEARCH_QUERY";
 type UPDATE_SEARCH_QUERY_TYPE = "catalogue/UPDATE_SEARCH_QUERY";
 
 export type UpdateSearchQueryAction = {
   type: UPDATE_SEARCH_QUERY_TYPE,
-  searchQuery: string
-};
-
-export const CHANGE_SOURCEID = "catalogue/CHANGE_SOURCEID";
-type CHANGE_SOURCEID_TYPE = "catalogue/CHANGE_SOURCEID";
-
-export type ChangeSourceIdAction = {
-  type: CHANGE_SOURCEID_TYPE,
-  newSourceId: string
+  payload: {
+    searchQuery: string
+  }
 };
 
 // ================================================================================
 // Consolidated Action Type
 // ================================================================================
-export type CatalogueActions =
+export type CataloguesAction =
   | FetchCatalogueRequestAction
   | FetchCatalogueSuccessAction
   | FetchCatalogueFailureAction
-  | AddPageRequestAction
-  | AddPageSuccessAction
-  | AddPageFailureAction
-  | AddPageNoNextPageAction
-  | ResetStateAction
-  | UpdateSearchQueryAction
-  | ChangeSourceIdAction;
+  | FetchCatalogueNoNextPageAction
+  | ResetCatalogueAction
+  | UpdateSearchQueryAction;

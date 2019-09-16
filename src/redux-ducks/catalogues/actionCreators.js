@@ -5,68 +5,78 @@ import type { CataloguePageRequest } from "@tachiweb/api-client";
 import type { FilterAnyType } from "types/filters";
 import { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
 import { selectLastUsedFilters } from "redux-ducks/filters";
-import { transformToMangaIdsArray } from "redux-ducks/utils";
-import {
-  selectCatalogueSearchQuery,
-  selectCatalogueSourceId,
-  selectCatalogue
-} from ".";
+import { selectCatalogueBySourceId, selectCatalogueSearchQuery } from ".";
 import {
   FETCH_CATALOGUE_REQUEST,
   FETCH_CATALOGUE_FAILURE,
   FETCH_CATALOGUE_SUCCESS,
-  ADD_PAGE_NO_NEXT_PAGE,
-  ADD_PAGE_FAILURE,
-  ADD_PAGE_REQUEST,
-  ADD_PAGE_SUCCESS,
-  RESET_STATE,
+  FETCH_CATALOGUE_NO_NEXT_PAGE,
+  RESET_CATALOGUE,
   UPDATE_SEARCH_QUERY,
-  CHANGE_SOURCEID,
-  type ResetStateAction,
-  type UpdateSearchQueryAction,
-  type ChangeSourceIdAction
+  type ResetCatalogueAction,
+  type UpdateSearchQueryAction
 } from "./actions";
 
 // ================================================================================
 // Action Creators
 // ================================================================================
+
+// Creating 2 functions to separate out the 'pure' function from any selectors
+/**
+ * Use this function for fetching the initial data as well as fetching additional data.
+ */
 export function fetchCatalogue(sourceId: string): ThunkAction {
   return (dispatch, getState) => {
     const searchQuery = selectCatalogueSearchQuery(getState());
+
     // Expected to be [] when searching all and on first load for individual catalogue
     const lastUsedFilters = selectLastUsedFilters(getState());
 
-    dispatch({
-      type: FETCH_CATALOGUE_REQUEST,
-      meta: { sourceId, searchQuery, lastUsedFilters }
-    });
+    const catalogue = selectCatalogueBySourceId(getState(), sourceId);
+    const nextPage = catalogue == null ? 1 : catalogue.page + 1;
+    const hasNextPage = catalogue == null ? true : catalogue.hasNextPage;
 
-    if (sourceId == null || sourceId === "") {
-      return dispatch({
-        type: FETCH_CATALOGUE_FAILURE,
-        errorMessage: "Can't get catalogue because no source was selected",
-        meta: { error: sourceId }
-      });
+    if (!hasNextPage) {
+      return dispatch({ type: FETCH_CATALOGUE_NO_NEXT_PAGE });
     }
 
-    // Filters should be null if empty when requesting from the server
-    const filtersChecked = lastUsedFilters.length > 0 ? lastUsedFilters : null;
+    return dispatch(
+      fetchCataloguePure(sourceId, nextPage, searchQuery, lastUsedFilters)
+    );
+  };
+}
+
+function fetchCataloguePure(
+  sourceId: string,
+  page: number,
+  searchQuery: string,
+  filters: $ReadOnlyArray<FilterAnyType>
+): ThunkAction {
+  return dispatch => {
+    dispatch({
+      type: FETCH_CATALOGUE_REQUEST,
+      meta: { sourceId, page, searchQuery, filters }
+    });
+
+    // API expects null instead of empty array if there are no filters
+    const filtersChecked = filters.length > 0 ? filters : null;
 
     return Server.api()
       .getSourceCatalogue(
         sourceId,
-        catalogueRequest(1, searchQuery.trim(), filtersChecked)
+        catalogueRequest(page, searchQuery.trim(), filtersChecked)
       )
       .then(
-        page => {
-          const { mangas, hasNextPage } = page;
+        catalogueData => {
+          const { mangas, hasNextPage } = catalogueData;
 
           dispatch({ type: ADD_MANGA, newManga: mangas });
           dispatch({
             type: FETCH_CATALOGUE_SUCCESS,
             payload: {
+              sourceId,
+              page,
               mangaIds: mangas.map(manga => manga.id),
-              page: 1,
               hasNextPage
             }
           });
@@ -81,79 +91,14 @@ export function fetchCatalogue(sourceId: string): ThunkAction {
   };
 }
 
-export function fetchNextCataloguePage(): ThunkAction {
-  return (dispatch, getState) => {
-    const { page, hasNextPage, searchQuery, sourceId } = selectCatalogue(
-      getState()
-    );
-    const lastUsedFilters = selectLastUsedFilters(getState());
-    const nextPage = page + 1;
-
-    if (!hasNextPage) {
-      // Failsafe - don't actually call this function if there is no next page
-      return dispatch({ type: ADD_PAGE_NO_NEXT_PAGE });
-    }
-    if (sourceId == null) {
-      return dispatch({
-        type: ADD_PAGE_FAILURE,
-        errorMessage: "There was a problem loading the next page of manga",
-        meta: { error: "fetchNextCataloguePage() sourceId is null" }
-      });
-    }
-
-    dispatch({
-      type: ADD_PAGE_REQUEST,
-      meta: {
-        sourceId,
-        nextPage,
-        hasNextPage,
-        searchQuery,
-        lastUsedFilters
-      }
-    });
-
-    const filtersChecked = lastUsedFilters.length ? lastUsedFilters : null;
-    return Server.api()
-      .getSourceCatalogue(
-        sourceId,
-        catalogueRequest(nextPage, searchQuery.trim(), filtersChecked)
-      )
-      .then(
-        newPage => {
-          const { mangas, hasNextPage: hasNextPageUpdated } = newPage;
-
-          const mangaIds = transformToMangaIdsArray(mangas);
-
-          dispatch({ type: ADD_MANGA, newManga: mangas });
-          dispatch({
-            type: ADD_PAGE_SUCCESS,
-            mangaIds,
-            page: nextPage,
-            hasNextPage: hasNextPageUpdated
-          });
-        },
-        error =>
-          dispatch({
-            type: ADD_PAGE_FAILURE,
-            errorMessage: "There was a problem loading the next page of manga",
-            meta: { error }
-          })
-      );
-  };
-}
-
-export function resetCatalogue(): ResetStateAction {
-  return { type: RESET_STATE };
+export function resetCatalogue(sourceId: string): ResetCatalogueAction {
+  return { type: RESET_CATALOGUE, payload: { sourceId } };
 }
 
 export function updateSearchQuery(
-  newSearchQuery: string
+  searchQuery: string
 ): UpdateSearchQueryAction {
-  return { type: UPDATE_SEARCH_QUERY, searchQuery: newSearchQuery };
-}
-
-export function changeSourceId(newSourceId: string): ChangeSourceIdAction {
-  return { type: CHANGE_SOURCEID, newSourceId };
+  return { type: UPDATE_SEARCH_QUERY, payload: { searchQuery } };
 }
 
 // ================================================================================
