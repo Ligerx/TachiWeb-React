@@ -12,7 +12,7 @@ import {
   FETCH_CATALOGUE_FAILURE,
   FETCH_CATALOGUE_SUCCESS,
   FETCH_CATALOGUE_NO_NEXT_PAGE,
-  RESET_CATALOGUE,
+  RESET_CATALOGUE_FOR_SOURCEIDS,
   UPDATE_SEARCH_QUERY,
   type UpdateSearchQueryAction
 } from "./actions";
@@ -104,7 +104,10 @@ export function updateSearchQuery(
 export function resetCatalogue(sourceIds: string | Array<string>): ThunkAction {
   return dispatch => {
     dispatch({ type: WIPE_ALL_FILTERS });
-    return dispatch({ type: RESET_CATALOGUE, payload: { sourceIds } });
+    return dispatch({
+      type: RESET_CATALOGUE_FOR_SOURCEIDS,
+      payload: { sourceIds }
+    });
   };
 }
 

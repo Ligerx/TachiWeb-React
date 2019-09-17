@@ -12,6 +12,8 @@ import times from "lodash/times";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
 
+type Props = { sourceId: string };
+
 const useStyles = makeStyles({
   openButton: {
     marginBottom: 24,
@@ -31,7 +33,7 @@ const useStyles = makeStyles({
   }
 });
 
-const DynamicSourceFilters = () => {
+const DynamicSourceFilters = ({ sourceId }: Props) => {
   const classes = useStyles();
 
   const filtersLength = useSelector(selectFiltersLength);
@@ -73,7 +75,10 @@ const DynamicSourceFilters = () => {
       >
         {/* without this div, FilterGroup components screw up, not sure why though */}
         <div>
-          <FilterActions onSearchClick={handleSearchClick} />
+          <FilterActions
+            sourceId={sourceId}
+            onSearchClick={handleSearchClick}
+          />
 
           <FormGroup className={classes.filters}>
             {times(filtersLength).map((_, index) => (

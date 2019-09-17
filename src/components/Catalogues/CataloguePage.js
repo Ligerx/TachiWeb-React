@@ -112,7 +112,7 @@ const CataloguePage = ({
       </AppBar>
 
       <Container>
-        <DynamicSourceFilters />
+        <DynamicSourceFilters sourceId={sourceId} />
 
         <Grid container spacing={2}>
           {mangaLibrary.map(manga => (

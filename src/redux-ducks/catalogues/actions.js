@@ -52,14 +52,6 @@ type FetchCatalogueNoNextPageAction = {
 // etc actions
 // ================================================================================
 
-export const RESET_CATALOGUE = "catalogue/RESET_CATALOGUE";
-type RESET_CATALOGUE_TYPE = "catalogue/RESET_CATALOGUE";
-
-export type ResetCatalogueAction = {
-  type: RESET_CATALOGUE_TYPE,
-  payload: { sourceIds: string | Array<string> }
-};
-
 export const UPDATE_SEARCH_QUERY = "catalogue/UPDATE_SEARCH_QUERY";
 type UPDATE_SEARCH_QUERY_TYPE = "catalogue/UPDATE_SEARCH_QUERY";
 
@@ -70,6 +62,23 @@ export type UpdateSearchQueryAction = {
   }
 };
 
+export const RESET_CATALOGUE_FOR_SOURCEIDS =
+  "catalogue/RESET_CATALOGUE_FOR_SOURCEIDS";
+type RESET_CATALOGUE_FOR_SOURCEIDS_TYPE =
+  "catalogue/RESET_CATALOGUE_FOR_SOURCEIDS";
+
+export type ResetCatalogueForSourceIdsAction = {
+  type: RESET_CATALOGUE_FOR_SOURCEIDS_TYPE,
+  payload: { sourceIds: string | Array<string> }
+};
+
+export const RESET_CATALOGUES_TO_INIT = "catalogue/RESET_CATALOGUES_TO_INIT";
+type RESET_CATALOGUES_TO_INIT_TYPE = "catalogue/RESET_CATALOGUES_TO_INIT";
+
+export type ResetCataloguesToInitAction = {
+  type: RESET_CATALOGUES_TO_INIT_TYPE
+};
+
 // ================================================================================
 // Consolidated Action Type
 // ================================================================================
@@ -78,5 +87,6 @@ export type CataloguesAction =
   | FetchCatalogueSuccessAction
   | FetchCatalogueFailureAction
   | FetchCatalogueNoNextPageAction
-  | ResetCatalogueAction
-  | UpdateSearchQueryAction;
+  | UpdateSearchQueryAction
+  | ResetCatalogueForSourceIdsAction
+  | ResetCataloguesToInitAction;

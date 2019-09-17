@@ -8,7 +8,7 @@ import {
   resetFilters,
   updateLastUsedFilters
 } from "redux-ducks/filters/actionCreators";
-import { fetchCatalogue } from "redux-ducks/catalogue/actionCreators";
+import { fetchCatalogue } from "redux-ducks/catalogues/actionCreators";
 
 const useStyles = makeStyles({
   // TODO: Position the controls div so that it's always at the top of the viewport
@@ -30,10 +30,11 @@ const useStyles = makeStyles({
 });
 
 type Props = {
+  sourceId: string,
   onSearchClick: Function // for any additional actions that fire
 };
 
-const FilterActions = memo<Props>(({ onSearchClick }: Props) => {
+const FilterActions = memo<Props>(({ sourceId, onSearchClick }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -43,7 +44,7 @@ const FilterActions = memo<Props>(({ onSearchClick }: Props) => {
 
   const handleSearchWithFiltersClick = () => {
     dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
-    dispatch(fetchCatalogue());
+    dispatch(fetchCatalogue(sourceId));
     onSearchClick();
   };
 

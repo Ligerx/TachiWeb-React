@@ -8,7 +8,8 @@ import {
   FETCH_CATALOGUE_REQUEST,
   FETCH_CATALOGUE_SUCCESS,
   UPDATE_SEARCH_QUERY,
-  RESET_CATALOGUE
+  RESET_CATALOGUE_FOR_SOURCEIDS,
+  RESET_CATALOGUES_TO_INIT
 } from "./actions";
 
 // ================================================================================
@@ -44,7 +45,7 @@ export default function cataloguesReducer(
   action: Action
 ): State {
   // Mutate Immer 'draft' to get an immutable copy of the new state
-  /* eslint-disable no-param-reassign */
+  /* eslint-disable no-param-reassign, consistent-return */
   return produce(state, draft => {
     switch (action.type) {
       case FETCH_CATALOGUE_REQUEST: {
@@ -85,7 +86,7 @@ export default function cataloguesReducer(
         break;
       }
 
-      case RESET_CATALOGUE: {
+      case RESET_CATALOGUE_FOR_SOURCEIDS: {
         // Clean up catalogue data for given sourceId(s)
         const { sourceIds } = action.payload;
 
@@ -105,11 +106,15 @@ export default function cataloguesReducer(
         break;
       }
 
+      case RESET_CATALOGUES_TO_INIT: {
+        return initialState;
+      }
+
       default:
         break;
     }
   });
-  /* eslint-enable no-param-reassign */
+  /* eslint-enable no-param-reassign, consistent-return */
 }
 
 // ================================================================================

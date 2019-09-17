@@ -1,7 +1,6 @@
 // @flow
 import { Server } from "api";
 import isEmpty from "lodash/isEmpty";
-import { selectCatalogueSourceId } from "redux-ducks/catalogue";
 import type { ThunkAction } from "redux-ducks/reducers";
 import {
   FETCH_REQUEST,
