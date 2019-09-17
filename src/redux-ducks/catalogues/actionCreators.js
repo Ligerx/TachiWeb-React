@@ -5,6 +5,7 @@ import type { CataloguePageRequest } from "@tachiweb/api-client";
 import type { FilterAnyType } from "types/filters";
 import { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
 import { selectLastUsedFilters } from "redux-ducks/filters";
+import { WIPE_ALL_FILTERS } from "redux-ducks/filters/actions";
 import { selectCatalogueBySourceId, selectCatalogueSearchQuery } from ".";
 import {
   FETCH_CATALOGUE_REQUEST,
@@ -13,7 +14,6 @@ import {
   FETCH_CATALOGUE_NO_NEXT_PAGE,
   RESET_CATALOGUE,
   UPDATE_SEARCH_QUERY,
-  type ResetCatalogueAction,
   type UpdateSearchQueryAction
 } from "./actions";
 
@@ -55,7 +55,8 @@ function fetchCataloguePure(
   return dispatch => {
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
-      meta: { sourceId, page, searchQuery, filters }
+      payload: { sourceId },
+      meta: { page, searchQuery, filters }
     });
 
     // API expects null instead of empty array if there are no filters
@@ -91,14 +92,20 @@ function fetchCataloguePure(
   };
 }
 
-export function resetCatalogue(sourceId: string): ResetCatalogueAction {
-  return { type: RESET_CATALOGUE, payload: { sourceId } };
-}
-
 export function updateSearchQuery(
   searchQuery: string
 ): UpdateSearchQueryAction {
   return { type: UPDATE_SEARCH_QUERY, payload: { searchQuery } };
+}
+
+/**
+ * One function to clean up everything related to searching and filtering one or more catalogues
+ */
+export function resetCatalogue(sourceIds: string | Array<string>): ThunkAction {
+  return dispatch => {
+    dispatch({ type: WIPE_ALL_FILTERS });
+    return dispatch({ type: RESET_CATALOGUE, payload: { sourceIds } });
+  };
 }
 
 // ================================================================================

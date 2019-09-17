@@ -5,9 +5,10 @@ import type { Manga } from "@tachiweb/api-client";
 import type { GlobalState, Action } from "redux-ducks/reducers";
 import { selectMangaInfos } from "redux-ducks/mangaInfos";
 import {
-  RESET_CATALOGUE,
+  FETCH_CATALOGUE_REQUEST,
   FETCH_CATALOGUE_SUCCESS,
-  UPDATE_SEARCH_QUERY
+  UPDATE_SEARCH_QUERY,
+  RESET_CATALOGUE
 } from "./actions";
 
 // ================================================================================
@@ -46,6 +47,13 @@ export default function cataloguesReducer(
   /* eslint-disable no-param-reassign */
   return produce(state, draft => {
     switch (action.type) {
+      case FETCH_CATALOGUE_REQUEST: {
+        // Add loading state
+        const { sourceId } = action.payload;
+        draft.loadingSourceIds.push(sourceId);
+        break;
+      }
+
       case FETCH_CATALOGUE_SUCCESS: {
         const { sourceId, page, mangaIds, hasNextPage } = action.payload;
 
@@ -63,6 +71,11 @@ export default function cataloguesReducer(
           catalogues[sourceId].mangaIds.push(...mangaIds);
         }
 
+        // Remove loading state
+        draft.loadingSourceIds = draft.loadingSourceIds.filter(
+          id => id !== sourceId
+        );
+
         break;
       }
 
@@ -73,8 +86,22 @@ export default function cataloguesReducer(
       }
 
       case RESET_CATALOGUE: {
-        const { sourceId } = action.payload;
-        delete draft.bySourceId[sourceId];
+        // Clean up catalogue data for given sourceId(s)
+        const { sourceIds } = action.payload;
+
+        if (Array.isArray(sourceIds)) {
+          sourceIds.forEach(sourceId => {
+            delete draft.bySourceId[sourceId];
+          });
+        } else {
+          delete draft.bySourceId[sourceIds];
+        }
+
+        // Clean up searchQuery
+        draft.searchQuery = "";
+
+        // Unsure if I need to clean up loadingSourceIds or not. Skipping for now
+
         break;
       }
 
@@ -88,6 +115,12 @@ export default function cataloguesReducer(
 // ================================================================================
 // Selectors
 // ================================================================================
+
+// Using custom loading state handling
+export const selectIsCatalogueLoading = (
+  state: GlobalState,
+  sourceId: string
+): boolean => state.catalogues.loadingSourceIds.includes(sourceId);
 
 export const selectCatalogueSearchQuery = (state: GlobalState): string =>
   state.catalogues.searchQuery;

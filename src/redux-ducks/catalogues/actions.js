@@ -24,6 +24,7 @@ type FETCH_CATALOGUE_NO_NEXT_PAGE_TYPE =
 // Action Object Types
 type FetchCatalogueRequestAction = {
   type: FETCH_CATALOGUE_REQUEST_TYPE,
+  payload: { sourceId: string },
   meta: Object
 };
 
@@ -56,7 +57,7 @@ type RESET_CATALOGUE_TYPE = "catalogue/RESET_CATALOGUE";
 
 export type ResetCatalogueAction = {
   type: RESET_CATALOGUE_TYPE,
-  payload: { sourceId: string }
+  payload: { sourceIds: string | Array<string> }
 };
 
 export const UPDATE_SEARCH_QUERY = "catalogue/UPDATE_SEARCH_QUERY";

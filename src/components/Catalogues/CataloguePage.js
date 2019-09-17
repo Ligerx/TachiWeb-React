@@ -8,21 +8,24 @@ import { makeStyles } from "@material-ui/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import Icon from "@material-ui/core/Icon";
+import IconButton from "@material-ui/core/IconButton";
 import { Client } from "api";
 import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
-import BackButton from "components/BackButton";
-import FullScreenLoading from "components/Loading/FullScreenLoading";
 import { selectIsSourcesLoading, selectSource } from "redux-ducks/sources";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   selectCatalogueManga,
   selectIsCatalogueLoading,
-  selectCatalogueSourceId,
   selectCatalogueHasNextPage
 } from "redux-ducks/catalogues";
-import { fetchCatalogue } from "redux-ducks/catalogues/actionCreators";
+import {
+  fetchCatalogue,
+  resetCatalogue
+} from "redux-ducks/catalogues/actionCreators";
+import { selectIsFiltersLoading } from "redux-ducks/filters";
 import { fetchFilters } from "redux-ducks/filters/actionCreators";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -40,13 +43,17 @@ const useStyles = makeStyles({
   }
 });
 
-type RouterProps = { match: { params: { sourceId: string } } };
+type RouterProps = {
+  match: { params: { sourceId: string } },
+  history: { push: Function }
+};
 type Props = RouterProps;
 
 const CataloguePage = ({
   match: {
     params: { sourceId }
-  }
+  },
+  history
 }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -60,12 +67,20 @@ const CataloguePage = ({
   const hasNextPage = useSelector(state =>
     selectCatalogueHasNextPage(state, sourceId)
   );
-  const catalogueIsLoading = useSelector(selectIsCatalogueLoading);
+
+  const catalogueIsLoading = useSelector(state =>
+    selectIsCatalogueLoading(state, sourceId)
+  );
+  const sourcesIsLoading = useSelector(selectIsSourcesLoading);
+  const filtersIsLoading = useSelector(selectIsFiltersLoading);
+
+  const isLoading = catalogueIsLoading || sourcesIsLoading || filtersIsLoading;
+  const noMoreResults = !catalogueIsLoading && !hasNextPage;
 
   useEffect(() => {
     dispatch(fetchSources());
     dispatch(fetchCatalogue(sourceId));
-    dispatch(fetchFilters());
+    dispatch(fetchFilters(sourceId));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLoadNextPage = () => {
@@ -73,7 +88,12 @@ const CataloguePage = ({
     dispatch(fetchCatalogue(sourceId));
   };
 
-  const noMoreResults = !catalogueIsLoading && !hasNextPage;
+  const handleBackToCatalogue = () => {
+    // Cleanup data when going from catalogue -> catalogues
+    dispatch(resetCatalogue(sourceId));
+
+    history.push(Client.catalogues());
+  };
 
   return (
     <>
@@ -81,7 +101,9 @@ const CataloguePage = ({
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
         <Toolbar>
-          <BackButton onBackClick={Client.catalogues()} />
+          <IconButton onClick={handleBackToCatalogue}>
+            <Icon>arrow_back</Icon>
+          </IconButton>
         </Toolbar>
 
         <Typography variant="h6" style={{ flex: 1 }}>
@@ -102,7 +124,7 @@ const CataloguePage = ({
           <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
         )}
 
-        {catalogueIsLoading && <CenteredLoading className={classes.loading} />}
+        {isLoading && <CenteredLoading className={classes.loading} />}
         {noMoreResults && (
           <Typography
             variant="caption"
