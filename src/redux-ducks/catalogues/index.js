@@ -1,6 +1,9 @@
 // @flow
 import produce from "immer";
+import createCachedSelector from "re-reselect";
+import type { Manga } from "@tachiweb/api-client";
 import type { GlobalState, Action } from "redux-ducks/reducers";
+import { selectMangaInfos } from "redux-ducks/mangaInfos";
 import {
   RESET_CATALOGUE,
   FETCH_CATALOGUE_SUCCESS,
@@ -86,10 +89,34 @@ export default function cataloguesReducer(
 // Selectors
 // ================================================================================
 
+export const selectCatalogueSearchQuery = (state: GlobalState): string =>
+  state.catalogues.searchQuery;
+
 export const selectCatalogueBySourceId = (
   state: GlobalState,
   sourceId: string
 ): ?CatalogueType => state.catalogues.bySourceId[sourceId];
 
-export const selectCatalogueSearchQuery = (state: GlobalState): string =>
-  state.catalogues.searchQuery;
+const emptyArray = []; // caching array to keep selector pure
+
+export const selectCatalogueManga: (
+  state: GlobalState,
+  sourceId: string
+) => $ReadOnlyArray<Manga> = createCachedSelector(
+  [selectMangaInfos, selectCatalogueBySourceId, (_, sourceId) => sourceId],
+  (mangaInfos, catalogue): $ReadOnlyArray<Manga> => {
+    if (catalogue == null) return emptyArray;
+
+    return catalogue.mangaIds.map(mangaId => mangaInfos[mangaId]);
+  }
+)((_, __, sourceId) => sourceId);
+
+export const selectCatalogueHasNextPage = (
+  state: GlobalState,
+  sourceId: string
+): boolean => {
+  const catalogue = selectCatalogueBySourceId(state, sourceId);
+
+  if (catalogue == null) return false;
+  return catalogue.hasNextPage;
+};
