@@ -30,16 +30,16 @@ import type { CategoriesAction } from "./categories/actions";
 const reducers = {
   loading,
   error,
+  mangaInfos,
   library,
+  categories,
   chapters,
   pageCounts,
   sources,
   catalogues,
   filters,
-  mangaInfos,
   extensions,
-  settings,
-  categories
+  settings
 };
 
 // Get the type of the entire redux store by extracting it from the reducers' return types
