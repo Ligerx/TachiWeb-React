@@ -104,11 +104,11 @@ const CataloguePage = ({
           <IconButton onClick={handleBackToCatalogue}>
             <Icon>arrow_back</Icon>
           </IconButton>
-        </Toolbar>
 
-        <Typography variant="h6" style={{ flex: 1 }}>
-          {sourceName}
-        </Typography>
+          <Typography variant="h6" style={{ flex: 1 }}>
+            {sourceName}
+          </Typography>
+        </Toolbar>
       </AppBar>
 
       <Container>

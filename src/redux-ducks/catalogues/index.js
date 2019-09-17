@@ -136,13 +136,17 @@ export const selectCatalogueManga: (
   state: GlobalState,
   sourceId: string
 ) => $ReadOnlyArray<Manga> = createCachedSelector(
-  [selectMangaInfos, selectCatalogueBySourceId, (_, sourceId) => sourceId],
+  [
+    selectMangaInfos,
+    selectCatalogueBySourceId,
+    (_, sourceId: string) => sourceId
+  ],
   (mangaInfos, catalogue): $ReadOnlyArray<Manga> => {
     if (catalogue == null) return emptyArray;
 
     return catalogue.mangaIds.map(mangaId => mangaInfos[mangaId]);
   }
-)((_, __, sourceId) => sourceId);
+)((_, sourceId) => sourceId);
 
 export const selectCatalogueHasNextPage = (
   state: GlobalState,

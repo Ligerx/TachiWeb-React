@@ -2,7 +2,6 @@
 import { Server } from "api";
 import isEmpty from "lodash/isEmpty";
 import { selectCatalogueSourceId } from "redux-ducks/catalogue";
-import { changeSourceId } from "redux-ducks/catalogue/actionCreators";
 import type { ThunkAction } from "redux-ducks/reducers";
 import {
   FETCH_REQUEST,
@@ -30,12 +29,6 @@ export function fetchSources(): ThunkAction {
       .then(
         sources => {
           dispatch({ type: FETCH_SUCCESS, payload: sources });
-
-          // SIDE EFFECT - set the catalogue sourceId on first sources load
-          if (!selectCatalogueSourceId(getState()) && !isEmpty(sources)) {
-            const firstSource = sources[Object.keys(sources)[0]];
-            dispatch(changeSourceId(firstSource.id));
-          }
         },
         error =>
           dispatch({
