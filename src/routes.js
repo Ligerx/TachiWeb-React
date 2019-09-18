@@ -16,18 +16,18 @@ import Sources from "components/Sources";
 
 type MangaRouterProps = { match: Object }; // props  passed by react router
 const MangaRouter = ({ match }: MangaRouterProps) => {
-  // match.path is the url prefix and back url.
+  // match.url is the url prefix and back url.
   // For example: library, a catalogue, and searching all catalogues use these components
   return (
-    <UrlPrefixContext.Provider value={match.path}>
+    <UrlPrefixContext.Provider value={match.url}>
       <Switch>
         <Route
-          path={Client.chapter(match.path, ":mangaId", ":chapterId")}
+          path={Client.chapter(match.url, ":mangaId", ":chapterId")}
           component={Reader}
         />
 
         <Route
-          path={Client.manga(match.path, ":mangaId")}
+          path={Client.manga(match.url, ":mangaId")}
           component={MangaInfo}
         />
       </Switch>
