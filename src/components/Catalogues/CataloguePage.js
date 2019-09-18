@@ -32,7 +32,10 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
 type RouterProps = {
-  match: { params: { sourceId: string } },
+  match: {
+    params: { sourceId: string },
+    url: string
+  },
   history: { push: Function }
 };
 type Props = RouterProps;
@@ -50,7 +53,8 @@ const useStyles = makeStyles({
 
 const CataloguePage = ({
   match: {
-    params: { sourceId }
+    params: { sourceId },
+    url
   },
   history
 }: Props) => {
@@ -116,7 +120,11 @@ const CataloguePage = ({
 
         <Grid container spacing={2}>
           {mangaLibrary.map(manga => (
-            <CatalogueMangaCard key={manga.id} manga={manga} />
+            <CatalogueMangaCard
+              key={manga.id}
+              to={Client.manga(url, manga.id)}
+              manga={manga}
+            />
           ))}
         </Grid>
 

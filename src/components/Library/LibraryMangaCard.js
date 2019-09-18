@@ -7,10 +7,11 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import Checkbox from "@material-ui/core/Checkbox";
 import MangaCard from "components/MangaCard";
 import Link from "components/Link";
-import { Server, Client } from "api";
+import { Server } from "api";
 import type { Manga } from "@tachiweb/api-client";
 
 type Props = {
+  to: string,
   manga: Manga,
   unread: number,
   isSelected: boolean,
@@ -54,6 +55,7 @@ const useStyles = makeStyles({
 });
 
 const LibraryMangaCard = ({
+  to,
   manga,
   unread,
   isSelected,
@@ -101,7 +103,7 @@ const LibraryMangaCard = ({
         <ButtonBase
           className={classes.card}
           component={Link}
-          to={Client.manga(Client.library(), manga.id)}
+          to={to}
           onClick={handleClick}
         >
           <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />

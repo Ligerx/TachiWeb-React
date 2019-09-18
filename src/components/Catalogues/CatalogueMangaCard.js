@@ -5,10 +5,11 @@ import { makeStyles } from "@material-ui/styles";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import MangaCard from "components/MangaCard";
 import type { Manga } from "@tachiweb/api-client";
-import { Server, Client } from "api";
+import { Server } from "api";
 import Link from "components/Link";
 
 type Props = {
+  to: string,
   manga: Manga
 };
 
@@ -23,7 +24,7 @@ const useStyles = makeStyles({
   }
 });
 
-const CatalogueMangaCard = ({ manga }: Props) => {
+const CatalogueMangaCard = ({ to, manga }: Props) => {
   const classes = useStyles();
   return (
     <Grid
@@ -32,11 +33,7 @@ const CatalogueMangaCard = ({ manga }: Props) => {
       sm={3}
       className={manga.favorite ? classes.isFavorited : null}
     >
-      <ButtonBase
-        className={classes.fullWidth}
-        component={Link}
-        to={Client.manga(Client.catalogues(), manga.id)}
-      >
+      <ButtonBase className={classes.fullWidth} component={Link} to={to}>
         <MangaCard title={manga.title} coverUrl={Server.cover(manga.id)} />
       </ButtonBase>
     </Grid>

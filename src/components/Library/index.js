@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Helmet } from "react-helmet";
+import { withRouter } from "react-router-dom";
+import { Client } from "api";
 import {
   selectFilteredSortedLibrary,
   selectIsLibraryLoading,
@@ -33,7 +35,14 @@ import { fetchCategories } from "redux-ducks/categories/actionCreators";
 // NOTE: unread count relies on the server knowing how many chapters there are
 //       If for some reason the server hasn't scraped a list of chapters, this number won't appear
 
-const Library = () => {
+type RouterProps = {
+  match: {
+    url: string
+  }
+};
+type Props = RouterProps;
+
+const Library = ({ match: { url } }: Props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMangaIds, setSelectedMangaIds] = useState<number[]>([]);
 
@@ -90,6 +99,7 @@ const Library = () => {
             {mangaLibrary.map(manga => (
               <LibraryMangaCard
                 key={manga.id}
+                to={Client.manga(url, manga.id)}
                 manga={manga}
                 unread={unread[manga.id] || 0}
                 isSelected={selectedMangaIds.includes(manga.id)}
@@ -108,4 +118,4 @@ const Library = () => {
   );
 };
 
-export default Library;
+export default withRouter(Library);
