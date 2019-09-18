@@ -59,8 +59,8 @@ function fetchCataloguePure(
   return dispatch => {
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
-      payload: { sourceId },
-      meta: { page, searchQuery, filters }
+      payload: { sourceId, page },
+      meta: { searchQuery, filters }
     });
 
     // API expects null instead of empty array if there are no filters

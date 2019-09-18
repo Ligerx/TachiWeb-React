@@ -24,7 +24,7 @@ type FETCH_CATALOGUE_NO_NEXT_PAGE_TYPE =
 // Action Object Types
 type FetchCatalogueRequestAction = {
   type: FETCH_CATALOGUE_REQUEST_TYPE,
-  payload: { sourceId: string },
+  payload: { sourceId: string, page: number },
   meta: Object
 };
 

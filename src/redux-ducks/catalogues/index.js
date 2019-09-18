@@ -49,9 +49,14 @@ export default function cataloguesReducer(
   return produce(state, draft => {
     switch (action.type) {
       case FETCH_CATALOGUE_REQUEST: {
-        // Add loading state
-        const { sourceId } = action.payload;
-        draft.loadingSourceIds.push(sourceId);
+        const { sourceId, page } = action.payload;
+
+        // Clear any existing manga if (re)starting from page 1
+        if (draft.bySourceId[sourceId] != null && page === 1) {
+          draft.bySourceId[sourceId].mangaIds = [];
+        }
+
+        draft.loadingSourceIds.push(sourceId); // Add loading state
         break;
       }
 
