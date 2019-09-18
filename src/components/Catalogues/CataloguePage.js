@@ -41,6 +41,14 @@ type RouterProps = {
 type Props = RouterProps;
 
 const useStyles = makeStyles({
+  searchParent: {
+    display: "flex",
+    marginBottom: 32
+  },
+  searchField: {
+    flex: 1,
+    marginRight: 32
+  },
   loading: {
     marginTop: 24,
     marginBottom: 40
@@ -115,8 +123,13 @@ const CataloguePage = ({
       </AppBar>
 
       <Container>
-        <CatalogueSearchField sourceId={sourceId} />
-        <DynamicSourceFilters sourceId={sourceId} />
+        <div className={classes.searchParent}>
+          <CatalogueSearchField
+            sourceId={sourceId}
+            className={classes.searchField}
+          />
+          <DynamicSourceFilters sourceId={sourceId} />
+        </div>
 
         <Grid container spacing={2}>
           {mangaLibrary.map(manga => (

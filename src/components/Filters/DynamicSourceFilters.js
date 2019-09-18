@@ -12,17 +12,9 @@ import times from "lodash/times";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
 
-type Props = { sourceId: string };
+type Props = { sourceId: string, buttonProps?: Object };
 
 const useStyles = makeStyles({
-  openButton: {
-    marginBottom: 24,
-    // Kinda hacking the UI for this together right now (right align)
-    // https://stackoverflow.com/questions/6507014/how-to-space-the-children-of-a-div-with-css
-    display: "block",
-    marginLeft: "auto",
-    marginRight: 8
-  },
   filters: {
     width: 250,
     marginLeft: 16,
@@ -33,7 +25,7 @@ const useStyles = makeStyles({
   }
 });
 
-const DynamicSourceFilters = ({ sourceId }: Props) => {
+const DynamicSourceFilters = ({ sourceId, buttonProps = {} }: Props) => {
   const classes = useStyles();
 
   const filtersLength = useSelector(selectFiltersLength);
@@ -46,12 +38,7 @@ const DynamicSourceFilters = ({ sourceId }: Props) => {
 
   if (!filtersLength) {
     return (
-      <Button
-        disabled
-        variant="contained"
-        color="primary"
-        className={classes.openButton}
-      >
+      <Button disabled variant="contained" color="primary" {...buttonProps}>
         Filters
       </Button>
     );
@@ -63,7 +50,7 @@ const DynamicSourceFilters = ({ sourceId }: Props) => {
         variant="contained"
         color="primary"
         onClick={() => setDrawerOpen(true)}
-        className={classes.openButton}
+        {...buttonProps}
       >
         Filters
       </Button>
