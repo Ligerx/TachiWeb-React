@@ -15,6 +15,8 @@ import {
   WIPE_ALL_FILTERS
 } from "./actions";
 
+// NOTE: Filters are currently only being used for 1 catalogue/source at a time, so that's all this supports
+
 // ================================================================================
 // Reducer
 // ================================================================================
