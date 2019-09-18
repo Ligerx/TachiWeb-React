@@ -29,8 +29,10 @@ type State = {
     [sourceId: string]: CatalogueType
   },
 
-  // Handling loading states here instead of loading reducer because you could be
-  // fetching from multiple sources at the same time
+  // Handling loading states here instead of loading reducer because you could be fetching
+  // from multiple sources at the same time.
+  // The existing loading/error reducer listens for static strings which are typed, so it
+  // doesn't seem like a good fit for this dynamic sourceId use case.
   loadingSourceIds: Array<string>
 };
 
