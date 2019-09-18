@@ -60,7 +60,9 @@ export default function cataloguesReducer(
 
         const catalogues = draft.bySourceId;
 
-        if (catalogues[sourceId] == null) {
+        if (catalogues[sourceId] == null || page === 1) {
+          // catalogue is null if there is no data for this catalogue yet
+          // (page === 1 && catalogue != null) when restarting the search for this catalogue
           catalogues[sourceId] = {
             page,
             hasNextPage,

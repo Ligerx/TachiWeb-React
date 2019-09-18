@@ -12,6 +12,7 @@ import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import { Client } from "api";
 import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
+import CatalogueSearchField from "components/Catalogues/CatalogueSearchField";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import { selectIsSourcesLoading, selectSource } from "redux-ducks/sources";
@@ -30,7 +31,11 @@ import { fetchFilters } from "redux-ducks/filters/actionCreators";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-// TODO: cleanup filters, search query, and this source on going back
+type RouterProps = {
+  match: { params: { sourceId: string } },
+  history: { push: Function }
+};
+type Props = RouterProps;
 
 const useStyles = makeStyles({
   loading: {
@@ -42,12 +47,6 @@ const useStyles = makeStyles({
     marginBottom: 60
   }
 });
-
-type RouterProps = {
-  match: { params: { sourceId: string } },
-  history: { push: Function }
-};
-type Props = RouterProps;
 
 const CataloguePage = ({
   match: {
@@ -112,6 +111,7 @@ const CataloguePage = ({
       </AppBar>
 
       <Container>
+        <CatalogueSearchField sourceId={sourceId} />
         <DynamicSourceFilters sourceId={sourceId} />
 
         <Grid container spacing={2}>

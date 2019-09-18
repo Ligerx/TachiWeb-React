@@ -44,7 +44,7 @@ const FilterActions = memo<Props>(({ sourceId, onSearchClick }: Props) => {
 
   const handleSearchWithFiltersClick = () => {
     dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
-    dispatch(fetchCatalogue(sourceId));
+    dispatch(fetchCatalogue(sourceId, { restartSearch: true }));
     onSearchClick();
   };
 

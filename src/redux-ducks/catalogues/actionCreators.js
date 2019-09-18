@@ -25,7 +25,10 @@ import {
 /**
  * Use this function for fetching the initial data as well as fetching additional data.
  */
-export function fetchCatalogue(sourceId: string): ThunkAction {
+export function fetchCatalogue(
+  sourceId: string,
+  options?: { restartSearch: boolean } = { restartSearch: false }
+): ThunkAction {
   return (dispatch, getState) => {
     const searchQuery = selectCatalogueSearchQuery(getState());
 
@@ -33,7 +36,8 @@ export function fetchCatalogue(sourceId: string): ThunkAction {
     const lastUsedFilters = selectLastUsedFilters(getState());
 
     const catalogue = selectCatalogueBySourceId(getState(), sourceId);
-    const nextPage = catalogue == null ? 1 : catalogue.page + 1;
+    const page =
+      catalogue == null || options.restartSearch ? 1 : catalogue.page + 1;
     const hasNextPage = catalogue == null ? true : catalogue.hasNextPage;
 
     if (!hasNextPage) {
@@ -41,7 +45,7 @@ export function fetchCatalogue(sourceId: string): ThunkAction {
     }
 
     return dispatch(
-      fetchCataloguePure(sourceId, nextPage, searchQuery, lastUsedFilters)
+      fetchCataloguePure(sourceId, page, searchQuery, lastUsedFilters)
     );
   };
 }
