@@ -10,11 +10,13 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import { Client } from "api";
 import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
-import CatalogueSearchField from "components/Catalogues/CatalogueSearchField";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
+import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import { selectIsSourcesLoading, selectSource } from "redux-ducks/sources";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
@@ -28,8 +30,6 @@ import {
 } from "redux-ducks/catalogues/actionCreators";
 import { selectIsFiltersLoading } from "redux-ducks/filters";
 import { fetchFilters } from "redux-ducks/filters/actionCreators";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
 
 type RouterProps = {
   match: {
@@ -94,6 +94,10 @@ const CataloguePage = ({
     dispatch(fetchFilters(sourceId));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleSearchBarSubmit = () => {
+    dispatch(fetchCatalogue(sourceId, { restartSearch: true }));
+  };
+
   const handleLoadNextPage = () => {
     if (catalogueIsLoading) return;
     dispatch(fetchCatalogue(sourceId));
@@ -123,13 +127,11 @@ const CataloguePage = ({
       </AppBar>
 
       <Container>
-        <div className={classes.searchParent}>
-          <CatalogueSearchField
-            sourceId={sourceId}
-            className={classes.searchField}
-          />
-          <DynamicSourceFilters sourceId={sourceId} />
-        </div>
+        <CatalogueSearchBar
+          sourceId={sourceId}
+          onSubmit={handleSearchBarSubmit}
+        />
+        <DynamicSourceFilters sourceId={sourceId} />
 
         <Grid container spacing={2}>
           {mangaLibrary.map(manga => (
