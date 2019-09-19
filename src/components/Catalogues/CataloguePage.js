@@ -20,6 +20,7 @@ import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import { selectIsSourcesLoading, selectSource } from "redux-ducks/sources";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
+  selectCatalogueBySourceId,
   selectCatalogueManga,
   selectIsCatalogueLoading,
   selectCatalogueHasNextPage
@@ -28,7 +29,10 @@ import {
   fetchCatalogue,
   resetCatalogue
 } from "redux-ducks/catalogues/actionCreators";
-import { selectIsFiltersLoading } from "redux-ducks/filters";
+import {
+  selectIsFiltersLoading,
+  selectFiltersLength
+} from "redux-ducks/filters";
 import { fetchFilters } from "redux-ducks/filters/actionCreators";
 
 type RouterProps = {
@@ -69,12 +73,16 @@ const CataloguePage = ({
   const source = useSelector(state => selectSource(state, sourceId));
   const sourceName = source == null ? "" : source.name;
 
+  const catalogue = useSelector(state =>
+    selectCatalogueBySourceId(state, sourceId)
+  );
   const mangaLibrary = useSelector(state =>
     selectCatalogueManga(state, sourceId)
   );
   const hasNextPage = useSelector(state =>
     selectCatalogueHasNextPage(state, sourceId)
   );
+  const filtersLength = useSelector(selectFiltersLength);
 
   const catalogueIsLoading = useSelector(state =>
     selectIsCatalogueLoading(state, sourceId)
@@ -86,9 +94,15 @@ const CataloguePage = ({
   const noMoreResults = !catalogueIsLoading && !hasNextPage;
 
   useEffect(() => {
-    dispatch(fetchSources());
-    dispatch(fetchCatalogue(sourceId));
-    dispatch(fetchFilters(sourceId));
+    dispatch(fetchSources()); // should return cached data if it was already fetched
+
+    if (catalogue == null) {
+      dispatch(fetchCatalogue(sourceId));
+    }
+
+    if (filtersLength === 0) {
+      dispatch(fetchFilters(sourceId));
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSearchBarSubmit = () => {
