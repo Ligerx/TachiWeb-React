@@ -49,6 +49,7 @@ const SearchBar = ({
 
       <Button
         variant="contained"
+        color="primary"
         className={classes.button}
         onClick={handleSubmit}
         {...buttonProps}

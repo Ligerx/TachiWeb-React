@@ -48,7 +48,6 @@ const DynamicSourceFilters = ({ sourceId, buttonProps = {} }: Props) => {
     <>
       <Button
         variant="contained"
-        color="primary"
         onClick={() => setDrawerOpen(true)}
         {...buttonProps}
       >
