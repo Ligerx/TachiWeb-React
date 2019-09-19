@@ -40,7 +40,7 @@ export function fetchCatalogue(
       catalogue == null || options.restartSearch ? 1 : catalogue.page + 1;
     const hasNextPage = catalogue == null ? true : catalogue.hasNextPage;
 
-    if (!hasNextPage) {
+    if (!hasNextPage && !options.restartSearch) {
       return dispatch({ type: FETCH_CATALOGUE_NO_NEXT_PAGE });
     }
 
