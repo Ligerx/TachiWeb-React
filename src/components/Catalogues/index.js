@@ -1,7 +1,8 @@
 // @flow
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Helmet } from "react-helmet";
+import { withRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
@@ -15,6 +16,7 @@ import Link from "components/Link";
 import MenuDrawer from "components/MenuDrawer";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import SourceList from "components/Catalogues/SourceList";
+import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import { langPrettyPrint } from "components/utils";
 import {
   selectIsSourcesLoading,
@@ -22,10 +24,18 @@ import {
   selectEnabledSourcesByLanguage
 } from "redux-ducks/sources";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
+import { updateSearchQuery } from "redux-ducks/catalogues/actionCreators";
 
-const useStyles = makeStyles({});
+type RouterProps = {
+  history: { push: Function }
+};
+type Props = RouterProps;
 
-const Catalogues = () => {
+const useStyles = makeStyles({
+  belowSearch: { marginBottom: 32 }
+});
+
+const Catalogues = ({ history }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -33,9 +43,16 @@ const Catalogues = () => {
   const sourceLanguages = useSelector(selectSourcesEnabledLanguagesSorted);
   const sourcesByLanguage = useSelector(selectEnabledSourcesByLanguage);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     dispatch(fetchSources());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSearchSubmit = () => {
+    dispatch(updateSearchQuery(searchQuery));
+    history.push(Client.cataloguesSearchAll());
+  };
 
   return (
     <>
@@ -58,6 +75,16 @@ const Catalogues = () => {
       </AppBar>
 
       <Container maxWidth="sm">
+        <CatalogueSearchBar
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onSubmit={handleSearchSubmit}
+          textFieldProps={{ label: "Search all catalogues" }}
+        />
+        {/* Hacky way of adding some margin. SearchBar doesn't
+            work right with passed in classNames [Sept 18, 2019] */}
+        <div className={classes.belowSearch} />
+
         {sourceLanguages.map(lang => (
           <div key={lang}>
             <Typography variant="h5" gutterBottom>
@@ -73,4 +100,4 @@ const Catalogues = () => {
   );
 };
 
-export default Catalogues;
+export default withRouter(Catalogues);

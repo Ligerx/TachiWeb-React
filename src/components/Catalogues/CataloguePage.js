@@ -139,8 +139,8 @@ const CataloguePage = ({
 
       <Container>
         <CatalogueSearchBar
-          sourceId={sourceId}
           onSubmit={handleSearchBarSubmit}
+          textFieldProps={{ label: "Search for manga" }}
         />
         <DynamicSourceFilters
           sourceId={sourceId}

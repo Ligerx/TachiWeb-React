@@ -5,24 +5,28 @@ import SearchBar from "components/Catalogues/SearchBar";
 import { selectCatalogueSearchQuery } from "redux-ducks/catalogues";
 import { updateSearchQuery } from "redux-ducks/catalogues/actionCreators";
 
-type Props = { sourceId: string, onSubmit: Function, useLocalState?: boolean }; // all other props will be passed down to <SearchBar />
+type Props = {
+  onSubmit: Function,
+
+  // By default, this component pulls and updates from redux
+  // If you pass in a value and onChange, you can use your own state management
+  value?: string,
+  onChange?: string => any
+}; // all other props will be passed down to <SearchBar />
 
 const CatalogueSearchBar = ({
-  sourceId,
   onSubmit,
-  useLocalState = false,
+  value,
+  onChange,
   ...otherProps
 }: Props) => {
   const searchQuery = useSelector(selectCatalogueSearchQuery);
-  const [localValue, setLocalValue] = useState("");
-
-  const value = useLocalState ? localValue : searchQuery;
 
   const dispatch = useDispatch();
 
   const handleChangeSearchQuery = event => {
-    if (useLocalState) {
-      setLocalValue(event.target.value);
+    if (value != null && onChange != null) {
+      onChange(event.target.value);
     } else {
       dispatch(updateSearchQuery(event.target.value));
     }
@@ -30,7 +34,7 @@ const CatalogueSearchBar = ({
 
   return (
     <SearchBar
-      value={value}
+      value={value != null ? value : searchQuery}
       onChange={handleChangeSearchQuery}
       onSubmit={onSubmit}
       {...otherProps}
