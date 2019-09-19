@@ -103,6 +103,9 @@ export const selectFilterAtIndex = (
   index: number
 ): FilterAnyType => state.filters.currentFilters[index];
 
+/**
+ * Useful as a sort of existence check. If length > 0, you know that filters exist.
+ */
 export const selectFiltersLength: GlobalState => number = createSelector(
   // Optimization
   // The length of filters is constant, so we can look outside of currentFilters
