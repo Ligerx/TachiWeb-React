@@ -11,6 +11,7 @@ import {
   FETCH_CATALOGUE_REQUEST,
   FETCH_CATALOGUE_FAILURE,
   FETCH_CATALOGUE_SUCCESS,
+  FETCH_CACHE,
   FETCH_CATALOGUE_NO_NEXT_PAGE,
   RESET_CATALOGUE_FOR_SOURCEIDS,
   UPDATE_SEARCH_QUERY,
@@ -23,13 +24,22 @@ import {
 
 // Creating 2 functions to separate out the 'pure' function from any selectors
 /**
- * Use this function for fetching the initial data as well as fetching additional data.
+ * Use this function for fetching catalogue data.
+ * By default it will fetch the 1st page, then subsequent pages.
+ *
+ * Set `restartSearch: true` to clear existing data and fetch from page 1.
+ *
+ * Set `useCachedData: true` to prevent fetching if any data already exists.
  */
 export function fetchCatalogue(
   sourceId: string,
-  options?: { restartSearch: boolean } = { restartSearch: false }
+  options?: { restartSearch?: boolean, useCachedData?: boolean }
 ): ThunkAction {
   return (dispatch, getState) => {
+    const defaultOptions = { restartSearch: false, useCachedData: false };
+    const mergedOptions =
+      options == null ? defaultOptions : { ...defaultOptions, ...options };
+
     const searchQuery = selectCatalogueSearchQuery(getState());
 
     // Expected to be [] when searching all and on first load for individual catalogue
@@ -37,10 +47,14 @@ export function fetchCatalogue(
 
     const catalogue = selectCatalogueBySourceId(getState(), sourceId);
     const page =
-      catalogue == null || options.restartSearch ? 1 : catalogue.page + 1;
+      catalogue == null || mergedOptions.restartSearch ? 1 : catalogue.page + 1;
     const hasNextPage = catalogue == null ? true : catalogue.hasNextPage;
 
-    if (!hasNextPage && !options.restartSearch) {
+    if (mergedOptions.useCachedData && catalogue != null) {
+      return dispatch({ type: FETCH_CACHE });
+    }
+
+    if (!hasNextPage && !mergedOptions.restartSearch) {
       return dispatch({ type: FETCH_CATALOGUE_NO_NEXT_PAGE });
     }
 

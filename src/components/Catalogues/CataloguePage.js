@@ -20,7 +20,6 @@ import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import { selectIsSourcesLoading, selectSource } from "redux-ducks/sources";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
-  selectCatalogueBySourceId,
   selectCatalogueManga,
   selectIsCatalogueLoading,
   selectCatalogueHasNextPage
@@ -73,9 +72,6 @@ const CataloguePage = ({
   const source = useSelector(state => selectSource(state, sourceId));
   const sourceName = source == null ? "" : source.name;
 
-  const catalogue = useSelector(state =>
-    selectCatalogueBySourceId(state, sourceId)
-  );
   const mangaLibrary = useSelector(state =>
     selectCatalogueManga(state, sourceId)
   );
@@ -94,11 +90,8 @@ const CataloguePage = ({
   const noMoreResults = !catalogueIsLoading && !hasNextPage;
 
   useEffect(() => {
-    dispatch(fetchSources()); // should return cached data if it was already fetched
-
-    if (catalogue == null) {
-      dispatch(fetchCatalogue(sourceId));
-    }
+    dispatch(fetchSources());
+    dispatch(fetchCatalogue(sourceId, { useCachedData: true }));
 
     if (filtersLength === 0) {
       dispatch(fetchFilters(sourceId));

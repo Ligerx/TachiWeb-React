@@ -56,7 +56,7 @@ const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
   useEffect(() => {
     dispatch(fetchSources()).then(() => {
       enabledSources.forEach(source => {
-        dispatch(fetchCatalogue(source.id));
+        dispatch(fetchCatalogue(source.id, { useCachedData: true }));
       });
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

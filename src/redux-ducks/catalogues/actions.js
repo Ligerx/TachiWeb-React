@@ -16,6 +16,9 @@ type FETCH_CATALOGUE_SUCCESS_TYPE = "catalogue/FETCH_SUCCESS";
 export const FETCH_CATALOGUE_FAILURE = "catalogue/FETCH_FAILURE";
 type FETCH_CATALOGUE_FAILURE_TYPE = "catalogue/FETCH_FAILURE";
 
+export const FETCH_CACHE = "catalogue/FETCH_CACHE";
+type FETCH_CACHE_TYPE = "catalogue/FETCH_CACHE";
+
 export const FETCH_CATALOGUE_NO_NEXT_PAGE =
   "catalogue/FETCH_CATALOGUE_NO_NEXT_PAGE";
 type FETCH_CATALOGUE_NO_NEXT_PAGE_TYPE =
@@ -43,6 +46,8 @@ type FetchCatalogueFailureAction = {
   errorMessage: string,
   meta: Object
 };
+
+type FetchCacheAction = { type: FETCH_CACHE_TYPE };
 
 type FetchCatalogueNoNextPageAction = {
   type: FETCH_CATALOGUE_NO_NEXT_PAGE_TYPE
@@ -86,6 +91,7 @@ export type CataloguesAction =
   | FetchCatalogueRequestAction
   | FetchCatalogueSuccessAction
   | FetchCatalogueFailureAction
+  | FetchCacheAction
   | FetchCatalogueNoNextPageAction
   | UpdateSearchQueryAction
   | ResetCatalogueForSourceIdsAction
