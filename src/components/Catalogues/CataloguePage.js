@@ -114,7 +114,7 @@ const CataloguePage = ({
     dispatch(fetchCatalogue(sourceId));
   };
 
-  const handleBackToCatalogue = () => {
+  const handleBackToCatalogues = () => {
     // Cleanup data when going from catalogue -> catalogues
     dispatch(resetCatalogue(sourceId));
 
@@ -127,7 +127,7 @@ const CataloguePage = ({
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
         <Toolbar>
-          <IconButton onClick={handleBackToCatalogue}>
+          <IconButton onClick={handleBackToCatalogues}>
             <Icon>arrow_back</Icon>
           </IconButton>
 
