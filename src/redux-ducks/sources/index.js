@@ -1,6 +1,7 @@
 // @flow
 import { createSelector } from "reselect";
 import isEmpty from "lodash/isEmpty";
+import flatten from "lodash/flatten";
 import { createLoadingSelector } from "redux-ducks/loading";
 import type { SourceMap } from "types";
 import type { Source } from "@tachiweb/api-client";
@@ -132,6 +133,14 @@ export const selectEnabledSourcesByLanguage: GlobalState => $ReadOnly<{
 
     return sourcesByLanguage;
   }
+);
+
+/**
+ * Select all enabled sources. No guarantees of any sorting order.
+ */
+export const selectEnabledSources: GlobalState => $ReadOnlyArray<Source> = createSelector(
+  [selectEnabledSourcesByLanguage],
+  enabledSourcesByLanguage => flatten(Object.values(enabledSourcesByLanguage))
 );
 
 // ================================================================================

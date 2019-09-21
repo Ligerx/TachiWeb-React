@@ -1,20 +1,34 @@
 // @flow
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Waypoint from "react-waypoint";
 import { Helmet } from "react-helmet";
-import isEmpty from "lodash/isEmpty";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
-import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
-import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
-import CenteredLoading from "components/Loading/CenteredLoading";
-import FullScreenLoading from "components/Loading/FullScreenLoading";
-import { selectIsSourcesLoading, selectSources } from "redux-ducks/sources";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
-import { fetchFilters } from "redux-ducks/filters/actionCreators";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Icon from "@material-ui/core/Icon";
+import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
+import { Client } from "api";
+import CatalogueSearchResultsPaper from "components/Catalogues/CatalogueSearchResultsPaper";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
+import {
+  selectIsSourcesLoading,
+  selectSourcesEnabledLanguagesSorted,
+  selectEnabledSourcesByLanguage,
+  selectEnabledSources
+} from "redux-ducks/sources";
+import { fetchSources } from "redux-ducks/sources/actionCreators";
+import {
+  fetchCatalogue,
+  resetCatalogue
+} from "redux-ducks/catalogues/actionCreators";
+
+type RouterProps = {
+  match: { url: string },
+  history: { push: Function }
+};
+type Props = RouterProps;
 
 const useStyles = makeStyles({
   loading: {
@@ -24,75 +38,72 @@ const useStyles = makeStyles({
   noMoreResults: {
     marginTop: 40,
     marginBottom: 60
+  },
+  catalogueSearchResults: {
+    marginBottom: 24
   }
 });
 
-const CataloguesSearchAllPage = () => {
+const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  // // Sources data
-  // const sources = useSelector(selectSources);
-  // // Catalogue data
-  // const hasNextPage = useSelector(selectCatalogueHasNextPage);
-  // const sourceId = useSelector(selectCatalogueSourceId);
-  // // Library data
-  // const mangaLibrary = useSelector(selectCatalogueMangaInfos);
-  // // Fetching data
-  // const sourcesAreLoading = useSelector(selectIsSourcesLoading);
-  // const catalogueIsLoading = useSelector(selectIsCatalogueLoading);
+  const sourcesAreLoading = useSelector(selectIsSourcesLoading);
+  const sourceLanguages = useSelector(selectSourcesEnabledLanguagesSorted);
+  const sourcesByLanguage = useSelector(selectEnabledSourcesByLanguage);
+  const enabledSources = useSelector(selectEnabledSources);
 
-  // useEffect(() => {
-  //   // Only reload on component mount if it's missing data, otherwise show cached data
-  //   if (isEmpty(sources) || sourceId == null) {
-  //     dispatch(fetchSources()).then(() => {
-  //       dispatch(fetchCatalogue());
-  //       dispatch(fetchFilters());
-  //     });
-  //   }
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    dispatch(fetchSources()).then(() => {
+      enabledSources.forEach(source => {
+        dispatch(fetchCatalogue(source.id));
+      });
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // const handleLoadNextPage = () => {
-  //   if (hasNextPage && !catalogueIsLoading) {
-  //     dispatch(fetchNextCataloguePage());
-  //   }
-  // };
+  const handleBackToCatalogues = () => {
+    // Cleanup data when going from catalogues search -> catalogues
+    dispatch(resetCatalogue(enabledSources.map(source => source.id)));
 
-  // const noMoreResults =
-  //   !catalogueIsLoading && !sourcesAreLoading && !hasNextPage;
+    history.push(Client.catalogues());
+  };
 
   return (
     <>
-      {/* <Helmet title="Catalogues - TachiWeb" />
+      <Helmet title="Catalogues Search - TachiWeb" />
 
-      <CatalogueHeader />
+      <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+        <Toolbar>
+          <IconButton onClick={handleBackToCatalogues}>
+            <Icon>arrow_back</Icon>
+          </IconButton>
+
+          <Typography variant="h6" style={{ flex: 1 }}>
+            Catalogues Search
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
       <Container>
-        <DynamicSourceFilters />
+        {sourceLanguages.map(lang => {
+          const sources = sourcesByLanguage[lang];
+          if (sources == null) return null;
 
-        <Grid container spacing={2}>
-          {mangaLibrary.map(manga => (
-            <CatalogueMangaCard key={manga.id} manga={manga} />
-          ))}
-        </Grid>
+          return sources.map(source => (
+            <div key={source.id} className={classes.catalogueSearchResults}>
+              <Typography variant="h5" gutterBottom>
+                {`${source.name} (${lang})`}
+              </Typography>
+              <CatalogueSearchResultsPaper
+                sourceId={source.id}
+                urlPrefix={url}
+              />
+            </div>
+          ));
+        })}
+      </Container>
 
-        {mangaLibrary.length > 0 && (
-          <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
-        )}
-
-        {catalogueIsLoading && <CenteredLoading className={classes.loading} />}
-        {sourcesAreLoading && <FullScreenLoading />}
-        {noMoreResults && (
-          <Typography
-            variant="caption"
-            display="block"
-            align="center"
-            className={classes.noMoreResults}
-          >
-            No more results
-          </Typography>
-        )}
-      </Container> */}
+      {sourcesAreLoading && <FullScreenLoading />}
     </>
   );
 };
