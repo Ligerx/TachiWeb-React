@@ -43,13 +43,11 @@ const Catalogues = ({ history }: Props) => {
   const sourceLanguages = useSelector(selectSourcesEnabledLanguagesSorted);
   const sourcesByLanguage = useSelector(selectEnabledSourcesByLanguage);
 
-  const [searchQuery, setSearchQuery] = useState("");
-
   useEffect(() => {
     dispatch(fetchSources());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (searchQuery: string) => {
     dispatch(updateSearchQuery(searchQuery));
     history.push(Client.cataloguesSearchAll());
   };
@@ -76,8 +74,7 @@ const Catalogues = ({ history }: Props) => {
 
       <Container maxWidth="sm">
         <CatalogueSearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
+          useLocalState
           onSubmit={handleSearchSubmit}
           textFieldProps={{ label: "Search all catalogues" }}
         />

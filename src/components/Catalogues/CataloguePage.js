@@ -105,7 +105,7 @@ const CataloguePage = ({
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSearchBarSubmit = () => {
+  const handleSearchSubmit = () => {
     dispatch(fetchCatalogue(sourceId, { restartSearch: true }));
   };
 
@@ -139,7 +139,7 @@ const CataloguePage = ({
 
       <Container>
         <CatalogueSearchBar
-          onSubmit={handleSearchBarSubmit}
+          onSubmit={handleSearchSubmit}
           textFieldProps={{ label: "Search for manga" }}
         />
         <DynamicSourceFilters
