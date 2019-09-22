@@ -3,7 +3,7 @@ import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { ExtensionType } from "types";
 import { RESET_SOURCES } from "redux-ducks/sources/actions";
-import { RESET_CATALOGUES } from "redux-ducks/catalogues/actions";
+import { resetCataloguesAndFilters } from "redux-ducks/catalogues/actionCreators";
 import {
   FETCH_REQUEST,
   FETCH_SUCCESS,
@@ -60,7 +60,7 @@ export function installExtension(packageName: string): ThunkAction {
 
       dispatch({ type: INSTALL_SUCCESS, extension });
       dispatch({ type: RESET_SOURCES });
-      dispatch({ type: RESET_CATALOGUES });
+      dispatch(resetCataloguesAndFilters());
     } catch (error) {
       dispatch({
         type: INSTALL_FAILURE,
@@ -87,7 +87,7 @@ export function uninstallExtension(extension: ExtensionType): ThunkAction {
 
       dispatch({ type: UNINSTALL_SUCCESS, packageName });
       dispatch({ type: RESET_SOURCES });
-      dispatch({ type: RESET_CATALOGUES });
+      dispatch(resetCataloguesAndFilters());
     } catch (error) {
       dispatch({
         type: UNINSTALL_FAILURE,
@@ -116,7 +116,7 @@ export function reloadExtensions(): ThunkAction {
       await dispatch(fetchExtensions());
 
       dispatch({ type: RESET_SOURCES });
-      dispatch({ type: RESET_CATALOGUES });
+      dispatch(resetCataloguesAndFilters());
     } catch (error) {
       dispatch({
         type: RELOAD_FAILURE,
