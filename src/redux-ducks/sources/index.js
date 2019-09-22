@@ -122,16 +122,16 @@ export const selectEnabledSourcesByLanguage: GlobalState => $ReadOnly<{
     // But it SHOULD be safe to assume that once source data is loaded, everything should run smooth.
     if (isEmpty(sourcesByLanguage)) return sourcesByLanguage; // return {}
 
-    enabledLanguages.reduce((obj, lang) => {
+    const enabledSourcesByLanguage = enabledLanguages.reduce((obj, lang) => {
       const sources = sourcesByLanguage[lang];
 
       const enabledSources = sources.filter(
-        source => !hiddenSources.includes(source)
+        source => !hiddenSources.includes(source.id)
       );
       return { ...obj, [lang]: enabledSources };
     }, {});
 
-    return sourcesByLanguage;
+    return enabledSourcesByLanguage;
   }
 );
 
