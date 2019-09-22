@@ -40,13 +40,10 @@ type FetchCacheAction = { type: FETCH_CACHE_TYPE };
 // etc actions
 // ================================================================================
 
-export const REMOVE_SOURCES = "sources/REMOVE_SOURCES";
-type REMOVE_SOURCES_TYPE = "sources/REMOVE_SOURCES";
+export const RESET_SOURCES = "sources/RESET_SOURCES";
+type RESET_SOURCES_TYPE = "sources/RESET_SOURCES";
 
-type RemoveSourcesAction = {
-  type: REMOVE_SOURCES_TYPE,
-  sourceIds: ?Array<string>
-};
+type ResetSourcesAction = { type: RESET_SOURCES_TYPE };
 
 // ================================================================================
 // Consolidated Action Type
@@ -56,4 +53,4 @@ export type SourcesAction =
   | FetchSuccessAction
   | FetchFailureAction
   | FetchCacheAction
-  | RemoveSourcesAction;
+  | ResetSourcesAction;

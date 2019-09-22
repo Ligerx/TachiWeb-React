@@ -32,19 +32,3 @@ export function transformToMangaIdsArray(
 ): Array<number> {
   return mangaArray.map(manga => manga.id);
 }
-
-// Support both mutable and read only maps
-type ObjType<K, V> = { [K]: V } | $ReadOnly<{ [K]: V }>;
-
-export function withDeletedKeys<K, V>(
-  obj: ObjType<K, V>,
-  keys: ?Array<K>
-): ObjType<K, V> {
-  if (keys == null) return obj;
-
-  const copy = { ...obj };
-  keys.forEach(key => {
-    delete copy[key];
-  });
-  return copy;
-}

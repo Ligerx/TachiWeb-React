@@ -2,7 +2,7 @@
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
 import type { ExtensionType } from "types";
-import { REMOVE_SOURCES } from "redux-ducks/sources/actions";
+import { RESET_SOURCES } from "redux-ducks/sources/actions";
 import { RESET_CATALOGUES_TO_INIT } from "redux-ducks/catalogues/actions";
 import {
   FETCH_REQUEST,
@@ -59,6 +59,7 @@ export function installExtension(packageName: string): ThunkAction {
       const extension: ExtensionType = json.data[0];
 
       dispatch({ type: INSTALL_SUCCESS, extension });
+      dispatch({ type: RESET_SOURCES });
       dispatch({ type: RESET_CATALOGUES_TO_INIT });
     } catch (error) {
       dispatch({
@@ -75,7 +76,7 @@ export function uninstallExtension(extension: ExtensionType): ThunkAction {
     dispatch({ type: UNINSTALL_REQUEST, meta: { extension } });
 
     try {
-      const { pkg_name: packageName, sources } = extension;
+      const { pkg_name: packageName } = extension;
 
       const response = await fetch(Server.extension(packageName), {
         method: "DELETE"
@@ -85,8 +86,8 @@ export function uninstallExtension(extension: ExtensionType): ThunkAction {
       if (!json.success) throw new Error("success = false in returned JSON");
 
       dispatch({ type: UNINSTALL_SUCCESS, packageName });
+      dispatch({ type: RESET_SOURCES });
       dispatch({ type: RESET_CATALOGUES_TO_INIT });
-      dispatch({ type: REMOVE_SOURCES, sourceIds: sources });
     } catch (error) {
       dispatch({
         type: UNINSTALL_FAILURE,
@@ -114,6 +115,7 @@ export function reloadExtensions(): ThunkAction {
       // fetch all extensions again because this call does not return the updated data
       await dispatch(fetchExtensions());
 
+      dispatch({ type: RESET_SOURCES });
       dispatch({ type: RESET_CATALOGUES_TO_INIT });
     } catch (error) {
       dispatch({

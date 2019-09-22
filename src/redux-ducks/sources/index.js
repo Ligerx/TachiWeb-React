@@ -6,12 +6,11 @@ import { createLoadingSelector } from "redux-ducks/loading";
 import type { SourceMap } from "types";
 import type { Source } from "@tachiweb/api-client";
 import type { GlobalState, Action } from "redux-ducks/reducers";
-import { withDeletedKeys } from "redux-ducks/utils";
 import {
   selectSourcesEnabledLanguagesSorted,
   selectHiddenSources
 } from "redux-ducks/settings";
-import { FETCH_SOURCES, FETCH_SUCCESS, REMOVE_SOURCES } from "./actions";
+import { FETCH_SOURCES, FETCH_SUCCESS, RESET_SOURCES } from "./actions";
 
 // ================================================================================
 // Reducer
@@ -19,16 +18,18 @@ import { FETCH_SOURCES, FETCH_SUCCESS, REMOVE_SOURCES } from "./actions";
 
 type State = SourceMap;
 
+const initialState = {};
+
 export default function sourcesReducer(
-  state: State = {},
+  state: State = initialState,
   action: Action
 ): State {
   switch (action.type) {
     case FETCH_SUCCESS:
       return sourceArrayToObject(action.payload);
 
-    case REMOVE_SOURCES:
-      return withDeletedKeys<string, Source>(state, action.sourceIds);
+    case RESET_SOURCES:
+      return initialState;
 
     default:
       return state;
