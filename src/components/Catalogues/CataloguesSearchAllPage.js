@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
 import { Client } from "api";
 import CatalogueSearchResultsPaper from "components/Catalogues/CatalogueSearchResultsPaper";
+import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import {
   selectIsSourcesLoading,
@@ -21,7 +22,8 @@ import {
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   fetchCatalogue,
-  resetCatalogue
+  resetCatalogue,
+  updateSearchQuery
 } from "redux-ducks/catalogues/actionCreators";
 
 type RouterProps = {
@@ -41,6 +43,9 @@ const useStyles = makeStyles({
   },
   catalogueSearchResults: {
     marginBottom: 24
+  },
+  belowSearch: {
+    marginBottom: 32
   }
 });
 
@@ -60,6 +65,14 @@ const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
       });
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSearchSubmit = (searchQuery: string) => {
+    dispatch(updateSearchQuery(searchQuery));
+
+    enabledSources.forEach(source => {
+      dispatch(fetchCatalogue(source.id, { restartSearch: true }));
+    });
+  };
 
   const handleBackToCatalogues = () => {
     // Cleanup data when going from catalogues search -> catalogues
@@ -85,6 +98,14 @@ const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
       </AppBar>
 
       <Container>
+        <CatalogueSearchBar
+          onSubmit={handleSearchSubmit}
+          textFieldProps={{ label: "Search all catalogues" }}
+        />
+        {/* Hacky way of adding some margin. SearchBar doesn't
+            work right with passed in classNames [Sept 18, 2019] */}
+        <div className={classes.belowSearch} />
+
         {sourceLanguages.map(lang => {
           const sources = sourcesByLanguage[lang];
           if (sources == null) return null;
