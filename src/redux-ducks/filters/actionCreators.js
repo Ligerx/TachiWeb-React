@@ -10,7 +10,6 @@ import type {
 } from "types/filters";
 import type { ThunkAction } from "redux-ducks/reducers";
 import { handleHTMLError } from "redux-ducks/utils";
-import { selectCatalogueSourceId } from "redux-ducks/catalogue";
 import { selectFilterAtIndex } from ".";
 import {
   FETCH_REQUEST,
@@ -28,18 +27,9 @@ import {
 // ================================================================================
 // Action Creators
 // ================================================================================
-export function fetchFilters(): ThunkAction {
-  return (dispatch, getState) => {
-    const sourceId = selectCatalogueSourceId(getState());
+export function fetchFilters(sourceId: string): ThunkAction {
+  return dispatch => {
     dispatch({ type: FETCH_REQUEST, meta: { sourceId } });
-
-    if (sourceId == null) {
-      return dispatch({
-        type: FETCH_FAILURE,
-        errorMessage: "Failed to get the filters.",
-        meta: { error: "fetchFilters() sourceId is null" }
-      });
-    }
 
     return fetch(Server.filters(sourceId))
       .then(handleHTMLError)

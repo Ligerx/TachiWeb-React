@@ -49,7 +49,7 @@ const Sources = () => {
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
         <Toolbar>
-          <BackButton onBackClick={Client.catalogue()} />
+          <BackButton onBackClick={Client.catalogues()} />
 
           <Typography variant="h6" style={{ flex: 1 }}>
             Sources

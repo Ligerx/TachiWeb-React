@@ -142,15 +142,23 @@ export const Server = {
   }
 };
 
-// urlPrefix used to go differentiate between '/library/...' and '/catalogue/...'
+// urlPrefix used to go differentiate between '/library/...', '/catalogue/searchAll/...', and '/catalogue/:sourceId/...'
 // ^ it should come with a '/' in the beginning
 export const Client = {
   library() {
     return "/library";
   },
 
-  catalogue() {
-    return "/catalogue";
+  catalogues() {
+    return "/catalogues";
+  },
+
+  cataloguesSearchAll() {
+    return "/catalogues/searchAll";
+  },
+
+  catalogue(sourceId) {
+    return `/catalogues/${sourceId}`;
   },
 
   manga(urlPrefix, mangaId) {

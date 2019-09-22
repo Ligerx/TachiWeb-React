@@ -1,10 +1,16 @@
 // @flow
 import { createSelector } from "reselect";
+import isEmpty from "lodash/isEmpty";
+import flatten from "lodash/flatten";
 import { createLoadingSelector } from "redux-ducks/loading";
 import type { SourceMap } from "types";
 import type { Source } from "@tachiweb/api-client";
 import type { GlobalState, Action } from "redux-ducks/reducers";
 import { withDeletedKeys } from "redux-ducks/utils";
+import {
+  selectSourcesEnabledLanguagesSorted,
+  selectHiddenSources
+} from "redux-ducks/settings";
 import { FETCH_SOURCES, FETCH_SUCCESS, REMOVE_SOURCES } from "./actions";
 
 // ================================================================================
@@ -53,7 +59,7 @@ export const selectSourcesByLanguage: GlobalState => $ReadOnly<{
 
     // Create object { [lang]: [...sources] }
     Object.values(sources).forEach((source: Source) => {
-      const lang = source.lang == null ? "noLang" : source.lang;
+      const lang = source.lang == null ? "Other" : source.lang;
 
       if (sourcesByLanguage[lang] == null) {
         sourcesByLanguage[lang] = [];
@@ -62,8 +68,8 @@ export const selectSourcesByLanguage: GlobalState => $ReadOnly<{
     });
 
     // Sort each of the individual arrays by source name
-    Object.values(sourcesByLanguage).forEach((sources: Array<Source>) => {
-      sources.sort((a, b) => {
+    Object.values(sourcesByLanguage).forEach((s: Array<Source>) => {
+      s.sort((a, b) => {
         if (a.name < b.name) {
           return -1;
         }
@@ -86,6 +92,55 @@ export const selectSourceLanguages: GlobalState => $ReadOnlyArray<string> = crea
   (sourcesByLanguage): $ReadOnlyArray<string> => {
     return Object.keys(sourcesByLanguage).sort();
   }
+);
+
+// Re-exporting this selector from settings since it makes more sense in context of sources
+export { selectSourcesEnabledLanguagesSorted };
+
+/**
+ * While language keys are sorted alphabetically, you should probably still rely on
+ * `selectSourcesEnabledLanguagesSorted()` just in case the browser doesn't guarantee
+ * key order is retained.
+ */
+export const selectEnabledSourcesByLanguage: GlobalState => $ReadOnly<{
+  [lang: string]: Array<Source>
+}> = createSelector(
+  [
+    selectSourcesByLanguage,
+    selectSourcesEnabledLanguagesSorted,
+    selectHiddenSources
+  ],
+  (
+    sourcesByLanguage,
+    enabledLanguages,
+    hiddenSources
+  ): $ReadOnly<{ [lang: string]: Array<Source> }> => {
+    // selectSourcesByLanguage() is derived from source data
+    // selectSourcesEnabledLanguagesSorted() and selectHiddenSources() are derived from settings data
+    // Since these are fetched at separate times, there is a small 'race condition' where settings
+    // seletors data is available but sourcesByLanguage() could return {}.
+    // But it SHOULD be safe to assume that once source data is loaded, everything should run smooth.
+    if (isEmpty(sourcesByLanguage)) return sourcesByLanguage; // return {}
+
+    const enabledSourcesByLanguage = enabledLanguages.reduce((obj, lang) => {
+      const sources = sourcesByLanguage[lang];
+
+      const enabledSources = sources.filter(
+        source => !hiddenSources.includes(source.id)
+      );
+      return { ...obj, [lang]: enabledSources };
+    }, {});
+
+    return enabledSourcesByLanguage;
+  }
+);
+
+/**
+ * Select all enabled sources. No guarantees of any sorting order.
+ */
+export const selectEnabledSources: GlobalState => $ReadOnlyArray<Source> = createSelector(
+  [selectEnabledSourcesByLanguage],
+  enabledSourcesByLanguage => flatten(Object.values(enabledSourcesByLanguage))
 );
 
 // ================================================================================

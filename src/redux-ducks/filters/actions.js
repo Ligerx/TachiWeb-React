@@ -6,6 +6,8 @@ import type { FilterAnyType } from "types/filters";
 // ================================================================================
 
 // Action Constants and Types
+export const FETCH_FILTERS = "filters/FETCH";
+
 export const FETCH_REQUEST = "filters/FETCH_REQUEST";
 type FETCH_REQUEST_TYPE = "filters/FETCH_REQUEST";
 
@@ -69,6 +71,15 @@ type UpdateFilterAction = {
 };
 
 // ================================================================================
+// etc
+// ================================================================================
+
+export const WIPE_ALL_FILTERS = "filters/WIPE_ALL_FILTERS";
+type WIPE_ALL_FILTERS_TYPE = "filters/WIPE_ALL_FILTERS";
+
+export type WipeAllFiltersAction = { type: WIPE_ALL_FILTERS_TYPE };
+
+// ================================================================================
 // Consolidated Action Type
 // ================================================================================
 export type FiltersAction =
@@ -78,4 +89,5 @@ export type FiltersAction =
   | ResetFiltersAction
   | UpdateLastUsedFiltersAction
   | UpdateCurrentFiltersAction
-  | UpdateFilterAction;
+  | UpdateFilterAction
+  | WipeAllFiltersAction;

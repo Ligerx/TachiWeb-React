@@ -19,9 +19,9 @@ import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
-type Props = { match: { params: Object } };
+type RouterProps = { match: { params: Object } };
 
-const Reader = ({ match: { params } }: Props) => {
+const Reader = ({ match: { params } }: RouterProps) => {
   const mangaId = parseInt(params.mangaId, 10);
   const chapterId = parseInt(params.chapterId, 10);
 

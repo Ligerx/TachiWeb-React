@@ -4,7 +4,9 @@ import { Client } from "api";
 import Library from "components/Library";
 import MangaInfo from "components/MangaInfo";
 import Reader from "components/Reader";
-import Catalogue from "components/Catalogue";
+import Catalogues from "components/Catalogues";
+import CataloguePage from "components/Catalogues/CataloguePage";
+import CataloguesSearchAllPage from "components/Catalogues/CataloguesSearchAllPage";
 import Extensions from "components/Extensions";
 import BackupRestore from "components/BackupRestore";
 import UrlPrefixContext from "components/UrlPrefixContext";
@@ -13,35 +15,21 @@ import Sources from "components/Sources";
 
 // NOTE: All url params are strings. You have to parse them if you want a different type.
 
-// match.path is the url prefix. i.e. '/library' '/catalogue'
-type MangaRouterProps = { match: Object }; // react router prop
+type MangaRouterProps = { match: Object }; // props  passed by react router
 const MangaRouter = ({ match }: MangaRouterProps) => {
-  // TODO: make Reader and MangaInfo consistent by moving MangaInfo backUrl info
-  // to using context instead of directly passing it here
-
-  // TODO: possibly also create a context for the MangaInfo defaultTab?
-
-  let backUrl = "";
-  let defaultTab = 0;
-
-  if (match.path === Client.library()) {
-    backUrl = Client.library();
-    defaultTab = 1;
-  } else if (match.path === Client.catalogue()) {
-    backUrl = Client.catalogue();
-    defaultTab = 0;
-  }
-
+  // match.url is the url prefix and back url.
+  // For example: library, a catalogue, and searching all catalogues use these components
   return (
-    <UrlPrefixContext.Provider value={match.path}>
+    <UrlPrefixContext.Provider value={match.url}>
       <Switch>
-        <Route path={`${match.path}/:mangaId/:chapterId`} component={Reader} />
+        <Route
+          path={Client.chapter(match.url, ":mangaId", ":chapterId")}
+          component={Reader}
+        />
 
         <Route
-          path={`${match.path}/:mangaId`}
-          render={props => (
-            <MangaInfo {...props} backUrl={backUrl} defaultTab={defaultTab} />
-          )}
+          path={Client.manga(match.url, ":mangaId")}
+          component={MangaInfo}
         />
       </Switch>
     </UrlPrefixContext.Provider>
@@ -54,17 +42,30 @@ const Router = () => (
       <Switch>
         <Route exact path="/" component={Library} />
 
-        <Route exact path="/catalogue" component={Catalogue} />
-        <Route path="/catalogue" component={MangaRouter} />
+        <Route exact path={Client.catalogues()} component={Catalogues} />
 
-        <Route exact path="/sources" component={Sources} />
+        <Route
+          exact
+          path={Client.cataloguesSearchAll()}
+          component={CataloguesSearchAllPage}
+        />
+        <Route path={Client.cataloguesSearchAll()} component={MangaRouter} />
 
-        <Route exact path="/library" component={Library} />
-        <Route path="/library" component={MangaRouter} />
+        <Route
+          exact
+          path={Client.catalogue(":sourceId")}
+          component={CataloguePage}
+        />
+        <Route path={Client.catalogue(":sourceId")} component={MangaRouter} />
 
-        <Route exact path="/extensions" component={Extensions} />
+        <Route exact path={Client.sources()} component={Sources} />
 
-        <Route exact path="/backup_restore" component={BackupRestore} />
+        <Route exact path={Client.library()} component={Library} />
+        <Route path={Client.library()} component={MangaRouter} />
+
+        <Route exact path={Client.extensions()} component={Extensions} />
+
+        <Route exact path={Client.backupRestore()} component={BackupRestore} />
 
         <Route path={`/settings/:${SETTING_INDEX}*`} component={Settings} />
       </Switch>

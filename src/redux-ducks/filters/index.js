@@ -1,17 +1,21 @@
 // @flow
 import type { FilterAnyType } from "types/filters";
 import type { GlobalState, Action } from "redux-ducks/reducers";
-import { RESET_STATE as RESET_CATALOGUE_STATE } from "redux-ducks/catalogue/actions";
 import { createSelector } from "reselect";
 import createCachedSelector from "re-reselect";
+import { createLoadingSelector } from "redux-ducks/loading";
 import {
+  FETCH_FILTERS,
   FETCH_REQUEST,
   FETCH_SUCCESS,
   RESET_FILTERS,
   UPDATE_LAST_USED_FILTERS,
   UPDATE_CURRENT_FILTERS,
-  UPDATE_FILTER
+  UPDATE_FILTER,
+  WIPE_ALL_FILTERS
 } from "./actions";
+
+// NOTE: Filters are currently only being used for 1 catalogue/source at a time, so that's all this supports
 
 // ================================================================================
 // Reducer
@@ -30,13 +34,13 @@ const initialState: State = {
   lastUsedFilters: [],
   currentFilters: []
 };
+
 export default function filtersReducer(
   state: State = initialState,
   action: Action
 ): State {
   switch (action.type) {
-    case RESET_CATALOGUE_STATE:
-      // SIDE EFFECT based on catalogue actions
+    case WIPE_ALL_FILTERS:
       return initialState;
 
     case FETCH_REQUEST:
@@ -82,6 +86,8 @@ export default function filtersReducer(
 // Selectors
 // ================================================================================
 
+export const selectIsFiltersLoading = createLoadingSelector([FETCH_FILTERS]);
+
 export const selectInitialFilters = (
   state: GlobalState
 ): $ReadOnlyArray<FilterAnyType> => state.filters.initialFilters;
@@ -97,6 +103,9 @@ export const selectFilterAtIndex = (
   index: number
 ): FilterAnyType => state.filters.currentFilters[index];
 
+/**
+ * Useful as a sort of existence check. If length > 0, you know that filters exist.
+ */
 export const selectFiltersLength: GlobalState => number = createSelector(
   // Optimization
   // The length of filters is constant, so we can look outside of currentFilters
