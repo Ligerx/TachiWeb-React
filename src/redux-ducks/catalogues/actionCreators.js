@@ -70,7 +70,7 @@ function fetchCataloguePure(
   searchQuery: string,
   filters: $ReadOnlyArray<FilterAnyType>
 ): ThunkAction {
-  return dispatch => {
+  return async dispatch => {
     dispatch({
       type: FETCH_CATALOGUE_REQUEST,
       payload: { sourceId, page },
@@ -80,33 +80,31 @@ function fetchCataloguePure(
     // API expects null instead of empty array if there are no filters
     const filtersChecked = filters.length > 0 ? filters : null;
 
-    return Server.api()
-      .getSourceCatalogue(
+    try {
+      const catalogueData = await Server.api().getSourceCatalogue(
         sourceId,
         catalogueRequest(page, searchQuery.trim(), filtersChecked)
-      )
-      .then(
-        catalogueData => {
-          const { mangas, hasNextPage } = catalogueData;
-
-          dispatch({ type: ADD_MANGA, newManga: mangas });
-          dispatch({
-            type: FETCH_CATALOGUE_SUCCESS,
-            payload: {
-              sourceId,
-              page,
-              mangaIds: mangas.map(manga => manga.id),
-              hasNextPage
-            }
-          });
-        },
-        error =>
-          dispatch({
-            type: FETCH_CATALOGUE_FAILURE,
-            errorMessage: "Failed to load catalogue",
-            meta: { error }
-          })
       );
+
+      const { mangas, hasNextPage } = catalogueData;
+
+      dispatch({ type: ADD_MANGA, newManga: mangas });
+      dispatch({
+        type: FETCH_CATALOGUE_SUCCESS,
+        payload: {
+          sourceId,
+          page,
+          mangaIds: mangas.map(manga => manga.id),
+          hasNextPage
+        }
+      });
+    } catch (error) {
+      dispatch({
+        type: FETCH_CATALOGUE_FAILURE,
+        errorMessage: "Failed to load catalogue",
+        meta: { error }
+      });
+    }
   };
 }
 
