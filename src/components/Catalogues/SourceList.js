@@ -29,7 +29,7 @@ const SourceList = ({ sources }: Props) => {
     <Paper className={classes.paper}>
       <List>
         {sources.map((source, index) => (
-          <>
+          <div key={source.id}>
             <ListItem
               key={source.id}
               button
@@ -57,7 +57,7 @@ const SourceList = ({ sources }: Props) => {
             </ListItem>
 
             {index !== sources.length - 1 && <Divider />}
-          </>
+          </div>
         ))}
       </List>
     </Paper>
