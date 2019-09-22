@@ -67,19 +67,14 @@ export default function cataloguesReducer(
 
         const catalogues = draft.bySourceId;
 
+        // Initialize this sourceId's catalogue data or reset it if restarting from page 1
         if (catalogues[sourceId] == null || page === 1) {
-          // catalogue is null if there is no data for this catalogue yet
-          // (page === 1 && catalogue != null) when restarting the search for this catalogue
-          catalogues[sourceId] = {
-            page,
-            hasNextPage,
-            mangaIds
-          };
-        } else {
-          catalogues[sourceId].page = page;
-          catalogues[sourceId].hasNextPage = hasNextPage;
-          catalogues[sourceId].mangaIds.push(...mangaIds);
+          catalogues[sourceId] = {};
         }
+
+        catalogues[sourceId].page = page;
+        catalogues[sourceId].hasNextPage = hasNextPage;
+        catalogues[sourceId].mangaIds.push(...mangaIds);
 
         // Remove loading state
         draft.loadingSourceIds = draft.loadingSourceIds.filter(
