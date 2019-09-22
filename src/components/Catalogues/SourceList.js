@@ -37,7 +37,13 @@ const SourceList = ({ sources }: Props) => {
               to={Client.catalogue(source.id)}
             >
               <ListItemAvatar>
-                <Avatar>{source.name.charAt(0)}</Avatar>
+                <Avatar
+                  style={{
+                    backgroundColor: stringToColor(source.name)
+                  }}
+                >
+                  {source.name.charAt(0)}
+                </Avatar>
               </ListItemAvatar>
 
               <ListItemText>{source.name}</ListItemText>
@@ -57,5 +63,27 @@ const SourceList = ({ sources }: Props) => {
     </Paper>
   );
 };
+
+// https://github.com/mui-org/material-ui/issues/12700#issuecomment-527927896
+function stringToColor(string: string) {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let colour = "";
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    colour += `00${value.toString(16)}`.substr(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  if (parseInt(colour, 16) > 15658734) return "#eeeeee";
+  return `#${colour}`;
+}
 
 export default SourceList;
