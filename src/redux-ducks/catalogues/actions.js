@@ -67,21 +67,11 @@ export type UpdateSearchQueryAction = {
   }
 };
 
-export const RESET_CATALOGUE_FOR_SOURCEIDS =
-  "catalogues/RESET_CATALOGUE_FOR_SOURCEIDS";
-type RESET_CATALOGUE_FOR_SOURCEIDS_TYPE =
-  "catalogues/RESET_CATALOGUE_FOR_SOURCEIDS";
+export const RESET_CATALOGUES = "catalogues/RESET_CATALOGUES";
+type RESET_CATALOGUES_TYPE = "catalogues/RESET_CATALOGUES";
 
-export type ResetCatalogueForSourceIdsAction = {
-  type: RESET_CATALOGUE_FOR_SOURCEIDS_TYPE,
-  payload: { sourceIds: string | Array<string> }
-};
-
-export const RESET_CATALOGUES_TO_INIT = "catalogues/RESET_CATALOGUES_TO_INIT";
-type RESET_CATALOGUES_TO_INIT_TYPE = "catalogues/RESET_CATALOGUES_TO_INIT";
-
-export type ResetCataloguesToInitAction = {
-  type: RESET_CATALOGUES_TO_INIT_TYPE
+export type ResetCataloguesAction = {
+  type: RESET_CATALOGUES_TYPE
 };
 
 // ================================================================================
@@ -94,5 +84,4 @@ export type CataloguesAction =
   | FetchCacheAction
   | FetchCatalogueNoNextPageAction
   | UpdateSearchQueryAction
-  | ResetCatalogueForSourceIdsAction
-  | ResetCataloguesToInitAction;
+  | ResetCataloguesAction;

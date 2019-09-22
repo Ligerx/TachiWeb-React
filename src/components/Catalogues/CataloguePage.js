@@ -26,7 +26,7 @@ import {
 } from "redux-ducks/catalogues";
 import {
   fetchCatalogue,
-  resetCatalogue
+  resetCataloguesAndFilters
 } from "redux-ducks/catalogues/actionCreators";
 import {
   selectIsFiltersLoading,
@@ -109,7 +109,7 @@ const CataloguePage = ({
 
   const handleBackToCatalogues = () => {
     // Cleanup data when going from catalogue -> catalogues
-    dispatch(resetCatalogue(sourceId));
+    dispatch(resetCataloguesAndFilters());
 
     history.push(Client.catalogues());
   };

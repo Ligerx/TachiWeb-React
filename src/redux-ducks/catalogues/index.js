@@ -8,8 +8,7 @@ import {
   FETCH_CATALOGUE_REQUEST,
   FETCH_CATALOGUE_SUCCESS,
   UPDATE_SEARCH_QUERY,
-  RESET_CATALOGUE_FOR_SOURCEIDS,
-  RESET_CATALOGUES_TO_INIT
+  RESET_CATALOGUES
 } from "./actions";
 
 // ================================================================================
@@ -95,27 +94,7 @@ export default function cataloguesReducer(
         break;
       }
 
-      case RESET_CATALOGUE_FOR_SOURCEIDS: {
-        // Clean up catalogue data for given sourceId(s)
-        const { sourceIds } = action.payload;
-
-        if (Array.isArray(sourceIds)) {
-          sourceIds.forEach(sourceId => {
-            delete draft.bySourceId[sourceId];
-          });
-        } else {
-          delete draft.bySourceId[sourceIds];
-        }
-
-        // Clean up searchQuery
-        draft.searchQuery = "";
-
-        // Unsure if I need to clean up loadingSourceIds or not. Skipping for now
-
-        break;
-      }
-
-      case RESET_CATALOGUES_TO_INIT: {
+      case RESET_CATALOGUES: {
         return initialState;
       }
 

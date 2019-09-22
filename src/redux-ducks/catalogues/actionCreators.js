@@ -13,8 +13,8 @@ import {
   FETCH_CATALOGUE_SUCCESS,
   FETCH_CACHE,
   FETCH_CATALOGUE_NO_NEXT_PAGE,
-  RESET_CATALOGUE_FOR_SOURCEIDS,
   UPDATE_SEARCH_QUERY,
+  RESET_CATALOGUES,
   type UpdateSearchQueryAction
 } from "./actions";
 
@@ -114,16 +114,10 @@ export function updateSearchQuery(
   return { type: UPDATE_SEARCH_QUERY, payload: { searchQuery } };
 }
 
-/**
- * One function to clean up everything related to searching and filtering one or more catalogues
- */
-export function resetCatalogue(sourceIds: string | Array<string>): ThunkAction {
+export function resetCataloguesAndFilters(): ThunkAction {
   return dispatch => {
     dispatch({ type: WIPE_ALL_FILTERS });
-    return dispatch({
-      type: RESET_CATALOGUE_FOR_SOURCEIDS,
-      payload: { sourceIds }
-    });
+    return dispatch({ type: RESET_CATALOGUES });
   };
 }
 

@@ -22,7 +22,7 @@ import {
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   fetchCatalogue,
-  resetCatalogue,
+  resetCataloguesAndFilters,
   updateSearchQuery
 } from "redux-ducks/catalogues/actionCreators";
 
@@ -76,7 +76,7 @@ const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
 
   const handleBackToCatalogues = () => {
     // Cleanup data when going from catalogues search -> catalogues
-    dispatch(resetCatalogue(enabledSources.map(source => source.id)));
+    dispatch(resetCataloguesAndFilters());
 
     history.push(Client.catalogues());
   };
