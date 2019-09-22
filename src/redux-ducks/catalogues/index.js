@@ -67,9 +67,14 @@ export default function cataloguesReducer(
 
         const catalogues = draft.bySourceId;
 
-        // Initialize this sourceId's catalogue data or reset it if restarting from page 1
         if (catalogues[sourceId] == null || page === 1) {
-          catalogues[sourceId] = {};
+          // catalogue is null if there is no data for this catalogue yet
+          // (page === 1 && catalogue != null) when restarting the search for this catalogue
+          catalogues[sourceId] = {
+            page,
+            hasNextPage,
+            mangaIds
+          };
         }
 
         catalogues[sourceId].page = page;
