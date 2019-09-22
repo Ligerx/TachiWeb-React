@@ -103,7 +103,7 @@ function fetchCataloguePure(
         error =>
           dispatch({
             type: FETCH_CATALOGUE_FAILURE,
-            errorMessage: "Failed to load this catalogue",
+            errorMessage: "Failed to load catalogue",
             meta: { error }
           })
       );
