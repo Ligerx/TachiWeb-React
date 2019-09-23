@@ -15,11 +15,11 @@ import {
   FETCH_REQUEST,
   FETCH_FAILURE,
   FETCH_SUCCESS,
-  RESET_FILTERS,
+  REVERT_TO_INITIAL_FILTERS,
   UPDATE_LAST_USED_FILTERS,
   UPDATE_CURRENT_FILTERS,
   UPDATE_FILTER,
-  type ResetFiltersAction,
+  type RevertToInitialFiltersAction,
   type UpdateLastUsedFiltersAction,
   type UpdateCurrentFiltersAction
 } from "./actions";
@@ -45,8 +45,8 @@ export function fetchFilters(sourceId: string): ThunkAction {
   };
 }
 
-export function resetFilters(): ResetFiltersAction {
-  return { type: RESET_FILTERS };
+export function resetFilters(): RevertToInitialFiltersAction {
+  return { type: REVERT_TO_INITIAL_FILTERS };
 }
 
 export function updateLastUsedFilters(): UpdateLastUsedFiltersAction {

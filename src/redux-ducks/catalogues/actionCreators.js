@@ -5,7 +5,7 @@ import type { CataloguePageRequest } from "@tachiweb/api-client";
 import type { FilterAnyType } from "types/filters";
 import { ADD_MANGA } from "redux-ducks/mangaInfos/actions";
 import { selectLastUsedFilters } from "redux-ducks/filters";
-import { WIPE_ALL_FILTERS } from "redux-ducks/filters/actions";
+import { RESET_FILTERS } from "redux-ducks/filters/actions";
 import { selectCatalogueBySourceId, selectCatalogueSearchQuery } from ".";
 import {
   FETCH_CATALOGUE_REQUEST,
@@ -116,7 +116,7 @@ export function updateSearchQuery(
 
 export function resetCataloguesAndFilters(): ThunkAction {
   return dispatch => {
-    dispatch({ type: WIPE_ALL_FILTERS });
+    dispatch({ type: RESET_FILTERS });
     return dispatch({ type: RESET_CATALOGUES });
   };
 }

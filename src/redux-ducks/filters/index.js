@@ -8,11 +8,11 @@ import {
   FETCH_FILTERS,
   FETCH_REQUEST,
   FETCH_SUCCESS,
-  RESET_FILTERS,
+  REVERT_TO_INITIAL_FILTERS,
   UPDATE_LAST_USED_FILTERS,
   UPDATE_CURRENT_FILTERS,
   UPDATE_FILTER,
-  WIPE_ALL_FILTERS
+  RESET_FILTERS
 } from "./actions";
 
 // NOTE: Filters are currently only being used for 1 catalogue/source at a time, so that's all this supports
@@ -40,7 +40,7 @@ export default function filtersReducer(
   action: Action
 ): State {
   switch (action.type) {
-    case WIPE_ALL_FILTERS:
+    case RESET_FILTERS:
       return initialState;
 
     case FETCH_REQUEST:
@@ -53,7 +53,7 @@ export default function filtersReducer(
         currentFilters: action.filters
       };
 
-    case RESET_FILTERS:
+    case REVERT_TO_INITIAL_FILTERS:
       // This is specifically for what data in the UI the user is seeing/using
       return { ...state, currentFilters: state.initialFilters };
 

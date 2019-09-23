@@ -36,8 +36,8 @@ type FetchFailureAction = {
 // ================================================================================
 
 // Action Constants and Types
-export const RESET_FILTERS = "filters/RESET_FILTERS";
-type RESET_FILTERS_TYPE = "filters/RESET_FILTERS";
+export const REVERT_TO_INITIAL_FILTERS = "filters/REVERT_TO_INITIAL_FILTERS";
+type REVERT_TO_INITIAL_FILTERS_TYPE = "filters/REVERT_TO_INITIAL_FILTERS";
 
 export const UPDATE_LAST_USED_FILTERS = "filters/UPDATE_LAST_USED_FILTERS";
 type UPDATE_LAST_USED_FILTERS_TYPE = "filters/UPDATE_LAST_USED_FILTERS";
@@ -46,7 +46,9 @@ export const UPDATE_CURRENT_FILTERS = "filters/UPDATE_CURRENT_FILTERS";
 type UPDATE_CURRENT_FILTERS_TYPE = "filters/UPDATE_CURRENT_FILTERS";
 
 // Action Object Types
-export type ResetFiltersAction = { type: RESET_FILTERS_TYPE };
+export type RevertToInitialFiltersAction = {
+  type: REVERT_TO_INITIAL_FILTERS_TYPE
+};
 
 export type UpdateLastUsedFiltersAction = {
   type: UPDATE_LAST_USED_FILTERS_TYPE
@@ -74,10 +76,10 @@ type UpdateFilterAction = {
 // etc
 // ================================================================================
 
-export const WIPE_ALL_FILTERS = "filters/WIPE_ALL_FILTERS";
-type WIPE_ALL_FILTERS_TYPE = "filters/WIPE_ALL_FILTERS";
+export const RESET_FILTERS = "filters/RESET_FILTERS";
+type RESET_FILTERS_TYPE = "filters/RESET_FILTERS";
 
-export type WipeAllFiltersAction = { type: WIPE_ALL_FILTERS_TYPE };
+export type ResetFiltersAction = { type: RESET_FILTERS_TYPE };
 
 // ================================================================================
 // Consolidated Action Type
@@ -86,8 +88,8 @@ export type FiltersAction =
   | FetchRequestAction
   | FetchSuccessAction
   | FetchFailureAction
-  | ResetFiltersAction
+  | RevertToInitialFiltersAction
   | UpdateLastUsedFiltersAction
   | UpdateCurrentFiltersAction
   | UpdateFilterAction
-  | WipeAllFiltersAction;
+  | ResetFiltersAction;
