@@ -39,7 +39,7 @@ const SourceList = ({ sources }: Props) => {
               <ListItemAvatar>
                 <Avatar
                   style={{
-                    backgroundColor: stringToColor(source.name)
+                    backgroundColor: getColorTachiyomi(source.name)
                   }}
                 >
                   {source.name.charAt(0)}
@@ -64,26 +64,45 @@ const SourceList = ({ sources }: Props) => {
   );
 };
 
-// https://github.com/mui-org/material-ui/issues/12700#issuecomment-527927896
-function stringToColor(string: string) {
-  let hash = 0;
-  let i;
+const MATERIAL_COLORS = [
+  "e57373",
+  "f06292",
+  "ba68c8",
+  "9575cd",
+  "7986cb",
+  "64b5f6",
+  "4fc3f7",
+  "4dd0e1",
+  "4db6ac",
+  "81c784",
+  "aed581",
+  "ff8a65",
+  "d4e157",
+  "ffd54f",
+  "ffb74d",
+  "a1887f",
+  "90a4ae"
+];
 
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+function hashCode(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i += 1) {
+    h = 31 * h + str.charCodeAt(i);
   }
+  return h;
+}
 
-  let colour = "";
+function getColor(key) {
+  return MATERIAL_COLORS[Math.abs(hashCode(key)) % MATERIAL_COLORS.length];
+}
 
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    colour += `00${value.toString(16)}`.substr(-2);
-  }
-  /* eslint-enable no-bitwise */
-
-  if (parseInt(colour, 16) > 15658734) return "#eeeeee";
-  return `#${colour}`;
+function getColorTachiyomi(string: string) {
+  // Specifically, Tachiyomi calls the getColor method, supplying the uppercase first
+  // letter of the catalogue name as the key argument.
+  // The algorithm used is located here:
+  // https://github.com/amulyakhare/TextDrawable/blob/master/library/src/main/java/com/amulyakhare/textdrawable/util/ColorGenerator.java
+  const char = string.charAt(0).toUpperCase();
+  return `#${getColor(char)}`;
 }
 
 export default SourceList;
