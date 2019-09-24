@@ -54,7 +54,7 @@ const LibraryHasSelectionsToolbar = ({
           <Icon>arrow_back</Icon>
         </IconButton>
 
-        <Typography variant="h6" style={{ flex: 1 }}>
+        <Typography variant="h6" noWrap style={{ flex: 1 }}>
           Selected: {selectedMangaIds.length}
         </Typography>
 

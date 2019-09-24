@@ -60,7 +60,7 @@ const Catalogues = ({ history }: Props) => {
         <Toolbar>
           <MenuDrawer />
 
-          <Typography variant="h6" style={{ flex: 1 }}>
+          <Typography variant="h6" noWrap style={{ flex: 1 }}>
             Catalogues
           </Typography>
 

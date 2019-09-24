@@ -51,7 +51,7 @@ const Sources = () => {
         <Toolbar>
           <BackButton onBackClick={Client.catalogues()} />
 
-          <Typography variant="h6" style={{ flex: 1 }}>
+          <Typography variant="h6" noWrap style={{ flex: 1 }}>
             Sources
           </Typography>
         </Toolbar>
