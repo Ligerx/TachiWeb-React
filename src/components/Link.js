@@ -9,18 +9,20 @@ import { Link as ReactRouterLink } from "react-router-dom";
 // React-Router decided they won't change this behavior ¯\_(ツ)_/¯
 // https://github.com/ReactTraining/react-router/issues/2319
 
-// Fall back on <button>, assuming you're using it in conjunction with a Material-UI Button
-//
-// If you need a fallback other than <button> in the future, consider an optional
-// prop to allow selecting which fallback element to use.
+// The default fallback tag is <button> because at the time of creating this component, it was
+// the most commonly used tag, mostly to work by default with Material-UI components that
+// are built on top of <ButtonBase>
+
+// https://reactkungfu.com/2016/11/dynamic-jsx-tags/
 
 type Props = {
-  to: ?string
-}; // all props will be passed to the <Link> or <button>
+  to: ?string,
+  fallbackComponent?: string | React.ComponentType<any>
+}; // all props except 'fallbackComponent' will be passed to the component
 
-const Link = (props: Props) => {
-  const Component = props.to ? ReactRouterLink : "button";
-  return <Component {...props} />;
+const Link = ({ to, fallbackComponent = "button", ...otherProps }: Props) => {
+  const Component = to == null ? fallbackComponent : ReactRouterLink;
+  return <Component to={to} {...otherProps} />;
 };
 
 export default Link;
