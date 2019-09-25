@@ -20,9 +20,14 @@ type Props = {
   fallbackComponent?: string | React.ComponentType<any>
 }; // all props except 'fallbackComponent' will be passed to the component
 
-const Link = ({ to, fallbackComponent = "button", ...otherProps }: Props) => {
+const Link = (
+  { to, fallbackComponent = "button", ...otherProps }: Props,
+  ref
+) => {
   const Component = to == null ? fallbackComponent : ReactRouterLink;
-  return <Component to={to} {...otherProps} />;
+  return <Component ref={ref} to={to} {...otherProps} />;
 };
 
-export default Link;
+// Forwarding ref so that any Material-UI component wrapping/using this component
+// doesn't throw an errors. Function components cannot be given refs without forwardRef.
+export default React.forwardRef<Props, any>(Link);
