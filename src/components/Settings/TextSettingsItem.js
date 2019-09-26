@@ -1,5 +1,5 @@
 // @flow
-import * as React from "react";
+import React, { useState, useRef } from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -11,10 +11,7 @@ import type { TextSchemaEntry } from "types/settings-schema";
 import { currentValueOrFallback } from "components/Settings/SettingsItem";
 import type { BaseSettingsItemProps } from "components/Settings/SettingsItem";
 
-type State = {
-  dialogOpen: boolean, // Whether or not the editing dialog is open
-  localValue: string // The current value of the textbox in the dialog
-};
+type Props = BaseSettingsItemProps & { schema: TextSchemaEntry };
 
 // setting-type to input-type mappings
 const SCHEMA_TYPE_TO_INPUT_TYPE_MAPPINGS = {
@@ -28,98 +25,81 @@ const SCHEMA_TYPE_TO_INPUT_TYPE_MAPPINGS = {
  * When editing this preference, a dialog is opened. The user can modify the value of the preference in the dialog
  * and the modified value is not committed to the store or server until the user confirms it.
  */
-class TextSettingsItem extends React.Component<
-  BaseSettingsItemProps & { schema: TextSchemaEntry },
-  State
-> {
-  state: State = {
-    dialogOpen: false,
-    localValue: currentValueOrFallback(this.props)
-  };
+const TextSettingsItem = (props: Props) => {
+  const { schema, onUpdateSetting } = props;
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [localValue, setLocalValue] = useState(currentValueOrFallback(props));
+
+  const textBoxRef = useRef(null);
 
   // Reset local state & open dialog
-  handleClick = () =>
-    this.setState(state => ({
-      ...state,
-      localValue: currentValueOrFallback(this.props),
-      dialogOpen: true
-    }));
-
-  handleLocalChange = (event: SyntheticEvent<HTMLInputElement>) =>
-    this.setState(state => ({
-      ...state,
-      localValue: event.currentTarget.value
-    }));
-
-  handleDialogShow = () => {
-    if (this.textBoxRef != null) this.textBoxRef.focus();
+  const handleClick = () => {
+    setLocalValue(currentValueOrFallback(props));
+    setDialogOpen(true);
   };
 
-  closeDialog = () => this.setState(state => ({ ...state, dialogOpen: false }));
+  const handleLocalChange = (event: SyntheticEvent<HTMLInputElement>) => {
+    setLocalValue(event.currentTarget.value);
+  };
 
-  // Just close dialog, do not push changes to server
-  handleCancel = () => this.closeDialog();
+  const handleDialogShow = () => {
+    if (textBoxRef.current != null) textBoxRef.current.focus();
+  };
 
-  handleOk = () => {
-    this.closeDialog();
+  const closeDialog = () => {
+    setDialogOpen(false);
+  };
 
-    const { onUpdateSetting, schema } = this.props;
-    const { localValue } = this.state;
-
+  const handleOk = () => {
     // Push changes to server
     onUpdateSetting(schema.key, localValue);
+    closeDialog();
   };
 
   // Pressing 'enter' will press the 'ok' button
-  handleKeyPress = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      this.handleOk();
-    }
+  const handleKeyPress = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") handleOk();
   };
 
-  textBoxRef: ?HTMLInputElement;
+  return (
+    <>
+      <SettingsListItem onClick={handleClick} schema={schema} />
 
-  render() {
-    const { schema } = this.props;
-    const { dialogOpen, localValue } = this.state;
-    return (
-      <>
-        <SettingsListItem onClick={this.handleClick} schema={schema} />
-        <Dialog
-          disableBackdropClick
-          disableEscapeKeyDown
-          maxWidth="xs"
-          open={dialogOpen}
-          onEntering={this.handleDialogShow}
-        >
-          <DialogTitle>{schema.label}</DialogTitle>
-          <DialogContent>
-            <TextField
-              inputRef={ref => {
-                this.textBoxRef = ref;
-              }}
-              label={schema.label}
-              value={localValue}
-              onChange={this.handleLocalChange}
-              onKeyPress={this.handleKeyPress}
-              type={SCHEMA_TYPE_TO_INPUT_TYPE_MAPPINGS[schema.type]}
-              margin="normal"
-              variant="outlined"
-              style={{ width: "100%" }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleCancel} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleOk} color="primary">
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </>
-    );
-  }
-}
+      <Dialog
+        disableBackdropClick
+        disableEscapeKeyDown
+        maxWidth="xs"
+        open={dialogOpen}
+        onEntering={handleDialogShow}
+      >
+        <DialogTitle>{schema.label}</DialogTitle>
+
+        <DialogContent>
+          <TextField
+            inputRef={textBoxRef}
+            label={schema.label}
+            value={localValue}
+            onChange={handleLocalChange}
+            onKeyPress={handleKeyPress}
+            type={SCHEMA_TYPE_TO_INPUT_TYPE_MAPPINGS[schema.type]}
+            margin="normal"
+            variant="outlined"
+            style={{ width: "100%" }}
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={closeDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleOk} color="primary">
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
 
 export default TextSettingsItem;
