@@ -1,14 +1,12 @@
 // @flow
 import * as React from "react";
 import Typography from "@material-ui/core/Typography";
-import ResponsiveGrid from "components/ResponsiveGrid";
 import Container from "@material-ui/core/Container";
 import MangaCard from "components/MangaCard";
 import Grid from "@material-ui/core/Grid";
 import BackgroundImage from "components/MangaInfo/BackgroundImage";
 import { makeStyles } from "@material-ui/styles";
 import type { Manga, Source } from "@tachiweb/api-client";
-import classNames from "classnames";
 import { Server } from "api";
 import upperFirst from "lodash/upperFirst";
 import capitalize from "lodash/capitalize";
@@ -27,7 +25,7 @@ type Props = {
 
 const useStyles = makeStyles({
   details: {
-    padding: "40px 16px 60px 16px"
+    padding: "48px 32px 60px 32px"
   },
   fabParent: {
     position: "relative"
@@ -42,29 +40,30 @@ const MangaInfoDetails = ({ source, mangaInfo, numChapters }: Props) => {
   return (
     <>
       <BackgroundImage coverUrl={coverUrl}>
-        <ResponsiveGrid
-          className={classNames(classes.gridPadding, classes.fabParent)}
-        >
-          <Grid item xs={4} sm={3}>
-            <MangaCard coverUrl={coverUrl} />
-          </Grid>
-          <Grid item xs={8} sm={9}>
-            <Typography variant="h6" gutterBottom>
-              {mangaInfo.title}
-            </Typography>
-            <DetailComponent fieldName="Chapters" value={numChapters} />
-            {detailsElements(mangaInfo)}
-            <DetailComponent
-              fieldName="Status"
-              value={capitalize(mangaInfo.status)}
-            />
-            {source != null && (
-              <DetailComponent fieldName="Source" value={source.name} />
-            )}
+        <Container maxWidth="md" className={classes.fabParent}>
+          <Grid container spacing={4}>
+            <Grid item xs={4} sm={3}>
+              <MangaCard coverUrl={coverUrl} />
+            </Grid>
+
+            <Grid item xs={8} sm={9}>
+              <Typography variant="h6" gutterBottom>
+                {mangaInfo.title}
+              </Typography>
+              <DetailComponent fieldName="Chapters" value={numChapters} />
+              {detailsElements(mangaInfo)}
+              <DetailComponent
+                fieldName="Status"
+                value={capitalize(mangaInfo.status)}
+              />
+              {source != null && (
+                <DetailComponent fieldName="Source" value={source.name} />
+              )}
+            </Grid>
           </Grid>
 
           <FavoriteFab mangaId={mangaInfo.id} />
-        </ResponsiveGrid>
+        </Container>
       </BackgroundImage>
 
       <Container maxWidth="md" className={classes.details}>
