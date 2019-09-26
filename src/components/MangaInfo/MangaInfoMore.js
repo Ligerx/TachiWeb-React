@@ -1,5 +1,5 @@
 // @flow
-import * as React from "react";
+import React, { useState } from "react";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
@@ -9,6 +9,13 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import RadioOptionsDialogue from "components/MangaInfo/RadioOptionsDialogue";
+
+type Props = {
+  sourceUrl: ?string,
+  flags: MangaFlags,
+  onDisplayModeChange: Function,
+  onSortTypeChange: Function
+};
 
 const displayModes = [
   { flagState: "NAME", label: "Show title" },
@@ -20,118 +27,99 @@ const sortingModes = [
   { flagState: "NUMBER", label: "By chapter number" }
 ];
 
-type Props = {
-  sourceUrl: ?string,
-  flags: MangaFlags,
-  onDisplayModeChange: Function,
-  onSortTypeChange: Function
-};
+const MangaInfoMore = ({
+  onDisplayModeChange,
+  onSortTypeChange,
+  sourceUrl,
+  flags: { displayMode, sortType }
+}: Props) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [displayModeOpen, setDisplayModeOpen] = useState(false);
+  const [sortTypeOpen, setSortTypeOpen] = useState(false);
 
-type State = {
-  anchorEl: ?React.Node,
-  displayModeOpen: boolean,
-  sortTypeOpen: boolean
-};
-
-class MangaInfoMore extends React.Component<Props, State> {
-  state = {
-    anchorEl: null,
-    displayModeOpen: false,
-    sortTypeOpen: false
+  const handleClick = (event: SyntheticEvent<>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleClick = (event: SyntheticEvent<>) => {
-    // $FlowFixMe - ignore flow warning below
-    this.setState({ anchorEl: event.currentTarget });
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
+  const handleDisplayModeClick = () => {
+    setDisplayModeOpen(true);
+    handleClose();
   };
 
-  handleDisplayModeClick = () => {
-    this.setState({ displayModeOpen: true });
-    this.handleClose();
-  };
+  const handleDisplayModeClose = (value: ?string) => {
+    setDisplayModeOpen(false);
 
-  handleDisplayModeClose = (value: ?string) => {
-    this.setState({ displayModeOpen: false });
-    if (value) {
-      const { onDisplayModeChange } = this.props;
+    if (value != null) {
       onDisplayModeChange(value);
     }
   };
 
-  handleSortTypeClick = () => {
-    this.setState({ sortTypeOpen: true });
-    this.handleClose();
+  const handleSortTypeClick = () => {
+    setSortTypeOpen(true);
+    handleClose();
   };
 
-  handleSortTypeClose = (value: ?string) => {
-    this.setState({ sortTypeOpen: false });
-    if (value) {
-      const { onSortTypeChange } = this.props;
+  const handleSortTypeClose = (value: ?string) => {
+    setSortTypeOpen(false);
+
+    if (value != null) {
       onSortTypeChange(value);
     }
   };
 
-  render() {
-    const { anchorEl, displayModeOpen, sortTypeOpen } = this.state;
-    const {
-      sourceUrl,
-      flags: { displayMode, sortType }
-    } = this.props;
+  return (
+    <>
+      <Tooltip title="More options">
+        <IconButton onClick={handleClick}>
+          <Icon>more_vert</Icon>
+        </IconButton>
+      </Tooltip>
 
-    return (
-      <>
-        <Tooltip title="More options">
-          <IconButton onClick={this.handleClick}>
-            <Icon>more_vert</Icon>
-          </IconButton>
-        </Tooltip>
+      {/* getContentAnchorEl must be null to make anchorOrigin work */}
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        getContentAnchorEl={null}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleDisplayModeClick}>
+          Change Display Mode
+        </MenuItem>
+        <MenuItem onClick={handleSortTypeClick}>Sorting Mode</MenuItem>
+        {/* <MenuItem>Download</MenuItem> */}
 
-        {/* getContentAnchorEl must be null to make anchorOrigin work */}
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-          getContentAnchorEl={null}
-          open={Boolean(anchorEl)}
-          onClose={this.handleClose}
-        >
-          <MenuItem onClick={this.handleDisplayModeClick}>
-            Change Display Mode
+        {sourceUrl != null ? (
+          <MenuItem component="a" href={sourceUrl} target="_blank">
+            <ListItemIcon>
+              <Icon>open_in_new</Icon>
+            </ListItemIcon>
+            <ListItemText primary="Open source website" />
           </MenuItem>
-          <MenuItem onClick={this.handleSortTypeClick}>Sorting Mode</MenuItem>
-          {/* <MenuItem>Download</MenuItem> */}
+        ) : null}
+      </Menu>
 
-          {sourceUrl != null ? (
-            <MenuItem component="a" href={sourceUrl} target="_blank">
-              <ListItemIcon>
-                <Icon>open_in_new</Icon>
-              </ListItemIcon>
-              <ListItemText primary="Open source website" />
-            </MenuItem>
-          ) : null}
-        </Menu>
+      <RadioOptionsDialogue
+        title="Choose Display Mode"
+        open={displayModeOpen}
+        value={displayMode}
+        options={displayModes}
+        onClose={handleDisplayModeClose}
+      />
 
-        <RadioOptionsDialogue
-          title="Choose Display Mode"
-          open={displayModeOpen}
-          value={displayMode}
-          options={displayModes}
-          onClose={this.handleDisplayModeClose}
-        />
-
-        <RadioOptionsDialogue
-          title="Sorting Mode"
-          open={sortTypeOpen}
-          value={sortType}
-          options={sortingModes}
-          onClose={this.handleSortTypeClose}
-        />
-      </>
-    );
-  }
-}
+      <RadioOptionsDialogue
+        title="Sorting Mode"
+        open={sortTypeOpen}
+        value={sortType}
+        options={sortingModes}
+        onClose={handleSortTypeClose}
+      />
+    </>
+  );
+};
 
 export default MangaInfoMore;
