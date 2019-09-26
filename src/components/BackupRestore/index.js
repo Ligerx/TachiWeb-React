@@ -7,7 +7,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import MenuDrawer from "components/MenuDrawer";
-import Grid from "@material-ui/core/Grid";
 import BackupCard from "components/BackupRestore/BackupCard";
 import RestoreCard from "components/BackupRestore/RestoreCard";
 
@@ -32,13 +31,8 @@ const BackupRestore = () => {
       </AppBar>
 
       <Container maxWidth="sm">
-        <Grid item xs={12} className={classes.card}>
-          <BackupCard />
-        </Grid>
-
-        <Grid item xs={12} className={classes.card}>
-          <RestoreCard />
-        </Grid>
+        <BackupCard className={classes.card} />
+        <RestoreCard className={classes.card} />
       </Container>
     </>
   );
