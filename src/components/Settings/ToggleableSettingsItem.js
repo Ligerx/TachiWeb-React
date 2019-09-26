@@ -8,6 +8,8 @@ import { currentValueOrFallback } from "components/Settings/SettingsItem";
 import type { ToggleableSchemaEntry } from "types/settings-schema";
 import SettingsListItem from "components/Settings/SettingsListItem";
 
+type Props = BaseSettingsItemProps & { schema: ToggleableSchemaEntry };
+
 // setting-type to element mappings
 const ITEM_TYPE_TO_SCHEMA_TYPE_MAPPING = {
   switch: Switch,
@@ -17,36 +19,35 @@ const ITEM_TYPE_TO_SCHEMA_TYPE_MAPPING = {
 /**
  * A two-state setting that can be toggled between 'on' and 'off'
  */
-class ToggleableSettingsItem extends React.Component<
-  BaseSettingsItemProps & { schema: ToggleableSchemaEntry }
-> {
-  handleChange = () => {
-    const { onUpdateSetting, schema } = this.props;
-    onUpdateSetting(schema.key, !currentValueOrFallback(this.props));
+const ToggleableSettingsItem = (props: Props) => {
+  const { onUpdateSetting, schema } = props;
+
+  const handleChange = () => {
+    onUpdateSetting(schema.key, !currentValueOrFallback(props));
   };
 
-  render() {
-    const { schema } = this.props;
-    const currentDescription = currentValueOrFallback(this.props)
-      ? schema.descriptionOn
-      : schema.descriptionOff;
-    const ToggleElement = ITEM_TYPE_TO_SCHEMA_TYPE_MAPPING[schema.type];
-    if (ToggleElement == null) return null;
-    return (
-      <SettingsListItem
-        onClick={this.handleChange}
-        selectedValueLabel={currentDescription}
-        schema={schema}
-      >
-        <ListItemSecondaryAction>
-          <ToggleElement
-            onChange={this.handleChange}
-            checked={currentValueOrFallback(this.props)}
-          />
-        </ListItemSecondaryAction>
-      </SettingsListItem>
-    );
-  }
-}
+  const currentDescription = currentValueOrFallback(props)
+    ? schema.descriptionOn
+    : schema.descriptionOff;
+
+  const ToggleElement = ITEM_TYPE_TO_SCHEMA_TYPE_MAPPING[schema.type];
+
+  if (ToggleElement == null) return null;
+
+  return (
+    <SettingsListItem
+      onClick={handleChange}
+      selectedValueLabel={currentDescription}
+      schema={schema}
+    >
+      <ListItemSecondaryAction>
+        <ToggleElement
+          onChange={handleChange}
+          checked={currentValueOrFallback(props)}
+        />
+      </ListItemSecondaryAction>
+    </SettingsListItem>
+  );
+};
 
 export default ToggleableSettingsItem;
