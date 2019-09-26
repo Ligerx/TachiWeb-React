@@ -2,10 +2,11 @@
 import * as React from "react";
 import Typography from "@material-ui/core/Typography";
 import ResponsiveGrid from "components/ResponsiveGrid";
+import Container from "@material-ui/core/Container";
 import MangaCard from "components/MangaCard";
 import Grid from "@material-ui/core/Grid";
 import BackgroundImage from "components/MangaInfo/BackgroundImage";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/styles";
 import type { Manga, Source } from "@tachiweb/api-client";
 import classNames from "classnames";
 import { Server } from "api";
@@ -18,28 +19,24 @@ import FavoriteFab from "components/FavoriteFab";
 // TODO: I'm applying padding to the ResponsiveGrid. This doesn't feel very elegant.
 //       Is there any simple way to keep all the styling in THIS component?
 
-const styles = () => ({
-  gridPadding: {
-    padding: "32px 24px"
+type Props = {
+  mangaInfo: Manga,
+  numChapters: number,
+  source: ?Source
+};
+
+const useStyles = makeStyles({
+  details: {
+    padding: "40px 16px 60px 16px"
   },
   fabParent: {
     position: "relative"
   }
 });
 
-type Props = {
-  classes: Object,
-  mangaInfo: Manga,
-  numChapters: number,
-  source: ?Source
-};
+const MangaInfoDetails = ({ source, mangaInfo, numChapters }: Props) => {
+  const classes = useStyles();
 
-const MangaInfoDetails = ({
-  classes,
-  source,
-  mangaInfo,
-  numChapters
-}: Props) => {
   const coverUrl: string = Server.cover(mangaInfo.id);
 
   return (
@@ -70,18 +67,14 @@ const MangaInfoDetails = ({
         </ResponsiveGrid>
       </BackgroundImage>
 
-      <ResponsiveGrid className={classes.gridPadding}>
+      <Container maxWidth="md" className={classes.details}>
         <DetailComponent
           fieldName="Description"
           value={mangaInfo.description || ""}
         />
-      </ResponsiveGrid>
+      </Container>
     </>
   );
-};
-
-MangaInfoDetails.defaultProps = {
-  children: null
 };
 
 // Helper functions
@@ -118,4 +111,4 @@ const DetailComponent = ({
   </Typography>
 );
 
-export default withStyles(styles)(MangaInfoDetails);
+export default MangaInfoDetails;
