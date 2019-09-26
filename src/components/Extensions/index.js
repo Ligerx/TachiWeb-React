@@ -1,11 +1,12 @@
 // @flow
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
+import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
-import ResponsiveGrid from "components/ResponsiveGrid";
+import Container from "@material-ui/core/Container";
 import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
 import ExtensionList from "components/Extensions/ExtensionList";
@@ -24,6 +25,12 @@ import {
 // Partially because I'm missing extension preferences,
 // but also because I don't think it's worth the effort to implement.
 
+const useStyles = makeStyles({
+  list: {
+    marginBottom: 32
+  }
+});
+
 const Extensions = () => {
   const installedExtensions = useSelector(selectInstalledExtensions);
   const notInstalledExtensions = useSelector(selectNotInstalledExtensions);
@@ -36,6 +43,8 @@ const Extensions = () => {
   useEffect(() => {
     dispatch(fetchExtensions());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const classes = useStyles();
 
   return (
     <>
@@ -53,11 +62,18 @@ const Extensions = () => {
         </Toolbar>
       </AppBar>
 
-      <ResponsiveGrid maxWidth="xs">
-        <ExtensionList title="Installed" extensions={installedExtensions} />
-
-        <ExtensionList title="Available" extensions={notInstalledExtensions} />
-      </ResponsiveGrid>
+      <Container maxWidth="sm">
+        <ExtensionList
+          title="Installed"
+          extensions={installedExtensions}
+          className={classes.list}
+        />
+        <ExtensionList
+          title="Available"
+          extensions={notInstalledExtensions}
+          className={classes.list}
+        />
+      </Container>
 
       {isExtensionsLoading && <FullScreenLoading />}
     </>
