@@ -53,7 +53,7 @@ const useStyles = makeStyles({
   page: {
     width: "100%",
     marginTop: 144,
-    marginBottom: 80
+    marginBottom: 60
   },
   navButtonsParent: {
     display: "flex",
