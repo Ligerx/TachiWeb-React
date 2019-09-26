@@ -1,13 +1,12 @@
 // @flow
 import * as React from "react";
 import Typography from "@material-ui/core/Typography";
-import ResponsiveGrid from "components/ResponsiveGrid";
+import Container from "@material-ui/core/Container";
 import MangaCard from "components/MangaCard";
 import Grid from "@material-ui/core/Grid";
 import BackgroundImage from "components/MangaInfo/BackgroundImage";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/styles";
 import type { Manga, Source } from "@tachiweb/api-client";
-import classNames from "classnames";
 import { Server } from "api";
 import upperFirst from "lodash/upperFirst";
 import capitalize from "lodash/capitalize";
@@ -18,70 +17,63 @@ import FavoriteFab from "components/FavoriteFab";
 // TODO: I'm applying padding to the ResponsiveGrid. This doesn't feel very elegant.
 //       Is there any simple way to keep all the styling in THIS component?
 
-const styles = () => ({
-  gridPadding: {
-    padding: "32px 24px"
+type Props = {
+  mangaInfo: Manga,
+  numChapters: number,
+  source: ?Source
+};
+
+const useStyles = makeStyles({
+  details: {
+    padding: "48px 32px 60px 32px"
   },
   fabParent: {
     position: "relative"
   }
 });
 
-type Props = {
-  classes: Object,
-  mangaInfo: Manga,
-  numChapters: number,
-  source: ?Source
-};
+const MangaInfoDetails = ({ source, mangaInfo, numChapters }: Props) => {
+  const classes = useStyles();
 
-const MangaInfoDetails = ({
-  classes,
-  source,
-  mangaInfo,
-  numChapters
-}: Props) => {
   const coverUrl: string = Server.cover(mangaInfo.id);
 
   return (
     <>
       <BackgroundImage coverUrl={coverUrl}>
-        <ResponsiveGrid
-          className={classNames(classes.gridPadding, classes.fabParent)}
-        >
-          <Grid item xs={4} sm={3}>
-            <MangaCard coverUrl={coverUrl} />
-          </Grid>
-          <Grid item xs={8} sm={9}>
-            <Typography variant="h6" gutterBottom>
-              {mangaInfo.title}
-            </Typography>
-            <DetailComponent fieldName="Chapters" value={numChapters} />
-            {detailsElements(mangaInfo)}
-            <DetailComponent
-              fieldName="Status"
-              value={capitalize(mangaInfo.status)}
-            />
-            {source != null && (
-              <DetailComponent fieldName="Source" value={source.name} />
-            )}
+        <Container maxWidth="md" className={classes.fabParent}>
+          <Grid container spacing={4}>
+            <Grid item xs={4} sm={3}>
+              <MangaCard coverUrl={coverUrl} />
+            </Grid>
+
+            <Grid item xs={8} sm={9}>
+              <Typography variant="h6" gutterBottom>
+                {mangaInfo.title}
+              </Typography>
+              <DetailComponent fieldName="Chapters" value={numChapters} />
+              {detailsElements(mangaInfo)}
+              <DetailComponent
+                fieldName="Status"
+                value={capitalize(mangaInfo.status)}
+              />
+              {source != null && (
+                <DetailComponent fieldName="Source" value={source.name} />
+              )}
+            </Grid>
           </Grid>
 
           <FavoriteFab mangaId={mangaInfo.id} />
-        </ResponsiveGrid>
+        </Container>
       </BackgroundImage>
 
-      <ResponsiveGrid className={classes.gridPadding}>
+      <Container maxWidth="md" className={classes.details}>
         <DetailComponent
           fieldName="Description"
           value={mangaInfo.description || ""}
         />
-      </ResponsiveGrid>
+      </Container>
     </>
   );
-};
-
-MangaInfoDetails.defaultProps = {
-  children: null
 };
 
 // Helper functions
@@ -118,4 +110,4 @@ const DetailComponent = ({
   </Typography>
 );
 
-export default withStyles(styles)(MangaInfoDetails);
+export default MangaInfoDetails;

@@ -6,12 +6,10 @@ import type { Manga } from "@tachiweb/api-client";
 import type { ChapterType } from "types";
 import { Server, Client } from "api";
 import { makeStyles } from "@material-ui/styles";
-import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import ImageWithLoader from "components/Reader/ImageWithLoader";
 import ReaderOverlay from "components/Reader/ReaderOverlay";
-import ResponsiveGrid from "components/ResponsiveGrid";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import Link from "components/Link";
@@ -47,10 +45,6 @@ import {
 //
 // But using 'behavior: auto' on initial scroll because it is guaranteed to only scroll down.
 
-// Waypoints that wrap around components require special code
-// However, it automatically works with normal elements like <div>
-// https://github.com/brigade/react-waypoint#children
-
 type Props = {
   mangaInfo: Manga,
   chapter: ChapterType,
@@ -60,17 +54,14 @@ type Props = {
 };
 
 const useStyles = makeStyles({
-  page: {
-    width: "100%"
+  pages: {
+    marginTop: 144,
+    marginBottom: 60
   },
   navButtonsParent: {
     display: "flex",
     justifyContent: "center",
-    marginTop: 40,
     marginBottom: 40
-  },
-  topOffset: {
-    marginTop: 144
   }
 });
 
@@ -191,51 +182,41 @@ const WebtoonReader = ({
         onJumpToPage={handleJumpToPage}
       />
 
-      <ResponsiveGrid spacing={0} className={classes.topOffset}>
+      <div className={classes.pages}>
         {times(pageCount).map((_, index) => (
-          <Grid
-            item
-            xs={12}
+          <Waypoint
             key={`${mangaInfo.id}-${chapter.id}-${index}`}
-            id={index}
+            onEnter={handlePageEnter(index)}
+            onLeave={handlePageLeave(index)}
           >
-            <Waypoint
-              onEnter={handlePageEnter(index)}
-              onLeave={handlePageLeave(index)}
-            >
-              <div>
-                {/* Refer to notes on Waypoint above for why this <div> is necessary */}
-                <ImageWithLoader
-                  className={classes.page}
-                  src={Server.image(mangaInfo.id, chapter.id, index)}
-                  alt={`${chapter.name} - Page ${index + 1}`}
-                  lazyLoad
-                  preventLoading={jumpToPageRef.current != null}
-                />
-              </div>
-            </Waypoint>
-          </Grid>
+            {/*
+                Waypoints that wrap around components require special code.
+                However, it works by default with normal elements like <div>
+                https://github.com/brigade/react-waypoint#children
+            */}
+            <div id={index}>
+              <ImageWithLoader
+                className={classes.page}
+                src={Server.image(mangaInfo.id, chapter.id, index)}
+                alt={`${chapter.name} - Page ${index + 1}`}
+                lazyLoad
+                preventLoading={jumpToPageRef.current != null}
+              />
+            </div>
+          </Waypoint>
         ))}
+      </div>
 
-        <Grid item xs={12} className={classes.navButtonsParent}>
-          <Button
-            component={Link}
-            to={prevChapterUrl}
-            disabled={!prevChapterUrl}
-          >
-            <Icon>navigate_before</Icon>
-            Previous Chapter
-          </Button>
-          <Button
-            component={Link}
-            to={nextChapterUrl}
-            disabled={!nextChapterUrl}
-          >
-            Next Chapter
-            <Icon>navigate_next</Icon>
-          </Button>
-        </Grid>
-      </ResponsiveGrid>
+      <div className={classes.navButtonsParent}>
+        <Button component={Link} to={prevChapterUrl} disabled={!prevChapterUrl}>
+          <Icon>navigate_before</Icon>
+          Previous Chapter
+        </Button>
+        <Button component={Link} to={nextChapterUrl} disabled={!nextChapterUrl}>
+          Next Chapter
+          <Icon>navigate_next</Icon>
+        </Button>
+      </div>
     </>
   );
 };
