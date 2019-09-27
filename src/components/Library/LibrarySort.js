@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React, { useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -8,6 +8,17 @@ import MenuItem from "@material-ui/core/MenuItem";
 import type { LibraryFlagsType } from "types";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+
+type Props = {
+  flags: LibraryFlagsType,
+  setLibraryFlag: Function
+};
+
+const useStyles = makeStyles({
+  icon: {
+    marginRight: 8
+  }
+});
 
 const sorts = [
   { flagState: "ALPHA", description: "Alphabetically" },
@@ -18,36 +29,21 @@ const sorts = [
   { flagState: "SOURCE", description: "Source" }
 ];
 
-const useStyles = makeStyles({
-  icon: {
-    marginRight: 8
-  }
-});
+const LibrarySort = ({ flags, setLibraryFlag }: Props) => {
+  const classes = useStyles();
 
-type Props = {
-  flags: LibraryFlagsType,
-  setLibraryFlag: Function
-};
+  const [anchorEl, setAnchorEl] = useState(null);
 
-type State = { anchorEl: ?HTMLElement };
-
-class LibrarySort extends Component<Props, State> {
-  state = {
-    anchorEl: null
+  const handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
-    this.setState({ anchorEl: event.currentTarget });
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
-  handleSortChange = (sortType: string) => () => {
-    const { flags, setLibraryFlag } = this.props;
-
-    const newSortObj = { ...flags.sort }; // not a deep clone but I thnk it works immutably
+  const handleSortChange = (sortType: string) => () => {
+    const newSortObj = { ...flags.sort }; // not a deep clone but I think it works immutably
 
     if (flags.sort.type === sortType) {
       const newDirection =
@@ -61,48 +57,43 @@ class LibrarySort extends Component<Props, State> {
     return setLibraryFlag("sort", newSortObj);
   };
 
-  render() {
-    const { classes, flags } = this.props;
-    const { anchorEl } = this.state;
+  return (
+    <>
+      <Tooltip title="Sort">
+        <IconButton onClick={handleClick}>
+          <Icon>sort_by_alpha</Icon>
+        </IconButton>
+      </Tooltip>
 
-    return (
-      <>
-        <Tooltip title="Sort">
-          <IconButton onClick={this.handleClick}>
-            <Icon>sort_by_alpha</Icon>
-          </IconButton>
-        </Tooltip>
-
-        {/* getContentAnchorEl must be null to make anchorOrigin work */}
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-          getContentAnchorEl={null}
-          open={Boolean(anchorEl)}
-          onClose={this.handleClose}
-        >
-          {sorts.map(sort => (
-            <MenuItem
-              key={sort.flagState}
-              onClick={this.handleSortChange(sort.flagState)}
-            >
-              <>
-                <Icon className={classes.icon}>
-                  {iconValue(
-                    flags.sort.type,
-                    flags.sort.direction,
-                    sort.flagState
-                  )}
-                </Icon>
-                <Typography>{sort.description}</Typography>
-              </>
-            </MenuItem>
-          ))}
-        </Menu>
-      </>
-    );
-  }
-}
+      {/* getContentAnchorEl must be null to make anchorOrigin work */}
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        getContentAnchorEl={null}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        {sorts.map(sort => (
+          <MenuItem
+            key={sort.flagState}
+            onClick={handleSortChange(sort.flagState)}
+          >
+            <>
+              <Icon className={classes.icon}>
+                {iconValue(
+                  flags.sort.type,
+                  flags.sort.direction,
+                  sort.flagState
+                )}
+              </Icon>
+              <Typography>{sort.description}</Typography>
+            </>
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+};
 
 // Helper methods
 function iconValue(
