@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React, { useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -8,93 +8,63 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 
-// TODO: pressing ESC to clear and close the search? That would be cool.
+// TODO: Animate search bar in and out
+// TODO: pressing ESC to clear and close the search?
 
 type Props = { searchQuery: string, onSearchChange: Function };
 
-type State = { searchVisible: boolean };
+const LibrarySearch = ({ searchQuery, onSearchChange }: Props) => {
+  const [searchVisible, setSearchVisible] = useState(false);
 
-class LibrarySearch extends Component<Props, State> {
-  constructor() {
-    super();
-    this.state = { searchVisible: false };
-
-    // TODO: Animate search bar in and out.
-    //       I tried before, but was having trouble figuring out how to do it.
-
-    // this.formControlRef = React.createRef();
-    this.inputRef = React.createRef();
-
-    // e.g. a property of Input would be
-    // inputRef is Material-UI's non-standard way of handling refs
-    // inputRef={(input) => {
-    //   this.inputRef = input;
-    // }}
-  }
-
-  inputRef = null;
-
-  handleClick = () => {
-    this.setState({ searchVisible: true });
-    // this.inputRef.focus();
+  const handleClick = () => {
+    setSearchVisible(true);
   };
 
-  handleChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    this.props.onSearchChange(event.currentTarget.value);
+  const handleChange = (event: SyntheticEvent<HTMLInputElement>) => {
+    onSearchChange(event.currentTarget.value);
   };
 
-  handleClearSearch = () => {
-    // this.formControlRef
-    // this.inputRef.blur(); // Remove focus from input
-    this.setState({ searchVisible: false });
-    this.props.onSearchChange("");
+  const handleClearSearch = () => {
+    setSearchVisible(false);
+    onSearchChange("");
   };
 
-  handleBlur = () => {
-    // TODO: clicking on the search icon will call this because it's not part of the input
-    //       not my intended interaction, but maybe not an important fix?
-    if (!this.props.searchQuery) {
-      this.setState({ searchVisible: false });
-      this.props.onSearchChange("");
+  const handleBlur = () => {
+    if (!searchQuery) {
+      setSearchVisible(false);
+      onSearchChange("");
     }
   };
 
-  render() {
-    const { searchQuery } = this.props;
-    const { searchVisible } = this.state;
+  return (
+    <>
+      <Tooltip title="Search">
+        <IconButton onClick={handleClick}>
+          <Icon>search</Icon>
+        </IconButton>
+      </Tooltip>
 
-    return (
-      <>
-        <Tooltip title="Search">
-          <IconButton onClick={this.handleClick}>
-            <Icon>search</Icon>
-          </IconButton>
-        </Tooltip>
-
-        {searchVisible ? (
-          <FormControl>
-            <InputLabel htmlFor="library-search-text">
-              Search Library
-            </InputLabel>
-            <Input
-              id="library-search-text"
-              value={searchQuery}
-              autoFocus
-              onChange={this.handleChange}
-              onBlur={this.handleBlur}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton onClick={this.handleClearSearch}>
-                    <Icon>close</Icon>
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
-        ) : null}
-      </>
-    );
-  }
-}
+      {searchVisible ? (
+        <FormControl>
+          <InputLabel htmlFor="library-search-text">Search Library</InputLabel>
+          <Input
+            id="library-search-text"
+            value={searchQuery}
+            autoFocus
+            onChange={handleChange}
+            onBlur={handleBlur}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton onClick={handleClearSearch}>
+                  <Icon>close</Icon>
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+      ) : null}
+    </>
+  );
+};
 
 export default LibrarySearch;
