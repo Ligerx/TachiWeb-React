@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React, { useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -22,109 +22,95 @@ type Props = {
   onDownloadedFilterChange: Function
 };
 
-type State = { anchorEl: ?HTMLElement };
+const MangaInfoFilter = ({
+  flags,
+  onReadFilterChange,
+  onDownloadedFilterChange
+}: Props) => {
+  const [anchorEl, setAnchorEl] = useState(null);
 
-class MangaInfoFilter extends Component<Props, State> {
-  state = {
-    anchorEl: null
+  const handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleClick = (event: SyntheticEvent<HTMLButtonElement>) => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handleRemoveFilters = () => {
-    const { onReadFilterChange, onDownloadedFilterChange } = this.props;
-
+  const handleRemoveFilters = () => {
     onReadFilterChange("SHOW_ALL");
     onDownloadedFilterChange("SHOW_ALL");
 
-    this.setState({ anchorEl: null }); // Also close the menu
+    setAnchorEl(null); // Also close the menu
   };
 
-  handleClose = () => {
-    this.setState({ anchorEl: null });
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  handleReadClick = (e: SyntheticEvent<>) => {
+  const handleReadClick = (e: SyntheticEvent<>) => {
     e.preventDefault();
-    const { flags, onReadFilterChange } = this.props;
     const newReadFlag =
       flags.readFilter === "SHOW_ALL" ? "SHOW_READ" : "SHOW_ALL";
     onReadFilterChange(newReadFlag);
   };
 
-  handleUnreadClick = (e: SyntheticEvent<>) => {
+  const handleUnreadClick = (e: SyntheticEvent<>) => {
     e.preventDefault();
-    const { flags, onReadFilterChange } = this.props;
     const newReadFlag =
       flags.readFilter === "SHOW_ALL" ? "SHOW_UNREAD" : "SHOW_ALL";
     onReadFilterChange(newReadFlag);
   };
 
-  handleDownloadedClick = (e: SyntheticEvent<>) => {
+  const handleDownloadedClick = (e: SyntheticEvent<>) => {
     e.preventDefault();
-    const { flags, onDownloadedFilterChange } = this.props;
     const newDownloadedFlag =
       flags.downloadedFilter === "SHOW_ALL" ? "SHOW_DOWNLOADED" : "SHOW_ALL";
     onDownloadedFilterChange(newDownloadedFlag);
   };
 
-  render() {
-    const { flags } = this.props;
-    const { anchorEl } = this.state;
+  const readIsDisabled = flags.readFilter === "SHOW_UNREAD";
+  const unreadIsDisabled = flags.readFilter === "SHOW_READ";
 
-    const readIsDisabled = flags.readFilter === "SHOW_UNREAD";
-    const unreadIsDisabled = flags.readFilter === "SHOW_READ";
+  return (
+    <>
+      <Tooltip title="Filter">
+        <IconButton onClick={handleClick}>
+          <Icon>filter_list</Icon>
+        </IconButton>
+      </Tooltip>
 
-    return (
-      <>
-        <Tooltip title="Filter">
-          <IconButton onClick={this.handleClick}>
-            <Icon>filter_list</Icon>
-          </IconButton>
-        </Tooltip>
+      {/* getContentAnchorEl must be null to make anchorOrigin work */}
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        getContentAnchorEl={null}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleReadClick} disabled={readIsDisabled}>
+          <FormControlLabel
+            label="Read"
+            control={<Checkbox checked={flags.readFilter === "SHOW_READ"} />}
+          />
+        </MenuItem>
 
-        {/* getContentAnchorEl must be null to make anchorOrigin work */}
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-          getContentAnchorEl={null}
-          open={Boolean(anchorEl)}
-          onClose={this.handleClose}
-        >
-          <MenuItem onClick={this.handleReadClick} disabled={readIsDisabled}>
-            <FormControlLabel
-              label="Read"
-              control={<Checkbox checked={flags.readFilter === "SHOW_READ"} />}
-            />
-          </MenuItem>
+        <MenuItem onClick={handleUnreadClick} disabled={unreadIsDisabled}>
+          <FormControlLabel
+            label="Unread"
+            control={<Checkbox checked={flags.readFilter === "SHOW_UNREAD"} />}
+          />
+        </MenuItem>
 
-          <MenuItem
-            onClick={this.handleUnreadClick}
-            disabled={unreadIsDisabled}
-          >
-            <FormControlLabel
-              label="Unread"
-              control={
-                <Checkbox checked={flags.readFilter === "SHOW_UNREAD"} />
-              }
-            />
-          </MenuItem>
+        <MenuItem onClick={handleDownloadedClick}>
+          <FormControlLabel
+            label="Downloaded"
+            control={
+              <Checkbox
+                checked={flags.downloadedFilter === "SHOW_DOWNLOADED"}
+              />
+            }
+          />
+        </MenuItem>
 
-          <MenuItem onClick={this.handleDownloadedClick}>
-            <FormControlLabel
-              label="Downloaded"
-              control={
-                <Checkbox
-                  checked={flags.downloadedFilter === "SHOW_DOWNLOADED"}
-                />
-              }
-            />
-          </MenuItem>
-
-          {/* TODO: Bookmarked information is not currently stored by the server */}
-          {/*
+        {/* TODO: Bookmarked information is not currently stored by the server */}
+        {/*
           <MenuItem onClick={null}>
             <FormControlLabel
               label="Bookmarked"
@@ -133,11 +119,10 @@ class MangaInfoFilter extends Component<Props, State> {
           </MenuItem>
           */}
 
-          <MenuItem onClick={this.handleRemoveFilters}>Remove Filters</MenuItem>
-        </Menu>
-      </>
-    );
-  }
-}
+        <MenuItem onClick={handleRemoveFilters}>Remove Filters</MenuItem>
+      </Menu>
+    </>
+  );
+};
 
 export default MangaInfoFilter;
