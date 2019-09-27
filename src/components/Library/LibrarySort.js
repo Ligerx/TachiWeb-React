@@ -7,7 +7,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import type { LibraryFlagsType } from "types";
 import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 
 const sorts = [
   { flagState: "ALPHA", description: "Alphabetically" },
@@ -18,14 +18,13 @@ const sorts = [
   { flagState: "SOURCE", description: "Source" }
 ];
 
-const styles = {
+const useStyles = makeStyles({
   icon: {
     marginRight: 8
   }
-};
+});
 
 type Props = {
-  classes: Object, // injected styles
   flags: LibraryFlagsType,
   setLibraryFlag: Function
 };
@@ -117,4 +116,4 @@ function iconValue(
   return "";
 }
 
-export default withStyles(styles)(LibrarySort);
+export default LibrarySort;

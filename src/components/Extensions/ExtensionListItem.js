@@ -5,30 +5,26 @@ import type { ExtensionType } from "types";
 import ListItem from "@material-ui/core/ListItem";
 import Avatar from "@material-ui/core/Avatar";
 import { Server } from "api";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import { langPrettyPrint } from "components/utils";
 
-const styles = () => ({
+const useStyles = makeStyles({
   avatar: { borderRadius: 0 },
   secondary: { right: 24 }
 });
 
 type Props = {
-  classes: Object,
   extension: ExtensionType,
   divider: boolean,
   children: React.Node
 };
 
-const ExtensionListItem = ({
-  classes,
-  extension,
-  divider,
-  children
-}: Props) => {
+const ExtensionListItem = ({ extension, divider, children }: Props) => {
   const { pkg_name, name, lang, version_name } = extension;
+
+  const classes = useStyles();
 
   return (
     <ListItem divider={divider}>
@@ -44,4 +40,4 @@ const ExtensionListItem = ({
   );
 };
 
-export default withStyles(styles)(ExtensionListItem);
+export default ExtensionListItem;

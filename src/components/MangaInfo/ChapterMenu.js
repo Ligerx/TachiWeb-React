@@ -5,21 +5,21 @@ import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import type { ChapterType } from "types";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 
 // Because this is nested inside ChapterListItem, which wraps the entire thing with a Link
 // You have to e.preventDefault() everywhere to stop from navigating to the Reader unintentionally
 
-const styles = {
+const useStyles = makeStyles({
   hiddenMenuItem: { display: "none" }
-};
+});
 
 type Props = {
-  classes: Object, // injected styles
   chapter: ChapterType,
   toggleRead: Function
 };
+
 type State = { anchorEl: ?HTMLElement };
 
 class ChapterMenu extends Component<Props, State> {
@@ -103,4 +103,4 @@ class ChapterMenu extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(ChapterMenu);
+export default ChapterMenu;
