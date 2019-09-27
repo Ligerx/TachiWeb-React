@@ -12,12 +12,10 @@ import type { Manga } from "@tachiweb/api-client";
 import type { ChapterType, ChapterPageLinkState } from "types";
 import { Server, Client } from "api";
 import { makeStyles } from "@material-ui/styles";
-import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import ImageWithLoader from "components/Reader/ImageWithLoader";
 import ReaderOverlay from "components/Reader/ReaderOverlay";
-import ResponsiveGrid from "components/ResponsiveGrid";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import {
@@ -54,15 +52,13 @@ type RouterProps = {
 const useStyles = makeStyles({
   page: {
     width: "100%",
-    marginBottom: 80
+    marginTop: 144,
+    marginBottom: 60
   },
   navButtonsParent: {
     display: "flex",
     justifyContent: "center",
     marginBottom: 40
-  },
-  topOffset: {
-    marginTop: 144
   }
 });
 
@@ -213,27 +209,26 @@ const SinglePageReader = ({
         onJumpToPage={setPage}
       />
 
-      <ResponsiveGrid className={classes.topOffset}>
-        <Grid item xs={12}>
-          <ImageWithLoader
-            src={Server.image(mangaInfo.id, chapter.id, page)}
-            className={classes.page}
-            alt={`${chapter.name} - Page ${page + 1}`}
-            onClick={handleNextPage}
-          />
-        </Grid>
+      {/* [September 25, 2019] ImageWithLoader doesn't currently accept arbitrary
+          props as expected, so styling a wrapping div instead  */}
+      <div className={classes.page}>
+        <ImageWithLoader
+          src={Server.image(mangaInfo.id, chapter.id, page)}
+          alt={`${chapter.name} - Page ${page + 1}`}
+          onClick={handleNextPage}
+        />
+      </div>
 
-        <Grid item xs={12} className={classes.navButtonsParent}>
-          <Button onClick={handlePrevPage} disabled={!hasPrevPage}>
-            <Icon>navigate_before</Icon>
-            Previous Page
-          </Button>
-          <Button onClick={handleNextPage} disabled={!hasNextPage}>
-            Next Page
-            <Icon>navigate_next</Icon>
-          </Button>
-        </Grid>
-      </ResponsiveGrid>
+      <div className={classes.navButtonsParent}>
+        <Button onClick={handlePrevPage} disabled={!hasPrevPage}>
+          <Icon>navigate_before</Icon>
+          Previous Page
+        </Button>
+        <Button onClick={handleNextPage} disabled={!hasNextPage}>
+          Next Page
+          <Icon>navigate_next</Icon>
+        </Button>
+      </div>
     </>
   );
 };

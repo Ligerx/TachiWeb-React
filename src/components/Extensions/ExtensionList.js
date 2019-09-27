@@ -3,7 +3,6 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import type { ExtensionType } from "types";
 import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ExtensionListItem from "components/Extensions/ExtensionListItem";
@@ -18,7 +17,7 @@ type Props = {
   extensions: Array<ExtensionType>
 };
 
-const ExtensionList = ({ title, extensions }: Props) => {
+const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
   const dispatch = useDispatch();
 
   const handleInstallExtension = packageName =>
@@ -30,7 +29,7 @@ const ExtensionList = ({ title, extensions }: Props) => {
   if (!extensions.length) return null;
 
   return (
-    <Grid item xs={12}>
+    <div {...otherProps}>
       <Typography variant="h5" gutterBottom>
         {title} ({extensions.length})
       </Typography>
@@ -61,7 +60,7 @@ const ExtensionList = ({ title, extensions }: Props) => {
           })}
         </List>
       </Paper>
-    </Grid>
+    </div>
   );
 };
 

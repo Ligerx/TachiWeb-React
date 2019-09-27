@@ -75,7 +75,7 @@ const dropzoneContent = ({
   return "Drag and Drop or Click Here to upload your backup file";
 };
 
-const RestoreCard = () => {
+const RestoreCard = ({ ...otherProps }: {}) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -106,7 +106,7 @@ const RestoreCard = () => {
 
   return (
     <>
-      <Card>
+      <Card {...otherProps}>
         <CardContent>
           <Typography gutterBottom variant="h5">
             Restore Your Library

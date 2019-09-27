@@ -1,7 +1,6 @@
 // @flow
 import React, { memo, createContext, useContext } from "react";
-import Grid from "@material-ui/core/Grid";
-import ResponsiveGrid from "components/ResponsiveGrid";
+import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import ChapterListItem from "components/MangaInfo/ChapterListItem";
 import type { ChapterType } from "types";
@@ -10,7 +9,7 @@ import { makeStyles } from "@material-ui/styles";
 import { FixedSizeList, areEqual } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 
-// TODO: I've made ResponsiveGrid maxWidth="xs". What happens when the chapter title is too long?
+// TODO: I've made Container maxWidth="md". What happens when the chapter title is too long?
 
 // Since I want this to fill the remaining vertical screen space, I'm relying on flexbox.
 // The parent of this component should use something like this:
@@ -63,33 +62,28 @@ const MangaInfoChapterList = ({ mangaInfo, chapters }: Props) => {
   if (!chapters.length) return null;
 
   return (
-    <ResponsiveGrid
-      maxWidth="xs"
-      parentProps={{ className: classes.virtualizedListParent }}
-    >
-      <Grid item xs={12}>
-        <Paper className={classes.paper}>
-          <RowContext.Provider value={mangaInfo}>
-            {/* itemSize is hard coded using what I saw in the inspector */}
-            <AutoSizer>
-              {({ height, width }) => (
-                <FixedSizeList
-                  height={height}
-                  width={width}
-                  itemSize={65}
-                  itemCount={chapters.length}
-                  itemData={chapters}
-                  itemKey={(index, data) => data[index].id}
-                  overscanCount={10}
-                >
-                  {Row}
-                </FixedSizeList>
-              )}
-            </AutoSizer>
-          </RowContext.Provider>
-        </Paper>
-      </Grid>
-    </ResponsiveGrid>
+    <Container maxWidth="sm" className={classes.virtualizedListParent}>
+      <Paper className={classes.paper}>
+        <RowContext.Provider value={mangaInfo}>
+          {/* itemSize is hard coded using what I saw in the inspector */}
+          <AutoSizer>
+            {({ height, width }) => (
+              <FixedSizeList
+                height={height}
+                width={width}
+                itemSize={65}
+                itemCount={chapters.length}
+                itemData={chapters}
+                itemKey={(index, data) => data[index].id}
+                overscanCount={10}
+              >
+                {Row}
+              </FixedSizeList>
+            )}
+          </AutoSizer>
+        </RowContext.Provider>
+      </Paper>
+    </Container>
   );
 };
 

@@ -32,6 +32,7 @@ const useStyles = makeStyles({
     // Overlay it above the image
     width: "100%",
     position: "fixed",
+    top: 0,
     zIndex: 1,
 
     // Visible only on hover
