@@ -58,10 +58,12 @@ const Library = ({ match: { url } }: Props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchLibrary()).then(() => dispatch(fetchUnread()));
+    dispatch(fetchLibrary()).then(() => {
+      dispatch(fetchUnread());
+      dispatch(fetchCategories());
+    });
     dispatch(fetchLibraryFlags());
     dispatch(fetchSources());
-    dispatch(fetchCategories());
   }, [dispatch]);
 
   const handleSelectManga = (mangaId: number, isSelected: boolean) => {
