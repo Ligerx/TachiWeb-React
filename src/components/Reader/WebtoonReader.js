@@ -105,16 +105,25 @@ const WebtoonReader = ({
       : null;
 
   const handleJumpToPage = (pageNum: number, options?: ScrollBehavior) => {
+    console.error("Inside handleJumpToPage", pageNum, options);
+    console.error("setting jumpToPageRef.current = ", pageNum);
     jumpToPageRef.current = pageNum;
     scrollToPage(pageNum, options);
   };
 
   const handlePageEnter = (index: number) => {
     return () => {
+      console.error("Inside handlePageEnter", index);
+      console.error("jumpToPageRef.current is", jumpToPageRef.current);
+
       // Clear page jump ref when we've reached our destination page
       if (jumpToPageRef.current === index) {
+        console.error("setting jumpToPageRef.current = null");
+
         jumpToPageRef.current = null;
       }
+
+      console.error("setPagesInView to ", [...pagesInView, index].sort());
 
       setPagesInView(prevPagesInView => [...prevPagesInView, index].sort());
     };
@@ -135,7 +144,8 @@ const WebtoonReader = ({
     if (chapter.read || chapter.last_page_read === 0) return;
 
     // Initialize the starting page. This only runs once on first mount.
-    handleJumpToPage(chapter.last_page_read, { behavior: "auto" });
+    handleJumpToPage(chapter.last_page_read);
+    // handleJumpToPage(chapter.last_page_read, { behavior: "auto" });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const topPageInView: ?number = pagesInView[0];

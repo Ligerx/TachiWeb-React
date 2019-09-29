@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/styles";
@@ -79,6 +79,10 @@ const ImageWithLoader = ({
     img.onerror = handleImageError;
     img.src = src;
   };
+
+  useEffect(() => {
+    console.error("ImageWithLoader, preventLoading ===", preventLoading);
+  }, [preventLoading]);
 
   const image = (
     <img
