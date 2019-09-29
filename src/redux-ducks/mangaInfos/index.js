@@ -1,5 +1,6 @@
 // @flow
 import type { Manga, MangaFlags, MangaViewer } from "@tachiweb/api-client";
+import produce from "immer";
 import { createLoadingSelector } from "redux-ducks/loading";
 import createCachedSelector from "re-reselect";
 import type { GlobalState, Action } from "redux-ducks/reducers";
@@ -12,7 +13,8 @@ import {
   UPDATE_MANGA_SUCCESS,
   TOGGLE_FAVORITE,
   TOGGLE_FAVORITE_SUCCESS,
-  SET_FLAG_REQUEST
+  SET_FLAG_REQUEST,
+  SET_VIEWER_REQUEST
 } from "./actions";
 
 // NOTE: for clarity, this will be called mangaInfos (with an s)
@@ -30,43 +32,55 @@ export default function mangaInfosReducer(
   state: State = {},
   action: Action
 ): State {
-  switch (action.type) {
-    case ADD_MANGA:
-      return { ...state, ...mangaArrayToObject(action.newManga) };
+  // Mutate Immer 'draft' to get an immutable copy of the new state
+  /* eslint-disable no-param-reassign, consistent-return */
+  return produce(state, draft => {
+    switch (action.type) {
+      case ADD_MANGA:
+        return { ...state, ...mangaArrayToObject(action.newManga) };
 
-    case FETCH_MANGA_CACHE:
-      return state;
+      case FETCH_MANGA_CACHE:
+        return state;
 
-    case FETCH_MANGA_SUCCESS:
-      return { ...state, [action.mangaInfo.id]: action.mangaInfo };
+      case FETCH_MANGA_SUCCESS:
+        return { ...state, [action.mangaInfo.id]: action.mangaInfo };
 
-    case UPDATE_MANGA_SUCCESS:
-      return { ...state, [action.mangaInfo.id]: action.mangaInfo };
+      case UPDATE_MANGA_SUCCESS:
+        return { ...state, [action.mangaInfo.id]: action.mangaInfo };
 
-    case TOGGLE_FAVORITE_SUCCESS:
-      return {
-        ...state,
-        [action.mangaId]: {
-          ...state[action.mangaId],
-          favorite: action.newFavoriteState
-        }
-      };
-
-    case SET_FLAG_REQUEST:
-      return {
-        ...state,
-        [action.mangaId]: {
-          ...state[action.mangaId],
-          flags: {
-            ...state[action.mangaId].flags,
-            [action.flag]: action.state
+      case TOGGLE_FAVORITE_SUCCESS:
+        return {
+          ...state,
+          [action.mangaId]: {
+            ...state[action.mangaId],
+            favorite: action.newFavoriteState
           }
-        }
-      };
+        };
 
-    default:
-      return state;
-  }
+      case SET_FLAG_REQUEST:
+        return {
+          ...state,
+          [action.mangaId]: {
+            ...state[action.mangaId],
+            flags: {
+              ...state[action.mangaId].flags,
+              [action.flag]: action.state
+            }
+          }
+        };
+
+      // Using immer here but I haven't migrated the whole reducer to immer yet
+      case SET_VIEWER_REQUEST: {
+        const { mangaId, viewer } = action.payload;
+        draft[mangaId].viewer = viewer;
+        break;
+      }
+
+      default:
+        return state;
+    }
+    /* eslint-enable no-param-reassign, consistent-return */
+  });
 }
 
 // ================================================================================
