@@ -11,8 +11,9 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import Link from "components/Link";
-import { selectMangaViewer } from "redux-ducks/mangaInfos";
 import { selectDefaultViewer } from "redux-ducks/settings";
+import { selectMangaViewer } from "redux-ducks/mangaInfos";
+import { setMangaViewer } from "redux-ducks/mangaInfos/actionCreators";
 
 type Props = {
   mangaId: number,
@@ -37,13 +38,15 @@ const ReaderOverlay = ({ mangaId, open, onClose }: Props) => {
   const viewer = useSelector(state => selectMangaViewer(state, mangaId));
   const defaultViewer = useSelector(selectDefaultViewer);
 
-  const blah2 = () => {};
+  const handleChangeViewer = event => {
+    dispatch(setMangaViewer(mangaId, event.target.value));
+  };
 
   return (
     <Dialog onClose={onClose} open={open}>
       <DialogTitle>Settings</DialogTitle>
       <DialogContent>
-        <Select value={viewer} onChange={blah2}>
+        <Select value={viewer} onChange={handleChangeViewer}>
           {Object.keys(viewerNames).map(viewerName => (
             <MenuItem key={viewerName} value={viewerName}>
               {viewerPrettyPrint(viewerName, defaultViewer)}
