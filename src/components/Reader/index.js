@@ -1,6 +1,8 @@
 // @flow
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import type { MangaViewer } from "@tachiweb/api-client";
+import type { SettingViewerType } from "types";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import compact from "lodash/compact";
 import SinglePageReader from "components/Reader/SinglePageReader";
@@ -69,7 +71,9 @@ const Reader = ({ match: { params } }: RouterProps) => {
     return <FullScreenLoading />;
   }
 
-  if (defaultViewer === "webtoon") {
+  const viewer = getViewer(mangaInfo.viewer, defaultViewer);
+
+  if (viewer === "WEBTOON") {
     return (
       <WebtoonReader
         mangaInfo={mangaInfo}
@@ -80,17 +84,35 @@ const Reader = ({ match: { params } }: RouterProps) => {
       />
     );
   }
+  // [Sept 28, 2019] SinglePageReader doesn't differentiate between L->R or R->L
+  if (viewer === "LEFT_TO_RIGHT" || viewer === "RIGHT_TO_LEFT") {
+    return (
+      <SinglePageReader
+        mangaInfo={mangaInfo}
+        chapter={chapter}
+        pageCount={pageCount}
+        prevChapter={prevChapter}
+        nextChapter={nextChapter}
+        prevChapterPageCount={prevChapterPageCount}
+      />
+    );
+  }
 
-  return (
-    <SinglePageReader
-      mangaInfo={mangaInfo}
-      chapter={chapter}
-      pageCount={pageCount}
-      prevChapter={prevChapter}
-      nextChapter={nextChapter}
-      prevChapterPageCount={prevChapterPageCount}
-    />
-  );
+  console.error("No reader type specified???");
 };
+
+function getViewer(mangaViewer: MangaViewer, settingViewer: SettingViewerType) {
+  if (mangaViewer === "DEFAULT") {
+    if (settingViewer == null) {
+      // default value in case both manga and setting viewers are not set
+      return "LEFT_TO_RIGHT";
+    }
+    // [Sept 28, 2019] mismatch between uppercase manga viewer (eg. "WEBTOON") and
+    // lowercase setting viewer (eg. "webtoon"). Using uppercase right now.
+    return settingViewer.toUpperCase();
+  }
+
+  return mangaViewer;
+}
 
 export default Reader;
