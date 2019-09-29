@@ -1,13 +1,13 @@
 // @flow
 import { Server } from "api";
-import type { MangaFlags } from "@tachiweb/api-client";
+import type { MangaFlags, MangaViewer } from "@tachiweb/api-client";
 import type { ThunkAction } from "redux-ducks/reducers";
 import { selectShouldReloadLibrary } from "redux-ducks/library";
 import {
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES
 } from "redux-ducks/library/actions";
-import { selectMangaFlags } from ".";
+import { selectMangaFlags, selectMangaViewer } from ".";
 import {
   FETCH_MANGA_CACHE,
   FETCH_MANGA_REQUEST,
@@ -22,7 +22,11 @@ import {
   SET_FLAG_NO_CHANGE,
   SET_FLAG_REQUEST,
   SET_FLAG_SUCCESS,
-  SET_FLAG_FAILURE
+  SET_FLAG_FAILURE,
+  SET_VIEWER_NO_CHANGE,
+  SET_VIEWER_REQUEST,
+  SET_VIEWER_SUCCESS,
+  SET_VIEWER_FAILURE
 } from "./actions";
 
 // ================================================================================
@@ -157,5 +161,36 @@ export function setFlag(
         () => dispatch({ type: SET_FLAG_SUCCESS }),
         () => dispatch({ type: SET_FLAG_FAILURE })
       );
+  };
+}
+
+export function setMangaViewer(
+  mangaId: number,
+  viewer: MangaViewer
+): ThunkAction {
+  return async (dispatch, getState) => {
+    const prevViewer = selectMangaViewer(getState(), mangaId);
+
+    if (prevViewer === viewer) {
+      return dispatch({
+        type: SET_VIEWER_NO_CHANGE,
+        meta: { mangaId, viewer }
+      });
+    }
+
+    dispatch({
+      type: SET_VIEWER_REQUEST,
+      payload: {
+        mangaId,
+        viewer
+      }
+    });
+
+    try {
+      await Server.api().setMangaViewer(mangaId, viewer);
+      return dispatch({ type: SET_FLAG_SUCCESS });
+    } catch (error) {
+      return dispatch({ type: SET_FLAG_FAILURE });
+    }
   };
 }

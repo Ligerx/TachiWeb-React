@@ -172,6 +172,7 @@ const WebtoonReader = ({
       />
 
       <ReaderOverlay
+        mangaId={mangaInfo.id}
         title={mangaInfo.title}
         chapterNum={chapter.chapter_number}
         pageCount={pageCount}

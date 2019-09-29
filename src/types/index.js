@@ -87,3 +87,16 @@ export type ChapterPageLinkState = $ReadOnly<{
 }>;
 
 export type PageCounts = $ReadOnly<{ [chapterId: number]: number }>;
+
+// [Written 5/10/2019] default viewer could be missing from the prefs object
+// There is no typing for prefs currently, so manually typing this.
+//
+// [Written 9/28/2019] The API specifies a "vertical" option, but leaving it out for now.
+// Since it's possible to have no setting, we need to include (null | void) here.
+// Settings currently uses lowercase but the reader API specifies using uppercase.
+export type SettingViewerType =
+  | "left_to_right"
+  | "right_to_left"
+  | "webtoon"
+  | null
+  | void;

@@ -4,7 +4,7 @@ import { createSelector } from "reselect";
 import UI_SETTINGS from "ui-settings";
 import { createLoadingSelector } from "redux-ducks/loading";
 import type { GlobalState, Action } from "redux-ducks/reducers";
-import type { PrefValue, PrefsType } from "types";
+import type { PrefValue, PrefsType, SettingViewerType } from "types";
 import {
   FETCH_PREFS,
   FETCH_PREFS_SUCCESS,
@@ -86,15 +86,7 @@ export const selectSettingsPrefs = (state: GlobalState) => state.settings.prefs;
 export const selectPrefValue = (state: GlobalState, key: string): PrefValue =>
   state.settings.prefs[key];
 
-// [Written 5/10/2019] default viewer could be missing from the prefs object
-// also, there is no typing for prefs currently, so manually typing this
-export type DefaultViewer =
-  | "left_to_right"
-  | "right_to_left"
-  | "webtoon"
-  | null
-  | void;
-export const selectDefaultViewer = (state: GlobalState): DefaultViewer =>
+export const selectDefaultViewer = (state: GlobalState): SettingViewerType =>
   state.settings.prefs.pref_default_viewer_key;
 
 // caching arrays to keep selectors pure

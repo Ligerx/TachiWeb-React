@@ -1,12 +1,14 @@
 // @flow
-import * as React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
 import PageSlider from "components/Reader/PageSlider";
+import SettingsDialog from "components/Reader/SettingsDialog";
 import Link from "components/Link";
 import { chapterNumPrettyPrint } from "components/utils";
 
@@ -17,6 +19,7 @@ import { chapterNumPrettyPrint } from "components/utils";
 //       https://github.com/mui-org/material-ui/issues/4793
 
 type Props = {
+  mangaId: number,
   title: string,
   chapterNum: number,
   pageCount: number,
@@ -45,6 +48,7 @@ const useStyles = makeStyles({
 });
 
 const ReaderOverlay = ({
+  mangaId,
   title,
   chapterNum,
   pageCount,
@@ -55,6 +59,15 @@ const ReaderOverlay = ({
   onJumpToPage
 }: Props) => {
   const classes = useStyles();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const handleSettingsClick = () => {
+    setSettingsOpen(true);
+  };
+
+  const handleSettingsClose = () => {
+    setSettingsOpen(false);
+  };
 
   return (
     <AppBar position="static" color="default" className={classes.overlay}>
@@ -70,6 +83,18 @@ const ReaderOverlay = ({
         <Typography variant="subtitle1">
           Chapter {chapterNumPrettyPrint(chapterNum)}
         </Typography>
+
+        <Tooltip title="Settings">
+          <IconButton onClick={handleSettingsClick}>
+            <Icon>settings</Icon>
+          </IconButton>
+        </Tooltip>
+
+        <SettingsDialog
+          mangaId={mangaId}
+          open={settingsOpen}
+          onClose={handleSettingsClose}
+        />
       </Toolbar>
 
       <Toolbar>
