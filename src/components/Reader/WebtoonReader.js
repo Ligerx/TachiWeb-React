@@ -93,6 +93,7 @@ const WebtoonReader = ({
 
   // Use jumpToPageRef to know when you are jumping and when you reached your destination
   const jumpToPageRef = useRef<?number>(null);
+  const [jumpingToPage, setJumpingToPage] = useState<?number>(null);
 
   const prevChapterUrl =
     prevChapter != null
@@ -106,21 +107,27 @@ const WebtoonReader = ({
 
   const handleJumpToPage = (pageNum: number, options?: ScrollBehavior) => {
     console.error("Inside handleJumpToPage", pageNum, options);
-    console.error("setting jumpToPageRef.current = ", pageNum);
-    jumpToPageRef.current = pageNum;
-    scrollToPage(pageNum, options);
+    // console.error("setting jumpToPageRef.current = ", pageNum);
+    // jumpToPageRef.current = pageNum;
+    setJumpingToPage(pageNum);
+    // scrollToPage(pageNum, options);
+    scrollToPage(pageNum, { behavior: "auto" });
   };
 
   const handlePageEnter = (index: number) => {
     return () => {
       console.error("Inside handlePageEnter", index);
-      console.error("jumpToPageRef.current is", jumpToPageRef.current);
+      // console.error("jumpToPageRef.current is", jumpToPageRef.current);
 
       // Clear page jump ref when we've reached our destination page
-      if (jumpToPageRef.current === index) {
-        console.error("setting jumpToPageRef.current = null");
+      // if (jumpToPageRef.current === index) {
+      //   console.error("setting jumpToPageRef.current = null");
 
-        jumpToPageRef.current = null;
+      //   jumpToPageRef.current = null;
+      // }
+
+      if (jumpingToPage === index) {
+        setJumpingToPage(null);
       }
 
       console.error("setPagesInView to ", [...pagesInView, index].sort());
@@ -144,8 +151,8 @@ const WebtoonReader = ({
     if (chapter.read || chapter.last_page_read === 0) return;
 
     // Initialize the starting page. This only runs once on first mount.
-    handleJumpToPage(chapter.last_page_read);
-    // handleJumpToPage(chapter.last_page_read, { behavior: "auto" });
+    // handleJumpToPage(chapter.last_page_read);
+    handleJumpToPage(chapter.last_page_read, { behavior: "auto" });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const topPageInView: ?number = pagesInView[0];
@@ -157,7 +164,8 @@ const WebtoonReader = ({
     lastPageInView, // Currently not preloading other in view pages
     pageCount,
     nextChapter ? nextChapter.id : null,
-    jumpToPageRef.current != null
+    // jumpToPageRef.current != null
+    jumpingToPage != null
   );
 
   // useUpdateReadingStatus() only takes 1 page currently
@@ -170,7 +178,8 @@ const WebtoonReader = ({
     mangaInfo.id,
     chapter.id,
     readingStatusPage,
-    jumpToPageRef.current != null
+    // jumpToPageRef.current != null
+    jumpingToPage != null
   );
 
   return (
@@ -211,7 +220,8 @@ const WebtoonReader = ({
                 src={Server.image(mangaInfo.id, chapter.id, index)}
                 alt={`${chapter.name} - Page ${index + 1}`}
                 lazyLoad
-                preventLoading={jumpToPageRef.current != null}
+                // preventLoading={jumpToPageRef.current != null}
+                preventLoading={jumpingToPage != null}
               />
             </div>
           </Waypoint>
