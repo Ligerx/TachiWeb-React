@@ -1,5 +1,5 @@
 // @flow
-import type { Manga } from "@tachiweb/api-client";
+import type { Manga, MangaViewer } from "@tachiweb/api-client";
 
 // ================================================================================
 // Fetch Manga
@@ -149,6 +149,33 @@ type SetFlagFailureAction = { type: SET_FLAG_FAILURE_TYPE };
 type SetFlagNoChangeAction = { type: SET_FLAG_NO_CHANGE_TYPE, meta: Object };
 
 // ================================================================================
+// Set Manga Viewer
+// ================================================================================
+
+// Action Constants and Types
+export const SET_VIEWER_REQUEST = "mangaInfos/SET_VIEWER_REQUEST";
+type SET_VIEWER_REQUEST_TYPE = "mangaInfos/SET_VIEWER_REQUEST";
+
+export const SET_VIEWER_SUCCESS = "mangaInfos/SET_VIEWER_SUCCESS";
+type SET_VIEWER_SUCCESS_TYPE = "mangaInfos/SET_VIEWER_SUCCESS";
+
+export const SET_VIEWER_FAILURE = "mangaInfos/SET_VIEWER_FAILURE";
+type SET_VIEWER_FAILURE_TYPE = "mangaInfos/SET_VIEWER_FAILURE";
+
+export const SET_VIEWER_NO_CHANGE = "mangaInfos/SET_VIEWER_NO_CHANGE";
+type SET_VIEWER_NO_CHANGE_TYPE = "mangaInfos/SET_VIEWER_NO_CHANGE";
+
+// Action Object Types
+type SetViewerRequestAction = {
+  type: SET_VIEWER_REQUEST_TYPE,
+  mangaId: number,
+  viewer: MangaViewer
+};
+type SetViewerSuccessAction = { type: SET_VIEWER_SUCCESS_TYPE };
+type SetViewerFailureAction = { type: SET_VIEWER_FAILURE_TYPE };
+type SetViewerNoChangeAction = { type: SET_VIEWER_NO_CHANGE_TYPE };
+
+// ================================================================================
 // Consolidated Action Type
 // ================================================================================
 export type MangaInfosAction =
@@ -166,4 +193,8 @@ export type MangaInfosAction =
   | SetFlagRequestAction
   | SetFlagSuccessAction
   | SetFlagFailureAction
-  | SetFlagNoChangeAction;
+  | SetFlagNoChangeAction
+  | SetViewerRequestAction
+  | SetViewerSuccessAction
+  | SetViewerFailureAction
+  | SetViewerNoChangeAction;
