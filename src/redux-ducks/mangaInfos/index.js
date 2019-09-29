@@ -1,5 +1,5 @@
 // @flow
-import type { Manga } from "@tachiweb/api-client";
+import type { Manga, MangaFlags, MangaViewer } from "@tachiweb/api-client";
 import { createLoadingSelector } from "redux-ducks/loading";
 import createCachedSelector from "re-reselect";
 import type { GlobalState, Action } from "redux-ducks/reducers";
@@ -70,6 +70,17 @@ export default function mangaInfosReducer(
 }
 
 // ================================================================================
+// Helper Functions
+// ================================================================================
+function mangaArrayToObject(mangaArray: Array<Manga>): State {
+  const mangaObject = {};
+  mangaArray.forEach(manga => {
+    mangaObject[manga.id] = manga;
+  });
+  return mangaObject;
+}
+
+// ================================================================================
 // Selectors
 // ================================================================================
 
@@ -100,16 +111,12 @@ export const selectIsFavorite: (
   // Cache Key
 )((state, mangaId) => mangaId);
 
-export const selectMangaFlags = (state: GlobalState, mangaId: number) =>
-  state.mangaInfos[mangaId].flags;
+export const selectMangaFlags = (
+  state: GlobalState,
+  mangaId: number
+): ?MangaFlags => state.mangaInfos[mangaId].flags;
 
-// ================================================================================
-// Helper Functions
-// ================================================================================
-function mangaArrayToObject(mangaArray: Array<Manga>): State {
-  const mangaObject = {};
-  mangaArray.forEach(manga => {
-    mangaObject[manga.id] = manga;
-  });
-  return mangaObject;
-}
+export const selectMangaViewer = (
+  state: GlobalState,
+  mangaId: number
+): ?MangaViewer => state.mangaInfos[mangaId].viewer;
