@@ -100,12 +100,3 @@ export type SettingViewerType =
   | "webtoon"
   | null
   | void;
-
-// Creating a separate type for Reader since it's slightly different than SettingViewerType
-// Settings currently uses lowercase but the reader API specifies using uppercase
-// "VERTICAL" also being left out here for now
-export type ReaderViewerType =
-  | "DEFAULT"
-  | "LEFT_TO_RIGHT"
-  | "RIGHT_TO_LEFT"
-  | "WEBTOON";
