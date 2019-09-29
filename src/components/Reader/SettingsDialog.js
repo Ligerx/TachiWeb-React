@@ -7,7 +7,9 @@ import { makeStyles } from "@material-ui/styles";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import Select from "@material-ui/core/Select";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import Link from "components/Link";
@@ -43,17 +45,27 @@ const ReaderOverlay = ({ mangaId, open, onClose }: Props) => {
   };
 
   return (
-    <Dialog onClose={onClose} open={open}>
+    <Dialog onClose={onClose} open={open} fullWidth maxWidth="xs">
       <DialogTitle>Settings</DialogTitle>
       <DialogContent>
-        <Select value={viewer} onChange={handleChangeViewer}>
+        <TextField
+          select
+          fullWidth
+          label="Viewer for this series"
+          value={viewer}
+          onChange={handleChangeViewer}
+          variant="outlined"
+        >
           {Object.keys(viewerNames).map(viewerName => (
             <MenuItem key={viewerName} value={viewerName}>
               {viewerPrettyPrint(viewerName, defaultViewer)}
             </MenuItem>
           ))}
-        </Select>
+        </TextField>
       </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
     </Dialog>
   );
 };
