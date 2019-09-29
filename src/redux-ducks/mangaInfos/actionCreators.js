@@ -180,8 +180,10 @@ export function setMangaViewer(
 
     dispatch({
       type: SET_VIEWER_REQUEST,
-      mangaId,
-      viewer
+      payload: {
+        mangaId,
+        viewer
+      }
     });
 
     try {

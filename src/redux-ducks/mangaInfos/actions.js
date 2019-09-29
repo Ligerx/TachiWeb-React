@@ -168,8 +168,10 @@ type SET_VIEWER_NO_CHANGE_TYPE = "mangaInfos/SET_VIEWER_NO_CHANGE";
 // Action Object Types
 type SetViewerRequestAction = {
   type: SET_VIEWER_REQUEST_TYPE,
-  mangaId: number,
-  viewer: MangaViewer
+  payload: {
+    mangaId: number,
+    viewer: MangaViewer
+  }
 };
 type SetViewerSuccessAction = { type: SET_VIEWER_SUCCESS_TYPE };
 type SetViewerFailureAction = { type: SET_VIEWER_FAILURE_TYPE };
