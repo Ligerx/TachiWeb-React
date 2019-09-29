@@ -19,6 +19,7 @@ import { chapterNumPrettyPrint } from "components/utils";
 //       https://github.com/mui-org/material-ui/issues/4793
 
 type Props = {
+  mangaId: number,
   title: string,
   chapterNum: number,
   pageCount: number,
@@ -47,6 +48,7 @@ const useStyles = makeStyles({
 });
 
 const ReaderOverlay = ({
+  mangaId,
   title,
   chapterNum,
   pageCount,
@@ -88,7 +90,11 @@ const ReaderOverlay = ({
           </IconButton>
         </Tooltip>
 
-        <SettingsDialog open={settingsOpen} onClose={handleSettingsClose} />
+        <SettingsDialog
+          mangaId={mangaId}
+          open={settingsOpen}
+          onClose={handleSettingsClose}
+        />
       </Toolbar>
 
       <Toolbar>

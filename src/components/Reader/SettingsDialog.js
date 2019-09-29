@@ -11,9 +11,11 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import Link from "components/Link";
+import { selectMangaViewer } from "redux-ducks/mangaInfos";
 import { selectDefaultViewer } from "redux-ducks/settings";
 
 type Props = {
+  mangaId: number,
   open: boolean,
   onClose: () => any
 };
@@ -28,23 +30,23 @@ const viewerNames = {
   WEBTOON: "Webtoon"
 };
 
-const ReaderOverlay = ({ open, onClose }: Props) => {
+const ReaderOverlay = ({ mangaId, open, onClose }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
+  const viewer = useSelector(state => selectMangaViewer(state, mangaId));
   const defaultViewer = useSelector(selectDefaultViewer);
 
-  const blah = "";
   const blah2 = () => {};
 
   return (
     <Dialog onClose={onClose} open={open}>
       <DialogTitle>Settings</DialogTitle>
       <DialogContent>
-        <Select value={blah} onChange={blah2}>
-          {Object.keys(viewerNames).map(viewer => (
-            <MenuItem key={viewer} value={viewer}>
-              {viewerPrettyPrint(viewer, defaultViewer)}
+        <Select value={viewer} onChange={blah2}>
+          {Object.keys(viewerNames).map(viewerName => (
+            <MenuItem key={viewerName} value={viewerName}>
+              {viewerPrettyPrint(viewerName, defaultViewer)}
             </MenuItem>
           ))}
         </Select>
