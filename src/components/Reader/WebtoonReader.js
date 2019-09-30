@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Helmet } from "react-helmet";
 import { times } from "lodash";
 import type { Manga } from "@tachiweb/api-client";
@@ -37,8 +37,6 @@ import {
 // The consequence of this is since I'm expecting the destination page entering to resume normal
 // side effects, these effects will run on every page going backwards (possibly out of order).
 //
-// It TECHNICALLY works, but it feels wrong...
-//
 // One way around this is to use smooth scrolling. This seems to slow down scrolling enough
 // that events fire in the expected order. Not sure if this is desirable.
 // This works in normal usage, but if you use debugging breakpoints the above issue appears again.
@@ -70,11 +68,13 @@ type ScrollBehavior = { behavior: "smooth" | "auto" };
 function scrollToPage(
   pageNum: number,
   options?: ScrollBehavior = { behavior: "smooth" }
+  // refer to above notes on why `behavior: "smooth"` is the default behavior
 ) {
   const page = document.getElementById(pageNum.toString()); // this is the <Grid> wrapping element
   if (!page) return;
 
   // Adding extra pixels to ensure the previous page isn't still in view. (browser quirk)
+  // eg. Ff you jump to page 13, it'll still show page 12 in the overlay until you scroll down 1 pixel
   window.scrollTo({ top: page.offsetTop + 1, ...options });
 }
 
@@ -91,8 +91,7 @@ const WebtoonReader = ({
   // Keep pagesInView sorted
   const [pagesInView, setPagesInView] = useState<Array<number>>([]);
 
-  // Use jumpToPageRef to know when you are jumping and when you reached your destination
-  const jumpToPageRef = useRef<?number>(null);
+  const [jumpingToPage, setJumpingToPage] = useState<?number>(null);
 
   const prevChapterUrl =
     prevChapter != null
@@ -105,15 +104,15 @@ const WebtoonReader = ({
       : null;
 
   const handleJumpToPage = (pageNum: number, options?: ScrollBehavior) => {
-    jumpToPageRef.current = pageNum;
+    setJumpingToPage(pageNum);
     scrollToPage(pageNum, options);
   };
 
   const handlePageEnter = (index: number) => {
     return () => {
-      // Clear page jump ref when we've reached our destination page
-      if (jumpToPageRef.current === index) {
-        jumpToPageRef.current = null;
+      // Clear jumpingToPage when we've reached our destination page
+      if (jumpingToPage === index) {
+        setJumpingToPage(null);
       }
 
       setPagesInView(prevPagesInView => [...prevPagesInView, index].sort());
@@ -135,6 +134,7 @@ const WebtoonReader = ({
     if (chapter.read || chapter.last_page_read === 0) return;
 
     // Initialize the starting page. This only runs once on first mount.
+    // Refer to notes above on why behavior: "auto" is used here.
     handleJumpToPage(chapter.last_page_read, { behavior: "auto" });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -147,7 +147,7 @@ const WebtoonReader = ({
     lastPageInView, // Currently not preloading other in view pages
     pageCount,
     nextChapter ? nextChapter.id : null,
-    jumpToPageRef.current != null
+    jumpingToPage != null
   );
 
   // useUpdateReadingStatus() only takes 1 page currently
@@ -160,7 +160,7 @@ const WebtoonReader = ({
     mangaInfo.id,
     chapter.id,
     readingStatusPage,
-    jumpToPageRef.current != null
+    jumpingToPage != null
   );
 
   return (
@@ -201,7 +201,7 @@ const WebtoonReader = ({
                 src={Server.image(mangaInfo.id, chapter.id, index)}
                 alt={`${chapter.name} - Page ${index + 1}`}
                 lazyLoad
-                preventLoading={jumpToPageRef.current != null}
+                preventLoading={jumpingToPage != null}
               />
             </div>
           </Waypoint>
