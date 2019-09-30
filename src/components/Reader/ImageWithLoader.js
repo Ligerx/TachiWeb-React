@@ -5,6 +5,7 @@ import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/styles";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import LazyLoad from "components/Reader/LazyLoad";
+import { useInView } from "react-intersection-observer";
 
 // https://www.javascriptstuff.com/detect-image-load/
 
@@ -80,31 +81,54 @@ const ImageWithLoader = ({
     img.src = src;
   };
 
-  useEffect(() => {
-    console.error("ImageWithLoader, preventLoading ===", preventLoading);
-  }, [preventLoading]);
+  // useEffect(() => {
+  //   console.error("ImageWithLoader, preventLoading ===", preventLoading);
+  // }, [preventLoading]);
 
-  const image = (
-    <img
-      {...otherProps}
-      className={classes.img}
-      onLoad={handleImageLoad}
-      onError={handleImageError}
-      src={src}
-      alt={alt}
-      key={`${src}-${retries}`}
-    />
-  );
+  // for lazy loading
+  const [allowLoading, setAllowLoading] = useState(!lazyLoad);
+  const [ref, inView] = useInView({
+    margin: `200px 0px 0px 0px`
+  });
+
+  useEffect(() => {
+    if (!inView || preventLoading || allowLoading) return;
+    setAllowLoading(true);
+  }, [inView, preventLoading, allowLoading]);
+
+  // const image = (
+  //   <img
+  //     {...otherProps}
+  //     className={classes.img}
+  //     onLoad={handleImageLoad}
+  //     onError={handleImageError}
+  //     src={src}
+  //     alt={alt}
+  //     key={`${src}-${retries}`}
+  //   />
+  // );
 
   return (
-    <>
+    <div ref={ref}>
       {/* img should occupy no space before it loads */}
-      {lazyLoad ? (
+      {/* {lazyLoad ? (
         <LazyLoad topThreshhold={200} preventLoading={preventLoading}>
           {image}
         </LazyLoad>
       ) : (
         image
+      )} */}
+
+      {allowLoading && (
+        <img
+          {...otherProps}
+          className={classes.img}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          src={src}
+          alt={alt}
+          key={`${src}-${retries}`}
+        />
       )}
 
       {(status === "LOADING" || status === "FAILED") && (
@@ -120,7 +144,7 @@ const ImageWithLoader = ({
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
