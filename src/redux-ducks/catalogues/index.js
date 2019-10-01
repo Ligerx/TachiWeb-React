@@ -74,11 +74,11 @@ export default function cataloguesReducer(
             hasNextPage,
             mangaIds
           };
+        } else {
+          catalogues[sourceId].page = page;
+          catalogues[sourceId].hasNextPage = hasNextPage;
+          catalogues[sourceId].mangaIds.push(...mangaIds);
         }
-
-        catalogues[sourceId].page = page;
-        catalogues[sourceId].hasNextPage = hasNextPage;
-        catalogues[sourceId].mangaIds.push(...mangaIds);
 
         // Remove loading state
         draft.loadingSourceIds = draft.loadingSourceIds.filter(
