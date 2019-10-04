@@ -62,26 +62,38 @@ const MangaInfoChapterList = ({ mangaInfo, chapters }: Props) => {
   if (!chapters.length) return null;
 
   return (
+    // <Container maxWidth="sm" className={classes.virtualizedListParent}>
+    //   <Paper className={classes.paper}>
+    //     <RowContext.Provider value={mangaInfo}>
+    //       {/* itemSize is hard coded using what I saw in the inspector */}
+    //       <AutoSizer>
+    //         {({ height, width }) => (
+    //           <FixedSizeList
+    //             height={height}
+    //             width={width}
+    //             itemSize={65}
+    //             itemCount={chapters.length}
+    //             itemData={chapters}
+    //             itemKey={(index, data) => data[index].id}
+    //             overscanCount={10}
+    //           >
+    //             {Row}
+    //           </FixedSizeList>
+    //         )}
+    //       </AutoSizer>
+    //     </RowContext.Provider>
+    //   </Paper>
+    // </Container>
+
     <Container maxWidth="sm" className={classes.virtualizedListParent}>
       <Paper className={classes.paper}>
-        <RowContext.Provider value={mangaInfo}>
-          {/* itemSize is hard coded using what I saw in the inspector */}
-          <AutoSizer>
-            {({ height, width }) => (
-              <FixedSizeList
-                height={height}
-                width={width}
-                itemSize={65}
-                itemCount={chapters.length}
-                itemData={chapters}
-                itemKey={(index, data) => data[index].id}
-                overscanCount={10}
-              >
-                {Row}
-              </FixedSizeList>
-            )}
-          </AutoSizer>
-        </RowContext.Provider>
+        {chapters.map(chapter => (
+          <ChapterListItem
+            key={chapter.id}
+            mangaInfo={mangaInfo}
+            chapter={chapter}
+          />
+        ))}
       </Paper>
     </Container>
   );

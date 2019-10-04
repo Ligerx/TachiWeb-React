@@ -3,10 +3,10 @@ import React, { useContext, memo, useState } from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import Switch from "@material-ui/core/Switch";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import classNames from "classnames";
 import Link from "components/Link";
 import type { ChapterType } from "types";
 import type { Manga } from "@tachiweb/api-client";
@@ -23,46 +23,42 @@ type Props = {
 }; // other props will be passed to the root ListItem
 
 const useStyles = makeStyles({
-  read: {
-    color: "#AAA"
-  },
-  listItem: {
-    paddingRight: 8, // decrease padding (default 24)
+  root: {
     backgroundColor: "white"
   },
-  chapterInfo: {
-    flex: 1,
-    marginRight: 8
-  },
-  extraInfo: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "flex-end"
-  },
-  date: { flex: 1 },
-  lastReadPage: { color: "rgba(0, 0, 0, 0.87)" }
+  lastReadPage: {
+    marginLeft: 128
+  }
 });
 
 const ChapterListItem = memo<Props>(
   ({ mangaInfo, chapter, ...otherProps }: Props) => {
-    const [anchorEl, setAnchorEl] = useState(null);
-
     const classes = useStyles();
     const urlPrefix = useContext(UrlPrefixContext);
 
-    const dimIfRead: Function = (read: boolean): ?String =>
-      read ? classes.read : null;
+    const [anchorEl, setAnchorEl] = useState(null);
 
-    const chapterName: string =
+    const chapterName =
       mangaInfo.flags.displayMode === "NAME"
         ? chapter.name
         : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 
+    const lastReadPage =
+      chapter.read || chapter.last_page_read === 0
+        ? null
+        : `Page: ${chapter.last_page_read + 1}`;
+
+    // stopping event bubbling shouldn't be necessary according to the docs but it's
+    // still happening...
     const handleOpenMenu = event => {
+      event.stopPropagation();
+      event.preventDefault();
       setAnchorEl(event.currentTarget);
     };
 
-    const handleCloseMenu = () => {
+    const handleCloseMenu = event => {
+      event.stopPropagation();
+      event.preventDefault();
       setAnchorEl(null);
     };
 
@@ -73,29 +69,23 @@ const ChapterListItem = memo<Props>(
         divider
         component={Link}
         to={Client.chapter(urlPrefix, mangaInfo.id, chapter.id)}
-        className={classes.listItem}
+        className={classes.root}
       >
         <ListItemText
-          primary={
-            <Typography variant="subtitle1" className={dimIfRead(chapter.read)}>
-              {chapterName}
-            </Typography>
-          }
+          primary={chapterName}
+          primaryTypographyProps={{
+            color: chapter.read ? "textSecondary" : "textPrimary"
+          }}
           secondary={
-            <div className={classes.extraInfo}>
-              <Typography
-                variant="caption"
-                className={classNames(classes.date, dimIfRead(chapter.read))}
-              >
-                {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
+            <>
+              {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
+              <Typography variant="inherit" className={classes.lastReadPage}>
+                {lastReadPage}
               </Typography>
-
-              <Typography variant="caption" className={classes.lastReadPage}>
-                {chapterText(chapter.read, chapter.last_page_read)}
-              </Typography>
-            </div>
+            </>
           }
         />
+
         <ListItemSecondaryAction>
           <IconButton onClick={handleOpenMenu}>
             <Icon>more_vert</Icon>
@@ -112,16 +102,5 @@ const ChapterListItem = memo<Props>(
     );
   }
 );
-
-// Helper Functions
-/* eslint-disable camelcase */
-function chapterText(read: boolean, last_page_read: number) {
-  let text: string = "";
-  if (!read && last_page_read > 0) {
-    text = `Page ${last_page_read + 1}`;
-  }
-  return text;
-}
-/* eslint-enable camelcase */
 
 export default ChapterListItem;

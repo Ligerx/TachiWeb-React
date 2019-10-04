@@ -16,9 +16,9 @@ type Props = {
 const ChapterMenu = ({ mangaId, chapter, anchorEl, onClose }: Props) => {
   const dispatch = useDispatch();
 
-  const handleToggleRead = (read: boolean) => () => {
+  const handleToggleRead = (read: boolean) => event => {
     dispatch(toggleRead(mangaId, chapter.id, read));
-    onClose();
+    onClose(event);
   };
 
   return (
@@ -46,7 +46,7 @@ const ChapterMenu = ({ mangaId, chapter, anchorEl, onClose }: Props) => {
       )}
 
       {/* TODO: use the new API for marking multiple chapters as read */}
-      <MenuItem disabled onClick={() => {}}>
+      <MenuItem disabled onClick={null}>
         Mark previous as Read
       </MenuItem>
     </Menu>
