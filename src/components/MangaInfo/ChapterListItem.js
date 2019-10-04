@@ -1,6 +1,10 @@
 // @flow
-import React, { useContext, memo } from "react";
+import React, { useContext, memo, useState } from "react";
 import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import Icon from "@material-ui/core/Icon";
+import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import classNames from "classnames";
 import Link from "components/Link";
@@ -11,8 +15,6 @@ import ChapterMenu from "components/MangaInfo/ChapterMenu";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import { Client } from "api";
 import dateFnsFormat from "date-fns/format";
-import { useDispatch } from "react-redux";
-import { toggleRead } from "redux-ducks/chapters/actionCreators";
 import { makeStyles } from "@material-ui/styles";
 
 type Props = {
@@ -43,12 +45,9 @@ const useStyles = makeStyles({
 
 const ChapterListItem = memo<Props>(
   ({ mangaInfo, chapter, ...otherProps }: Props) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+
     const classes = useStyles();
-    const dispatch = useDispatch();
-
-    const handleToggleRead = (read: boolean) =>
-      dispatch(toggleRead(mangaInfo.id, chapter.id, read));
-
     const urlPrefix = useContext(UrlPrefixContext);
 
     const dimIfRead: Function = (read: boolean): ?String =>
@@ -59,6 +58,14 @@ const ChapterListItem = memo<Props>(
         ? chapter.name
         : `Chapter ${chapterNumPrettyPrint(chapter.chapter_number)}`;
 
+    const handleOpenMenu = event => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseMenu = () => {
+      setAnchorEl(null);
+    };
+
     return (
       <ListItem
         {...otherProps}
@@ -68,26 +75,39 @@ const ChapterListItem = memo<Props>(
         to={Client.chapter(urlPrefix, mangaInfo.id, chapter.id)}
         className={classes.listItem}
       >
-        <div className={classes.chapterInfo}>
-          <Typography variant="subtitle1" className={dimIfRead(chapter.read)}>
-            {chapterName}
-          </Typography>
-
-          <div className={classes.extraInfo}>
-            <Typography
-              variant="caption"
-              className={classNames(classes.date, dimIfRead(chapter.read))}
-            >
-              {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
+        <ListItemText
+          primary={
+            <Typography variant="subtitle1" className={dimIfRead(chapter.read)}>
+              {chapterName}
             </Typography>
+          }
+          secondary={
+            <div className={classes.extraInfo}>
+              <Typography
+                variant="caption"
+                className={classNames(classes.date, dimIfRead(chapter.read))}
+              >
+                {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
+              </Typography>
 
-            <Typography variant="caption" className={classes.lastReadPage}>
-              {chapterText(chapter.read, chapter.last_page_read)}
-            </Typography>
-          </div>
-        </div>
+              <Typography variant="caption" className={classes.lastReadPage}>
+                {chapterText(chapter.read, chapter.last_page_read)}
+              </Typography>
+            </div>
+          }
+        />
+        <ListItemSecondaryAction>
+          <IconButton onClick={handleOpenMenu}>
+            <Icon>more_vert</Icon>
+          </IconButton>
+        </ListItemSecondaryAction>
 
-        <ChapterMenu chapter={chapter} toggleRead={handleToggleRead} />
+        <ChapterMenu
+          mangaId={mangaInfo.id}
+          chapter={chapter}
+          anchorEl={anchorEl}
+          onClose={handleCloseMenu}
+        />
       </ListItem>
     );
   }
