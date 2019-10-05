@@ -56,6 +56,8 @@ const ChapterListItem = memo<Props>(
     };
 
     return (
+      // using a parent div instead of fragment because nesting ChapterMenu inside ListItem causes bugs,
+      // but the root needs to accept react-window styling props, which fragments can't do.
       <div {...otherProps}>
         <ListItem
           button
