@@ -19,7 +19,7 @@ import { makeStyles } from "@material-ui/styles";
 type Props = {
   mangaInfo: Manga,
   chapter: ChapterType
-}; // other props will be passed to the root ListItem
+}; // other props will be passed to the root div (useful for react-window sizing)
 
 const useStyles = makeStyles({
   root: {
@@ -56,9 +56,8 @@ const ChapterListItem = memo<Props>(
     };
 
     return (
-      <>
+      <div {...otherProps}>
         <ListItem
-          {...otherProps}
           button
           divider
           component={Link}
@@ -96,7 +95,7 @@ const ChapterListItem = memo<Props>(
           anchorEl={anchorEl}
           onClose={handleCloseMenu}
         />
-      </>
+      </div>
     );
   }
 );
