@@ -99,34 +99,6 @@ const MangaInfo = ({ match: { params } }: RouterProps) => {
     setTabValue(newValue);
   };
 
-  const tabContent = (): Node => {
-    if (mangaInfo == null) return null;
-
-    const numChapters: number = chapters ? chapters.length : 0;
-
-    if (tabValue === 0) {
-      return (
-        <MangaInfoDetails
-          mangaInfo={mangaInfo}
-          numChapters={numChapters}
-          source={source}
-        />
-      );
-    }
-    if (tabValue === 1) {
-      return (
-        <>
-          <CenterHorizontally>
-            <ContinueReadingButton mangaId={mangaInfo.id} />
-          </CenterHorizontally>
-
-          <MangaInfoChapterList chapters={chapters} mangaInfo={mangaInfo} />
-        </>
-      );
-    }
-    return null;
-  };
-
   if (!mangaInfo) return <FullScreenLoading />;
 
   return (
@@ -140,7 +112,22 @@ const MangaInfo = ({ match: { params } }: RouterProps) => {
         onBackClick={urlPrefix}
       />
 
-      {tabContent()}
+      {tabValue === 0 && (
+        <MangaInfoDetails
+          mangaInfo={mangaInfo}
+          numChapters={chapters ? chapters.length : 0}
+          source={source}
+        />
+      )}
+      {tabValue === 1 && (
+        <>
+          <CenterHorizontally>
+            <ContinueReadingButton mangaId={mangaInfo.id} />
+          </CenterHorizontally>
+
+          <MangaInfoChapterList chapters={chapters} mangaInfo={mangaInfo} />
+        </>
+      )}
 
       {(isMangaInfosLoading || isChaptersLoading) && <FullScreenLoading />}
     </div>
