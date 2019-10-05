@@ -1,7 +1,7 @@
 // @flow
 import React, { memo, createContext, useContext } from "react";
 import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
+import List from "@material-ui/core/List";
 import ChapterListItem from "components/MangaInfo/ChapterListItem";
 import type { ChapterType } from "types";
 import type { Manga } from "@tachiweb/api-client";
@@ -49,10 +49,8 @@ const useStyles = makeStyles({
     flexGrow: 1,
     marginBottom: 16
   },
-  paper: {
-    height: "100%",
-    backgroundColor: "#fafafa",
-    overflow: "hidden"
+  list: {
+    height: "100%"
   }
 });
 
@@ -63,7 +61,7 @@ const MangaInfoChapterList = ({ mangaInfo, chapters }: Props) => {
 
   return (
     <Container maxWidth="sm" className={classes.virtualizedListParent}>
-      <Paper className={classes.paper}>
+      <List className={classes.list}>
         <RowContext.Provider value={mangaInfo}>
           {/* itemSize is hard coded using what I saw in the inspector */}
           <AutoSizer>
@@ -71,7 +69,7 @@ const MangaInfoChapterList = ({ mangaInfo, chapters }: Props) => {
               <FixedSizeList
                 height={height}
                 width={width}
-                itemSize={65}
+                itemSize={73}
                 itemCount={chapters.length}
                 itemData={chapters}
                 itemKey={(index, data) => data[index].id}
@@ -82,7 +80,7 @@ const MangaInfoChapterList = ({ mangaInfo, chapters }: Props) => {
             )}
           </AutoSizer>
         </RowContext.Provider>
-      </Paper>
+      </List>
     </Container>
   );
 };
