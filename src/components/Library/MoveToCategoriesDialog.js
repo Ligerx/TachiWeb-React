@@ -79,8 +79,8 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
         ))}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary" autoFocus>
-          Go Back
+        <Button onClick={onClose} color="primary">
+          Cancel
         </Button>
         <Button onClick={handleMoveCategoryManga} color="primary">
           Move

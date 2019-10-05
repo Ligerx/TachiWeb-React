@@ -3,7 +3,6 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { MangaViewer } from "@tachiweb/api-client";
 import type { SettingViewerType } from "types";
-import { makeStyles } from "@material-ui/styles";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -11,8 +10,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import Typography from "@material-ui/core/Typography";
-import Link from "components/Link";
 import { selectDefaultViewer } from "redux-ducks/settings";
 import { selectMangaViewer } from "redux-ducks/mangaInfos";
 import { setMangaViewer } from "redux-ducks/mangaInfos/actionCreators";
@@ -23,8 +20,6 @@ type Props = {
   onClose: () => any
 };
 
-const useStyles = makeStyles({});
-
 // [Sept 28, 2019] Skipping "VERTICAL" because it's not present in the settings menu as of writing this.
 const viewerNames = {
   DEFAULT: "Default",
@@ -34,7 +29,6 @@ const viewerNames = {
 };
 
 const ReaderOverlay = ({ mangaId, open, onClose }: Props) => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const viewer = useSelector(state => selectMangaViewer(state, mangaId));
@@ -64,7 +58,9 @@ const ReaderOverlay = ({ mangaId, open, onClose }: Props) => {
         </TextField>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
       </DialogActions>
     </Dialog>
   );

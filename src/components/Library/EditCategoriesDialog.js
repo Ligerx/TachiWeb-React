@@ -27,6 +27,9 @@ const EditCategoriesDialog = ({ isOpen, onClose }: Props) => {
       <EditCategoriesDraggableList />
 
       <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
         <Button onClick={handleAddCategory} color="primary">
           Add Category
         </Button>

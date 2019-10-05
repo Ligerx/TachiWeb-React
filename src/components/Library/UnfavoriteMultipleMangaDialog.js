@@ -30,8 +30,8 @@ const UnfavoriteMultipleMangaDialog = ({ open, onClose, onDelete }: Props) => {
         /> */}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary" autoFocus>
-          Go Back
+        <Button onClick={onClose} color="primary">
+          Cancel
         </Button>
         <Button onClick={onDelete} color="primary">
           Remove

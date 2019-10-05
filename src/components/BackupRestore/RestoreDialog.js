@@ -71,12 +71,7 @@ const RestoreDialog = ({ open, onClose, tryAgain }: Props) => {
           <Button onClick={handleClose} color="primary">
             Close
           </Button>
-          <Button
-            component={Link}
-            to={Client.library()}
-            color="primary"
-            autoFocus
-          >
+          <Button component={Link} to={Client.library()} color="primary">
             Go To Library
           </Button>
         </DialogActions>

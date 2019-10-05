@@ -88,8 +88,8 @@ const UninstallConfirmationDialog = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary" autoFocus>
-          Go Back
+        <Button onClick={onClose} color="primary">
+          Cancel
         </Button>
         <Button onClick={onUninstall} color="primary">
           Uninstall

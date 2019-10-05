@@ -94,7 +94,7 @@ const TextSettingsItem = (props: Props) => {
             Cancel
           </Button>
           <Button onClick={handleOk} color="primary">
-            Ok
+            Save
           </Button>
         </DialogActions>
       </Dialog>

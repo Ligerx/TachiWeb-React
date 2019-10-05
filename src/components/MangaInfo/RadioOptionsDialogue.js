@@ -65,8 +65,12 @@ const RadioOptionsDialogue = ({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleOk}>Select</Button>
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleOk} color="primary">
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );

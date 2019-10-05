@@ -16,8 +16,8 @@ const DeleteCategoryDialog = ({ open, onClose, onDelete }: Props) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Delete Category?</DialogTitle>
       <DialogActions>
-        <Button onClick={onClose} color="primary" autoFocus>
-          Go Back
+        <Button onClick={onClose} color="primary">
+          Cancel
         </Button>
         <Button onClick={onDelete} color="primary">
           Delete
