@@ -3,7 +3,6 @@ import React, { useContext, memo, useState } from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import Switch from "@material-ui/core/Switch";
 import Icon from "@material-ui/core/Icon";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
@@ -48,57 +47,56 @@ const ChapterListItem = memo<Props>(
         ? null
         : `Page: ${chapter.last_page_read + 1}`;
 
-    // stopping event bubbling shouldn't be necessary according to the docs but it's
-    // still happening...
     const handleOpenMenu = event => {
-      event.stopPropagation();
-      event.preventDefault();
       setAnchorEl(event.currentTarget);
     };
 
-    const handleCloseMenu = event => {
-      event.stopPropagation();
-      event.preventDefault();
+    const handleCloseMenu = () => {
       setAnchorEl(null);
     };
 
     return (
-      <ListItem
-        {...otherProps}
-        button
-        divider
-        component={Link}
-        to={Client.chapter(urlPrefix, mangaInfo.id, chapter.id)}
-        className={classes.root}
-      >
-        <ListItemText
-          primary={chapterName}
-          primaryTypographyProps={{
-            color: chapter.read ? "textSecondary" : "textPrimary"
-          }}
-          secondary={
-            <>
-              {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
-              <Typography variant="inherit" className={classes.lastReadPage}>
-                {lastReadPage}
-              </Typography>
-            </>
-          }
-        />
+      <>
+        <ListItem
+          {...otherProps}
+          button
+          divider
+          component={Link}
+          to={Client.chapter(urlPrefix, mangaInfo.id, chapter.id)}
+          className={classes.root}
+        >
+          <ListItemText
+            primary={chapterName}
+            primaryTypographyProps={{
+              color: chapter.read ? "textSecondary" : "textPrimary"
+            }}
+            secondary={
+              <>
+                {chapter.date ? dateFnsFormat(chapter.date, "MM/DD/YYYY") : ""}
+                <Typography variant="inherit" className={classes.lastReadPage}>
+                  {lastReadPage}
+                </Typography>
+              </>
+            }
+          />
 
-        <ListItemSecondaryAction>
-          <IconButton onClick={handleOpenMenu}>
-            <Icon>more_vert</Icon>
-          </IconButton>
-        </ListItemSecondaryAction>
+          <ListItemSecondaryAction>
+            <IconButton onClick={handleOpenMenu}>
+              <Icon>more_vert</Icon>
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
 
+        {/* The ChapterMenu should not be placed as a child of ListItem.
+            Doing so for some reason makes the IconButton click also trigger the
+            underlying ListItem click. */}
         <ChapterMenu
           mangaId={mangaInfo.id}
           chapter={chapter}
           anchorEl={anchorEl}
           onClose={handleCloseMenu}
         />
-      </ListItem>
+      </>
     );
   }
 );

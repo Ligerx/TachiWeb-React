@@ -10,15 +10,15 @@ type Props = {
   mangaId: number,
   chapter: ChapterType,
   anchorEl: Node,
-  onClose: Function
+  onClose: () => any
 };
 
 const ChapterMenu = ({ mangaId, chapter, anchorEl, onClose }: Props) => {
   const dispatch = useDispatch();
 
-  const handleToggleRead = (read: boolean) => event => {
+  const handleToggleRead = (read: boolean) => () => {
     dispatch(toggleRead(mangaId, chapter.id, read));
-    onClose(event);
+    onClose();
   };
 
   return (
