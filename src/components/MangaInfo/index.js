@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState, useContext, type Node } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Helmet } from "react-helmet";
 import { Client } from "api";
 import UrlPrefixContext from "components/UrlPrefixContext";
