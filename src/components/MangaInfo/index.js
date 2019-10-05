@@ -7,7 +7,7 @@ import MangaInfoHeader from "components/MangaInfo/MangaInfoHeader";
 import MangaInfoDetails from "components/MangaInfo/MangaInfoDetails";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import ContinueReadingButton from "components/MangaInfo/ContinueReadingButton";
-import MangaInfoChapterList from "components/MangaInfo/MangaInfoChapterList";
+import MangaInfoChapterList from "components/MangaInfo/ChapterList";
 import CenterHorizontally from "components/CenterHorizontally";
 import { useSelector, useDispatch, useStore } from "react-redux";
 import {
