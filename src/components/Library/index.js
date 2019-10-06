@@ -23,6 +23,7 @@ import CategoriesTabs from "components/Library/CategoriesTabs";
 import AppBar from "@material-ui/core/AppBar";
 import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
+import LibraryEmptyState from "components/Library/LibraryEmptyState";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   selectIsCategoriesLoading,
@@ -116,6 +117,8 @@ const Library = ({ match: { url } }: Props) => {
       {(libraryIsLoading || chaptersAreUpdating || categoriesAreLoading) && (
         <FullScreenLoading />
       )}
+
+      <LibraryEmptyState />
     </>
   );
 };
