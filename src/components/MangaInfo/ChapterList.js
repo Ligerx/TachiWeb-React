@@ -54,7 +54,7 @@ const useStyles = makeStyles({
   }
 });
 
-const MangaInfoChapterList = ({ mangaInfo, chapters }: Props) => {
+const ChapterList = ({ mangaInfo, chapters }: Props) => {
   const classes = useStyles();
 
   if (!chapters.length) return null;
@@ -85,4 +85,4 @@ const MangaInfoChapterList = ({ mangaInfo, chapters }: Props) => {
   );
 };
 
-export default MangaInfoChapterList;
+export default ChapterList;
