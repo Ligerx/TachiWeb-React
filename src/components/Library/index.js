@@ -23,7 +23,7 @@ import CategoriesTabs from "components/Library/CategoriesTabs";
 import AppBar from "@material-ui/core/AppBar";
 import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
-import LibraryEmptyState from "components/Library/EmptyState/LibraryEmptyState";
+import LibraryEmptyState from "components/Library/EmptyState/EmptyStateContent";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   selectIsCategoriesLoading,

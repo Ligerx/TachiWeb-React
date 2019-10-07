@@ -24,7 +24,7 @@ const useStyles = makeStyles({
   }
 });
 
-const LibraryEmptyState = ({  }: Props) => {
+const EmptyStateContent = ({  }: Props) => {
   const classes = useStyles();
   return (
     <Container maxWidth="xs" className={classes.root}>
@@ -41,4 +41,4 @@ const LibraryEmptyState = ({  }: Props) => {
   );
 };
 
-export default LibraryEmptyState;
+export default EmptyStateContent;
