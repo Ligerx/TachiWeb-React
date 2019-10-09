@@ -57,8 +57,8 @@ const EmptyState = () => {
   const startY = ((y + height) / windowHeight) * 100;
   // const endX = 16 / 100;
   // const endY = 64 / 100;
-  const endX = (16 / windowWidth) * 100;
-  const endY = (64 / windowHeight) * 100;
+  const endX = ((16 + 24) / windowWidth) * 100;
+  const endY = ((64 + 24) / windowHeight) * 100;
   // const endX = 0;
   // const endY = 0;
 
