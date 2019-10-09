@@ -16,7 +16,7 @@ type Props = {
 const useStyles = makeStyles({
   svg: {
     stroke: "red",
-    strokeWidth: "1.25px",
+    strokeWidth: "1px",
     fill: "none"
   },
   arrowHead: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles({
   }
 });
 
-const EmptyState = ({ startX, startY, endX, endY, className }: Props) => {
+const Arrow = ({ startX, startY, endX, endY, className }: Props) => {
   const classes = useStyles();
 
   if (startX == null || startY == null || endX == null || endY == null) {
@@ -36,6 +36,9 @@ const EmptyState = ({ startX, startY, endX, endY, className }: Props) => {
       width="100%"
       height="100%"
       viewBox="0 0 100 100"
+      // preserveAspectRatio is important because otherwise the default 'zooming'
+      // behavior causes positions to move around
+      preserveAspectRatio="none"
       className={classNames(classes.svg, className)}
     >
       <defs>
@@ -52,9 +55,12 @@ const EmptyState = ({ startX, startY, endX, endY, className }: Props) => {
         </marker>
       </defs>
 
-      <path d="M20,80 L10,20" style={{ markerEnd: "url(#arrowHead)" }} />
+      <path
+        d={`M${startX},${startY} L${endX},${endY}`}
+        style={{ markerEnd: "url(#arrowHead)" }}
+      />
     </svg>
   );
 };
 
-export default EmptyState;
+export default Arrow;

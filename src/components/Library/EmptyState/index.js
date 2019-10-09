@@ -44,28 +44,43 @@ const useStyles = makeStyles({
 
 const EmptyState = () => {
   const classes = useStyles();
-  const contentRef = useRef(null);
   const ref = useRef(null);
+  const contentRef = useRef(null);
+  const { x, y, height } =
+    contentRef.current != null
+      ? contentRef.current.getBoundingClientRect()
+      : {};
 
-  // const size = useComponentSize(ref);
-  // const size2 = useWindowSize();
+  const { width: windowWidth, height: windowHeight } = useWindowSize();
 
-  // useEffect(() => {
-  //   console.error("EmptyState component size", size);
-  // }, [size]);
-  // useEffect(() => {
-  //   console.error("EmptyState window size", size2);
-  // }, [size2]);
+  const startX = ((x + 16) / windowWidth) * 100;
+  const startY = ((y + height) / windowHeight) * 100;
+  // const endX = 16 / 100;
+  // const endY = 64 / 100;
+  const endX = (16 / windowWidth) * 100;
+  const endY = (64 / windowHeight) * 100;
+  // const endX = 0;
+  // const endY = 0;
+
+  useEffect(() => {
+    console.error("should be rerendering");
+    console.error("component rect", x, y, height);
+    console.error("window size", windowWidth, windowHeight);
+    console.error("startX", startX);
+    console.error("startY", startY);
+    console.error("endX", endX);
+    console.error("endY", endY);
+  });
 
   return (
     <div ref={ref} className={classes.root}>
       <EmptyStateContent ref={contentRef} className={classes.content} />
       <Arrow
         className={classes.arrow}
-        startX={null}
-        startY={null}
-        endX={null}
-        endY={null}
+        startX={startX}
+        startY={startY}
+        endX={endX}
+        endY={endY}
       />
     </div>
   );
