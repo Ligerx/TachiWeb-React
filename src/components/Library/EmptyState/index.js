@@ -16,8 +16,6 @@ import { useComponentSize, useWindowSize } from "components/hooks";
 // Arrow should be z-index -2 and be height/width 100% so that it doesn't push the content around.
 const useStyles = makeStyles({
   root: {
-    // Need to change position to make z-index work
-    // chose absolute because it's straightforward to create an element that fills the viewport
     zIndex: -1,
     position: "absolute",
     top: 0,
@@ -25,10 +23,23 @@ const useStyles = makeStyles({
     bottom: 0,
     left: 0,
 
+    // position the content, without changing width of children
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    alignItems: "center"
   },
-  content: {}
+  content: {
+    // push the content below the header
+    marginTop: 64 + 80
+  },
+  arrow: {
+    zIndex: -2,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0
+  }
 });
 
 const EmptyState = () => {
@@ -48,8 +59,14 @@ const EmptyState = () => {
 
   return (
     <div ref={ref} className={classes.root}>
-      <EmptyStateContent ref={contentRef} />
-      {/* <Arrow /> */}
+      <EmptyStateContent ref={contentRef} className={classes.content} />
+      <Arrow
+        className={classes.arrow}
+        startX={null}
+        startY={null}
+        endX={null}
+        endY={null}
+      />
     </div>
   );
 };
