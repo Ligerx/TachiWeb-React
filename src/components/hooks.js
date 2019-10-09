@@ -22,15 +22,28 @@ export function useDerivedStateFromProps<T>(props: T): [T, (state: T) => void] {
   return [state, setState];
 }
 
+export function useThrottle(func: Function, wait?: number = 0): Function {
+  const funcThrottled = useRef(throttle(func, wait)).current;
+
+  useEffect(() => {
+    return function cleanup() {
+      funcThrottled.cancel();
+    };
+  }, [funcThrottled]);
+
+  return funcThrottled;
+}
+
 // https://www.hooks.guide/rehooks/useComponentSize
 // Slightly modified and including throttling
 export function useComponentSize(ref) {
   const [componentSize, setComponentSize] = useState(getSize(ref.current));
 
   const wait = 100; // arbitrarily picking this wait time
-  const setComponentSizeThrottled = useRef(
-    throttle(size => setComponentSize(size), wait)
-  ).current;
+  const setComponentSizeThrottled = useThrottle(
+    size => setComponentSize(size),
+    wait
+  );
 
   useLayoutEffect(() => {
     function handleResize() {
@@ -41,8 +54,7 @@ export function useComponentSize(ref) {
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    return () => {
-      setComponentSizeThrottled.cancel();
+    return function cleanup() {
       window.removeEventListener("resize", handleResize);
     };
   }, [ref, setComponentSizeThrottled]);
@@ -67,21 +79,19 @@ export function useWindowSize() {
   });
 
   const wait = 100; // arbitrarily picking this wait time
-  const setSizeThrottled = useRef(
-    throttle(
-      () =>
-        setSize({
-          width: window.innerWidth,
-          height: window.innerHeight
-        }),
-      wait
-    )
-  ).current;
+  const setSizeThrottled = useThrottle(
+    () =>
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      }),
+    wait
+  );
 
   useEffect(() => {
     window.addEventListener("resize", setSizeThrottled);
 
-    return () => {
+    return function cleanup() {
       window.removeEventListener("resize", setSizeThrottled);
     };
   }, [setSizeThrottled]);
