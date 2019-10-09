@@ -9,8 +9,6 @@ import Typography from "@material-ui/core/Typography";
 // https://create-react-app.dev/docs/adding-images-fonts-and-files
 import { ReactComponent as EmptyStateSVG } from "./tachiyomi-greyscale-backdrop.svg";
 
-type Props = {};
-
 const useStyles = makeStyles({
   root: {
     display: "flex",
@@ -24,10 +22,11 @@ const useStyles = makeStyles({
   }
 });
 
-const EmptyStateContent = ({  }: Props) => {
+const EmptyStateContent = (_, ref) => {
   const classes = useStyles();
+
   return (
-    <Container maxWidth="xs" className={classes.root}>
+    <Container maxWidth="xs" className={classes.root} ref={ref}>
       <EmptyStateSVG className={classes.svg} />
       <Typography variant="h6" alignt="center" gutterBottom>
         No manga added yet
@@ -41,4 +40,6 @@ const EmptyStateContent = ({  }: Props) => {
   );
 };
 
-export default EmptyStateContent;
+export default React.forwardRef<Props, typeof EmptyStateContent>(
+  EmptyStateContent
+);

@@ -23,7 +23,7 @@ import CategoriesTabs from "components/Library/CategoriesTabs";
 import AppBar from "@material-ui/core/AppBar";
 import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
-import LibraryEmptyState from "components/Library/EmptyState/EmptyStateContent";
+import EmptyState from "components/Library/EmptyState";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   selectIsCategoriesLoading,
@@ -118,7 +118,7 @@ const Library = ({ match: { url } }: Props) => {
         <FullScreenLoading />
       )}
 
-      <LibraryEmptyState />
+      <EmptyState />
     </>
   );
 };
