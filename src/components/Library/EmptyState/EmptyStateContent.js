@@ -40,7 +40,8 @@ const EmptyStateContent = ({ className }: Props, ref) => {
 
       <Typography color="textSecondary" align="center">
         To get started, first <strong>install an extension.</strong> <br />
-        Second, <strong>search for manga</strong> in your catalogues. <br />
+        Second, <strong>search</strong> for manga in your
+        <strong> catalogues</strong>. <br />
         Then, <Icon className={classes.icon}>bookmark</Icon>
         <strong>bookmark manga</strong> to save them to this page.
       </Typography>
