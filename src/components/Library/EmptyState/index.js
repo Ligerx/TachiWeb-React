@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import EmptyStateContent from "components/Library/EmptyState/EmptyStateContent";
 import Arrow from "components/Library/EmptyState/Arrow";
-import { useWindowSize } from "components/hooks";
+import { useWindowSize, useBoundingClientRect } from "components/hooks";
 
 // Root should be z-index -1
 //    Since I want to stretch the arrow svg container to fit the screen, I can either put it behind
@@ -42,11 +42,8 @@ const EmptyState = () => {
   const classes = useStyles();
   const ref = useRef(null);
   const contentRef = useRef(null);
-  const { x, y, height } =
-    contentRef.current != null
-      ? contentRef.current.getBoundingClientRect()
-      : {};
 
+  const { x, y, height } = useBoundingClientRect(contentRef);
   const { width: windowWidth, height: windowHeight } = useWindowSize();
 
   const startX = (x / windowWidth) * 100;

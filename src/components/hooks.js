@@ -98,3 +98,43 @@ export function useWindowSize() {
 
   return size;
 }
+
+type Rect = {
+  left: number | void,
+  top: number | void,
+  right: number | void,
+  bottom: number | void,
+  x: number | void,
+  y: number | void,
+  width: number | void,
+  height: number | void
+};
+// mostly based on useComponentSize()
+/** Returns either the `.getBoundingClientRect()` or `{}` */
+export function useBoundingClientRect(ref): Rect {
+  const [componentRect, setComponentRect] = useState(
+    ref.current ? ref.current.getBoundingClientRect() : {}
+  );
+
+  const wait = 100; // arbitrarily picking this wait time
+  const setComponentRectThrottled = useThrottle(
+    rect => setComponentRect(rect),
+    wait
+  );
+
+  useLayoutEffect(() => {
+    function handleResize() {
+      if (ref && ref.current) {
+        setComponentRectThrottled(ref.current.getBoundingClientRect());
+      }
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return function cleanup() {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [ref, setComponentRectThrottled]);
+
+  return componentRect;
+}
