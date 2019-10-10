@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import EmptyStateContent from "components/Library/EmptyState/EmptyStateContent";
-import Arrow from "components/Library/EmptyState/Arrow";
+import Arrow from "components/Library/EmptyState/ArrowToMenu";
 import { useComponentSize, useBoundingClientRect } from "components/hooks";
 
 const useStyles = makeStyles({

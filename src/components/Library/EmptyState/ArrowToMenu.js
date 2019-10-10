@@ -29,7 +29,7 @@ const useStyles = makeStyles({
   }
 });
 
-const Arrow = ({ startX, startY, endX, endY, className }: Props) => {
+const ArrowToMenu = ({ startX, startY, endX, endY, className }: Props) => {
   const classes = useStyles();
 
   if (
@@ -70,12 +70,6 @@ const Arrow = ({ startX, startY, endX, endY, className }: Props) => {
       </defs>
 
       <path
-        // Straight Line
-        // d={`M${startX},${startY} L${endX},${endY}`}
-        //
-        // Quadratic Curve
-        // d={`M${startX},${startY} Q${endX},${startY}  ${endX},${endY}`}
-        //
         // Quadratic Curve with extra curvature
         d={`M${startX},${startY} Q${0},${startY}  ${endX},${endY}`}
         className={classes.line}
@@ -85,4 +79,4 @@ const Arrow = ({ startX, startY, endX, endY, className }: Props) => {
   );
 };
 
-export default Arrow;
+export default ArrowToMenu;
