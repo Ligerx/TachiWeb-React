@@ -1,9 +1,9 @@
 // @flow
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import EmptyStateContent from "components/Library/EmptyState/EmptyStateContent";
-import Arrow from "components/Library/EmptyState/ArrowToMenu";
-import { useComponentSize, useBoundingClientRect } from "components/hooks";
+import ArrowToMenu from "components/Library/EmptyState/ArrowToMenu";
+import { useBoundingClientRect } from "components/hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -44,6 +44,7 @@ const EmptyState = () => {
     height: contentHeight
   } = useBoundingClientRect(contentRef);
 
+  // ArrowToMenu relies on values from 0 - 100
   const startX = ((contentX - x) / width) * 100;
   const offsetY = contentY - y;
   const startY = ((offsetY + contentHeight - 56) / height) * 100;
@@ -53,7 +54,7 @@ const EmptyState = () => {
   return (
     <div ref={ref} className={classes.root}>
       <EmptyStateContent ref={contentRef} className={classes.content} />
-      <Arrow
+      <ArrowToMenu
         className={classes.arrow}
         startX={startX}
         startY={startY}
