@@ -15,7 +15,8 @@ type Props = {
 
 const useStyles = makeStyles({
   svg: {
-    stroke: "darkgray"
+    stroke: "darkgray",
+    fill: "none"
   },
   arrowHead: {
     fill: "none",
@@ -23,7 +24,8 @@ const useStyles = makeStyles({
   },
   line: {
     strokeWidth: "2px",
-    strokeDasharray: "24"
+    strokeDasharray: "24",
+    vectorEffect: "non-scaling-stroke"
   }
 });
 
@@ -48,8 +50,8 @@ const Arrow = ({ startX, startY, endX, endY, className }: Props) => {
         <marker
           id="arrowHead"
           viewBox="0 0 10 10"
-          refX="9"
-          refY="5"
+          refX="9" // move the tip of the arrow closer to the end of the line
+          refY="5" // center the arrow left/right
           markerWidth="1"
           markerHeight="1"
           orient="auto"
@@ -59,8 +61,14 @@ const Arrow = ({ startX, startY, endX, endY, className }: Props) => {
       </defs>
 
       <path
-        vectorEffect="non-scaling-stroke"
-        d={`M${startX},${startY} L${endX},${endY}`}
+        // Straight Line
+        // d={`M${startX},${startY} L${endX},${endY}`}
+        //
+        // Quadratic Curve
+        // d={`M${startX},${startY} Q${endX},${startY}  ${endX},${endY}`}
+        //
+        // Quadratic Curve with extra curvature
+        d={`M${startX},${startY} Q${0},${startY}  ${endX},${endY}`}
         className={classes.line}
         style={{ markerEnd: "url(#arrowHead)" }}
       />

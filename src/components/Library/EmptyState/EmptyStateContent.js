@@ -14,12 +14,11 @@ type Props = {
 const useStyles = makeStyles({
   root: {
     // align contents
-    // using inline-flex to make the width fit the content
-    display: "inline-flex",
+    display: "flex",
     alignItems: "center",
     flexDirection: "column",
 
-    margin: 40
+    margin: 48
   },
   svg: {
     marginBottom: 16

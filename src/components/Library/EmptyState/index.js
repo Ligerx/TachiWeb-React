@@ -53,7 +53,7 @@ const EmptyState = () => {
 
   const { width: windowWidth, height: windowHeight } = useWindowSize();
 
-  const startX = ((x - 8) / windowWidth) * 100;
+  const startX = (x / windowWidth) * 100;
   const startY = ((y + height - 48) / windowHeight) * 100;
   // AppBar left padding is 16px (mobile) or 24px
   // Half the menu icon width = 24px
