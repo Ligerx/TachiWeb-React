@@ -32,7 +32,16 @@ const useStyles = makeStyles({
 const Arrow = ({ startX, startY, endX, endY, className }: Props) => {
   const classes = useStyles();
 
-  if (startX == null || startY == null || endX == null || endY == null) {
+  if (
+    startX == null ||
+    Number.isNaN(startX) ||
+    startY == null ||
+    Number.isNaN(startY) ||
+    endX == null ||
+    Number.isNaN(endX) ||
+    endY == null ||
+    Number.isNaN(endY)
+  ) {
     return null;
   }
 
