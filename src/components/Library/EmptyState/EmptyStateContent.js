@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
+import HelpDialog from "components/Library/EmptyState/HelpDialog";
 // This is how you import SVG files as components
 // https://create-react-app.dev/docs/adding-images-fonts-and-files
 import { ReactComponent as EmptyStateSVG } from "./tachiyomi-greyscale-backdrop.svg";
@@ -36,8 +37,9 @@ const EmptyStateContent = ({ className }: Props, ref) => {
     <div className={classNames(classes.root, className)} ref={ref}>
       <EmptyStateSVG className={classes.svg} />
       <Typography variant="h6" alignt="center" gutterBottom>
-        No manga added yet
+        No manga added yet <HelpDialog />
       </Typography>
+
       <Typography color="textSecondary" align="center">
         To get started, first <strong>install an extension.</strong> <br />
         Second, <strong>search for manga</strong> in your catalogues. <br />
