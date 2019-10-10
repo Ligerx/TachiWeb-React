@@ -33,26 +33,22 @@ const useStyles = makeStyles({
 
 const EmptyState = () => {
   const classes = useStyles();
+
   const ref = useRef(null);
   const contentRef = useRef(null);
 
-  const { x, y, height } = useBoundingClientRect(contentRef);
-  const { width: componentWidth, height: componentHeight } = useComponentSize(
-    ref
-  );
+  const { x, y, width, height } = useBoundingClientRect(ref);
+  const {
+    x: contentX,
+    y: contentY,
+    height: contentHeight
+  } = useBoundingClientRect(contentRef);
 
-  const startX = (x / componentWidth) * 100;
-  const startY = ((y + height - 48) / componentHeight) * 100;
-  // AppBar left padding is 16px (mobile) or 24px. Half the menu icon width = 24px.
-  // approximating a middle ground
-  const endX = ((24 + 24) / componentWidth) * 100;
+  const startX = ((contentX - x) / width) * 100;
+  const offsetY = contentY - y;
+  const startY = ((offsetY + contentHeight - 56) / height) * 100;
+  const endX = ((24 + 24) / width) * 100;
   const endY = 0;
-
-  useEffect(() => {
-    console.error("client rect", x, y, height);
-    console.error("component size", componentWidth, componentHeight);
-    console.error("calculations", startX, startY, endX, endY);
-  });
 
   return (
     <div ref={ref} className={classes.root}>
