@@ -1,13 +1,9 @@
 // @flow
-import React, { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import EmptyStateContent from "components/Library/EmptyState/EmptyStateContent";
 import Arrow from "components/Library/EmptyState/Arrow";
-import { useComponentSize, useWindowSize } from "components/hooks";
+import { useWindowSize } from "components/hooks";
 
 // Root should be z-index -1
 //    Since I want to stretch the arrow svg container to fit the screen, I can either put it behind
@@ -60,9 +56,6 @@ const EmptyState = () => {
   const endX = ((24 + 24) / windowWidth) * 100;
   // AppBar with one row height is 56px (mobile) or 64px
   const endY = ((64 + 8) / windowHeight) * 100;
-
-  // NOTE: the further the endX and endY are from the actual elements, the more
-  // deviation away due to the slope of the line
 
   return (
     <div ref={ref} className={classes.root}>
