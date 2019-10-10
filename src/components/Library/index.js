@@ -7,7 +7,8 @@ import { Client } from "api";
 import {
   selectFilteredSortedLibrary,
   selectIsLibraryLoading,
-  selectUnread
+  selectUnread,
+  selectLibraryIsLoadedAndEmpty
 } from "redux-ducks/library";
 import {
   fetchLibrary,
@@ -55,6 +56,8 @@ const Library = ({ match: { url } }: Props) => {
   const chaptersAreUpdating = useSelector(selectIsChaptersLoading);
   const categoriesAreLoading = useSelector(selectIsCategoriesLoading);
   const categoriesIsLoaded = useSelector(selectCategoriesIsLoaded);
+
+  const isLibraryLoadedAndEmpty = useSelector(selectLibraryIsLoadedAndEmpty);
 
   const dispatch = useDispatch();
 
@@ -118,7 +121,7 @@ const Library = ({ match: { url } }: Props) => {
         <FullScreenLoading />
       )}
 
-      <EmptyState />
+      {isLibraryLoadedAndEmpty && <EmptyState />}
     </>
   );
 };
