@@ -34,46 +34,11 @@ export function useThrottle(func: Function, wait?: number = 0): Function {
   return funcThrottled;
 }
 
-type Size = { width: number | void, height: number | void };
+// useWindowSize() and useBoundingClientRect() were inspired by:
 // https://www.hooks.guide/rehooks/useComponentSize
-// Slightly modified and including throttling
-export function useComponentSize(ref): Size {
-  const [componentSize, setComponentSize] = useState(getSize(ref.current));
 
-  const wait = 100; // arbitrarily picking this wait time
-  const setComponentSizeThrottled = useThrottle(
-    size => setComponentSize(size),
-    wait
-  );
-
-  useLayoutEffect(() => {
-    function handleResize() {
-      if (ref && ref.current) {
-        setComponentSizeThrottled(getSize(ref.current));
-      }
-    }
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return function cleanup() {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [ref, setComponentSizeThrottled]);
-
-  return componentSize;
-}
-// Helper function
-function getSize(el) {
-  if (!el) return {};
-
-  return {
-    width: el.offsetWidth,
-    height: el.offsetHeight
-  };
-}
-
-// mostly based on useComponentSize()
-export function useWindowSize() {
+type Size = { width: number | void, height: number | void };
+export function useWindowSize(): Size {
   const [size, setSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight
