@@ -252,3 +252,10 @@ export const selectShouldReloadLibrary = (state: GlobalState): boolean =>
 
 export const selectIsLibraryFlagsLoaded = (state: GlobalState): boolean =>
   state.library.isFlagsLoaded;
+
+export const selectLibraryIsLoadedAndEmpty: GlobalState => boolean = createSelector(
+  [selectIsLibraryLoading, selectShouldReloadLibrary, selectLibraryMangaIds],
+  (isLibraryLoading, shouldReloadLibrary, mangaIds): boolean => {
+    return !isLibraryLoading && !shouldReloadLibrary && mangaIds.length === 0;
+  }
+);

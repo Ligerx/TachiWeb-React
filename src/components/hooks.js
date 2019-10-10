@@ -1,5 +1,6 @@
 // @flow
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import throttle from "lodash/throttle";
 
 // https://reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
 export function usePrevious<T>(value: T): T {
@@ -19,4 +20,87 @@ export function useDerivedStateFromProps<T>(props: T): [T, (state: T) => void] {
   }, [props]);
 
   return [state, setState];
+}
+
+export function useThrottle(func: Function, wait?: number = 0): Function {
+  const funcThrottled = useRef(throttle(func, wait)).current;
+
+  useEffect(() => {
+    return function cleanup() {
+      funcThrottled.cancel();
+    };
+  }, [funcThrottled]);
+
+  return funcThrottled;
+}
+
+// useWindowSize() and useBoundingClientRect() were inspired by:
+// https://www.hooks.guide/rehooks/useComponentSize
+
+type Size = { width: number | void, height: number | void };
+export function useWindowSize(): Size {
+  const [size, setSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  const wait = 100; // arbitrarily picking this wait time
+  const setSizeThrottled = useThrottle(
+    () =>
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      }),
+    wait
+  );
+
+  useEffect(() => {
+    window.addEventListener("resize", setSizeThrottled);
+
+    return function cleanup() {
+      window.removeEventListener("resize", setSizeThrottled);
+    };
+  }, [setSizeThrottled]);
+
+  return size;
+}
+
+type Rect = {
+  left: number | void,
+  top: number | void,
+  right: number | void,
+  bottom: number | void,
+  x: number | void,
+  y: number | void,
+  width: number | void,
+  height: number | void
+};
+// mostly based on useComponentSize()
+/** Returns either the `.getBoundingClientRect()` or `{}` */
+export function useBoundingClientRect(ref): Rect {
+  const [componentRect, setComponentRect] = useState(
+    ref.current ? ref.current.getBoundingClientRect() : {}
+  );
+
+  const wait = 100; // arbitrarily picking this wait time
+  const setComponentRectThrottled = useThrottle(
+    rect => setComponentRect(rect),
+    wait
+  );
+
+  useLayoutEffect(() => {
+    function handleResize() {
+      if (ref && ref.current) {
+        setComponentRectThrottled(ref.current.getBoundingClientRect());
+      }
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return function cleanup() {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [ref, setComponentRectThrottled]);
+
+  return componentRect;
 }

@@ -7,7 +7,8 @@ import { Client } from "api";
 import {
   selectFilteredSortedLibrary,
   selectIsLibraryLoading,
-  selectUnread
+  selectUnread,
+  selectLibraryIsLoadedAndEmpty
 } from "redux-ducks/library";
 import {
   fetchLibrary,
@@ -23,6 +24,7 @@ import CategoriesTabs from "components/Library/CategoriesTabs";
 import AppBar from "@material-ui/core/AppBar";
 import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
+import EmptyState from "components/Library/EmptyState";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
   selectIsCategoriesLoading,
@@ -54,6 +56,8 @@ const Library = ({ match: { url } }: Props) => {
   const chaptersAreUpdating = useSelector(selectIsChaptersLoading);
   const categoriesAreLoading = useSelector(selectIsCategoriesLoading);
   const categoriesIsLoaded = useSelector(selectCategoriesIsLoaded);
+
+  const isLibraryLoadedAndEmpty = useSelector(selectLibraryIsLoadedAndEmpty);
 
   const dispatch = useDispatch();
 
@@ -116,6 +120,8 @@ const Library = ({ match: { url } }: Props) => {
       {(libraryIsLoading || chaptersAreUpdating || categoriesAreLoading) && (
         <FullScreenLoading />
       )}
+
+      {isLibraryLoadedAndEmpty && <EmptyState />}
     </>
   );
 };
