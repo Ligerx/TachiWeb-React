@@ -34,9 +34,10 @@ export function useThrottle(func: Function, wait?: number = 0): Function {
   return funcThrottled;
 }
 
+type Size = { width: number | void, height: number | void };
 // https://www.hooks.guide/rehooks/useComponentSize
 // Slightly modified and including throttling
-export function useComponentSize(ref) {
+export function useComponentSize(ref): Size {
   const [componentSize, setComponentSize] = useState(getSize(ref.current));
 
   const wait = 100; // arbitrarily picking this wait time

@@ -18,9 +18,7 @@ const useStyles = makeStyles({
     // align contents
     display: "flex",
     alignItems: "center",
-    flexDirection: "column",
-
-    margin: 48
+    flexDirection: "column"
   },
   svg: {
     marginBottom: 16
