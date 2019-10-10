@@ -53,24 +53,16 @@ const EmptyState = () => {
 
   const { width: windowWidth, height: windowHeight } = useWindowSize();
 
-  const startX = ((x + 16) / windowWidth) * 100;
-  const startY = ((y + height) / windowHeight) * 100;
-  // const endX = 16 / 100;
-  // const endY = 64 / 100;
-  const endX = ((16 + 24) / windowWidth) * 100;
-  const endY = ((64 + 24) / windowHeight) * 100;
-  // const endX = 0;
-  // const endY = 0;
+  const startX = ((x - 8) / windowWidth) * 100;
+  const startY = ((y + height - 48) / windowHeight) * 100;
+  // AppBar left padding is 16px (mobile) or 24px
+  // Half the menu icon width = 24px
+  const endX = ((24 + 24) / windowWidth) * 100;
+  // AppBar with one row height is 56px (mobile) or 64px
+  const endY = ((64 + 8) / windowHeight) * 100;
 
-  useEffect(() => {
-    console.error("should be rerendering");
-    console.error("component rect", x, y, height);
-    console.error("window size", windowWidth, windowHeight);
-    console.error("startX", startX);
-    console.error("startY", startY);
-    console.error("endX", endX);
-    console.error("endY", endY);
-  });
+  // NOTE: the further the endX and endY are from the actual elements, the more
+  // deviation away due to the slope of the line
 
   return (
     <div ref={ref} className={classes.root}>
