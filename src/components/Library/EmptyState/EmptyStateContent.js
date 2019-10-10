@@ -3,6 +3,7 @@ import React from "react";
 import classNames from "classnames";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import Icon from "@material-ui/core/Icon";
 // This is how you import SVG files as components
 // https://create-react-app.dev/docs/adding-images-fonts-and-files
 import { ReactComponent as EmptyStateSVG } from "./tachiyomi-greyscale-backdrop.svg";
@@ -22,6 +23,9 @@ const useStyles = makeStyles({
   },
   svg: {
     marginBottom: 16
+  },
+  icon: {
+    verticalAlign: "middle"
   }
 });
 
@@ -37,7 +41,8 @@ const EmptyStateContent = ({ className }: Props, ref) => {
       <Typography color="textSecondary" align="center">
         To get started, first <strong>install an extension.</strong> <br />
         Second, <strong>search for manga</strong> in your catalogues. <br />
-        Then, <strong>bookmark manga</strong> to save them to this page.
+        Then, <Icon className={classes.icon}>bookmark</Icon>
+        <strong>bookmark manga</strong> to save them to this page.
       </Typography>
     </div>
   );
