@@ -25,6 +25,14 @@ const useStyles = makeStyles({
   },
   icon: {
     verticalAlign: "middle"
+  },
+  dialogParent: {
+    position: "relative"
+  },
+  dialog: {
+    position: "absolute",
+    right: -48 - 4, // 48 is the component size, 4 is some additional spacing
+    top: -8
   }
 });
 
@@ -34,8 +42,13 @@ const EmptyStateContent = ({ className }: Props, ref) => {
   return (
     <div className={classNames(classes.root, className)} ref={ref}>
       <EmptyStateSVG className={classes.svg} />
-      <Typography variant="h6" alignt="center" gutterBottom>
-        No manga added yet <HelpDialog />
+      <Typography
+        variant="h6"
+        alignt="center"
+        gutterBottom
+        className={classes.dialogParent}
+      >
+        No manga added yet <HelpDialog className={classes.dialog} />
       </Typography>
 
       <Typography color="textSecondary" align="center">

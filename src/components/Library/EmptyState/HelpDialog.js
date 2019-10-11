@@ -10,13 +10,15 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 
+type Props = { className?: string };
+
 const useStyles = makeStyles({
   icon: {
     verticalAlign: "middle"
   }
 });
 
-const HelpDialog = () => {
+const HelpDialog = ({ className }: Props) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -31,7 +33,7 @@ const HelpDialog = () => {
 
   return (
     <>
-      <IconButton onClick={handleOpen}>
+      <IconButton onClick={handleOpen} className={className}>
         <Icon>help</Icon>
       </IconButton>
 
