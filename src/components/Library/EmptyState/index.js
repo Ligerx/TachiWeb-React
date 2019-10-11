@@ -1,6 +1,7 @@
 // @flow
 import React, { useRef } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import EmptyStateContent from "components/Library/EmptyState/EmptyStateContent";
 import ArrowToMenu from "components/Library/EmptyState/ArrowToMenu";
 import { useBoundingClientRect } from "components/hooks";
@@ -33,6 +34,7 @@ const useStyles = makeStyles({
 
 const EmptyState = () => {
   const classes = useStyles();
+  const theme = useTheme();
 
   const ref = useRef(null);
   const contentRef = useRef(null);
@@ -48,7 +50,16 @@ const EmptyState = () => {
   const startX = ((contentX - x) / width) * 100;
   const offsetY = contentY - y;
   const startY = ((offsetY + contentHeight - 56) / height) * 100;
-  const endX = ((24 + 24) / width) * 100;
+
+  // The toolbar (header) gutters change depending on screen size. This shifts the
+  // menu icon position and where the arrow should point to.
+  // Adjusting the endX based on Material-UI's responsive styles.
+  // https://github.com/mui-org/material-ui/blob/0f968fc5400e0e6bbb6f9296fe1c6a29d0bde0d1/packages/material-ui/src/Toolbar/Toolbar.js#L14
+  const isUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const gutterX = isUpSm ? theme.spacing(3) : theme.spacing(2);
+  const halfButtonWidth = 24;
+
+  const endX = ((gutterX + halfButtonWidth) / width) * 100;
   const endY = 0;
 
   return (
