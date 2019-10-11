@@ -10,7 +10,7 @@ import HelpDialog from "components/Library/EmptyState/HelpDialog";
 import { ReactComponent as EmptyStateSVG } from "./tachiyomi-greyscale-backdrop.svg";
 
 type Props = {
-  className?: Object
+  className?: string
 };
 
 const useStyles = makeStyles({

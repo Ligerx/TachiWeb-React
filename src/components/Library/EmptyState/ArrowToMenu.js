@@ -10,7 +10,7 @@ type Props = {
   endX: ?number,
   endY: ?number,
 
-  className?: Object
+  className?: string
 };
 
 const useStyles = makeStyles({
