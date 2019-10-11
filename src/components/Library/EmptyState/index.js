@@ -47,9 +47,8 @@ const EmptyState = () => {
   } = useBoundingClientRect(contentRef);
 
   // ArrowToMenu relies on values from 0 - 100
-  const startX = ((contentX - x) / width) * 100;
-  const offsetY = contentY - y;
-  const startY = ((offsetY + contentHeight - 56) / height) * 100;
+  const startX = contentX - x;
+  const startY = contentY - y + contentHeight - 56;
 
   // The toolbar (header) gutters change depending on screen size. This shifts the
   // menu icon position and where the arrow should point to.
@@ -59,7 +58,7 @@ const EmptyState = () => {
   const gutterX = isUpSm ? theme.spacing(3) : theme.spacing(2);
   const halfButtonWidth = 24;
 
-  const endX = ((gutterX + halfButtonWidth) / width) * 100;
+  const endX = gutterX + halfButtonWidth;
   const endY = 0;
 
   return (
@@ -67,6 +66,8 @@ const EmptyState = () => {
       <EmptyStateContent ref={contentRef} className={classes.content} />
       <ArrowToMenu
         className={classes.arrow}
+        width={width}
+        height={height}
         startX={startX}
         startY={startY}
         endX={endX}
