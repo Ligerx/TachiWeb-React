@@ -20,7 +20,6 @@ import {
   FETCH_LIBRARY_SUCCESS,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
-  ADJUST_UNREAD,
   UPLOAD_RESTORE,
   UPLOAD_RESTORE_SUCCESS,
   FETCH_LIBRARY_FLAGS,
@@ -34,11 +33,9 @@ import {
 type State = $ReadOnly<{
   mangaIds: $ReadOnlyArray<number>,
   reloadLibrary: boolean,
-  unread: $ReadOnly<{ [mangaId: number]: number }>,
   downloaded: $ReadOnly<{ [mangaId: number]: number }>,
   totalChaptersSortIndexes: $ReadOnly<{ [index: number]: number }>,
   lastReadSortIndexes: $ReadOnly<{ [index: number]: number }>,
-  reloadUnread: boolean,
   reloadTotalChaptersSortIndexes: boolean,
   reloadLastReadSortIndexes: boolean,
   flags: LibraryFlagsType,
@@ -48,11 +45,9 @@ type State = $ReadOnly<{
 const defaultState: State = {
   mangaIds: [], // array of mangaIds that point at data loaded in mangaInfos reducer
   reloadLibrary: true, // Library should be loaded once on first visit
-  unread: {},
   downloaded: {},
   totalChaptersSortIndexes: {},
   lastReadSortIndexes: {},
-  reloadUnread: true, // should refresh unread for library if something new is added
   reloadDownloaded: true,
   reloadTotalChaptersSortIndexes: true,
   reloadLastReadSortIndexes: true,
@@ -97,7 +92,6 @@ export default function libraryReducer(
       return {
         ...state,
         mangaIds: [...state.mangaIds, action.mangaId],
-        reloadUnread: true,
         reloadDownloaded: true,
         reloadTotalChaptersSortIndexes: true,
         reloadLastReadSortIndexes: true
@@ -114,23 +108,10 @@ export default function libraryReducer(
       };
     }
 
-    case ADJUST_UNREAD: {
-      const { unread } = state;
-      const { mangaId, difference } = action; // difference should be 1 or -1
-      return {
-        ...state,
-        unread: {
-          ...unread,
-          [mangaId]: unread[mangaId] + difference
-        }
-      };
-    }
-
     case UPLOAD_RESTORE_SUCCESS:
       return {
         ...state,
         reloadLibrary: true,
-        reloadUnread: true,
         isFlagsLoaded: false,
         reloadDownloaded: true,
         reloadTotalChaptersSortIndexes: true,
@@ -156,7 +137,6 @@ export default function libraryReducer(
     case UPDATE_CHAPTERS_SUCCESS:
       return {
         ...state,
-        reloadUnread: true,
         reloadTotalChaptersSortIndexes: true
       };
 
@@ -191,10 +171,6 @@ export function selectLibraryMangaIds(
 ): $ReadOnlyArray<number> {
   return state.library.mangaIds;
 }
-
-export const selectUnread = (
-  state: GlobalState
-): $ReadOnly<{ [mangaId: number]: number }> => state.library.unread;
 
 export const selectLibraryFlags = (state: GlobalState): LibraryFlagsType =>
   state.library.flags;

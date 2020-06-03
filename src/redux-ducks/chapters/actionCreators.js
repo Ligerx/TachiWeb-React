@@ -1,7 +1,6 @@
 // @flow
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
-import { ADJUST_UNREAD } from "redux-ducks/library/actions";
 import { handleHTMLError } from "redux-ducks/utils";
 import { selectPageCount } from "redux-ducks/pageCounts";
 import { selectChaptersForManga, selectChapter } from ".";
@@ -142,20 +141,14 @@ export function updateReadingStatus(
     return fetch(updateReadingStatusUrl)
       .then(handleHTMLError)
       .then(
-        () => {
-          if (didReadLastPage) {
-            // Update library unread that there's one less unread chapter
-            dispatch({ type: ADJUST_UNREAD, mangaId, difference: -1 });
-          }
-
-          return dispatch({
+        () =>
+          dispatch({
             type: UPDATE_READING_STATUS_SUCCESS,
             mangaId,
             chapterId: chapter.id,
             readPage,
             didReadLastPage
-          });
-        },
+          }),
         error =>
           dispatch({
             type: UPDATE_READING_STATUS_FAILURE,
@@ -178,18 +171,13 @@ export function toggleRead(
     return fetch(Server.updateReadingStatus(mangaId, chapterId, 0, read))
       .then(handleHTMLError)
       .then(
-        () => {
-          // Update cached library unread chapter count
-          const difference = read ? -1 : 1;
-          dispatch({ type: ADJUST_UNREAD, mangaId, difference });
-
-          return dispatch({
+        () =>
+          dispatch({
             type: TOGGLE_READ_SUCCESS,
             mangaId,
             chapterId,
             read
-          });
-        },
+          }),
         error =>
           dispatch({
             type: TOGGLE_READ_FAILURE,

@@ -140,9 +140,6 @@ type ADD_TO_FAVORITES_TYPE = "library/ADD_TO_FAVORITES";
 export const REMOVE_FROM_FAVORITES = "library/REMOVE_FROM_FAVORITES";
 type REMOVE_FROM_FAVORITES_TYPE = "library/REMOVE_FROM_FAVORITES";
 
-export const ADJUST_UNREAD = "library/ADJUST_UNREAD";
-type ADJUST_UNREAD_TYPE = "library/ADJUST_UNREAD";
-
 // Action Object Types
 export type AddToFavoriteAction = {
   type: ADD_TO_FAVORITES_TYPE,
@@ -152,12 +149,6 @@ export type AddToFavoriteAction = {
 export type RemoveFromFavoriteAction = {
   type: REMOVE_FROM_FAVORITES_TYPE,
   mangaId: number
-};
-
-export type AdjustUnreadAction = {
-  type: ADJUST_UNREAD_TYPE,
-  mangaId: number,
-  difference: 1 | -1
 };
 
 // ================================================================================
@@ -179,5 +170,4 @@ export type LibraryAction =
   | UploadRestoreSuccessAction
   | UploadRestoreFailureAction
   | AddToFavoriteAction
-  | RemoveFromFavoriteAction
-  | AdjustUnreadAction;
+  | RemoveFromFavoriteAction;
