@@ -19,6 +19,8 @@ esproposal.class_instance_fields=enable
 # suppress_type=$FlowIssue
 # suppress_type=$FlowFixMe
 
+esproposal.optional_chaining=enable
+
 [strict]
 
 
