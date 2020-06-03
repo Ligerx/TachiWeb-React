@@ -66,7 +66,7 @@ const Library = ({ match: { url } }: Props) => {
       dispatch(fetchCategories());
     });
     dispatch(fetchLibraryFlags());
-    dispatch(fetchSources());
+    dispatch(fetchSources()); // for sorting
   }, [dispatch]);
 
   const handleSelectManga = (mangaId: number, isSelected: boolean) => {
