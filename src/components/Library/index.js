@@ -7,12 +7,10 @@ import { Client } from "api";
 import {
   selectFilteredSortedLibrary,
   selectIsLibraryLoading,
-  selectUnread,
   selectLibraryIsLoadedAndEmpty
 } from "redux-ducks/library";
 import {
   fetchLibrary,
-  fetchUnread,
   fetchLibraryFlags
 } from "redux-ducks/library/actionCreators";
 import { selectIsChaptersLoading } from "redux-ducks/chapters";
@@ -31,6 +29,7 @@ import {
   selectCategoriesIsLoaded
 } from "redux-ducks/categories";
 import { fetchCategories } from "redux-ducks/categories/actionCreators";
+import { useUnread } from "components/apiHooks";
 
 // TODO: no feedback of success/errors after clicking the library update button
 
@@ -51,7 +50,6 @@ const Library = ({ match: { url } }: Props) => {
   const mangaLibrary = useSelector(state =>
     selectFilteredSortedLibrary(state, searchQuery)
   );
-  const unread = useSelector(selectUnread);
   const libraryIsLoading = useSelector(selectIsLibraryLoading);
   const chaptersAreUpdating = useSelector(selectIsChaptersLoading);
   const categoriesAreLoading = useSelector(selectIsCategoriesLoading);
@@ -63,12 +61,13 @@ const Library = ({ match: { url } }: Props) => {
 
   useEffect(() => {
     dispatch(fetchLibrary()).then(() => {
-      dispatch(fetchUnread());
       dispatch(fetchCategories());
     });
     dispatch(fetchLibraryFlags());
     dispatch(fetchSources());
   }, [dispatch]);
+
+  const { data: unreadArray } = useUnread();
 
   const handleSelectManga = (mangaId: number, isSelected: boolean) => {
     setSelectedMangaIds(prevState => {
@@ -107,7 +106,7 @@ const Library = ({ match: { url } }: Props) => {
                 key={manga.id}
                 to={Client.manga(url, manga.id)}
                 manga={manga}
-                unread={unread[manga.id] || 0}
+                unread={unreadArray?.find(({ id }) => manga.id === id)?.unread}
                 isSelected={selectedMangaIds.includes(manga.id)}
                 showSelectedCheckbox={selectedMangaIds.length > 0}
                 onSelectedToggle={handleSelectManga}
