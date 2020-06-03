@@ -144,7 +144,7 @@ export default function filterSortLibrary(
   mangaLibrary: Array<Manga>,
   libraryFlags: LibraryFlagsType,
   sources: SourceMap,
-  unread: { [mangaId: number]: number },
+  unread: { [mangaId: number]: number } = {},
   downloaded: { [mangaId: number]: number },
   totalChaptersSortIndexes: { [mangaId: number]: number },
   lastReadSortIndexes: { [mangaId: number]: number },

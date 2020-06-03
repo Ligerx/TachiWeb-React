@@ -13,6 +13,7 @@ import {
 } from "redux-ducks/chapters/actions";
 import { selectSources } from "redux-ducks/sources";
 import { selectCategoryMangaIds } from "redux-ducks/categories";
+import { type UnreadMap } from "components/apiHooks";
 import filterSortLibrary from "./libraryUtils";
 import {
   FETCH_LIBRARY,
@@ -219,13 +220,14 @@ export const selectLibraryMangaInfosForCurrentCategory: GlobalState => $ReadOnly
 
 export const selectFilteredSortedLibrary: (
   state: GlobalState,
-  searchQuery: string
+  searchQuery: string,
+  unread: UnreadMap
 ) => $ReadOnlyArray<Manga> = createCachedSelector(
   [
     selectLibraryMangaInfosForCurrentCategory,
     selectLibraryFlags,
     selectSources,
-    selectUnread,
+    (_, __, unread) => unread,
     // [June 16, 2019] Too lazy to make individual selectors for each of these right now.
     (state: GlobalState) => state.library.downloaded,
     (state: GlobalState) => state.library.totalChaptersSortIndexes,
@@ -235,7 +237,7 @@ export const selectFilteredSortedLibrary: (
   ],
   filterSortLibrary
   // Cache Key
-)((_, searchQuery) => searchQuery);
+)((_, searchQuery, unread) => searchQuery + JSON.stringify(unread));
 
 export const selectShouldReloadLibrary = (state: GlobalState): boolean =>
   state.library.reloadLibrary;

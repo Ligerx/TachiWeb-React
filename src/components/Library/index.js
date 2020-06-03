@@ -50,7 +50,7 @@ const Library = ({ match: { url } }: Props) => {
   const { data: unreadMap } = useUnread();
 
   const mangaLibrary = useSelector(state =>
-    selectFilteredSortedLibrary(state, searchQuery)
+    selectFilteredSortedLibrary(state, searchQuery, unreadMap)
   );
   const libraryIsLoading = useSelector(selectIsLibraryLoading);
   const chaptersAreUpdating = useSelector(selectIsChaptersLoading);
