@@ -11,10 +11,12 @@ function fetcherUnpackContent(url) {
   return fetcher(url).then(json => json.content);
 }
 
+export type UnreadMap = { [mangaId: number]: number };
+
 export function useUnread() {
   const dispatch = useDispatch();
 
-  return useSWR<{ [mangaId: number]: number }>(
+  return useSWR<UnreadMap>(
     Server.libraryUnread(),
     url => fetcherUnpackContent(url).then(content => unreadArrayToMap(content)),
     {
@@ -31,7 +33,7 @@ export function useUnread() {
 
 function unreadArrayToMap(
   unreadArray: { id: number, unread: number }[]
-): { [mangaId: number]: number } {
+): UnreadMap {
   const newUnread = {};
   unreadArray.forEach(unreadObj => {
     newUnread[unreadObj.id] = unreadObj.unread;
