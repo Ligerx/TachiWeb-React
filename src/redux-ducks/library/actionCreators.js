@@ -17,10 +17,6 @@ import {
   FETCH_LIBRARY_REQUEST,
   FETCH_LIBRARY_SUCCESS,
   FETCH_LIBRARY_FAILURE,
-  FETCH_UNREAD_CACHE,
-  FETCH_UNREAD_REQUEST,
-  FETCH_UNREAD_SUCCESS,
-  FETCH_UNREAD_FAILURE,
   UPLOAD_RESTORE_REQUEST,
   UPLOAD_RESTORE_SUCCESS,
   UPLOAD_RESTORE_FAILURE,
@@ -69,43 +65,11 @@ export function fetchLibrary({
               "lastReadIndex"
             )
           });
-          dispatch({
-            type: FETCH_UNREAD_SUCCESS,
-            unread: transformLibraryMangaField(libraryMangas, "totalUnread")
-          });
         },
         error =>
           dispatch({
             type: FETCH_LIBRARY_FAILURE,
             errorMessage: "Failed to load your library",
-            meta: { error }
-          })
-      );
-  };
-}
-
-export function fetchUnread({
-  ignoreCache = false
-}: Options = {}): ThunkAction {
-  return (dispatch, getState) => {
-    if (!ignoreCache && !selectShouldReloadLibrary(getState())) {
-      return dispatch({ type: FETCH_UNREAD_CACHE });
-    }
-
-    dispatch({ type: FETCH_UNREAD_REQUEST });
-
-    return fetch(Server.libraryUnread())
-      .then(handleHTMLError)
-      .then(
-        json =>
-          dispatch({
-            type: FETCH_UNREAD_SUCCESS,
-            unread: transformUnread(json.content)
-          }),
-        error =>
-          dispatch({
-            type: FETCH_UNREAD_FAILURE,
-            errorMessage: "Failed to get unread chapters for your library",
             meta: { error }
           })
       );
@@ -132,8 +96,6 @@ export function updateLibrary(): ThunkAction {
     );
 
     return serialPromiseChain(updateChapterPromises).then(() => {
-      // [June 16, 2019 -- nulldev]
-      // Will always load the unread if ignoring the cache, so no need to call fetchUnread()
       dispatch(fetchLibrary({ ignoreCache: true }));
     });
   };
@@ -205,16 +167,7 @@ export function setLibraryFlag(
 // ================================================================================
 // Helper functions
 // ================================================================================
-type Param = Array<{ id: number, unread: number }>;
 type Return = { [mangaId: number]: number };
-
-function transformUnread(unreadArray: Param): Return {
-  const newUnread = {};
-  unreadArray.forEach(unreadObj => {
-    newUnread[unreadObj.id] = unreadObj.unread;
-  });
-  return newUnread;
-}
 
 function uploadPostParameters(file: File): Object {
   const formData = new FormData();

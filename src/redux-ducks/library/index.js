@@ -17,8 +17,6 @@ import filterSortLibrary from "./libraryUtils";
 import {
   FETCH_LIBRARY,
   FETCH_LIBRARY_SUCCESS,
-  FETCH_UNREAD,
-  FETCH_UNREAD_SUCCESS,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
   ADJUST_UNREAD,
@@ -92,13 +90,6 @@ export default function libraryReducer(
         ...state,
         mangaIds: action.mangaIds,
         reloadLibrary: false
-      };
-
-    case FETCH_UNREAD_SUCCESS:
-      return {
-        ...state,
-        unread: action.unread,
-        reloadUnread: false
       };
 
     case ADD_TO_FAVORITES:
@@ -188,7 +179,6 @@ export const selectDidRestoreFail = createErrorSelector([UPLOAD_RESTORE]);
 
 export const selectIsLibraryLoading = createLoadingSelector([
   FETCH_LIBRARY,
-  FETCH_UNREAD,
   FETCH_LIBRARY_FLAGS
 ]);
 

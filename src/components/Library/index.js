@@ -116,9 +116,10 @@ const Library = ({ match: { url } }: Props) => {
         </Container>
       )}
 
-      {(libraryIsLoading || chaptersAreUpdating || categoriesAreLoading) && (
-        <FullScreenLoading />
-      )}
+      {(libraryIsLoading ||
+        chaptersAreUpdating ||
+        categoriesAreLoading ||
+        unreadArray == null) && <FullScreenLoading />}
 
       {isLibraryLoadedAndEmpty && <EmptyState />}
     </>

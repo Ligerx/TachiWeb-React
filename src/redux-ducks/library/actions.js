@@ -40,41 +40,6 @@ type FetchLibraryFailureAction = {
 type FetchLibraryCacheAction = { type: FETCH_LIBRARY_CACHE_TYPE };
 
 // ================================================================================
-// Fetch unread count for library
-// ================================================================================
-
-// Action Constants and Types
-export const FETCH_UNREAD = "library/FETCH_UNREAD";
-
-export const FETCH_UNREAD_REQUEST = "library/FETCH_UNREAD_REQUEST";
-type FETCH_UNREAD_REQUEST_TYPE = "library/FETCH_UNREAD_REQUEST";
-
-export const FETCH_UNREAD_SUCCESS = "library/FETCH_UNREAD_SUCCESS";
-type FETCH_UNREAD_SUCCESS_TYPE = "library/FETCH_UNREAD_SUCCESS";
-
-export const FETCH_UNREAD_FAILURE = "library/FETCH_UNREAD_FAILURE";
-type FETCH_UNREAD_FAILURE_TYPE = "library/FETCH_UNREAD_FAILURE";
-
-export const FETCH_UNREAD_CACHE = "library/FETCH_UNREAD_CACHE";
-type FETCH_UNREAD_CACHE_TYPE = "library/FETCH_UNREAD_CACHE";
-
-// Action Object Types
-type FetchUnreadRequestAction = { type: FETCH_UNREAD_REQUEST_TYPE };
-
-type FetchUnreadSuccessAction = {
-  type: FETCH_UNREAD_SUCCESS_TYPE,
-  unread: { [mangaId: number]: number }
-};
-
-type FetchUnreadFailureAction = {
-  type: FETCH_UNREAD_FAILURE_TYPE,
-  errorMessage: string,
-  meta: Object
-};
-
-type FetchUnreadCacheAction = { type: FETCH_UNREAD_CACHE_TYPE };
-
-// ================================================================================
 // Fetch library flags
 // ================================================================================
 
@@ -203,10 +168,6 @@ export type LibraryAction =
   | FetchLibrarySuccessAction
   | FetchLibraryFailureAction
   | FetchLibraryCacheAction
-  | FetchUnreadRequestAction
-  | FetchUnreadSuccessAction
-  | FetchUnreadFailureAction
-  | FetchUnreadCacheAction
   | FetchLibraryFlagsRequestAction
   | FetchLibraryFlagsSuccessAction
   | FetchLibraryFlagsFailureAction
