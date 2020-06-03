@@ -47,6 +47,8 @@ const Library = ({ match: { url } }: Props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMangaIds, setSelectedMangaIds] = useState<number[]>([]);
 
+  const { data: unreadMap } = useUnread();
+
   const mangaLibrary = useSelector(state =>
     selectFilteredSortedLibrary(state, searchQuery)
   );
@@ -66,8 +68,6 @@ const Library = ({ match: { url } }: Props) => {
     dispatch(fetchLibraryFlags());
     dispatch(fetchSources());
   }, [dispatch]);
-
-  const { data: unreadArray } = useUnread();
 
   const handleSelectManga = (mangaId: number, isSelected: boolean) => {
     setSelectedMangaIds(prevState => {
@@ -106,7 +106,7 @@ const Library = ({ match: { url } }: Props) => {
                 key={manga.id}
                 to={Client.manga(url, manga.id)}
                 manga={manga}
-                unread={unreadArray?.find(({ id }) => manga.id === id)?.unread}
+                unread={unreadMap[manga.id]}
                 isSelected={selectedMangaIds.includes(manga.id)}
                 showSelectedCheckbox={selectedMangaIds.length > 0}
                 onSelectedToggle={handleSelectManga}
@@ -119,7 +119,7 @@ const Library = ({ match: { url } }: Props) => {
       {(libraryIsLoading ||
         chaptersAreUpdating ||
         categoriesAreLoading ||
-        unreadArray == null) && <FullScreenLoading />}
+        unreadMap == null) && <FullScreenLoading />}
 
       {isLibraryLoadedAndEmpty && <EmptyState />}
     </>

@@ -14,9 +14,9 @@ function fetcherUnpackContent(url) {
 export function useUnread() {
   const dispatch = useDispatch();
 
-  return useSWR<{ id: number, unread: number }[]>(
+  return useSWR<{ [mangaId: number]: number }>(
     Server.libraryUnread(),
-    fetcherUnpackContent,
+    url => fetcherUnpackContent(url).then(content => unreadArrayToMap(content)),
     {
       onError(error) {
         dispatch({
@@ -27,4 +27,14 @@ export function useUnread() {
       }
     }
   );
+}
+
+function unreadArrayToMap(
+  unreadArray: { id: number, unread: number }[]
+): { [mangaId: number]: number } {
+  const newUnread = {};
+  unreadArray.forEach(unreadObj => {
+    newUnread[unreadObj.id] = unreadObj.unread;
+  });
+  return newUnread;
 }
