@@ -24,12 +24,8 @@ import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
 import EmptyState from "components/Library/EmptyState";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
-import {
-  selectIsCategoriesLoading,
-  selectCategoriesIsLoaded
-} from "redux-ducks/categories";
 import { fetchCategories } from "redux-ducks/categories/actionCreators";
-import { useUnread } from "components/apiHooks";
+import { useUnread, useCategories } from "components/apiHooks";
 
 // TODO: no feedback of success/errors after clicking the library update button
 
@@ -48,14 +44,13 @@ const Library = ({ match: { url } }: Props) => {
   const [selectedMangaIds, setSelectedMangaIds] = useState<number[]>([]);
 
   const { data: unreadMap } = useUnread();
+  const { data: categories } = useCategories();
 
   const mangaLibrary = useSelector(state =>
     selectFilteredSortedLibrary(state, searchQuery, unreadMap)
   );
   const libraryIsLoading = useSelector(selectIsLibraryLoading);
   const chaptersAreUpdating = useSelector(selectIsChaptersLoading);
-  const categoriesAreLoading = useSelector(selectIsCategoriesLoading);
-  const categoriesIsLoaded = useSelector(selectCategoriesIsLoaded);
 
   const isLibraryLoadedAndEmpty = useSelector(selectLibraryIsLoadedAndEmpty);
 
@@ -98,7 +93,7 @@ const Library = ({ match: { url } }: Props) => {
       </AppBar>
 
       {/* Prevent library manga from flashing on screen before organizing them into categories */}
-      {categoriesIsLoaded && (
+      {categories != null && (
         <Container>
           <Grid container spacing={2}>
             {mangaLibrary.map(manga => (
@@ -106,7 +101,7 @@ const Library = ({ match: { url } }: Props) => {
                 key={manga.id}
                 to={Client.manga(url, manga.id)}
                 manga={manga}
-                unread={unreadMap[manga.id]}
+                unread={unreadMap?.[manga.id]}
                 isSelected={selectedMangaIds.includes(manga.id)}
                 showSelectedCheckbox={selectedMangaIds.length > 0}
                 onSelectedToggle={handleSelectManga}
@@ -118,7 +113,7 @@ const Library = ({ match: { url } }: Props) => {
 
       {(libraryIsLoading ||
         chaptersAreUpdating ||
-        categoriesAreLoading ||
+        categories == null ||
         unreadMap == null) && <FullScreenLoading />}
 
       {isLibraryLoadedAndEmpty && <EmptyState />}

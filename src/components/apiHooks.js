@@ -46,6 +46,7 @@ function unreadArrayToMap(
   return newUnread;
 }
 
+// Not sorting the categories. Just assuming they'll be sorted initially for now.
 export function useCategories() {
   const dispatch = useDispatch();
 

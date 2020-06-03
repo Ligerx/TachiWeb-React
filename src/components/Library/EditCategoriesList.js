@@ -1,13 +1,12 @@
 // @flow
 import React, { memo } from "react";
-import { useSelector } from "react-redux";
 import List from "@material-ui/core/List";
-import { selectCategories } from "redux-ducks/categories";
 import EditCategoriesListItem from "components/Library/EditCategoriesListItem";
+import type { CategoryType } from "types";
 
-const EditCategoriesList = memo(() => {
-  const categories = useSelector(selectCategories);
+type Props = { categories: CategoryType[] };
 
+const EditCategoriesList = memo<Props>(({ categories }: Props) => {
   return (
     <List>
       {categories.map((category, index) => (
