@@ -2,11 +2,13 @@
 import React, { memo } from "react";
 import List from "@material-ui/core/List";
 import EditCategoriesListItem from "components/Library/EditCategoriesListItem";
-import type { CategoryType } from "types";
+import { useCategories } from "components/apiHooks";
 
-type Props = { categories: CategoryType[] };
+const EditCategoriesList = memo<{}>(() => {
+  const { data: categories } = useCategories();
 
-const EditCategoriesList = memo<Props>(({ categories }: Props) => {
+  if (categories == null) return null;
+
   return (
     <List>
       {categories.map((category, index) => (
