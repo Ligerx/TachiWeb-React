@@ -1,8 +1,9 @@
 // @flow
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { useDispatch } from "react-redux";
 import { Server } from "api";
 import type { CategoryType } from "types";
+import format from "date-fns/format";
 
 // NOTE: For any calls using the Server.api().{call}, I'm sort of hacking around SWR's intended usage pattern.
 // I'm manually adding a unique key, then using the api call as the fetcher.
@@ -52,7 +53,7 @@ export function useCategories() {
 
   return useSWR<CategoryType[]>(
     "/api/v3/categories",
-    Server.api().getCategories,
+    () => Server.api().getCategories(),
     {
       onError(error) {
         dispatch({
@@ -63,4 +64,24 @@ export function useCategories() {
       }
     }
   );
+}
+
+export function useCreateCategory(): () => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async () => {
+    const name = `New Category ${format(new Date(), "MM-DD HH:mm:ss")}`;
+
+    try {
+      // const newCategory = await Server.api().createCategory({ name });
+      await Server.api().createCategory({ name });
+      mutate("/api/v3/categories");
+    } catch (error) {
+      dispatch({
+        type: "categories/CREATE_FAILURE",
+        errorMessage: "Failed to create a new category.",
+        meta: { error }
+      });
+    }
+  };
 }
