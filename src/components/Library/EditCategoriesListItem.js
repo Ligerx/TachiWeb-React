@@ -1,6 +1,5 @@
 // @flow
 import React, { memo, useState } from "react";
-import { useDispatch } from "react-redux";
 import { Draggable } from "react-beautiful-dnd";
 import { makeStyles } from "@material-ui/core/styles";
 import Icon from "@material-ui/core/Icon";
@@ -8,9 +7,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
 import { useDerivedStateFromProps } from "components/hooks";
-import { updateCategoryName } from "redux-ducks/categories/actionCreators";
 import DeleteCategoryDialog from "components/Library/DeleteCategoryDialog";
-import { useDeleteCategory } from "components/apiHooks";
+import { useDeleteCategory, useUpdateCategoryName } from "components/apiHooks";
 
 type Props = {
   name: string,
@@ -30,12 +28,12 @@ const useStyles = makeStyles({
 
 const EditCategoriesListItem = memo<Props>(({ name, id, index }: Props) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const [tempName, setTempName] = useDerivedStateFromProps(name);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const deleteCategory = useDeleteCategory();
+  const updateCategoryName = useUpdateCategoryName();
 
   const handleChange = (event: SyntheticInputEvent<>) => {
     setTempName(event.target.value);
@@ -49,7 +47,7 @@ const EditCategoriesListItem = memo<Props>(({ name, id, index }: Props) => {
       return;
     }
 
-    dispatch(updateCategoryName(id, tempName));
+    updateCategoryName(id, tempName);
   };
 
   const handleDelete = () => {

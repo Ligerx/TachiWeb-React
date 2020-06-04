@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { Server } from "api";
 import type { CategoryType } from "types";
 import format from "date-fns/format";
+import produce from "immer";
 
 // NOTE: For any calls using the Server.api().{call}, I'm sort of hacking around SWR's intended usage pattern.
 // I'm manually adding a unique key, then using the api call as the fetcher.
@@ -85,11 +86,11 @@ export function useCreateCategory(): () => Promise<void> {
   };
 }
 
-export function useDeleteCategory(): number => Promise<void> {
+export function useDeleteCategory(): (categoryId: number) => Promise<void> {
   // TODO: handle changing current tab
   const dispatch = useDispatch();
 
-  return async (categoryId: number) => {
+  return async categoryId => {
     try {
       await Server.api().deleteCategory(categoryId);
       mutate(Server.categories());
@@ -97,6 +98,36 @@ export function useDeleteCategory(): number => Promise<void> {
       dispatch({
         type: "categories/DELETE_FAILURE",
         errorMessage: "Failed to delete category.",
+        meta: { error }
+      });
+    }
+  };
+}
+
+export function useUpdateCategoryName(): (
+  categoryId: number,
+  name: string
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async (categoryId, name) => {
+    try {
+      // Optimistic update
+      mutate(
+        Server.categories(),
+        produce((draftCategories: CategoryType[]) => {
+          const category = draftCategories.find(c => c.id === categoryId);
+          category.name = name;
+        }),
+        false
+      );
+
+      await Server.api().editCategory(categoryId, { name });
+      mutate(Server.categories());
+    } catch (error) {
+      dispatch({
+        type: "categories/UPDATE_CATEGORY_NAME_FAILURE",
+        errorMessage: "Failed to update the category name.",
         meta: { error }
       });
     }
