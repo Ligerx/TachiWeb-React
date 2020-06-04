@@ -8,11 +8,9 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
 import { useDerivedStateFromProps } from "components/hooks";
-import {
-  updateCategoryName,
-  deleteCategory
-} from "redux-ducks/categories/actionCreators";
+import { updateCategoryName } from "redux-ducks/categories/actionCreators";
 import DeleteCategoryDialog from "components/Library/DeleteCategoryDialog";
+import { useDeleteCategory } from "components/apiHooks";
 
 type Props = {
   name: string,
@@ -30,12 +28,14 @@ const useStyles = makeStyles({
   }
 });
 
-const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
+const EditCategoriesListItem = memo<Props>(({ name, id, index }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const [tempName, setTempName] = useDerivedStateFromProps(name);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const deleteCategory = useDeleteCategory();
 
   const handleChange = (event: SyntheticInputEvent<>) => {
     setTempName(event.target.value);
@@ -54,7 +54,7 @@ const EditCategoriesListItem = memo(({ name, id, index }: Props) => {
 
   const handleDelete = () => {
     setDeleteOpen(false);
-    dispatch(deleteCategory(id));
+    deleteCategory(id);
   };
 
   return (

@@ -85,3 +85,21 @@ export function useCreateCategory(): () => Promise<void> {
     }
   };
 }
+
+export function useDeleteCategory(): number => Promise<void> {
+  // TODO: handle changing current tab
+  const dispatch = useDispatch();
+
+  return async (categoryId: number) => {
+    try {
+      await Server.api().deleteCategory(categoryId);
+      mutate("/api/v3/categories");
+    } catch (error) {
+      dispatch({
+        type: "categories/DELETE_FAILURE",
+        errorMessage: "Failed to delete category.",
+        meta: { error }
+      });
+    }
+  };
+}
