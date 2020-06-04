@@ -140,39 +140,39 @@ export function useReorderCategory(): (
 ) => Promise<void> {
   const dispatch = useDispatch();
 
+  // Using the SWR categories hook to get data needed to optimistically update the UI.
+  // Unsure if this is the 'correct' way to do this, but it seems to work.
+  const { data: categories } = useCategories();
+
   return async (sourceIndex, destinationIndex) => {
+    // Reordering the categorise does not change their order property, so I'm manually overwriting that based on index
+    const reorderedCategories = arrayMove(
+      categories,
+      sourceIndex,
+      destinationIndex
+    );
+
+    // category order uses 1-based indexing
+    const updatedOrderCategories = reorderedCategories.map(
+      (category, index) => ({ ...category, order: index + 1 })
+    );
+
+    // This endpoint only accepts id, order, and name. So I need to strip down the request to only these properties.
+    const idAndOrderOnlyCategories = updatedOrderCategories.map(category => ({
+      id: category.id,
+      order: category.order
+    }));
+
     try {
-      mutate(Server.categories(), async (categories: CategoryType[]) => {
-        // Reordering the categorise does not change their order property, so I'm manually overwriting that based on index
-        const reorderedCategories = arrayMove(
-          categories,
-          sourceIndex,
-          destinationIndex
-        );
+      // Optimistic UI update
+      mutate(Server.categories(), updatedOrderCategories, false);
 
-        // category order uses 1-based indexing
-        const updatedOrderCategories = reorderedCategories.map(
-          (category, index) => ({ ...category, order: index + 1 })
-        );
-
-        // This endpoint only accepts id, order, and name. So I need to strip down the request to only these properties.
-        const idAndOrderOnlyCategories = updatedOrderCategories.map(
-          category => ({
-            id: category.id,
-            order: category.order
-          })
-        );
-
-        await Server.api().editCategories(idAndOrderOnlyCategories);
-
-        // mutating the cache with the full categories, not the stripped down ones
-        return updatedOrderCategories;
-        // FIXME: the interface is flashing. that means I'm not optimistically updating correctly.
-      });
+      await Server.api().editCategories(idAndOrderOnlyCategories);
+      mutate(Server.categories());
     } catch (error) {
       dispatch({
         type: "categories/REORDER_CATEGORY_FAILURE",
-        errorMessage: "Failed to add change category order.",
+        errorMessage: "Failed to change category order.",
         meta: { error }
       });
     }
