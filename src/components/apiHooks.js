@@ -133,3 +133,62 @@ export function useUpdateCategoryName(): (
     }
   };
 }
+
+export function useReorderCategory(): (
+  sourceIndex: number,
+  destinationIndex: number
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async (sourceIndex, destinationIndex) => {
+    try {
+      mutate(Server.categories(), async (categories: CategoryType[]) => {
+        // Reordering the categorise does not change their order property, so I'm manually overwriting that based on index
+        const reorderedCategories = arrayMove(
+          categories,
+          sourceIndex,
+          destinationIndex
+        );
+
+        // category order uses 1-based indexing
+        const updatedOrderCategories = reorderedCategories.map(
+          (category, index) => ({ ...category, order: index + 1 })
+        );
+
+        // This endpoint only accepts id, order, and name. So I need to strip down the request to only these properties.
+        const idAndOrderOnlyCategories = updatedOrderCategories.map(
+          category => ({
+            id: category.id,
+            order: category.order
+          })
+        );
+
+        await Server.api().editCategories(idAndOrderOnlyCategories);
+
+        // mutating the cache with the full categories, not the stripped down ones
+        return updatedOrderCategories;
+        // FIXME: the interface is flashing. that means I'm not optimistically updating correctly.
+      });
+    } catch (error) {
+      dispatch({
+        type: "categories/REORDER_CATEGORY_FAILURE",
+        errorMessage: "Failed to add change category order.",
+        meta: { error }
+      });
+    }
+  };
+}
+
+/**
+ * returns a new array
+ * https://stackoverflow.com/a/6470794
+ */
+function arrayMove<T>(arr: T[], fromIndex: number, toIndex: number): T[] {
+  const copy = [...arr];
+
+  const element = copy[fromIndex];
+  copy.splice(fromIndex, 1);
+  copy.splice(toIndex, 0, element);
+
+  return copy;
+}
