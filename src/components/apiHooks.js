@@ -52,7 +52,7 @@ export function useCategories() {
   const dispatch = useDispatch();
 
   return useSWR<CategoryType[]>(
-    "/api/v3/categories",
+    Server.categories(),
     () => Server.api().getCategories(),
     {
       onError(error) {
@@ -73,9 +73,8 @@ export function useCreateCategory(): () => Promise<void> {
     const name = `New Category ${format(new Date(), "MM-DD HH:mm:ss")}`;
 
     try {
-      // const newCategory = await Server.api().createCategory({ name });
       await Server.api().createCategory({ name });
-      mutate("/api/v3/categories");
+      mutate(Server.categories());
     } catch (error) {
       dispatch({
         type: "categories/CREATE_FAILURE",
@@ -93,7 +92,7 @@ export function useDeleteCategory(): number => Promise<void> {
   return async (categoryId: number) => {
     try {
       await Server.api().deleteCategory(categoryId);
-      mutate("/api/v3/categories");
+      mutate(Server.categories());
     } catch (error) {
       dispatch({
         type: "categories/DELETE_FAILURE",

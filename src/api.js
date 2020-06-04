@@ -139,6 +139,11 @@ export const Server = {
       }),
       fetch
     );
+  },
+
+  // manually re-adding apis to have a source of truth for SWR hooks
+  categories() {
+    return "/api/v3/categories";
   }
 };
 
