@@ -1,6 +1,5 @@
 // @flow
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import zipObject from "lodash/zipObject";
 import type { CategoryType } from "types";
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,8 +10,10 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import { updateMultipleCategoryManga } from "redux-ducks/categories/actionCreators";
-import { useCategories } from "components/apiHooks";
+import {
+  useCategories,
+  useUpdateMangasInCategories
+} from "components/apiHooks";
 
 type Props = {
   mangaIds: Array<number>,
@@ -26,10 +27,10 @@ const useStyles = makeStyles({
 });
 
 const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
-  const dispatch = useDispatch();
   const classes = useStyles();
 
   const { data: categories } = useCategories();
+  const updateMangasInCategories = useUpdateMangasInCategories();
 
   // Array of booleans that tracks if a checkbox is selected. This is ordered 1:1 with categories.
   const [selectedCategoriesList, setSelectedCategoriesList] = useState<
@@ -57,7 +58,7 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
     const categoryIds = categories.map(category => category.id);
     const categorySelections = zipObject(categoryIds, selectedCategoriesList);
 
-    dispatch(updateMultipleCategoryManga(categorySelections, mangaIds));
+    updateMangasInCategories(categorySelections, mangaIds);
     onClose();
     onMove();
   };
