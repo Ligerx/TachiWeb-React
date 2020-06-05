@@ -121,7 +121,9 @@ export function useUpdateCategoryName(): (
         Server.categories(),
         produce((draftCategories: CategoryType[]) => {
           const category = draftCategories.find(c => c.id === categoryId);
-          category.name = name;
+          if (category != null) {
+            category.name = name;
+          }
         }),
         false
       );
@@ -290,4 +292,31 @@ export function useExtensions() {
       });
     }
   });
+}
+
+export function useReloadExtensions(): () => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async () => {
+    try {
+      const response = await fetch(Server.reloadExtensions(), {
+        method: "POST"
+      });
+
+      const json = await response.json();
+      if (!json.success) throw new Error("success = false in returned JSON");
+
+      mutate(Server.extensions());
+
+      // TODO: are these manual mutations actually needed?
+      // dispatch({ type: RESET_SOURCES });
+      // dispatch(resetCataloguesAndFilters());
+    } catch (error) {
+      dispatch({
+        type: "extensions/RELOAD_FAILURE",
+        errorMessage: "Failed to reload extensions.",
+        meta: { error }
+      });
+    }
+  };
 }

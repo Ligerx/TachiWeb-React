@@ -11,11 +11,8 @@ import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
 import ExtensionList from "components/Extensions/ExtensionList";
 import { useDispatch } from "react-redux";
-import {
-  fetchExtensions,
-  reloadExtensions
-} from "redux-ducks/extensions/actionCreators";
-import { useExtensions } from "components/apiHooks";
+import { fetchExtensions } from "redux-ducks/extensions/actionCreators";
+import { useExtensions, useReloadExtensions } from "components/apiHooks";
 import partition from "lodash/partition";
 import type { ExtensionType } from "types";
 
@@ -38,7 +35,9 @@ const Extensions = () => {
     notInstalledExtensions
   ] = sortAndPartitionExtensions(extensions);
 
-  const handleReloadExtensions = () => dispatch(reloadExtensions());
+  const reloadExtensions = useReloadExtensions();
+
+  const handleReloadExtensions = () => reloadExtensions();
 
   useEffect(() => {
     dispatch(fetchExtensions());
