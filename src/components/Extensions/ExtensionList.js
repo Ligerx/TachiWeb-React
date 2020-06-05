@@ -1,14 +1,12 @@
 // @flow
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import type { ExtensionType } from "types";
 import Paper from "@material-ui/core/Paper";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ExtensionListItem from "components/Extensions/ExtensionListItem";
 import ExtensionButton from "components/Extensions/ExtensionButton";
-import { installExtension } from "redux-ducks/extensions/actionCreators";
-import { useUninstallExtension } from "apiHooks";
+import { useInstallExtension, useUninstallExtension } from "apiHooks";
 
 type Props = {
   title: string,
@@ -16,12 +14,10 @@ type Props = {
 };
 
 const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
-  const dispatch = useDispatch();
-
+  const installExtension = useInstallExtension();
   const uninstallExtension = useUninstallExtension();
 
-  const handleInstallExtension = packageName =>
-    dispatch(installExtension(packageName));
+  const handleInstallExtension = extension => installExtension(extension);
 
   const handleUninstallExtension = extension => uninstallExtension(extension);
 
@@ -46,12 +42,8 @@ const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
                   status={extension.status}
                   has_update={extension.has_update}
                   name={extension.name}
-                  onUpdateClick={() =>
-                    handleInstallExtension(extension.pkg_name)
-                  }
-                  onInstallClick={() =>
-                    handleInstallExtension(extension.pkg_name)
-                  }
+                  onUpdateClick={() => handleInstallExtension(extension)}
+                  onInstallClick={() => handleInstallExtension(extension)}
                   onUninstallClick={() => handleUninstallExtension(extension)}
                 />
               </ExtensionListItem>

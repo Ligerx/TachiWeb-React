@@ -352,3 +352,41 @@ export function useUninstallExtension(): (
     }
   };
 }
+
+// TODO do i need to expose some sort of isLoading capability?
+/**
+ * Running install on an already installed extension will update it instead
+ */
+export function useInstallExtension(): (
+  extension: ExtensionType
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async extension => {
+    try {
+      const response = await fetch(
+        Server.installExtension(extension.pkg_name),
+        {
+          method: "POST"
+        }
+      );
+
+      const json = await response.json();
+      if (!json.success) throw new Error("success = false in returned JSON");
+
+      // const extension: ExtensionType = json.data[0];
+
+      mutate(Server.extensions());
+
+      // TODO: are these manual mutations actually needed?
+      // dispatch({ type: RESET_SOURCES });
+      // dispatch(resetCataloguesAndFilters());
+    } catch (error) {
+      dispatch({
+        type: "extensions/INSTALL_FAILURE",
+        errorMessage: "Failed to install this extension.",
+        meta: { error }
+      });
+    }
+  };
+}
