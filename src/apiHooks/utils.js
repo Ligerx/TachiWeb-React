@@ -1,5 +1,5 @@
 // @flow
-function fetcher(url: string) {
+export function fetcher(url: string) {
   return fetch(url).then(res => res.json());
 }
 

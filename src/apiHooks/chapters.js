@@ -2,8 +2,8 @@
 import useSWR, { mutate } from "swr";
 import { useDispatch } from "react-redux";
 import { Server } from "api";
-import type { ChapterType } from "types";
-import { fetcherUnpackContent } from "./utils";
+import type { ChapterType, PageCounts } from "types";
+import { fetcher, fetcherUnpackContent } from "./utils";
 
 export function useChapters(mangaId: number) {
   const dispatch = useDispatch();
@@ -19,5 +19,22 @@ export function useChapters(mangaId: number) {
   });
 }
 
-// TODO remove this placeholder
-export const blah = 0;
+export function usePageCount(mangaId: ?number, chapterId: ?number) {
+  const dispatch = useDispatch();
+
+  const hasDefinedParams = mangaId != null && chapterId != null;
+
+  return useSWR<PageCounts>(
+    hasDefinedParams ? Server.pageCount(mangaId, chapterId) : null,
+    url => fetcher(url).then(json => json.page_count),
+    {
+      onError(error) {
+        dispatch({
+          type: "pageCounts/FETCH_FAILURE",
+          errorMessage: "Failed to get page count",
+          meta: { error, mangaId, chapterId }
+        });
+      }
+    }
+  );
+}
