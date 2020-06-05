@@ -2,7 +2,7 @@
 import useSWR, { mutate } from "swr";
 import { useDispatch } from "react-redux";
 import { Server } from "api";
-import type { CategoryType } from "types";
+import type { CategoryType, ExtensionType } from "types";
 import format from "date-fns/format";
 import produce from "immer";
 
@@ -16,6 +16,10 @@ function fetcher(url) {
 
 function fetcherUnpackContent(url) {
   return fetcher(url).then(json => json.content);
+}
+
+function fetcherUnpackData(url) {
+  return fetcher(url).then(json => json.data);
 }
 
 export type UnreadMap = { [mangaId: number]: number };
@@ -272,4 +276,18 @@ function serialPromiseChain(
     (promiseChain, currentPromise) => promiseChain.then(() => currentPromise()),
     Promise.resolve([])
   );
+}
+
+export function useExtensions() {
+  const dispatch = useDispatch();
+
+  return useSWR<ExtensionType[]>(Server.extensions(), fetcherUnpackData, {
+    onError(error) {
+      dispatch({
+        type: "extensions/FETCH_FAILURE",
+        errorMessage: "Failed to load extensions.",
+        meta: { error }
+      });
+    }
+  });
 }

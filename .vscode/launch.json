@@ -12,6 +12,16 @@
       }
     },
     {
+      "name": "WSL Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMapPathOverrides": {
+        "/*": "/__vscode-remote-uri__/*"
+      }
+    },
+    {
       "name": "Debug CRA Tests",
       "type": "node",
       "request": "launch",
