@@ -13,7 +13,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import {
   useCategories,
   useUpdateMangasInCategories
-} from "components/apiHooks";
+} from "apiHooks";
 
 type Props = {
   mangaIds: Array<number>,

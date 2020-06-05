@@ -2,7 +2,7 @@
 import React, { memo } from "react";
 import List from "@material-ui/core/List";
 import EditCategoriesListItem from "components/Library/EditCategoriesListItem";
-import { useCategories } from "components/apiHooks";
+import { useCategories } from "apiHooks";
 
 const EditCategoriesList = memo<{}>(() => {
   const { data: categories } = useCategories();

@@ -2,7 +2,7 @@
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import EditCategoriesList from "components/Library/EditCategoriesList";
-import { useReorderCategory } from "components/apiHooks";
+import { useReorderCategory } from "apiHooks";
 
 // Following the functional component example in the react-beautiful-dnd docs
 // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/about/examples.md

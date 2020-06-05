@@ -25,7 +25,7 @@ import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelections
 import EmptyState from "components/Library/EmptyState";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import { fetchCategories } from "redux-ducks/categories/actionCreators";
-import { useUnread, useCategories } from "components/apiHooks";
+import { useUnread, useCategories } from "apiHooks";
 
 // TODO: no feedback of success/errors after clicking the library update button
 

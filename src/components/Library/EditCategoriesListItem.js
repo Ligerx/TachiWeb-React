@@ -8,7 +8,7 @@ import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
 import { useDerivedStateFromProps } from "components/hooks";
 import DeleteCategoryDialog from "components/Library/DeleteCategoryDialog";
-import { useDeleteCategory, useUpdateCategoryName } from "components/apiHooks";
+import { useDeleteCategory, useUpdateCategoryName } from "apiHooks";
 
 type Props = {
   name: string,

@@ -12,7 +12,7 @@ import RefreshButton from "components/RefreshButton";
 import ExtensionList from "components/Extensions/ExtensionList";
 import { useDispatch } from "react-redux";
 import { fetchExtensions } from "redux-ducks/extensions/actionCreators";
-import { useExtensions, useReloadExtensions } from "components/apiHooks";
+import { useExtensions, useReloadExtensions } from "apiHooks";
 import partition from "lodash/partition";
 import type { ExtensionType } from "types";
 

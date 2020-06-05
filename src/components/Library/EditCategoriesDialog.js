@@ -5,7 +5,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import EditCategoriesDraggableList from "components/Library/EditCategoriesDraggableList";
-import { useCreateCategory } from "components/apiHooks";
+import { useCreateCategory } from "apiHooks";
 
 type Props = {
   isOpen: boolean,

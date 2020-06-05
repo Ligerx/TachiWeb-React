@@ -5,7 +5,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { selectCurrentCategoryId } from "redux-ducks/categories";
 import { changeCurrentCategoryId } from "redux-ducks/categories/actionCreators";
-import { useCategories } from "components/apiHooks";
+import { useCategories } from "apiHooks";
 import { selectLibraryMangaIds } from "redux-ducks/library";
 import { defaultCategoryMangaIds } from "components/utils";
 
