@@ -15,7 +15,7 @@ export function useMangaInfo(mangaId: number) {
         dispatch({
           type: "mangaInfos/FETCH_FAILURE",
           errorMessage: "Failed to get this manga's information",
-          meta: { error }
+          meta: { error, mangaId }
         });
       }
     }

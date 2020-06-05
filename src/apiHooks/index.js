@@ -91,7 +91,7 @@ export function useDeleteCategory(): (categoryId: number) => Promise<void> {
       dispatch({
         type: "categories/DELETE_FAILURE",
         errorMessage: "Failed to delete category.",
-        meta: { error }
+        meta: { error, categoryId }
       });
     }
   };
@@ -123,7 +123,7 @@ export function useUpdateCategoryName(): (
       dispatch({
         type: "categories/UPDATE_CATEGORY_NAME_FAILURE",
         errorMessage: "Failed to update the category name.",
-        meta: { error }
+        meta: { error, categoryId, name }
       });
     }
   };
@@ -168,7 +168,7 @@ export function useReorderCategory(): (
       dispatch({
         type: "categories/REORDER_CATEGORY_FAILURE",
         errorMessage: "Failed to change category order.",
-        meta: { error }
+        meta: { error, categories, sourceIndex, destinationIndex }
       });
     }
   };
@@ -232,7 +232,7 @@ export function useUpdateMangasInCategories(): (
       dispatch({
         type: "categories/UPDATE_CATEGORY_MANGA_FAILURE",
         errorMessage: "Failed to add or remove manga from category.",
-        meta: { error }
+        meta: { error, categorySelections, mangaIds, categories }
       });
     }
   };
@@ -337,7 +337,7 @@ export function useUninstallExtension(): (
       dispatch({
         type: "extensions/UNINSTALL_FAILURE",
         errorMessage: "Failed to uninstall this extension.",
-        meta: { error }
+        meta: { error, extension }
       });
     }
   };
@@ -375,7 +375,7 @@ export function useInstallExtension(): (
       dispatch({
         type: "extensions/INSTALL_FAILURE",
         errorMessage: "Failed to install this extension.",
-        meta: { error }
+        meta: { error, extension }
       });
     }
   };
