@@ -320,3 +320,35 @@ export function useReloadExtensions(): () => Promise<void> {
     }
   };
 }
+
+// TODO do i need to expose some sort of isLoading capability?
+export function useUninstallExtension(): (
+  extension: ExtensionType
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async extension => {
+    try {
+      const { pkg_name: packageName } = extension;
+
+      const response = await fetch(Server.extension(packageName), {
+        method: "DELETE"
+      });
+
+      const json = await response.json();
+      if (!json.success) throw new Error("success = false in returned JSON");
+
+      mutate(Server.extensions());
+
+      // TODO: are these manual mutations actually needed?
+      // dispatch({ type: RESET_SOURCES });
+      // dispatch(resetCataloguesAndFilters());
+    } catch (error) {
+      dispatch({
+        type: "extensions/UNINSTALL_FAILURE",
+        errorMessage: "Failed to uninstall this extension.",
+        meta: { error }
+      });
+    }
+  };
+}

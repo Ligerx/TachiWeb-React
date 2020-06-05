@@ -7,10 +7,8 @@ import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ExtensionListItem from "components/Extensions/ExtensionListItem";
 import ExtensionButton from "components/Extensions/ExtensionButton";
-import {
-  installExtension,
-  uninstallExtension
-} from "redux-ducks/extensions/actionCreators";
+import { installExtension } from "redux-ducks/extensions/actionCreators";
+import { useUninstallExtension } from "apiHooks";
 
 type Props = {
   title: string,
@@ -20,11 +18,12 @@ type Props = {
 const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
   const dispatch = useDispatch();
 
+  const uninstallExtension = useUninstallExtension();
+
   const handleInstallExtension = packageName =>
     dispatch(installExtension(packageName));
 
-  const handleUninstallExtension = extension =>
-    dispatch(uninstallExtension(extension));
+  const handleUninstallExtension = extension => uninstallExtension(extension);
 
   if (!extensions.length) return null;
 
