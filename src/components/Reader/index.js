@@ -16,8 +16,8 @@ import { fetchChapters } from "redux-ducks/chapters/actionCreators";
 import { selectPageCount } from "redux-ducks/pageCounts";
 import { fetchPageCount } from "redux-ducks/pageCounts/actionCreators";
 import { selectDefaultViewer } from "redux-ducks/settings";
-import { selectMangaInfo } from "redux-ducks/mangaInfos";
 import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
+import { useMangaInfo } from "apiHooks";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
@@ -27,8 +27,9 @@ const Reader = ({ match: { params } }: RouterProps) => {
   const mangaId = parseInt(params.mangaId, 10);
   const chapterId = parseInt(params.chapterId, 10);
 
+  const { data: mangaInfo } = useMangaInfo(mangaId);
+
   const defaultViewer = useSelector(selectDefaultViewer);
-  const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
   const chapter = useSelector(state =>
     selectChapter(state, mangaId, chapterId)
   );
@@ -50,7 +51,7 @@ const Reader = ({ match: { params } }: RouterProps) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchMangaInfo(mangaId));
+    dispatch(fetchMangaInfo(mangaId)); // remove
     dispatch(fetchChapters(mangaId));
   }, [dispatch, mangaId]);
 
