@@ -9,27 +9,14 @@ import FullScreenLoading from "components/Loading/FullScreenLoading";
 import ContinueReadingButton from "components/MangaInfo/ContinueReadingButton";
 import MangaInfoChapterList from "components/MangaInfo/ChapterList";
 import CenterHorizontally from "components/CenterHorizontally";
-import { useSelector, useDispatch, useStore } from "react-redux";
-import {
-  selectIsMangaInfosLoading,
-  selectMangaInfo
-} from "redux-ducks/mangaInfos";
-import {
-  fetchMangaInfo,
-  updateMangaInfo
-} from "redux-ducks/mangaInfos/actionCreators";
-import {
-  selectIsChaptersLoading,
-  selectFilteredSortedChapters,
-  selectChaptersForManga
-} from "redux-ducks/chapters";
-import {
-  fetchChapters,
-  updateChapters
-} from "redux-ducks/chapters/actionCreators";
 import { makeStyles } from "@material-ui/styles";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
-import { selectSource } from "redux-ducks/sources";
+import {
+  useMangaInfo,
+  useChapters,
+  useUpdateChapters,
+  useUpdateMangaInfo,
+  useSource
+} from "apiHooks";
 
 type RouterProps = { match: { params: Object } };
 
@@ -54,52 +41,33 @@ const MangaInfo = ({ match: { params } }: RouterProps) => {
 
   const mangaId = parseInt(params.mangaId, 10);
 
-  const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
-  const chapters = useSelector(state =>
-    selectFilteredSortedChapters(state, mangaId)
-  );
-  const source = useSelector(state =>
-    selectSource(state, mangaInfo ? mangaInfo.sourceId : "")
-  );
-  const isMangaInfosLoading = useSelector(selectIsMangaInfosLoading);
-  const isChaptersLoading = useSelector(selectIsChaptersLoading);
+  const { data: mangaInfo } = useMangaInfo(mangaId);
+  const { data: chapters } = useChapters(mangaId);
+  const { data: source } = useSource(mangaInfo?.sourceId);
 
-  const dispatch = useDispatch();
-
-  const store = useStore();
+  const updateChapters = useUpdateChapters();
+  const updateMangaInfo = useUpdateMangaInfo();
 
   useEffect(() => {
-    dispatch(fetchChapters(mangaId)).then(() => {
-      // The first time a manga is loaded by the server, it will not have any chapters scraped.
-      // So check if we found any chapters. If not, try scraping the site once.
+    // The first time a manga is loaded by the server, it will not have any chapters scraped.
+    // So check if we found any chapters. If not, try scraping the site once.
+    if (chapters != null && chapters.length === 0) {
+      updateChapters(mangaId);
+    }
+  }, [chapters, mangaId, updateChapters]);
 
-      // Check for chapters directly in the store instead of relying on useSelector().
-      // This is because the useSelector() value doesn't update until the next render
-      // which occurs AFTER this useEffect() promise runs.
-      const chaptersInStore = selectChaptersForManga(store.getState(), mangaId);
-
-      if (!chaptersInStore.length) {
-        // return promise so next .then()'s wait until the data has finished fetching
-        return dispatch(updateChapters(mangaId));
-      }
-      return null;
-    });
-
-    dispatch(fetchMangaInfo(mangaId)).then(() => {
-      // Update manga manually if the server has not fetched the data for this manga yet
-      if (mangaInfo && !mangaInfo.initialized) {
-        dispatch(updateMangaInfo(mangaId));
-      }
-
-      dispatch(fetchSources());
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    // Update manga manually if the server has not fetched the data for this manga yet
+    if (mangaInfo != null && !mangaInfo.initialized) {
+      updateMangaInfo(mangaId);
+    }
+  }, [mangaId, mangaInfo, updateMangaInfo]);
 
   const handleChangeTab = (event: SyntheticEvent<>, newValue: number) => {
     setTabValue(newValue);
   };
 
-  if (!mangaInfo) return <FullScreenLoading />;
+  if (mangaInfo == null || chapters == null) return <FullScreenLoading />;
 
   return (
     <div className={classes.parent}>
@@ -128,8 +96,6 @@ const MangaInfo = ({ match: { params } }: RouterProps) => {
           <MangaInfoChapterList chapters={chapters} mangaInfo={mangaInfo} />
         </>
       )}
-
-      {(isMangaInfosLoading || isChaptersLoading) && <FullScreenLoading />}
     </div>
   );
 };
