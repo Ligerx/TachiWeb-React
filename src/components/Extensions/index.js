@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from "react";
+import React from "react";
 import { Helmet } from "react-helmet";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
@@ -10,8 +10,6 @@ import Container from "@material-ui/core/Container";
 import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
 import ExtensionList from "components/Extensions/ExtensionList";
-import { useDispatch } from "react-redux";
-import { fetchExtensions } from "redux-ducks/extensions/actionCreators";
 import { useExtensions, useReloadExtensions } from "apiHooks";
 import partition from "lodash/partition";
 import type { ExtensionType } from "types";
@@ -27,7 +25,7 @@ const useStyles = makeStyles({
 });
 
 const Extensions = () => {
-  const dispatch = useDispatch();
+  const classes = useStyles();
 
   const { data: extensions } = useExtensions();
   const [
@@ -38,12 +36,6 @@ const Extensions = () => {
   const reloadExtensions = useReloadExtensions();
 
   const handleReloadExtensions = () => reloadExtensions();
-
-  useEffect(() => {
-    dispatch(fetchExtensions());
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const classes = useStyles();
 
   return (
     <>
