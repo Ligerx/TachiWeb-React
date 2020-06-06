@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { Server } from "api";
 import type { ChapterType, PageCounts } from "types";
 import type { Manga } from "@tachiweb/api-client";
+import produce from "immer";
 import { fetcher, fetcherUnpackContent } from "./utils";
 
 export function useChapters(mangaId: number) {
@@ -127,4 +128,26 @@ export function useFirstUnreadChapter(mangaId: number) {
   });
 
   return { ...response, data: firstUnreadChapter };
+}
+
+// TODO: Update this function (and maybe updateReadingStatus()) to new api version
+export function useToggleRead(): (
+  mangaId: number,
+  chapterId: number,
+  read: boolean
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async (mangaId, chapterId, read) => {
+    try {
+      await fetch(Server.updateReadingStatus(mangaId, chapterId, 0, read));
+      mutate(Server.chapters(mangaId));
+    } catch (error) {
+      dispatch({
+        type: "chapters/TOGGLE_READ_FAILURE",
+        errorMessage: `Failed to mark chapter as ${read ? "read" : "unread"}`,
+        meta: { error }
+      });
+    }
+  };
 }
