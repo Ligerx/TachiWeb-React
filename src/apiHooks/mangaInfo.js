@@ -2,7 +2,8 @@
 import useSWR, { mutate } from "swr";
 import { useDispatch } from "react-redux";
 import { Server } from "api";
-import type { Manga, MangaFlags } from "@tachiweb/api-client";
+import type { Manga, MangaViewer } from "@tachiweb/api-client";
+import produce from "immer";
 
 export function useMangaInfo(mangaId: number) {
   const dispatch = useDispatch();
@@ -13,7 +14,7 @@ export function useMangaInfo(mangaId: number) {
     {
       onError(error) {
         dispatch({
-          type: "mangaInfos/FETCH_FAILURE",
+          type: "mangaInfo/FETCH_FAILURE",
           errorMessage: "Failed to get this manga's information",
           meta: { error, mangaId }
         });
@@ -22,5 +23,31 @@ export function useMangaInfo(mangaId: number) {
   );
 }
 
-// TODO remove this placeholder
-export const blah = 0;
+export function useSetMangaViewer(): (
+  mangaId: number,
+  viewer: MangaViewer
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async (mangaId, viewer) => {
+    try {
+      // Optimistic update
+      mutate(
+        Server.mangaInfo(mangaId),
+        produce((draftMangaInfo: Manga) => {
+          draftMangaInfo.viewer = viewer;
+        }),
+        false
+      );
+
+      await Server.api().setMangaViewer(mangaId, viewer);
+      mutate(Server.mangaInfo(mangaId));
+    } catch (error) {
+      dispatch({
+        type: "mangaInfo/SET_MANGA_VIEWER_FAILURE",
+        errorMessage: "Failed to change your viewer setting for this manga.",
+        meta: { error, mangaId, viewer }
+      });
+    }
+  };
+}

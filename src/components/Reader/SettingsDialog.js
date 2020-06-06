@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import type { MangaViewer } from "@tachiweb/api-client";
 import type { SettingViewerType } from "types";
 import Dialog from "@material-ui/core/Dialog";
@@ -11,8 +11,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import { selectDefaultViewer } from "redux-ducks/settings";
-import { selectMangaViewer } from "redux-ducks/mangaInfos";
-import { setMangaViewer } from "redux-ducks/mangaInfos/actionCreators";
+import { useMangaInfo, useSetMangaViewer } from "apiHooks";
 
 type Props = {
   mangaId: number,
@@ -29,13 +28,16 @@ const viewerNames = {
 };
 
 const ReaderOverlay = ({ mangaId, open, onClose }: Props) => {
-  const dispatch = useDispatch();
+  const {
+    data: { viewer }
+  } = useMangaInfo(mangaId);
 
-  const viewer = useSelector(state => selectMangaViewer(state, mangaId));
+  const setMangaViewer = useSetMangaViewer();
+
   const defaultViewer = useSelector(selectDefaultViewer);
 
   const handleChangeViewer = event => {
-    dispatch(setMangaViewer(mangaId, event.target.value));
+    setMangaViewer(mangaId, event.target.value);
   };
 
   return (
