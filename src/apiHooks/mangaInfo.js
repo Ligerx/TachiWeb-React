@@ -2,7 +2,7 @@
 import useSWR, { mutate } from "swr";
 import { useDispatch } from "react-redux";
 import { Server } from "api";
-import type { Manga, MangaViewer } from "@tachiweb/api-client";
+import type { Manga, MangaViewer, MangaFlags } from "@tachiweb/api-client";
 import produce from "immer";
 
 export function useMangaInfo(mangaId: number) {
@@ -65,6 +65,35 @@ export function useUpdateMangaInfo(): (mangaId: number) => Promise<void> {
         type: "mangaInfos/UPDATE_FAILURE",
         errorMessage: "Failed to update this manga's information",
         meta: { error }
+      });
+    }
+  };
+}
+
+export function useSetFlag(): (
+  mangaInfo: Manga,
+  flag: $Keys<MangaFlags>,
+  state: string
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async (mangaInfo, flag, state) => {
+    const prevFlags = mangaInfo.flags;
+
+    if (prevFlags[flag] === state) return;
+
+    try {
+      // setMangaFlags() requires an updated copy of the full flag object.
+      await Server.api().setMangaFlags(mangaInfo.id, {
+        ...prevFlags,
+        [flag]: state
+      });
+      mutate(Server.mangaInfo(mangaInfo.id));
+    } catch (error) {
+      dispatch({
+        type: "mangaInfos/SET_FLAG_FAILURE",
+        errorMessage: "Failed to update this manga's filter and sort settings.",
+        meta: { error, mangaInfo, flag, state }
       });
     }
   };

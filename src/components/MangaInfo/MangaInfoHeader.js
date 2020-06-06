@@ -12,9 +12,7 @@ import BackButton from "components/BackButton";
 import MangaInfoMore from "components/MangaInfo/MangaInfoMore";
 import Tooltip from "@material-ui/core/Tooltip";
 import MangaInfoFilter from "components/MangaInfo/MangaInfoFilter";
-import { useDispatch } from "react-redux";
-import { setFlag } from "redux-ducks/mangaInfos/actionCreators";
-import { useUpdateChapters, useUpdateMangaInfo } from "apiHooks";
+import { useUpdateChapters, useUpdateMangaInfo, useSetFlag } from "apiHooks";
 
 // NOTE: empty href in IconButton will not render <a>
 
@@ -31,13 +29,12 @@ const MangaInfoHeader = ({
   handleChangeTab,
   onBackClick
 }: Props) => {
-  const dispatch = useDispatch();
-
   const updateChapters = useUpdateChapters();
   const updateMangaInfo = useUpdateMangaInfo();
+  const setFlag = useSetFlag();
 
   const handleSetFlag = (flag, state) => {
-    dispatch(setFlag(mangaInfo.id, flag, state));
+    setFlag(mangaInfo, flag, state);
   };
 
   const handleRefreshClick = () => {
