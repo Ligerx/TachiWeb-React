@@ -13,11 +13,8 @@ import MangaInfoMore from "components/MangaInfo/MangaInfoMore";
 import Tooltip from "@material-ui/core/Tooltip";
 import MangaInfoFilter from "components/MangaInfo/MangaInfoFilter";
 import { useDispatch } from "react-redux";
-import {
-  updateMangaInfo,
-  setFlag
-} from "redux-ducks/mangaInfos/actionCreators";
-import { updateChapters } from "redux-ducks/chapters/actionCreators";
+import { setFlag } from "redux-ducks/mangaInfos/actionCreators";
+import { useUpdateChapters, useUpdateMangaInfo } from "apiHooks";
 
 // NOTE: empty href in IconButton will not render <a>
 
@@ -36,16 +33,16 @@ const MangaInfoHeader = ({
 }: Props) => {
   const dispatch = useDispatch();
 
+  const updateChapters = useUpdateChapters();
+  const updateMangaInfo = useUpdateMangaInfo();
+
   const handleSetFlag = (flag, state) => {
     dispatch(setFlag(mangaInfo.id, flag, state));
   };
 
   const handleRefreshClick = () => {
-    // Running updateChapters also updates mangaInfo.chapters and mangaInfo.unread
-    // So run updateMangaInfo after chapters
-    dispatch(updateChapters(mangaInfo.id)).then(() =>
-      dispatch(updateMangaInfo(mangaInfo.id))
-    );
+    updateChapters(mangaInfo.id);
+    updateMangaInfo(mangaInfo.id);
   };
 
   return (

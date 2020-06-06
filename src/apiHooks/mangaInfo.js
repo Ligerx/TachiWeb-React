@@ -52,6 +52,7 @@ export function useSetMangaViewer(): (
   };
 }
 
+// TODO do I need to be able to support a loading state here?
 export function useUpdateMangaInfo(): (mangaId: number) => Promise<void> {
   const dispatch = useDispatch();
 
