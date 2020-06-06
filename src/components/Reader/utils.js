@@ -1,8 +1,9 @@
 // @flow
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { Server } from "api";
-import { updateReadingStatus } from "redux-ducks/chapters/actionCreators";
+import { useUpdateReadingStatus as useUpdateReadingStatusAPI } from "apiHooks";
+import type { Manga } from "@tachiweb/api-client";
+import type { ChapterType } from "types";
 
 export function usePagePreloader(
   mangaId: number,
@@ -43,20 +44,27 @@ export function usePagePreloader(
 }
 
 export function useUpdateReadingStatus(
-  mangaId: number,
-  chapterId: number,
-  page: ?number, // possibly null on WebtoonReader init
+  mangaInfo: Manga,
+  chapter: ChapterType,
+  pageCount: number,
+  readPage: ?number, // possibly null on WebtoonReader init
   skipEffect?: boolean = false
 ) {
-  const dispatch = useDispatch();
+  const updateReadingStatusAPI = useUpdateReadingStatusAPI();
 
   useEffect(() => {
     if (skipEffect) return;
-    if (page == null) return;
+    if (readPage == null) return;
 
-    // updateReadingStatus() is handling whether or not an update should be made
-    dispatch(updateReadingStatus(mangaId, chapterId, page));
-  }, [dispatch, mangaId, chapterId, page, skipEffect]);
+    updateReadingStatusAPI(mangaInfo, chapter, readPage, pageCount);
+  }, [
+    mangaInfo,
+    chapter,
+    readPage,
+    pageCount,
+    skipEffect,
+    updateReadingStatusAPI
+  ]);
 }
 
 export function useReaderScrollToTop(

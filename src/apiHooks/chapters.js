@@ -3,6 +3,7 @@ import useSWR, { mutate } from "swr";
 import { useDispatch } from "react-redux";
 import { Server } from "api";
 import type { ChapterType, PageCounts } from "types";
+import type { Manga } from "@tachiweb/api-client";
 import { fetcher, fetcherUnpackContent } from "./utils";
 
 export function useChapters(mangaId: number) {
@@ -37,4 +38,44 @@ export function usePageCount(mangaId: ?number, chapterId: ?number) {
       }
     }
   );
+}
+
+// TODO currently the reading status is not updating on the chapters page because it's not hooked up to SWR
+//      I don't think I NEED to do optimistic updates, but we'll see how it feels
+/**
+ * Update one chapter's `read` and `last_page_read` properties
+ */
+export function useUpdateReadingStatus(): (
+  mangaInfo: Manga,
+  chapter: ChapterType,
+  readPage: number,
+  pageCount: number
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async (mangaInfo, chapter, readPage, pageCount) => {
+    // Escape early if no update is needed
+    if (chapter.read) return;
+    if (readPage === chapter.last_page_read) return;
+
+    const didReadLastPage = readPage === pageCount - 1;
+
+    try {
+      await fetch(
+        Server.updateReadingStatus(
+          mangaInfo.id,
+          chapter.id,
+          readPage,
+          didReadLastPage
+        )
+      );
+      mutate(Server.chapters(mangaInfo.id));
+    } catch (error) {
+      dispatch({
+        type: "chapters/UPDATE_READING_STATUS_FAILURE",
+        errorMessage: "Failed to save your reading status",
+        meta: { error }
+      });
+    }
+  };
 }
