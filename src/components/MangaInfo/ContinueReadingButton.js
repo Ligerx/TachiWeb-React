@@ -6,9 +6,8 @@ import Link from "components/Link";
 import { chapterNumPrettyPrint } from "components/utils";
 import UrlPrefixContext from "components/UrlPrefixContext";
 import { Client } from "api";
-import { selectFirstUnreadChapter } from "redux-ducks/chapters";
-import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/styles";
+import { useFirstUnreadChapter } from "apiHooks";
 
 // The chapters list passed into this component should NOT be sorted or filtered.
 // It iterates through the chapters array based on the array's natural order.
@@ -33,9 +32,7 @@ const ContinueReadingButton = ({ mangaId }: Props) => {
   const classes = useStyles();
   const urlPrefix = useContext(UrlPrefixContext);
 
-  const firstUnreadChapter = useSelector(state =>
-    selectFirstUnreadChapter(state, mangaId)
-  );
+  const { data: firstUnreadChapter } = useFirstUnreadChapter(mangaId);
 
   if (firstUnreadChapter) {
     return (
