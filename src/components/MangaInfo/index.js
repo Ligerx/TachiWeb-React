@@ -17,6 +17,7 @@ import {
   useUpdateMangaInfo,
   useSource
 } from "apiHooks";
+import filterSortChapters from "redux-ducks/chapters/chapterUtils";
 
 type RouterProps = { match: { params: Object } };
 
@@ -42,8 +43,13 @@ const MangaInfo = ({ match: { params } }: RouterProps) => {
   const mangaId = parseInt(params.mangaId, 10);
 
   const { data: mangaInfo } = useMangaInfo(mangaId);
-  const { data: chapters } = useChapters(mangaId);
   const { data: source } = useSource(mangaInfo?.sourceId);
+  const { data: unsortedOrFilteredChapters } = useChapters(mangaId);
+  // may need to memoize this if it's laggy
+  const chapters = filterSortChapters(
+    unsortedOrFilteredChapters,
+    mangaInfo.flags
+  );
 
   const updateChapters = useUpdateChapters();
   const updateMangaInfo = useUpdateMangaInfo();
