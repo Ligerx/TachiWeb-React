@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { Server } from "api";
 import type { ChapterType, PageCounts } from "types";
 import type { Manga } from "@tachiweb/api-client";
-import produce from "immer";
 import { fetcher, fetcherUnpackContent } from "./utils";
 
 export function useChapters(mangaId: number) {
