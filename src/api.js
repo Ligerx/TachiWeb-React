@@ -66,6 +66,10 @@ export const Server = {
     return url;
   },
 
+  source(sourceId) {
+    return `/api/v3/sources/${sourceId}`;
+  },
+
   filters(sourceId) {
     return `/api/get_filters/${sourceId}`;
   },
