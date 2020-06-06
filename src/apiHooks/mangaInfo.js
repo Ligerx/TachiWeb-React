@@ -51,3 +51,20 @@ export function useSetMangaViewer(): (
     }
   };
 }
+
+export function useUpdateMangaInfo(): (mangaId: number) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async mangaId => {
+    try {
+      await Server.api().updateMangaInfo(mangaId);
+      mutate(Server.mangaInfo(mangaId));
+    } catch (error) {
+      dispatch({
+        type: "mangaInfos/UPDATE_FAILURE",
+        errorMessage: "Failed to update this manga's information",
+        meta: { error }
+      });
+    }
+  };
+}
