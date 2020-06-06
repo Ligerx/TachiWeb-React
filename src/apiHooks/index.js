@@ -383,3 +383,4 @@ export function useInstallExtension(): (
 
 export * from "./mangaInfo";
 export * from "./chapters";
+export * from "./sources";
