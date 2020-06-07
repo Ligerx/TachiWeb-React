@@ -20,7 +20,14 @@ import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelections
 import EmptyState from "components/Library/EmptyState";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
 import { fetchCategories } from "redux-ducks/categories/actionCreators";
-import { useUnread, useCategories, useLibrary } from "apiHooks";
+import {
+  useUnread,
+  useCategories,
+  useLibrary,
+  useLibraryFlags,
+  useSources
+} from "apiHooks";
+import filterSortLibrary from "redux-ducks/library/libraryUtils";
 
 // TODO: no feedback of success/errors after clicking the library update button
 
@@ -38,9 +45,34 @@ const Library = ({ match: { url } }: Props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMangaIds, setSelectedMangaIds] = useState<number[]>([]);
 
-  const { data: libraryMangas } = useLibrary(); // TODO need to sort/filter these results
-  const { data: unreadMap } = useUnread();
   const { data: categories } = useCategories();
+  const { data: unreadMap } = useUnread();
+  const { data: sources } = useSources();
+  const { data: libraryFlags } = useLibraryFlags();
+  const { data: notSortedOrFilteredLibraryMangas } = useLibrary(); // TODO need to sort/filter these results
+  // update this function to be cleaner with the new swr hooks data
+  // also need to update the render function
+  const libraryMangas =
+    notSortedOrFilteredLibraryMangas &&
+    libraryFlags &&
+    sources &&
+    unreadMap &&
+    filterSortLibrary(
+      notSortedOrFilteredLibraryMangas.map(libraryManga => libraryManga.manga),
+      libraryFlags,
+      sources,
+      unreadMap,
+      notSortedOrFilteredLibraryMangas.map(libraryManga => ({
+        [libraryManga.manga.id]: libraryManga.totalDownloaded
+      })),
+      notSortedOrFilteredLibraryMangas.map(libraryManga => ({
+        [libraryManga.manga.id]: libraryManga.totalChaptersIndex
+      })),
+      notSortedOrFilteredLibraryMangas.map(libraryManga => ({
+        [libraryManga.manga.id]: libraryManga.lastReadIndex
+      })),
+      searchQuery
+    );
 
   const chaptersAreUpdating = useSelector(selectIsChaptersLoading); // TODO remove/replace this with apiHook functionality
 
@@ -86,7 +118,7 @@ const Library = ({ match: { url } }: Props) => {
       {categories != null && libraryMangas != null && (
         <Container>
           <Grid container spacing={2}>
-            {libraryMangas.map(libraryManga => (
+            {/* {libraryMangas.map(libraryManga => (
               <LibraryMangaCard
                 key={libraryManga.manga.id}
                 to={Client.manga(url, libraryManga.manga.id)}
@@ -96,8 +128,8 @@ const Library = ({ match: { url } }: Props) => {
                 showSelectedCheckbox={selectedMangaIds.length > 0}
                 onSelectedToggle={handleSelectManga}
               />
-            ))}
-            {/* {mangaLibrary.map(manga => (
+            ))} */}
+            {libraryMangas.map(manga => (
               <LibraryMangaCard
                 key={manga.id}
                 to={Client.manga(url, manga.id)}
@@ -107,7 +139,7 @@ const Library = ({ match: { url } }: Props) => {
                 showSelectedCheckbox={selectedMangaIds.length > 0}
                 onSelectedToggle={handleSelectManga}
               />
-            ))} */}
+            ))}
           </Grid>
         </Container>
       )}

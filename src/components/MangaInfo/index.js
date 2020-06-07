@@ -45,7 +45,8 @@ const MangaInfo = ({ match: { params } }: RouterProps) => {
   const { data: mangaInfo } = useMangaInfo(mangaId);
   const { data: source } = useSource(mangaInfo?.sourceId);
   const { data: unsortedOrFilteredChapters } = useChapters(mangaId);
-  // may need to memoize this if it's laggy
+  // TODO need to handle undefined chapters coming from the apiHook
+  // TODO may need to memoize this if it's laggy
   const chapters = filterSortChapters(
     unsortedOrFilteredChapters,
     mangaInfo.flags
