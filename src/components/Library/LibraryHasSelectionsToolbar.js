@@ -1,13 +1,12 @@
 // @flow
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import UnfavoriteMultipleMangaDialog from "components/Library/UnfavoriteMultipleMangaDialog";
 import MoveToCategoriesDialog from "components/Library/MoveToCategoriesDialog";
-import { unfavoriteMultiple } from "redux-ducks/mangaInfos/actionCreators";
+import { useUnfavoriteMultiple } from "apiHooks";
 
 type Props = {
   selectedMangaIds: Array<number>,
@@ -18,7 +17,7 @@ const LibraryHasSelectionsToolbar = ({
   selectedMangaIds,
   deselectMangaIds
 }: Props) => {
-  const dispatch = useDispatch();
+  const unfavoriteMultiple = useUnfavoriteMultiple();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [
@@ -43,7 +42,7 @@ const LibraryHasSelectionsToolbar = ({
   };
 
   const handleUnfavoriteManga = () => {
-    dispatch(unfavoriteMultiple(selectedMangaIds));
+    unfavoriteMultiple(selectedMangaIds);
     deselectMangaIds();
   };
 

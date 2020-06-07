@@ -98,3 +98,42 @@ export function useSetFlag(): (
     }
   };
 }
+
+export function useToggleFavorite(): (
+  mangaId: number,
+  isCurrentlyFavorite: boolean
+) => Promise<void> {
+  const dispatch = useDispatch();
+
+  return async (mangaId, isCurrentlyFavorite) => {
+    try {
+      // TODO: Remove toString when https://github.com/OpenAPITools/openapi-generator/pull/2499 is merged
+      Server.api().setMangaFavorited(
+        mangaId,
+        (!isCurrentlyFavorite).toString()
+      );
+      mutate(Server.mangaInfo(mangaId));
+    } catch (error) {
+      dispatch({
+        type: "mangaInfos/TOGGLE_FAVORITE_FAILURE",
+        errorMessage: isCurrentlyFavorite
+          ? "Failed to unfavorite this manga"
+          : "Failed to favorite this manga"
+      });
+    }
+  };
+}
+
+// TODO:
+// [July 24, 2019] There's no batch method for setting a manga's favorite status. Currently just
+// looping over toggleFavorite, but should probably refactor these 2 methods at some point.
+export function useUnfavoriteMultiple(): (
+  mangaIds: Array<number>
+) => Promise<void> {
+  const toggleFavorite = useToggleFavorite();
+
+  return async mangaIds => {
+    // not sure if I need to chain promises instead of doing them all at once
+    mangaIds.forEach(mangaId => toggleFavorite(mangaId, true));
+  };
+}
