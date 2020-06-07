@@ -1,14 +1,8 @@
 // @flow
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { withRouter } from "react-router-dom";
 import { Client } from "api";
-import {
-  fetchLibrary,
-  fetchLibraryFlags
-} from "redux-ducks/library/actionCreators";
-import { selectIsChaptersLoading } from "redux-ducks/chapters";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import LibraryMangaCard from "components/Library/LibraryMangaCard";
@@ -18,8 +12,6 @@ import AppBar from "@material-ui/core/AppBar";
 import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
 import EmptyState from "components/Library/EmptyState";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
-import { fetchCategories } from "redux-ducks/categories/actionCreators";
 import {
   useUnread,
   useCategories,
@@ -73,18 +65,6 @@ const Library = ({ match: { url } }: Props) => {
       })),
       searchQuery
     );
-
-  const chaptersAreUpdating = useSelector(selectIsChaptersLoading); // TODO remove/replace this with apiHook functionality
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchLibrary()).then(() => {
-      dispatch(fetchCategories());
-    });
-    dispatch(fetchLibraryFlags());
-    dispatch(fetchSources()); // for sorting
-  }, [dispatch]);
 
   const handleSelectManga = (mangaId: number, isSelected: boolean) => {
     setSelectedMangaIds(prevState => {
@@ -144,10 +124,9 @@ const Library = ({ match: { url } }: Props) => {
         </Container>
       )}
 
-      {(libraryMangas == null ||
-        chaptersAreUpdating ||
-        categories == null ||
-        unreadMap == null) && <FullScreenLoading />}
+      {(libraryMangas == null || categories == null || unreadMap == null) && (
+        <FullScreenLoading />
+      )}
 
       {libraryMangas != null && libraryMangas.length === 0 && <EmptyState />}
     </>
