@@ -1,6 +1,5 @@
 // @flow
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import LibraryMore from "components/Library/LibraryMore";
@@ -9,11 +8,7 @@ import LibrarySearch from "components/Library/LibrarySearch";
 import MenuDrawer from "components/MenuDrawer";
 import LibraryFilter from "components/Library/LibraryFilter";
 import LibrarySort from "components/Library/LibrarySort";
-import { selectLibraryFlags } from "redux-ducks/library";
-import {
-  setLibraryFlag,
-  updateLibrary
-} from "redux-ducks/library/actionCreators";
+import { useLibraryFlags, useUpdateLibrary, useSetLibraryFlag } from "apiHooks";
 
 type Props = {
   searchQuery: string,
@@ -21,16 +16,18 @@ type Props = {
 };
 
 const LibraryDefaultToolbar = ({ searchQuery, onSearchChange }: Props) => {
-  const dispatch = useDispatch();
+  const { data: libraryFlags } = useLibraryFlags();
 
-  const flags = useSelector(selectLibraryFlags);
+  const updateLibrary = useUpdateLibrary();
+  const setLibraryFlag = useSetLibraryFlag();
 
   const handleRefreshClick = () => {
-    dispatch(updateLibrary());
+    updateLibrary();
   };
 
-  const handleSetLibraryFlag = (flag, state) =>
-    dispatch(setLibraryFlag(flag, state));
+  const handleSetLibraryFlag = (flag, state) => {
+    setLibraryFlag(libraryFlags, flag, state);
+  };
 
   return (
     <Toolbar>
@@ -47,9 +44,12 @@ const LibraryDefaultToolbar = ({ searchQuery, onSearchChange }: Props) => {
 
       <RefreshButton onClick={handleRefreshClick} />
 
-      <LibraryFilter flags={flags} setLibraryFlag={handleSetLibraryFlag} />
+      <LibraryFilter
+        flags={libraryFlags}
+        setLibraryFlag={handleSetLibraryFlag}
+      />
 
-      <LibrarySort flags={flags} setLibraryFlag={handleSetLibraryFlag} />
+      <LibrarySort flags={libraryFlags} setLibraryFlag={handleSetLibraryFlag} />
 
       <LibraryMore />
     </Toolbar>

@@ -5,6 +5,7 @@ import { Server } from "api";
 import type { CategoryType } from "types";
 import format from "date-fns/format";
 import produce from "immer";
+import { serialPromiseChain } from "./utils";
 
 // Not sorting the categories. Just assuming they'll be sorted initially for now.
 export function useCategories() {
@@ -222,14 +223,4 @@ function getMangaToAddOrRemoveFromCategory(
   });
 
   return [mangaToAdd, mangaToRemove];
-}
-
-// https://decembersoft.com/posts/promises-in-serial-with-array-reduce/
-function serialPromiseChain(
-  promiseArray: (() => Promise<any>)[]
-): Promise<any> {
-  return promiseArray.reduce(
-    (promiseChain, currentPromise) => promiseChain.then(() => currentPromise()),
-    Promise.resolve([])
-  );
 }
