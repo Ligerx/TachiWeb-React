@@ -41,7 +41,8 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
 
   useEffect(() => {
     setSelectedCategoriesList(deriveState(categories, mangaIds));
-  }, [categories, mangaIds]);
+    // Manually adding a dep for open to reset the state when the dialog opens or closes
+  }, [categories, mangaIds, open]);
 
   const handleToggleCategory = (index: number) => {
     const stateCopy = selectedCategoriesList.slice();
