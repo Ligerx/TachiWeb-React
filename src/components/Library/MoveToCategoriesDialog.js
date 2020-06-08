@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import zipObject from "lodash/zipObject";
 import type { CategoryType } from "types";
 import { makeStyles } from "@material-ui/core/styles";
@@ -27,9 +27,14 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
   const classes = useStyles();
 
   const { data: categoriesWithDefault } = useCategories();
-  const categories = categoriesWithDefault.filter(
-    category => category.id !== -1
-  );
+
+  // Ignoring default category for this component. Using useMemo so that shallow equality is preserved between renders.
+  // This helps useEffect fire on deps change as expected instead of on every render.
+  const categories = useMemo(() => {
+    if (categoriesWithDefault == null) return categoriesWithDefault;
+    return categoriesWithDefault.filter(category => category.id !== -1);
+  }, [categoriesWithDefault]);
+
   const updateMangasInCategories = useUpdateMangasInCategories();
 
   // Array of booleans that tracks if a checkbox is selected. This is ordered 1:1 with categories.
@@ -67,7 +72,7 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Move to categories</DialogTitle>
       <DialogContent>
-        {categories &&
+        {categories != null &&
           categories.map((category, index) => (
             <FormControlLabel
               key={category.id}
@@ -95,7 +100,7 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
 };
 
 function deriveState(
-  categories: Array<CategoryType> | null,
+  categories: ?(CategoryType[]),
   mangaIds: Array<number>
 ): Array<boolean> {
   if (categories == null) return [];
@@ -113,6 +118,7 @@ function deriveState(
 
     return selected;
   });
+
   return state;
 }
 

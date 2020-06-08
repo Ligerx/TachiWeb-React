@@ -6,7 +6,7 @@ import type { CategoryType } from "types";
 import format from "date-fns/format";
 import produce from "immer";
 import type { LibraryManga } from "@tachiweb/api-client";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { selectCurrentCategoryId } from "redux-ducks/categories";
 import { changeCurrentCategoryId } from "redux-ducks/categories/actionCreators";
 import { useLibrary } from "./library";
@@ -37,11 +37,6 @@ export function useCategories() {
     }
   );
 
-  // The return value from useSWR has a class/object with getters/settrs. It is not possible to simply clone it
-  // with all properties. Instead I'm just going to manually build the object myself.
-  // Currently only including the data property.
-  const response = { data: originalResponse.data };
-
   // Manually adding the default category in if it exists.
   // TODO:
   // clean up this hack, ideally by having the server send the default manga ids with categories
@@ -50,22 +45,36 @@ export function useCategories() {
   // or I need to make some components ignore the default category
   const { data: libraryMangas } = useLibrary();
 
-  // Manually overriding the original response to mimick getting default category from the server
-  if (libraryMangas == null || response.data == null) {
-    response.data = undefined;
-  } else {
-    const defaultMangaIds = defaultCategoryMangaIds(
-      response.data,
-      libraryMangas
-    );
-    const defaultCategory: CategoryType = {
-      id: -1,
-      manga: defaultMangaIds,
-      name: "Default",
-      order: 0 // assuming that the categories from the server are starting from 1
-    };
-    response.data = [defaultCategory, ...response.data];
-  }
+  // Using useMemo so that the return value doesn't change every render (based on shallow equality).
+  // This is needed to make things like shallow equality checks and useEffect deps array work correctly.
+  const response = useMemo(() => {
+    // The return value from useSWR has a class/object with getters/setters. It is not possible to simply clone it
+    // with all properties. Instead I'm just going to manually build the object myself.
+    // Currently only including the data property.
+    const value = { data: originalResponse.data };
+
+    // Manually overriding the original response to mimick getting default category from the server.
+    // This will always include a default category even when categories or library is empty.
+    // Changing this logic will require updating consumers of useCategories().
+    if (libraryMangas == null || value.data == null) {
+      value.data = undefined;
+    } else {
+      const defaultMangaIds = defaultCategoryMangaIds(
+        value.data,
+        libraryMangas
+      );
+
+      const defaultCategory: CategoryType = {
+        id: -1,
+        manga: defaultMangaIds,
+        name: "Default",
+        order: 0 // assuming that the categories from the server are starting from 1
+      };
+      value.data = [defaultCategory, ...value.data];
+    }
+
+    return value;
+  }, [libraryMangas, originalResponse.data]);
 
   // SIDE EFFECT
   // change currentCategoryId if categories updates and the currentCategoryId does not point to an existing category
@@ -251,9 +260,15 @@ export function useUpdateMangasInCategories(): (
 
   // Using the SWR categories hook to get data needed to optimistically update the UI.
   // Unsure if this is the 'correct' way to do this, but it seems to work.
-  const { data: categories } = useCategories();
+  const { data: categoriesWithDefault } = useCategories();
 
   return async (categorySelections, mangaIds) => {
+    if (categoriesWithDefault == null) return;
+
+    const categories = categoriesWithDefault.filter(
+      category => category.id !== -1
+    );
+
     // Object.keys returns strings. Converting them back to numbers for consistency.
     const categoryIds = Object.keys(categorySelections).map(string =>
       parseInt(string, 10)
