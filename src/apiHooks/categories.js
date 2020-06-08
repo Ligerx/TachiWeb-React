@@ -51,9 +51,23 @@ export function useCategories(
   // or I need to make some components ignore the default category
   const { data: libraryMangas } = useLibrary();
 
-  // Using useMemo so that the return value doesn't change every render (based on shallow equality).
+  // Using useMemo so that the return value doesn't change every render.
   // This is needed to make things like shallow equality checks and useEffect deps array work correctly.
-  const response = useMemo(() => {
+  //
+  // Creating 3 separate useMemo values because the side effect hook below needs to refer to responseWithOptionalDefault
+  // to correctly work even though this hook could return 3 different types of values.
+  const responseNoDefault = useMemo(() => {
+    const value = { data: originalResponse.data };
+
+    if (libraryMangas == null || value.data == null) {
+      value.data = undefined;
+      return value;
+    }
+
+    return value;
+  }, [libraryMangas, originalResponse.data]);
+
+  const responseWithDefault = useMemo(() => {
     // The return value from useSWR has a class/object with getters/setters. It is not possible to simply clone it
     // with all properties. Instead I'm just going to manually build the object myself.
     // Currently only including the data property.
@@ -67,39 +81,58 @@ export function useCategories(
       return value;
     }
 
-    if (options.includeDefault === "YES") {
-      value.data = addDefaultCategory(value.data, libraryMangas);
-    } else if (options.includeDefault === "IF_NOT_EMPTY") {
-      const defaultIds = defaultCategoryMangaIds(value.data, libraryMangas);
+    value.data = addDefaultCategory(value.data, libraryMangas);
 
-      if (defaultIds.length > 0) {
-        value.data = addDefaultCategory(value.data, libraryMangas);
-      }
+    return value;
+  }, [libraryMangas, originalResponse.data]);
+
+  const responseWithOptionalDefault = useMemo(() => {
+    const value = { data: originalResponse.data };
+
+    if (libraryMangas == null || value.data == null) {
+      value.data = undefined;
+      return value;
+    }
+
+    const defaultIds = defaultCategoryMangaIds(value.data, libraryMangas);
+
+    if (defaultIds.length > 0) {
+      value.data = addDefaultCategory(value.data, libraryMangas);
     }
 
     return value;
-  }, [options.includeDefault, libraryMangas, originalResponse.data]);
+  }, [libraryMangas, originalResponse.data]);
 
   // SIDE EFFECT
-  // change currentCategoryId if categories updates and the currentCategoryId does not point to an existing category
-  // make sure to account for default category
+  // Change currentCategoryId if categories updates and the currentCategoryId does not point to an existing category
+  // make sure to account for default category.
+  // This must refer to responseWithOptionalDefault to work correctly.
   const currentCategoryId = useSelector(selectCurrentCategoryId);
   useEffect(() => {
     if (libraryMangas == null) return;
-    if (response.data == null) return;
+    if (responseWithOptionalDefault.data == null) return;
 
-    const currentCategoryExists = response.data.some(
+    const currentCategoryExists = responseWithOptionalDefault.data.some(
       category => category.id === currentCategoryId
     );
     if (!currentCategoryExists) {
       // should pull default category if it exists, otherwise the first category. Based on the above
-      dispatch(changeCurrentCategoryId(response.data[0].id));
+      dispatch(changeCurrentCategoryId(responseWithOptionalDefault.data[0].id));
     }
-    // HACK: originalResponse.data instead of response.data since response will be changing on every render right now
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentCategoryId, dispatch, libraryMangas, originalResponse.data]);
+  }, [
+    currentCategoryId,
+    dispatch,
+    libraryMangas,
+    responseWithOptionalDefault.data
+  ]);
 
-  return response;
+  if (options.includeDefault === "YES") {
+    return responseWithDefault;
+  }
+  if (options.includeDefault === "IF_NOT_EMPTY") {
+    return responseWithOptionalDefault;
+  }
+  return responseNoDefault;
 }
 
 function addDefaultCategory(
