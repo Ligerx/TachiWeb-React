@@ -13,13 +13,15 @@ import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
 import EmptyState from "components/Library/EmptyState";
 import {
-  useUnread,
   useCategories,
   useLibrary,
   useLibraryFlags,
   useSources
 } from "apiHooks";
-import filterSortLibrary from "redux-ducks/library/libraryUtils";
+import type { LibraryManga } from "@tachiweb/api-client";
+import { selectCurrentCategoryId } from "redux-ducks/categories";
+import { useSelector } from "react-redux";
+import { filterSortLibrary } from "./utils";
 
 // TODO: no feedback of success/errors after clicking the library update button
 
@@ -38,33 +40,28 @@ const Library = ({ match: { url } }: Props) => {
   const [selectedMangaIds, setSelectedMangaIds] = useState<number[]>([]);
 
   const { data: categories } = useCategories();
-  const { data: unreadMap } = useUnread();
   const { data: sources } = useSources();
   const { data: libraryFlags } = useLibraryFlags();
-  const { data: notSortedOrFilteredLibraryMangas } = useLibrary(); // TODO need to sort/filter these results
+  const { data: notSortedOrFilteredLibraryMangas } = useLibrary();
+
+  const currentCategoryId = useSelector(selectCurrentCategoryId);
+
   // update this function to be cleaner with the new swr hooks data
   // also need to update the render function
-  const libraryMangas =
-    notSortedOrFilteredLibraryMangas &&
-    libraryFlags &&
-    sources &&
-    unreadMap &&
-    filterSortLibrary(
-      notSortedOrFilteredLibraryMangas.map(libraryManga => libraryManga.manga),
-      libraryFlags,
-      sources,
-      unreadMap,
-      notSortedOrFilteredLibraryMangas.map(libraryManga => ({
-        [libraryManga.manga.id]: libraryManga.totalDownloaded
-      })),
-      notSortedOrFilteredLibraryMangas.map(libraryManga => ({
-        [libraryManga.manga.id]: libraryManga.totalChaptersIndex
-      })),
-      notSortedOrFilteredLibraryMangas.map(libraryManga => ({
-        [libraryManga.manga.id]: libraryManga.lastReadIndex
-      })),
-      searchQuery
-    );
+  const allDataLoaded =
+    notSortedOrFilteredLibraryMangas != null &&
+    categories != null &&
+    libraryFlags != null &&
+    sources != null;
+  const libraryMangas: ?(LibraryManga[]) = allDataLoaded
+    ? filterSortLibrary(
+        notSortedOrFilteredLibraryMangas,
+        categories.find(category => category.id === currentCategoryId),
+        libraryFlags,
+        sources,
+        searchQuery
+      )
+    : null;
 
   const handleSelectManga = (mangaId: number, isSelected: boolean) => {
     setSelectedMangaIds(prevState => {
@@ -95,10 +92,10 @@ const Library = ({ match: { url } }: Props) => {
       </AppBar>
 
       {/* Prevent library manga from flashing on screen before organizing them into categories */}
-      {categories != null && libraryMangas != null && (
+      {allDataLoaded && (
         <Container>
           <Grid container spacing={2}>
-            {/* {libraryMangas.map(libraryManga => (
+            {libraryMangas.map(libraryManga => (
               <LibraryMangaCard
                 key={libraryManga.manga.id}
                 to={Client.manga(url, libraryManga.manga.id)}
@@ -108,27 +105,15 @@ const Library = ({ match: { url } }: Props) => {
                 showSelectedCheckbox={selectedMangaIds.length > 0}
                 onSelectedToggle={handleSelectManga}
               />
-            ))} */}
-            {libraryMangas.map(manga => (
-              <LibraryMangaCard
-                key={manga.id}
-                to={Client.manga(url, manga.id)}
-                manga={manga}
-                unread={unreadMap?.[manga.id]}
-                isSelected={selectedMangaIds.includes(manga.id)}
-                showSelectedCheckbox={selectedMangaIds.length > 0}
-                onSelectedToggle={handleSelectManga}
-              />
             ))}
           </Grid>
         </Container>
       )}
 
-      {(libraryMangas == null || categories == null || unreadMap == null) && (
-        <FullScreenLoading />
-      )}
+      {!allDataLoaded && <FullScreenLoading />}
 
-      {libraryMangas != null && libraryMangas.length === 0 && <EmptyState />}
+      {notSortedOrFilteredLibraryMangas != null &&
+        notSortedOrFilteredLibraryMangas.length === 0 && <EmptyState />}
     </>
   );
 };

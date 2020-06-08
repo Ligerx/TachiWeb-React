@@ -1,6 +1,5 @@
 // @flow
 import ISO6391 from "iso-639-1";
-import type { CategoryType } from "types";
 
 // Sometimes chapter.chapter_number is a float.
 // This function dynamically rounds those floats for easier display.
@@ -42,21 +41,4 @@ export function langPrettyPrint(lang: string) {
   // ISO6391.getNativeName() returns "" if it can't find the native name.
   // Returning the original lang string seems like a more predictable outcome instead.
   return prettyPrint || lang;
-}
-
-export function defaultCategoryMangaIds(
-  categories: CategoryType[] | null,
-  libraryMangaIds: number[]
-): number[] {
-  if (categories == null) return [];
-
-  let mangaNotInACategory = [...libraryMangaIds];
-
-  categories.forEach(category => {
-    mangaNotInACategory = mangaNotInACategory.filter(
-      mangaId => !category.manga.includes(mangaId)
-    );
-  });
-
-  return mangaNotInACategory;
 }

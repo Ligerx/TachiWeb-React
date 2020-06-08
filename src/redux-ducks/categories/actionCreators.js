@@ -43,9 +43,9 @@ export function fetchCategories(): ThunkAction {
       // SIDE EFFECT - set the category after success
       // Note: This selector relies on comparing category manga with library manga so
       //       library must be loaded first.
-      if (categories.length > 0 && !selectDefaultCategoryHasManga(getState())) {
-        dispatch(changeCurrentCategoryId(categories[0].id));
-      }
+      // if (categories.length > 0 && !selectDefaultCategoryHasManga(getState())) {
+      //   dispatch(changeCurrentCategoryId(categories[0].id));
+      // }
       // -----------
     } catch (error) {
       dispatch({

@@ -10,10 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import {
-  useCategories,
-  useUpdateMangasInCategories
-} from "apiHooks";
+import { useCategories, useUpdateMangasInCategories } from "apiHooks";
 
 type Props = {
   mangaIds: Array<number>,
@@ -29,7 +26,10 @@ const useStyles = makeStyles({
 const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
   const classes = useStyles();
 
-  const { data: categories } = useCategories();
+  const { data: categoriesWithDefault } = useCategories();
+  const categories = categoriesWithDefault.filter(
+    category => category.id !== -1
+  );
   const updateMangasInCategories = useUpdateMangasInCategories();
 
   // Array of booleans that tracks if a checkbox is selected. This is ordered 1:1 with categories.

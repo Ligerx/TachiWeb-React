@@ -29,6 +29,8 @@ const LibraryDefaultToolbar = ({ searchQuery, onSearchChange }: Props) => {
     setLibraryFlag(libraryFlags, flag, state);
   };
 
+  if (libraryFlags == null) return null;
+
   return (
     <Toolbar>
       <MenuDrawer />

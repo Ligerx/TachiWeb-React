@@ -30,7 +30,7 @@ type State = {
   byId: { [categoryId: number]: CategoryType },
   allIds: Array<number>, // ordered
   isLoaded: boolean,
-  currentCategoryId: ?number // null = default category
+  currentCategoryId: number // -1 = default category
 };
 
 export default function categoriesReducer(
@@ -38,7 +38,7 @@ export default function categoriesReducer(
     byId: {},
     allIds: [],
     isLoaded: false,
-    currentCategoryId: null
+    currentCategoryId: -1
   },
   action: Action
 ): State {

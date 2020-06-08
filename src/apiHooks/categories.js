@@ -1,17 +1,29 @@
 // @flow
 import useSWR, { mutate } from "swr";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Server } from "api";
 import type { CategoryType } from "types";
 import format from "date-fns/format";
 import produce from "immer";
+import type { LibraryManga } from "@tachiweb/api-client";
+import { useEffect } from "react";
+import { selectCurrentCategoryId } from "redux-ducks/categories";
+import { changeCurrentCategoryId } from "redux-ducks/categories/actionCreators";
+import { useLibrary } from "./library";
 import { serialPromiseChain } from "./utils";
 
-// Not sorting the categories. Just assuming they'll be sorted initially for now.
+/**
+ * Fetch array of categories, including the default category if it should be shown.
+ *
+ * Default has a categoryId = -1 and order = 0.
+ *
+ * @returns `{ data }` only returned because I'm doing some hacky stuff here. Fix later.
+ */
 export function useCategories() {
   const dispatch = useDispatch();
 
-  return useSWR<CategoryType[]>(
+  // Not sorting the categories. Just assuming they'll be sorted correctly in the returned data.
+  const originalResponse = useSWR<CategoryType[]>(
     Server.categories(),
     () => Server.api().getCategories(),
     {
@@ -24,6 +36,76 @@ export function useCategories() {
       }
     }
   );
+
+  // The return value from useSWR has a class/object with getters/settrs. It is not possible to simply clone it
+  // with all properties. Instead I'm just going to manually build the object myself.
+  // Currently only including the data property.
+  const response = { data: originalResponse.data };
+
+  // Manually adding the default category in if it exists.
+  // TODO:
+  // clean up this hack, ideally by having the server send the default manga ids with categories
+  // it would also remove the wire-crossing of the library apiHook file
+  // however, if the default ids come in with categories, either I want to manually strip them out to keep separate
+  // or I need to make some components ignore the default category
+  const { data: libraryMangas } = useLibrary();
+
+  // Manually overriding the original response to mimick getting default category from the server
+  if (libraryMangas == null || response.data == null) {
+    response.data = undefined;
+  } else {
+    const defaultMangaIds = defaultCategoryMangaIds(
+      response.data,
+      libraryMangas
+    );
+    const defaultCategory: CategoryType = {
+      id: -1,
+      manga: defaultMangaIds,
+      name: "Default",
+      order: 0 // assuming that the categories from the server are starting from 1
+    };
+    response.data = [defaultCategory, ...response.data];
+  }
+
+  // SIDE EFFECT
+  // change currentCategoryId if categories updates and the currentCategoryId does not point to an existing category
+  // make sure to account for default category
+  const currentCategoryId = useSelector(selectCurrentCategoryId);
+  useEffect(() => {
+    if (libraryMangas == null) return;
+    if (response.data == null) return;
+
+    const currentCategoryExists = response.data.some(
+      category => category.id === currentCategoryId
+    );
+    if (!currentCategoryExists) {
+      // should pull default category if it exists, otherwise the first category. Based on the above
+      dispatch(changeCurrentCategoryId(response.data[0].id));
+    }
+    // HACK: originalResponse.data instead of response.data since response will be changing on every render right now
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCategoryId, dispatch, libraryMangas, originalResponse.data]);
+
+  return response;
+}
+
+function defaultCategoryMangaIds(
+  categories: CategoryType[],
+  libraryMangas: LibraryManga[]
+): number[] {
+  const libraryMangaIds = libraryMangas.map(
+    libraryManga => libraryManga.manga.id
+  );
+
+  let mangaNotInACategory = [...libraryMangaIds];
+
+  categories.forEach(category => {
+    mangaNotInACategory = mangaNotInACategory.filter(
+      mangaId => !category.manga.includes(mangaId)
+    );
+  });
+
+  return mangaNotInACategory;
 }
 
 export function useCreateCategory(): () => Promise<void> {
@@ -103,16 +185,23 @@ export function useReorderCategory(): (
 
   // Using the SWR categories hook to get data needed to optimistically update the UI.
   // Unsure if this is the 'correct' way to do this, but it seems to work.
-  const { data: categories } = useCategories();
+  const { data: categoriesWithDefault } = useCategories();
 
   return async (sourceIndex, destinationIndex) => {
-    // Reordering the categorise does not change their order property, so I'm manually overwriting that based on index
+    if (categoriesWithDefault == null) return;
+
+    // removing default category if it exists because the server doesn't want to see this info
+    const categories = categoriesWithDefault.filter(
+      category => category.id !== -1
+    );
+
     const reorderedCategories = arrayMove(
       categories,
       sourceIndex,
       destinationIndex
     );
 
+    // Reordering the categorise does not change their order property, so I need to then manually overwriting that based on index
     // category order uses 1-based indexing
     const updatedOrderCategories = reorderedCategories.map(
       (category, index) => ({ ...category, order: index + 1 })

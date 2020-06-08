@@ -3,7 +3,8 @@ import type {
   LibraryFlagsType,
   LibraryFlagsSortType,
   LibraryFlagsFiltersType,
-  SourceMap
+  SourceMap,
+  CategoryType
 } from "types";
 import type { LibraryManga } from "@tachiweb/api-client";
 
@@ -14,6 +15,12 @@ import type { LibraryManga } from "@tachiweb/api-client";
 function stringComparison(a: string, b: string) {
   return a.localeCompare(b, "en", { sensitivity: "base" }); // case insensitive
 }
+
+const filterMangaInCurrentCategory = (currentCategory: CategoryType) => (
+  libraryManga: LibraryManga
+) =>
+  // need to use some() because includes() doesn't work with non-primitives
+  currentCategory.manga.some(mangaId => mangaId === libraryManga.manga.id);
 
 const downloadedFilterFuncs = {
   ANY: () => true,
@@ -40,6 +47,7 @@ const searchFilterFunc = (searchQuery: string) => (
 
 function filterLibrary(
   libraryMangas: LibraryManga[],
+  currentCategory: CategoryType,
   filterFlags: LibraryFlagsFiltersType,
   searchQuery: string
 ): LibraryManga[] {
@@ -47,6 +55,7 @@ function filterLibrary(
 
   return libraryMangas
     .slice() // clone array
+    .filter(filterMangaInCurrentCategory(currentCategory))
     .filter(downloadedFilterFuncs[DOWNLOADED.status])
     .filter(readFilterFuncs[UNREAD.status])
     .filter(completedFilterFuncs[COMPLETED.status])
@@ -128,12 +137,14 @@ function sortLibrary(
 // eslint-disable-next-line import/prefer-default-export
 export function filterSortLibrary(
   libraryMangas: LibraryManga[],
+  currentCategory: CategoryType,
   libraryFlags: LibraryFlagsType,
   sources: SourceMap,
   searchQuery: string
 ): LibraryManga[] {
   const filteredLibraryMangas = filterLibrary(
     libraryMangas,
+    currentCategory,
     libraryFlags.filters,
     searchQuery
   );

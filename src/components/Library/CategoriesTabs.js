@@ -5,22 +5,14 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { selectCurrentCategoryId } from "redux-ducks/categories";
 import { changeCurrentCategoryId } from "redux-ducks/categories/actionCreators";
-import { useCategories, useLibrary } from "apiHooks";
-import { defaultCategoryMangaIds } from "components/utils";
+import { useCategories } from "apiHooks";
 
 const CategoriesTabs = () => {
   const dispatch = useDispatch();
 
-  const { data: categories } = useCategories();
-  const { data: libraryMangas } = useLibrary();
-
   const currentCategoryId = useSelector(selectCurrentCategoryId);
 
-  const defaultCategoryHasManga =
-    defaultCategoryMangaIds(
-      categories,
-      libraryMangas.map(libraryManga => libraryManga.manga.id)
-    ).length > 0;
+  const { data: categories } = useCategories();
 
   const handleTabChange = (event: SyntheticEvent<>, newCategoryId) => {
     dispatch(changeCurrentCategoryId(newCategoryId));
@@ -35,8 +27,6 @@ const CategoriesTabs = () => {
       indicatorColor="primary"
       variant="scrollable"
     >
-      {defaultCategoryHasManga ? <Tab label="Default" value={null} /> : null}
-
       {categories.map(category => (
         <Tab key={category.id} label={category.name} value={category.id} />
       ))}

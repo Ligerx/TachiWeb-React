@@ -87,33 +87,3 @@ export function useSetLibraryFlag(): (
     }
   };
 }
-
-export type UnreadMap = { [mangaId: number]: number };
-
-export function useUnread() {
-  const dispatch = useDispatch();
-
-  return useSWR<UnreadMap>(
-    Server.libraryUnread(),
-    url => fetcherUnpackContent(url).then(content => unreadArrayToMap(content)),
-    {
-      onError(error) {
-        dispatch({
-          type: "library/FETCH_UNREAD_FAILURE",
-          errorMessage: "Failed to get unread chapters for your library",
-          meta: { error }
-        });
-      }
-    }
-  );
-}
-
-function unreadArrayToMap(
-  unreadArray: { id: number, unread: number }[]
-): UnreadMap {
-  const newUnread = {};
-  unreadArray.forEach(unreadObj => {
-    newUnread[unreadObj.id] = unreadObj.unread;
-  });
-  return newUnread;
-}
