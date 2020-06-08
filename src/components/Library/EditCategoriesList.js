@@ -5,10 +5,7 @@ import EditCategoriesListItem from "components/Library/EditCategoriesListItem";
 import { useCategories } from "apiHooks";
 
 const EditCategoriesList = memo<{}>(() => {
-  const { data: categoriesWithDefault } = useCategories();
-  const categories = categoriesWithDefault.filter(
-    category => category.id !== -1
-  );
+  const { data: categories } = useCategories();
 
   if (categories == null) return null;
 

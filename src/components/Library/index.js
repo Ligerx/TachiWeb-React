@@ -39,7 +39,7 @@ const Library = ({ match: { url } }: Props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMangaIds, setSelectedMangaIds] = useState<number[]>([]);
 
-  const { data: categories } = useCategories();
+  const { data: categories } = useCategories({ includeDefault: "YES" });
   const { data: sources } = useSources();
   const { data: libraryFlags } = useLibraryFlags();
   const { data: notSortedOrFilteredLibraryMangas } = useLibrary();

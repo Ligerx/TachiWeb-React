@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import zipObject from "lodash/zipObject";
 import type { CategoryType } from "types";
 import { makeStyles } from "@material-ui/core/styles";
@@ -26,14 +26,7 @@ const useStyles = makeStyles({
 const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
   const classes = useStyles();
 
-  const { data: categoriesWithDefault } = useCategories();
-
-  // Ignoring default category for this component. Using useMemo so that shallow equality is preserved between renders.
-  // This helps useEffect fire on deps change as expected instead of on every render.
-  const categories = useMemo(() => {
-    if (categoriesWithDefault == null) return categoriesWithDefault;
-    return categoriesWithDefault.filter(category => category.id !== -1);
-  }, [categoriesWithDefault]);
+  const { data: categories } = useCategories();
 
   const updateMangasInCategories = useUpdateMangasInCategories();
 

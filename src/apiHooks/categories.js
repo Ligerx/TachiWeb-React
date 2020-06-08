@@ -13,16 +13,22 @@ import { useLibrary } from "./library";
 import { serialPromiseChain } from "./utils";
 
 /**
- * Fetch array of categories, including the default category if it should be shown.
+ * Fetch array of categories. If desired, you can optionally include the default category.
+ * By default, the default category is not included.
  *
- * Default has a categoryId = -1 and order = 0.
+ * @returns `{ data }` data is the only property returned because I'm manually building the response myself.
+ * If included, the default category has a `categoryId = -1` and `order = 0`.
  *
- * @returns `{ data }` only returned because I'm doing some hacky stuff here. Fix later.
+ * MAJOR HACKING HAPPENING HERE. Clean this up if I can get the server to do the heavy lifting instead.
  */
-export function useCategories() {
+export function useCategories(
+  options: { includeDefault: "NO" | "YES" | "IF_NOT_EMPTY" } = {
+    includeDefault: "NO"
+  }
+) {
   const dispatch = useDispatch();
 
-  // Not sorting the categories. Just assuming they'll be sorted correctly in the returned data.
+  // Assuming that categories be sorted correctly in the returned data.
   const originalResponse = useSWR<CategoryType[]>(
     Server.categories(),
     () => Server.api().getCategories(),
@@ -37,7 +43,7 @@ export function useCategories() {
     }
   );
 
-  // Manually adding the default category in if it exists.
+  // Manually adding the default category if requested.
   // TODO:
   // clean up this hack, ideally by having the server send the default manga ids with categories
   // it would also remove the wire-crossing of the library apiHook file
@@ -58,23 +64,21 @@ export function useCategories() {
     // Changing this logic will require updating consumers of useCategories().
     if (libraryMangas == null || value.data == null) {
       value.data = undefined;
-    } else {
-      const defaultMangaIds = defaultCategoryMangaIds(
-        value.data,
-        libraryMangas
-      );
+      return value;
+    }
 
-      const defaultCategory: CategoryType = {
-        id: -1,
-        manga: defaultMangaIds,
-        name: "Default",
-        order: 0 // assuming that the categories from the server are starting from 1
-      };
-      value.data = [defaultCategory, ...value.data];
+    if (options.includeDefault === "YES") {
+      value.data = addDefaultCategory(value.data, libraryMangas);
+    } else if (options.includeDefault === "IF_NOT_EMPTY") {
+      const defaultIds = defaultCategoryMangaIds(value.data, libraryMangas);
+
+      if (defaultIds.length > 0) {
+        value.data = addDefaultCategory(value.data, libraryMangas);
+      }
     }
 
     return value;
-  }, [libraryMangas, originalResponse.data]);
+  }, [options.includeDefault, libraryMangas, originalResponse.data]);
 
   // SIDE EFFECT
   // change currentCategoryId if categories updates and the currentCategoryId does not point to an existing category
@@ -96,6 +100,22 @@ export function useCategories() {
   }, [currentCategoryId, dispatch, libraryMangas, originalResponse.data]);
 
   return response;
+}
+
+function addDefaultCategory(
+  categories: CategoryType[],
+  libraryMangas: LibraryManga[]
+): CategoryType[] {
+  const defaultMangaIds = defaultCategoryMangaIds(categories, libraryMangas);
+
+  const defaultCategory: CategoryType = {
+    id: -1,
+    manga: defaultMangaIds,
+    name: "Default",
+    order: 0 // assuming that the categories from the server are starting from 1
+  };
+
+  return [defaultCategory, ...categories];
 }
 
 function defaultCategoryMangaIds(
@@ -137,7 +157,6 @@ export function useCreateCategory(): () => Promise<void> {
 }
 
 export function useDeleteCategory(): (categoryId: number) => Promise<void> {
-  // TODO: handle changing current tab
   const dispatch = useDispatch();
 
   return async categoryId => {
@@ -192,17 +211,10 @@ export function useReorderCategory(): (
 ) => Promise<void> {
   const dispatch = useDispatch();
 
-  // Using the SWR categories hook to get data needed to optimistically update the UI.
-  // Unsure if this is the 'correct' way to do this, but it seems to work.
-  const { data: categoriesWithDefault } = useCategories();
+  const { data: categories } = useCategories();
 
   return async (sourceIndex, destinationIndex) => {
-    if (categoriesWithDefault == null) return;
-
-    // removing default category if it exists because the server doesn't want to see this info
-    const categories = categoriesWithDefault.filter(
-      category => category.id !== -1
-    );
+    if (categories == null) return;
 
     const reorderedCategories = arrayMove(
       categories,
@@ -258,16 +270,10 @@ export function useUpdateMangasInCategories(): (
 ) => Promise<void> {
   const dispatch = useDispatch();
 
-  // Using the SWR categories hook to get data needed to optimistically update the UI.
-  // Unsure if this is the 'correct' way to do this, but it seems to work.
-  const { data: categoriesWithDefault } = useCategories();
+  const { data: categories } = useCategories();
 
   return async (categorySelections, mangaIds) => {
-    if (categoriesWithDefault == null) return;
-
-    const categories = categoriesWithDefault.filter(
-      category => category.id !== -1
-    );
+    if (categories == null) return;
 
     // Object.keys returns strings. Converting them back to numbers for consistency.
     const categoryIds = Object.keys(categorySelections).map(string =>
@@ -295,7 +301,6 @@ export function useUpdateMangasInCategories(): (
     });
 
     try {
-      // TODO: Side effect of fixing the selected category
       await serialPromiseChain(editCategoryMangaPromises);
       mutate(Server.categories());
     } catch (error) {

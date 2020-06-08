@@ -6,15 +6,15 @@ import Tab from "@material-ui/core/Tab";
 import { selectCurrentCategoryId } from "redux-ducks/categories";
 import { changeCurrentCategoryId } from "redux-ducks/categories/actionCreators";
 import { useCategories } from "apiHooks";
-import type { CategoryType } from "types";
 
 const CategoriesTabs = () => {
   const dispatch = useDispatch();
 
   const currentCategoryId = useSelector(selectCurrentCategoryId);
 
-  const { data: categoriesWithDefault } = useCategories();
-  const categories = removeEmptyDefaultCategory(categoriesWithDefault);
+  const { data: categories } = useCategories({
+    includeDefault: "IF_NOT_EMPTY"
+  });
 
   const handleTabChange = (event: SyntheticEvent<>, newCategoryId) => {
     dispatch(changeCurrentCategoryId(newCategoryId));
@@ -35,19 +35,5 @@ const CategoriesTabs = () => {
     </Tabs>
   );
 };
-
-function removeEmptyDefaultCategory(
-  categories: ?(CategoryType[])
-): ?(CategoryType[]) {
-  if (categories == null) return categories;
-
-  const defaultCategory = categories.find(category => category.id === -1);
-
-  if (defaultCategory != null && defaultCategory.manga.length === 0) {
-    return categories.filter(category => category.id !== -1);
-  }
-
-  return categories;
-}
 
 export default CategoriesTabs;
