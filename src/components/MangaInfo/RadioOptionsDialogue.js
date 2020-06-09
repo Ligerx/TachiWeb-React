@@ -52,7 +52,7 @@ const RadioOptionsDialogue = ({
       <DialogTitle>{title}</DialogTitle>
 
       <DialogContent>
-        <RadioGroup ref={radioGroup} value={value} onChange={handleChange}>
+        <RadioGroup ref={radioGroup} value={localValue} onChange={handleChange}>
           {options.map(option => (
             <FormControlLabel
               value={option.flagState}
