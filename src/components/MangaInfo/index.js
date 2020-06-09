@@ -18,6 +18,7 @@ import {
   useSource
 } from "apiHooks";
 import filterSortChapters from "redux-ducks/chapters/chapterUtils";
+import type { ChapterType } from "types";
 
 type RouterProps = { match: { params: Object } };
 
@@ -45,12 +46,14 @@ const MangaInfo = ({ match: { params } }: RouterProps) => {
   const { data: mangaInfo } = useMangaInfo(mangaId);
   const { data: source } = useSource(mangaInfo?.sourceId);
   const { data: unsortedOrFilteredChapters } = useChapters(mangaId);
-  // TODO need to handle undefined chapters coming from the apiHook
+
   // TODO may need to memoize this if it's laggy
-  const chapters = filterSortChapters(
-    unsortedOrFilteredChapters,
-    mangaInfo.flags
-  );
+  const isChaptersAndMangaLoaded =
+    unsortedOrFilteredChapters != null && mangaInfo != null;
+
+  const chapters: ?(ChapterType[]) = isChaptersAndMangaLoaded
+    ? filterSortChapters(unsortedOrFilteredChapters, mangaInfo.flags)
+    : null;
 
   const updateChapters = useUpdateChapters();
   const updateMangaInfo = useUpdateMangaInfo();
