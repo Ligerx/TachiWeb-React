@@ -1,6 +1,5 @@
 // @flow
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import Dropzone from "react-dropzone";
 import { makeStyles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
@@ -9,7 +8,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import RestoreDialog from "components/BackupRestore/RestoreDialog";
-import { uploadRestoreFile } from "redux-ducks/library/actionCreators";
+import { useUploadRestoreFile } from "apiHooks";
 
 // TODO: clear all files from state when user successfully restores library
 
@@ -77,7 +76,8 @@ const dropzoneContent = ({
 
 const RestoreCard = ({ ...otherProps }: {}) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
+
+  const uploadRestoreFile = useUploadRestoreFile();
 
   const [acceptedFiles, setAcceptedFiles] = useState([]);
   const [rejectedFiles, setRejectedFiles] = useState([]);
@@ -94,7 +94,7 @@ const RestoreCard = ({ ...otherProps }: {}) => {
   const handleUpload = () => {
     // Checking that files exist just in case (even though button should be disabled)
     if (acceptedFiles.length) {
-      dispatch(uploadRestoreFile(acceptedFiles[0]));
+      uploadRestoreFile(acceptedFiles[0]);
       setDialogueOpen(true);
     }
   };
