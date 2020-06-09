@@ -5,11 +5,7 @@ import { Server } from "api";
 import type { LibraryManga } from "@tachiweb/api-client";
 import type { LibraryFlagsType, LibraryFlagsPossibleValueTypes } from "types";
 import { useUpdateChapters } from "./chapters";
-import {
-  fetcherUnpackData,
-  fetcherUnpackContent,
-  serialPromiseChain
-} from "./utils";
+import { fetcherUnpackData, serialPromiseChain } from "./utils";
 
 export function useLibrary() {
   const dispatch = useDispatch();
@@ -72,17 +68,20 @@ export function useSetLibraryFlag(): (
   const dispatch = useDispatch();
 
   return async (libraryFlags, flag, value) => {
+    const newFlags = { ...libraryFlags, [flag]: value };
+
     try {
       await fetch(Server.libraryFlags(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(libraryFlags)
+        body: JSON.stringify(newFlags)
       });
+      mutate(Server.libraryFlags());
     } catch (error) {
       dispatch({
         type: "library/SET_FLAG_FAILURE",
         errorMessage: "Failed to update your library settings.",
-        meta: { error, libraryFlags, flag, value }
+        meta: { error, libraryFlags, newFlags, flag, value }
       });
     }
   };
