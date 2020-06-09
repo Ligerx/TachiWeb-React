@@ -17,8 +17,8 @@ import {
   useUpdateMangaInfo,
   useSource
 } from "apiHooks";
-import filterSortChapters from "redux-ducks/chapters/chapterUtils";
 import type { ChapterType } from "types";
+import filterSortChapters from "./utils";
 
 type RouterProps = { match: { params: Object } };
 
