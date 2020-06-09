@@ -21,6 +21,7 @@ const CategoriesTabs = () => {
   };
 
   if (categories == null || categories.length === 0) return null;
+  if (categories.length === 1 && categories[0].id === -1) return null;
 
   return (
     <Tabs
