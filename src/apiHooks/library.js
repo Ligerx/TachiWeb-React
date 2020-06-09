@@ -47,6 +47,8 @@ export function useUpdateLibrary(): () => Promise<void> {
   return async () => {
     if (libraryMangas == null) return;
 
+    // TODO do I need to also useUpdateMangaInfo here?
+
     // Create an array of promise functions
     // Since calling updateChapters runs the function, create an intermediate function
     const updateChapterPromises = libraryMangas.map(libraryManga => () =>
