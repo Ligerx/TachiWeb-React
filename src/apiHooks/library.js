@@ -89,16 +89,25 @@ export function useSetLibraryFlag(): (
   };
 }
 
-// TODO: add ability to do loading state here?
-// TODO: prob also need to add a failure state here as well (in addition to the redux dispatch error)
-export function useUploadRestoreFile(): (file: File) => Promise<void> {
+export function useUploadRestoreFile(
+  setIsLoading?: (loading: boolean) => any = () => {},
+  setDidFailure?: (failed: boolean) => any = () => {}
+): (file: File) => Promise<void> {
   const dispatch = useDispatch();
 
   return async file => {
     try {
+      setDidFailure(false); // reset
+      setIsLoading(true);
+
       // TODO: I'm not currently checking if the response message says failure or success
       await fetch(Server.restoreUpload(), uploadPostParameters(file));
+
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
+      setDidFailure(true);
+
       dispatch({
         type: "library/UPLOAD_RESTORE_FAILURE",
         errorMessage: `Failed to restore library from ${file.name}`,

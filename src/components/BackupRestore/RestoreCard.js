@@ -77,11 +77,14 @@ const dropzoneContent = ({
 const RestoreCard = ({ ...otherProps }: {}) => {
   const classes = useStyles();
 
-  const uploadRestoreFile = useUploadRestoreFile();
-
   const [acceptedFiles, setAcceptedFiles] = useState([]);
   const [rejectedFiles, setRejectedFiles] = useState([]);
   const [dialogueOpen, setDialogueOpen] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [didFail, setDidFail] = useState(false);
+
+  const uploadRestoreFile = useUploadRestoreFile(setIsLoading, setDidFail);
 
   const handleDrop = (
     newAcceptedFiles: Array<File>,
@@ -141,6 +144,8 @@ const RestoreCard = ({ ...otherProps }: {}) => {
         open={dialogueOpen}
         onClose={handleCloseDialog}
         tryAgain={handleUpload}
+        isLoading={isLoading}
+        didFail={didFail}
       />
     </>
   );
