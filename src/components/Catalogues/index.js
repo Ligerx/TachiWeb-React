@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Helmet } from "react-helmet";
 import { withRouter } from "react-router-dom";
@@ -18,13 +18,11 @@ import FullScreenLoading from "components/Loading/FullScreenLoading";
 import SourceList from "components/Catalogues/SourceList";
 import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import { langPrettyPrint } from "components/utils";
-import {
-  selectIsSourcesLoading,
-  selectSourcesEnabledLanguagesSorted,
-  selectEnabledSourcesByLanguage
-} from "redux-ducks/sources";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
+import { selectSourcesEnabledLanguagesSorted } from "redux-ducks/sources";
 import { updateSearchQuery } from "redux-ducks/catalogues/actionCreators";
+import { useSources } from "apiHooks";
+import groupBy from "lodash/groupBy";
+import type { Source } from "@tachiweb/api-client";
 
 type RouterProps = {
   history: { push: Function }
@@ -39,18 +37,23 @@ const Catalogues = ({ history }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const sourcesAreLoading = useSelector(selectIsSourcesLoading);
   const sourceLanguages = useSelector(selectSourcesEnabledLanguagesSorted);
-  const sourcesByLanguage = useSelector(selectEnabledSourcesByLanguage);
 
-  useEffect(() => {
-    dispatch(fetchSources());
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const { data: sources } = useSources();
 
   const handleSearchSubmit = (searchQuery: string) => {
     dispatch(updateSearchQuery(searchQuery));
     history.push(Client.cataloguesSearchAll());
   };
+
+  if (sources == null) {
+    return <FullScreenLoading />;
+  }
+
+  const sourcesByLanguage: { [lang: string]: Source[] } = groupBy(
+    sortByName(sources),
+    source => source.lang
+  );
 
   return (
     <>
@@ -91,10 +94,14 @@ const Catalogues = ({ history }: Props) => {
           </div>
         ))}
       </Container>
-
-      {sourcesAreLoading && <FullScreenLoading />}
     </>
   );
 };
+
+function sortByName(sources: Source[]): Source[] {
+  return sources.sort((a, b) =>
+    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  );
+}
 
 export default withRouter(Catalogues);
