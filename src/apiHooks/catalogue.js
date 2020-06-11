@@ -1,6 +1,6 @@
 // @flow
 import useSWR, { useSWRPages } from "swr";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Server } from "api";
 import type {
   CataloguePageRequest,
@@ -8,26 +8,18 @@ import type {
   Manga
 } from "@tachiweb/api-client";
 import type { FilterAnyType } from "types/filters";
-import { selectLastUsedFilters } from "redux-ducks/filters";
-import { selectCatalogueSearchQuery } from "redux-ducks/catalogues";
 import * as React from "react";
 
 /**
- * render func should be memoized for performance
  * @param filters Expected to be [] when searching all and on first load for individual catalogue.
  * @param render This is a render prop. Accept the data and return an element.
  */
 export function useCataloguePages(
   sourceId: string,
   searchQuery: string,
-  filters: FilterAnyType[], // Expected to be [] when searching all and on first load for individual catalogue
+  filters: FilterAnyType[],
   render: (mangaInfos: Manga[]) => React.Node
 ) {
-  // const searchQuery = useSelector(selectCatalogueSearchQuery);
-
-  // // Expected to be [] when searching all and on first load for individual catalogue
-  // const lastUsedFilters = useSelector(selectLastUsedFilters);
-
   // TODO: I might have to 'memorize' the render function or something for performance.
   // More investigation is needed to see if there is an over-rendering or performance problem here.
   return useSWRPages(
@@ -39,16 +31,22 @@ export function useCataloguePages(
       "paginating"
     ],
     ({ offset, withSWR }) => {
-      const { data: catalogue } = withSWR(
+      const { data: cataloguePayload } = withSWR(
+        // The api for useSWRPages requires that you break the rule of hooks
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         useCatalogue(sourceId, searchQuery, filters, offset ?? 1)
       );
 
-      if (catalogue == null) return null;
+      if (cataloguePayload == null) return null;
 
-      return render(catalogue.mangas);
+      return render(cataloguePayload.mangas);
     },
     // Current page starts from 1, index starts from 0, so next page is index + 2
-    (data, index) => (data != null && data.hasNextPage ? index + 2 : null)
+    ({ data: cataloguePayload }, index) => {
+      return cataloguePayload != null && cataloguePayload.hasNextPage
+        ? index + 2
+        : null;
+    }
   );
 }
 

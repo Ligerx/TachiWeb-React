@@ -1,6 +1,6 @@
 // @flow
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch, useStore } from "react-redux";
 import Waypoint from "react-waypoint";
 import { Helmet } from "react-helmet";
 import { withRouter } from "react-router-dom";
@@ -17,22 +17,19 @@ import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
-import { selectIsSourcesLoading, selectSource } from "redux-ducks/sources";
 import { fetchSources } from "redux-ducks/sources/actionCreators";
-import {
-  selectCatalogueManga,
-  selectIsCatalogueLoading,
-  selectCatalogueHasNextPage
-} from "redux-ducks/catalogues";
+import { selectCatalogueSearchQuery } from "redux-ducks/catalogues";
 import {
   fetchCatalogue,
   resetCataloguesAndFilters
 } from "redux-ducks/catalogues/actionCreators";
 import {
   selectIsFiltersLoading,
-  selectFiltersLength
+  selectFiltersLength,
+  selectLastUsedFilters
 } from "redux-ducks/filters";
 import { fetchFilters } from "redux-ducks/filters/actionCreators";
+import { useCataloguePages, useSource } from "apiHooks";
 
 type RouterProps = {
   match: {
@@ -69,26 +66,44 @@ const CataloguePage = ({
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const source = useSelector(state => selectSource(state, sourceId));
+  // NEW STUFF ==========
+
+  // TODO: Hack/optimization
+  // I need to select the searchQuery from redux at the top level of this component tree to pass into useCataloguePages.
+  // However, that means that any change of input into the search bar will cause everything to rerender.
+  // Using useStore doesn't cause any rerenders and I can use it to manually pull in the redux searchQuery to initialize my local state.
+  const store = useStore();
+
+  const [searchQuery, setSearchQuery] = useState(
+    selectCatalogueSearchQuery(store.getState())
+  );
+
+  const { data: source } = useSource(sourceId);
   const sourceName = source == null ? "" : source.name;
 
-  const mangaLibrary = useSelector(state =>
-    selectCatalogueManga(state, sourceId)
-  );
-  const hasNextPage = useSelector(state =>
-    selectCatalogueHasNextPage(state, sourceId)
-  );
-  const filtersLength = useSelector(selectFiltersLength);
+  const lastUsedFilters = useSelector(selectLastUsedFilters);
 
-  const catalogueIsLoading = useSelector(state =>
-    selectIsCatalogueLoading(state, sourceId)
+  const { pages, isLoadingMore, isReachingEnd, loadMore } = useCataloguePages(
+    sourceId,
+    searchQuery,
+    lastUsedFilters,
+    mangaInfos =>
+      mangaInfos.map(mangaInfo => (
+        <CatalogueMangaCard
+          key={mangaInfo.id}
+          to={Client.manga(url, mangaInfo.id)}
+          manga={mangaInfo}
+        />
+      ))
   );
-  const sourcesIsLoading = useSelector(selectIsSourcesLoading);
+  // ====================
+
+  const filtersLength = useSelector(selectFiltersLength);
   const filtersIsLoading = useSelector(selectIsFiltersLoading);
 
-  const isLoading = catalogueIsLoading || sourcesIsLoading || filtersIsLoading;
-  const noMoreResults = !catalogueIsLoading && !hasNextPage;
+  const isLoading = filtersIsLoading || source == null || isLoadingMore;
 
+  // TODO: remove parts of this that aren't necessary
   useEffect(() => {
     dispatch(fetchSources());
     dispatch(fetchCatalogue(sourceId, { useCachedData: true }));
@@ -98,13 +113,14 @@ const CataloguePage = ({
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSearchSubmit = () => {
-    dispatch(fetchCatalogue(sourceId, { restartSearch: true }));
+  const handleSearchSubmit = (newSearchQuery: string) => {
+    // for simplicity, I'm not relying on the value stored inside redux
+    setSearchQuery(newSearchQuery);
   };
 
   const handleLoadNextPage = () => {
-    if (catalogueIsLoading) return;
-    dispatch(fetchCatalogue(sourceId));
+    if (isReachingEnd) return;
+    loadMore();
   };
 
   const handleBackToCatalogues = () => {
@@ -141,21 +157,15 @@ const CataloguePage = ({
         />
 
         <Grid container spacing={2}>
-          {mangaLibrary.map(manga => (
-            <CatalogueMangaCard
-              key={manga.id}
-              to={Client.manga(url, manga.id)}
-              manga={manga}
-            />
-          ))}
+          {pages}
         </Grid>
 
-        {mangaLibrary.length > 0 && (
+        {pages.length > 0 && (
           <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
         )}
 
         {isLoading && <CenteredLoading className={classes.loading} />}
-        {noMoreResults && (
+        {isReachingEnd && (
           <Typography
             variant="caption"
             display="block"
