@@ -1,18 +1,21 @@
 // @flow
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer";
 import FormGroup from "@material-ui/core/FormGroup";
 import FilterActions from "components/Filters/FilterActions";
 import { makeStyles } from "@material-ui/styles";
-import { selectFiltersLength } from "redux-ducks/filters";
-import { useSelector } from "react-redux";
 import DynamicFilter from "components/Filters/DynamicFilter";
-import times from "lodash/times";
+import type { FilterAnyType } from "types/filters";
+import produce from "immer";
 
 // FIXME: Weird blue line when clicking the <FormGroup>
 
-type Props = { sourceId: string, buttonProps?: Object };
+type Props = {
+  filters: FilterAnyType[],
+  onSearchClick: (FilterAnyType[]) => any,
+  buttonProps?: Object
+};
 
 const useStyles = makeStyles({
   filters: {
@@ -25,18 +28,42 @@ const useStyles = makeStyles({
   }
 });
 
-const DynamicSourceFilters = ({ sourceId, buttonProps = {} }: Props) => {
+const DynamicSourceFilters = ({
+  filters,
+  onSearchClick,
+  buttonProps = {}
+}: Props) => {
   const classes = useStyles();
-
-  const filtersLength = useSelector(selectFiltersLength);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // Keep a local copy of the filters that you can edit
+  const [filtersCopy, setFiltersCopy] = useState(filters);
+  useEffect(() => {
+    setFiltersCopy(filters);
+  }, [filters]);
+
   const handleSearchClick = () => {
+    onSearchClick(filtersCopy);
     setDrawerOpen(false);
   };
 
-  if (!filtersLength) {
+  const handleResetClick = () => {
+    setFiltersCopy(filters);
+  };
+
+  const handleFilterChange = (index: number) => (
+    updatedFilter: FilterAnyType
+  ) => {
+    setFiltersCopy(oldFilters => {
+      return produce(oldFilters, draftFilters => {
+        // eslint-disable-next-line no-param-reassign
+        draftFilters[index] = updatedFilter;
+      });
+    });
+  };
+
+  if (filters.length === 0) {
     return (
       <Button disabled variant="contained" color="primary" {...buttonProps}>
         Filters
@@ -62,15 +89,19 @@ const DynamicSourceFilters = ({ sourceId, buttonProps = {} }: Props) => {
         {/* without this div, FilterGroup components screw up, not sure why though */}
         <div>
           <FilterActions
-            sourceId={sourceId}
             onSearchClick={handleSearchClick}
+            onResetClick={handleResetClick}
           />
 
           <FormGroup className={classes.filters}>
-            {times(filtersLength).map((_, index) => (
-              // The order of filters is constant, so using index as the key is fine.
-              // eslint-disable-next-line react/no-array-index-key
-              <DynamicFilter index={index} key={index} />
+            {filters.map((filter, index) => (
+              <DynamicFilter
+                // The order of filters is constant, so using index as the key is fine.
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                filter={filter}
+                onChange={handleFilterChange(index)}
+              />
             ))}
           </FormGroup>
         </div>

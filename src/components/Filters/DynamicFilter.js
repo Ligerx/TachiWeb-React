@@ -1,37 +1,35 @@
 // @flow
+/* eslint-disable no-underscore-dangle */
 import React from "react";
-import { selectFilterTypeAtIndex } from "redux-ducks/filters";
-import { useSelector } from "react-redux";
 import FilterTextField from "components/Filters/FilterTextField";
 import FilterSelect from "components/Filters/FilterSelect";
 import FilterSort from "components/Filters/FilterSort";
 import FilterTristate from "components/Filters/FilterTristate";
 import FilterGroup from "components/Filters/FilterGroup";
+import type { FilterAnyType } from "types/filters";
 
-type Props = { index: number };
+type Props = { filter: FilterAnyType, onChange: FilterAnyType => any };
 
-const DynamicFilter = ({ index }: Props) => {
-  const type = useSelector(state => selectFilterTypeAtIndex(state, index));
-
-  if (["HEADER", "SEPARATOR", "CHECKBOX"].includes(type)) {
-    console.error(`Catalogue filters - ${type} is not implemented.`);
+const DynamicFilter = ({ filter, onChange }: Props) => {
+  if (["HEADER", "SEPARATOR", "CHECKBOX"].includes(filter._type)) {
+    console.error(`Catalogue filters - ${filter._type} is not implemented.`);
   }
 
-  switch (type) {
+  switch (filter._type) {
     case "TEXT":
-      return <FilterTextField index={index} key={index} />;
+      return <FilterTextField filter={filter} onChange={onChange} />;
 
     case "SELECT":
-      return <FilterSelect index={index} key={index} />;
+      return <FilterSelect filter={filter} onChange={onChange} />;
 
     case "SORT":
-      return <FilterSort index={index} key={index} />;
+      return <FilterSort filter={filter} onChange={onChange} />;
 
     case "TRISTATE":
-      return <FilterTristate index={index} key={index} />;
+      return <FilterTristate filter={filter} onChange={onChange} />;
 
     case "GROUP":
-      return <FilterGroup index={index} key={index} />;
+      return <FilterGroup filter={filter} onChange={onChange} />;
 
     default:
       return null;

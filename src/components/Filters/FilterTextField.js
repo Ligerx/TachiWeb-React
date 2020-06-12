@@ -1,19 +1,13 @@
 // @flow
 import React, { memo } from "react";
-import { selectFilterAtIndex } from "redux-ducks/filters";
-import { updateFilterTextField } from "redux-ducks/filters/actionCreators";
-import { useSelector, useDispatch } from "react-redux";
 import TextField from "@material-ui/core/TextField";
+import type { FilterText } from "types/filters";
 
-type Props = { index: number };
+type Props = { filter: FilterText, onChange: FilterText => any };
 
-const FilterTextField = memo<Props>(({ index }: Props) => {
-  const dispatch = useDispatch();
-
-  const filter = useSelector(state => selectFilterAtIndex(state, index));
-
+const FilterTextField = memo<Props>(({ filter, onChange }: Props) => {
   const handleChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    dispatch(updateFilterTextField(index, event.currentTarget.value));
+    onChange({ ...filter, state: event.currentTarget.value });
   };
 
   return (
@@ -21,7 +15,6 @@ const FilterTextField = memo<Props>(({ index }: Props) => {
       label={filter.name}
       value={filter.state}
       onChange={handleChange}
-      key={filter.name}
     />
   );
 });

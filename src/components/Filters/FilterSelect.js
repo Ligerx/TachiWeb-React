@@ -4,9 +4,7 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { selectFilterAtIndex } from "redux-ducks/filters";
-import { updateFilterSelect } from "redux-ducks/filters/actionCreators";
-import { useSelector, useDispatch } from "react-redux";
+import type { FilterSelect as FilterSelectType } from "types/filters";
 
 // NOTE: Odd obsevations about choosing the key (No errors though)
 //
@@ -17,26 +15,22 @@ import { useSelector, useDispatch } from "react-redux";
 // I think because MenuItem is so deeply nested in other components (via material-ui)
 // it makes passing values behave oddly...
 
-type Props = { index: number };
+type Props = { filter: FilterSelectType, onChange: FilterSelectType => any };
 
-const FilterSelect = memo<Props>(({ index }: Props) => {
-  const dispatch = useDispatch();
-
-  const filter = useSelector(state => selectFilterAtIndex(state, index));
-
+const FilterSelect = memo<Props>(({ filter, onChange }: Props) => {
   const handleChange = (event: SyntheticEvent<HTMLLIElement>) => {
     // NOTE: LIElement is actually within a select
     const newValue = parseInt(event.currentTarget.dataset.value, 10);
-    dispatch(updateFilterSelect(index, newValue));
+    onChange({ ...filter, state: newValue });
   };
 
   return (
     <FormControl>
-      <InputLabel htmlFor={generateId(index)}>{filter.name}</InputLabel>
+      <InputLabel htmlFor={generateId(filter)}>{filter.name}</InputLabel>
       <Select
         value={filter.state}
         onChange={handleChange}
-        inputProps={{ id: generateId(index) }}
+        inputProps={{ id: generateId(filter) }}
       >
         {filter.values.map((text, valuesIndex) => (
           <MenuItem value={valuesIndex} key={`${filter.name} ${text}`}>
@@ -49,8 +43,8 @@ const FilterSelect = memo<Props>(({ index }: Props) => {
 });
 
 // Helper function
-function generateId(index: number): string {
-  return `filter-select-${index}`;
+function generateId(filter: FilterSelectType): string {
+  return `filter-select-${filter.name}-${filter.values.toString()}`;
 }
 
 export default FilterSelect;

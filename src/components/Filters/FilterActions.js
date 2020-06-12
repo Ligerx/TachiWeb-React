@@ -3,12 +3,6 @@ import React, { memo } from "react";
 import { makeStyles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import { useDispatch } from "react-redux";
-import {
-  resetFilters,
-  updateLastUsedFilters
-} from "redux-ducks/filters/actionCreators";
-import { fetchCatalogue } from "redux-ducks/catalogues/actionCreators";
 
 const useStyles = makeStyles({
   // TODO: Position the controls div so that it's always at the top of the viewport
@@ -30,21 +24,18 @@ const useStyles = makeStyles({
 });
 
 type Props = {
-  sourceId: string,
-  onSearchClick: Function // for any additional actions that fire
+  onSearchClick: () => any,
+  onResetClick: () => any
 };
 
-const FilterActions = memo<Props>(({ sourceId, onSearchClick }: Props) => {
+const FilterActions = memo<Props>(({ onSearchClick, onResetClick }: Props) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const handleResetClick = () => {
-    dispatch(resetFilters());
+    onResetClick();
   };
 
-  const handleSearchWithFiltersClick = () => {
-    dispatch(updateLastUsedFilters()); // Must come before fetchCatalogue. This is a synchronous function.
-    dispatch(fetchCatalogue(sourceId, { restartSearch: true }));
+  const handleSearchClick = () => {
     onSearchClick();
   };
 
@@ -52,11 +43,7 @@ const FilterActions = memo<Props>(({ sourceId, onSearchClick }: Props) => {
     <div className={classes.controls}>
       <div className={classes.actionButtons}>
         <Button onClick={handleResetClick}>Reset</Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSearchWithFiltersClick}
-        >
+        <Button variant="contained" color="primary" onClick={handleSearchClick}>
           Search
         </Button>
       </div>

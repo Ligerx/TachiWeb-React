@@ -125,6 +125,16 @@ const CataloguePage = ({
     });
   };
 
+  const handleFilterSearchClick = (newFilters: FilterAnyType[]) => {
+    history.push({
+      pathname,
+      search: queryString.stringify({
+        search: stringToURI(searchQuery),
+        filters: jsonToURI(newFilters)
+      })
+    });
+  };
+
   const handleLoadNextPage = () => {
     if (isReachingEnd) return;
     loadMore();
@@ -151,7 +161,8 @@ const CataloguePage = ({
           textFieldProps={{ label: "Search for manga" }}
         />
         <DynamicSourceFilters
-          sourceId={sourceId}
+          filters={filters}
+          onSearchClick={handleFilterSearchClick}
           buttonProps={{ className: classes.filterButton }}
         />
 
