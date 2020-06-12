@@ -12,7 +12,7 @@
     "iso-639-1": "^2.0.3",
     "lodash": "^4.17.10",
     "prop-types": "^15.6.1",
-    "query-string-es5": "^6.1.0",
+    "query-string": "^6.13.1",
     "rc-slider": "^8.6.1",
     "re-reselect": "^3.1.0",
     "react": "^16.8.6",
