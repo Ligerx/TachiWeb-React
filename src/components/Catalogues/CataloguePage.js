@@ -15,7 +15,7 @@ import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import { useCataloguePages, useSource, useFilters } from "apiHooks";
-import queryString from "query-string-es5";
+import queryString from "query-string";
 import BackButton from "components/BackButton";
 import type { FilterAnyType } from "types/filters";
 
@@ -65,36 +65,14 @@ const CataloguePage = ({
 
   const parsedSearch: QueryParams = queryString.parse(search);
 
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
-  useEffect(() => {
-    const newSearchQuery = parsedSearch.search
-      ? uriToString(parsedSearch.search)
-      : "";
-    setSearchQuery(newSearchQuery);
-  }, [parsedSearch.search]);
+  const searchQuery = useSearchQueryFromQueryParam(parsedSearch.search);
 
   const { data: initialFilters } = useFilters(sourceId);
 
-  const [filters, setFilters] = useState<FilterAnyType[]>([]);
-
-  // Save a copy of initial filters into state when viewing this page with no filters in the search query
-  const alreadySavedFiltersRef = useRef(false);
-  useEffect(() => {
-    if (initialFilters == null) return;
-    if (parsedSearch.filters != null) return;
-    if (alreadySavedFiltersRef.current) return;
-
-    setFilters(initialFilters);
-    alreadySavedFiltersRef.current = true;
-  }, [initialFilters, parsedSearch.filters]);
-
-  useEffect(() => {
-    const newFilters = parsedSearch.filters
-      ? (uriToJSON(parsedSearch.filters): FilterAnyType[])
-      : [];
-    setFilters(newFilters);
-  }, [parsedSearch.filters]);
+  const filters = useFiltersFromQueryParam(
+    initialFilters,
+    parsedSearch.filters
+  );
 
   const { data: source } = useSource(sourceId);
   const sourceName = source == null ? "" : source.name;
@@ -189,6 +167,46 @@ const CataloguePage = ({
     </>
   );
 };
+
+function useSearchQueryFromQueryParam(searchQueryParam: ?string) {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  useEffect(() => {
+    const newSearchQuery = searchQueryParam
+      ? uriToString(searchQueryParam)
+      : "";
+    setSearchQuery(newSearchQuery);
+  }, [searchQueryParam]);
+
+  return searchQuery;
+}
+
+function useFiltersFromQueryParam(
+  initialFilters: FilterAnyType[],
+  filtersQueryParam: ?string
+) {
+  const [filters, setFilters] = useState<FilterAnyType[]>([]);
+
+  // Save a copy of initial filters into state when viewing this page with no filters in the search query
+  const alreadySavedFiltersRef = useRef(false);
+  useEffect(() => {
+    if (initialFilters == null) return;
+    if (filtersQueryParam != null) return;
+    if (alreadySavedFiltersRef.current) return;
+
+    setFilters(initialFilters);
+    alreadySavedFiltersRef.current = true;
+  }, [initialFilters, filtersQueryParam]);
+
+  useEffect(() => {
+    const newFilters = filtersQueryParam
+      ? (uriToJSON(filtersQueryParam): FilterAnyType[])
+      : [];
+    setFilters(newFilters);
+  }, [filtersQueryParam]);
+
+  return filters;
+}
 
 // URL search query can't support nested objects like filters. So encode it when putting it into the URL and vice versa.
 // https://stackoverflow.com/questions/9909620/convert-javascript-object-into-uri-encoded-string
