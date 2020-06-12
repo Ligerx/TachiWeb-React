@@ -11,3 +11,4 @@ export * from "./library";
 export * from "./categories";
 export * from "./extensions";
 export * from "./catalogue";
+export * from "./filters";

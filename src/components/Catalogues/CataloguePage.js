@@ -1,6 +1,5 @@
 // @flow
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch, useStore } from "react-redux";
+import React, { useEffect, useState, useRef } from "react";
 import Waypoint from "react-waypoint";
 import { Helmet } from "react-helmet";
 import { withRouter } from "react-router-dom";
@@ -8,8 +7,6 @@ import { makeStyles } from "@material-ui/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Icon from "@material-ui/core/Icon";
-import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import { Client } from "api";
@@ -17,25 +14,17 @@ import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
-import { selectCatalogueSearchQuery } from "redux-ducks/catalogues";
-import {
-  fetchCatalogue,
-  resetCataloguesAndFilters
-} from "redux-ducks/catalogues/actionCreators";
-import {
-  selectIsFiltersLoading,
-  selectFiltersLength,
-  selectLastUsedFilters
-} from "redux-ducks/filters";
-import { fetchFilters } from "redux-ducks/filters/actionCreators";
-import { useCataloguePages, useSource } from "apiHooks";
+import { useCataloguePages, useSource, useFilters } from "apiHooks";
+import queryString from "query-string-es5";
+import BackButton from "components/BackButton";
+import type { FilterAnyType } from "types/filters";
 
 type RouterProps = {
   match: {
     params: { sourceId: string },
     url: string
   },
+  location: { pathname: string, search: string },
   history: { push: Function }
 };
 type Props = RouterProps;
@@ -56,37 +45,64 @@ const useStyles = makeStyles({
   }
 });
 
+type QueryParams = {
+  // encoded string
+  search?: string,
+  // encoded array of json-strings
+  // JSON.stringify and JSON.parse accepts arrays of objects so I'll just encode the entire array
+  filters?: string
+};
+
 const CataloguePage = ({
   match: {
     params: { sourceId },
     url
   },
+  location: { pathname, search },
   history
 }: Props) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
-  // NEW STUFF ==========
+  const parsedSearch: QueryParams = queryString.parse(search);
 
-  // TODO: Hack/optimization
-  // I need to select the searchQuery from redux at the top level of this component tree to pass into useCataloguePages.
-  // However, that means that any change of input into the search bar will cause everything to rerender.
-  // Using useStore doesn't cause any rerenders and I can use it to manually pull in the redux searchQuery to initialize my local state.
-  const store = useStore();
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const [searchQuery, setSearchQuery] = useState(
-    selectCatalogueSearchQuery(store.getState())
-  );
+  useEffect(() => {
+    const newSearchQuery = parsedSearch.search
+      ? uriToString(parsedSearch.search)
+      : "";
+    setSearchQuery(newSearchQuery);
+  }, [parsedSearch.search]);
+
+  const { data: initialFilters } = useFilters(sourceId);
+
+  const [filters, setFilters] = useState<FilterAnyType[]>([]);
+
+  // Save a copy of initial filters into state when viewing this page with no filters in the search query
+  const alreadySavedFiltersRef = useRef(false);
+  useEffect(() => {
+    if (initialFilters == null) return;
+    if (parsedSearch.filters != null) return;
+    if (alreadySavedFiltersRef.current) return;
+
+    setFilters(initialFilters);
+    alreadySavedFiltersRef.current = true;
+  }, [initialFilters, parsedSearch.filters]);
+
+  useEffect(() => {
+    const newFilters = parsedSearch.filters
+      ? (uriToJSON(parsedSearch.filters): FilterAnyType[])
+      : [];
+    setFilters(newFilters);
+  }, [parsedSearch.filters]);
 
   const { data: source } = useSource(sourceId);
   const sourceName = source == null ? "" : source.name;
 
-  const lastUsedFilters = useSelector(selectLastUsedFilters);
-
   const { pages, isLoadingMore, isReachingEnd, loadMore } = useCataloguePages(
     sourceId,
     searchQuery,
-    lastUsedFilters,
+    filters,
     mangaInfos =>
       mangaInfos.map(mangaInfo => (
         <CatalogueMangaCard
@@ -96,38 +112,22 @@ const CataloguePage = ({
         />
       ))
   );
-  // ====================
 
-  const filtersLength = useSelector(selectFiltersLength);
-  const filtersIsLoading = useSelector(selectIsFiltersLoading);
-
-  const isLoading = filtersIsLoading || source == null || isLoadingMore;
-
-  // TODO: remove parts of this that aren't necessary
-  useEffect(() => {
-    dispatch(fetchSources());
-    dispatch(fetchCatalogue(sourceId, { useCachedData: true }));
-
-    if (filtersLength === 0) {
-      dispatch(fetchFilters(sourceId));
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const isLoading = initialFilters == null || source == null || isLoadingMore;
 
   const handleSearchSubmit = (newSearchQuery: string) => {
-    // for simplicity, I'm not relying on the value stored inside redux
-    setSearchQuery(newSearchQuery);
+    history.push({
+      pathname,
+      search: queryString.stringify({
+        search: stringToURI(newSearchQuery),
+        filters: jsonToURI(filters)
+      })
+    });
   };
 
   const handleLoadNextPage = () => {
     if (isReachingEnd) return;
     loadMore();
-  };
-
-  const handleBackToCatalogues = () => {
-    // Cleanup data when going from catalogue -> catalogues
-    dispatch(resetCataloguesAndFilters());
-
-    history.push(Client.catalogues());
   };
 
   return (
@@ -136,9 +136,7 @@ const CataloguePage = ({
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
         <Toolbar>
-          <IconButton onClick={handleBackToCatalogues}>
-            <Icon>arrow_back</Icon>
-          </IconButton>
+          <BackButton onBackClick={Client.catalogues()} />
 
           <Typography variant="h6" noWrap style={{ flex: 1 }}>
             {sourceName}
@@ -148,6 +146,7 @@ const CataloguePage = ({
 
       <Container>
         <CatalogueSearchBar
+          useLocalState
           onSubmit={handleSearchSubmit}
           textFieldProps={{ label: "Search for manga" }}
         />
@@ -179,5 +178,29 @@ const CataloguePage = ({
     </>
   );
 };
+
+// URL search query can't support nested objects like filters. So encode it when putting it into the URL and vice versa.
+// https://stackoverflow.com/questions/9909620/convert-javascript-object-into-uri-encoded-string
+/**
+ * Seems to support arrays in addition to objects
+ */
+function jsonToURI(json: Object): string {
+  return encodeURIComponent(JSON.stringify(json));
+}
+
+/**
+ * Seems to support arrays in addition to objects
+ */
+function uriToJSON(urijson: string): Object {
+  return JSON.parse(decodeURIComponent(urijson));
+}
+
+function stringToURI(string: string): string {
+  return encodeURIComponent(string);
+}
+
+function uriToString(uriString: string): string {
+  return decodeURIComponent(uriString);
+}
 
 export default withRouter(CataloguePage);
