@@ -5,6 +5,21 @@ import { Server } from "api";
 import type { CataloguePageRequest, CataloguePage } from "@tachiweb/api-client";
 import type { FilterAnyType } from "types/filters";
 
+/**
+ * Below is an example of loading statuses you can derive from the returned data.
+ *
+ * The below loading statuses are pulled and modified from an example on github:
+ * https://github.com/vercel/swr/pull/435
+ *
+ * ```
+ * const { data, error, page, setPage } = useCatalogueInfinite(...);
+ *
+ * const isLoadingInitialData = !data && !error;
+ * const isLoadingMore = isLoadingInitialData || (data && typeof data[page - 1] === "undefined");
+ * const isReachingEnd = data && data[data.length - 1].hasNextPage === false;
+ * const isEmpty = data?.[0]?.mangas.length === 0;
+ * ```
+ */
 export function useCatalogueInfinite(
   sourceId: string,
   searchQuery: string,

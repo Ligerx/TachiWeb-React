@@ -81,8 +81,6 @@ const CataloguePage = () => {
     cataloguePage => cataloguePage.mangas
   );
 
-  // The below loading statuses are pulled and modified from an example on github
-  // https://github.com/vercel/swr/pull/435
   const isLoadingInitialData = !data && !error;
   const isLoadingMore =
     isLoadingInitialData || (data && typeof data[page - 1] === "undefined");
