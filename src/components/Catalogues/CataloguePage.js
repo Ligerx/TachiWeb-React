@@ -87,22 +87,29 @@ const CataloguePage = () => {
   const isLoading = initialFilters == null || source == null || isLoadingMore;
 
   const handleSearchSubmit = (newSearchQuery: string) => {
+    const newQuery = queryString.stringify(
+      {
+        ...parsedSearch,
+        search: stringToURI(newSearchQuery)
+      },
+      { skipEmptyString: true }
+    );
+
     history.push({
       pathname,
-      search: queryString.stringify({
-        search: stringToURI(newSearchQuery),
-        filters: jsonToURI(filters)
-      })
+      search: newQuery
     });
   };
 
   const handleFilterSearchClick = (newFilters: FilterAnyType[]) => {
+    const newQuery = queryString.stringify({
+      ...parsedSearch,
+      filters: jsonToURI(newFilters)
+    });
+
     history.push({
       pathname,
-      search: queryString.stringify({
-        search: stringToURI(searchQuery),
-        filters: jsonToURI(newFilters)
-      })
+      search: newQuery
     });
   };
 
