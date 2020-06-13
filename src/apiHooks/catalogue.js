@@ -20,16 +20,31 @@ export function useCataloguePages(
   filters: FilterAnyType[],
   render: (mangaInfos: Manga[]) => React.Node
 ) {
+  // TODO: Update to new (less crappy) infinite loading API when it comes out
+  // Seems like it's just broken and won't update on filter change for whatever reason.
+  // https://github.com/vercel/swr/pull/435
+
+  console.error("Top of useCataloguePages");
+  console.error(sourceId);
+  console.error(searchQuery);
+  console.error(filters);
+
+  React.useEffect(() => {
+    console.error("==== FILTERS IS CHANGING");
+  }, [filters]);
+  React.useEffect(() => {
+    console.error("== SEARCH QUERY IS CHANGING");
+  }, [searchQuery]);
   // TODO: I might have to 'memorize' the render function or something for performance.
   // More investigation is needed to see if there is an over-rendering or performance problem here.
+
+  // https://github.com/vercel/swr/issues/126#issuecomment-558193873
+  // Based on this github issue, the pageKey should be a static string and the deps array should
+  // be used to trigger a reset. However, to support multiple function calls on the same page, I need
+  // some sort of differentiator, so I'm using sourceId.
+  // I won't pass in sourceId to the deps array based on the above issue as well.
   return useSWRPages(
-    [
-      Server.catalogue(),
-      sourceId,
-      searchQuery,
-      filters.toString(),
-      "paginating"
-    ],
+    `${Server.catalogue()}-${sourceId}`,
     ({ offset, withSWR }) => {
       const { data: cataloguePayload } = withSWR(
         // The api for useSWRPages requires that you break the rule of hooks
@@ -46,7 +61,8 @@ export function useCataloguePages(
       return cataloguePayload != null && cataloguePayload.hasNextPage
         ? index + 2
         : null;
-    }
+    },
+    [searchQuery, filters]
   );
 }
 
@@ -66,11 +82,22 @@ export function useCatalogue(
 
   return useSWR<CataloguePage>(
     [Server.catalogue(), sourceId, page, searchQuery, filters.toString()],
-    () =>
-      Server.api().getSourceCatalogue(
+    () => {
+      console.error("Inside useCatalogue");
+      console.error(sourceId);
+      console.error(page);
+      console.error(searchQuery.trim());
+      console.error(filtersChecked);
+      return Server.api().getSourceCatalogue(
         sourceId,
         cataloguePostOptions(page, searchQuery.trim(), filtersChecked)
-      ),
+      );
+    },
+    // () =>
+    //   Server.api().getSourceCatalogue(
+    //     sourceId,
+    //     cataloguePostOptions(page, searchQuery.trim(), filtersChecked)
+    //   ),
     {
       onError(error) {
         dispatch({
