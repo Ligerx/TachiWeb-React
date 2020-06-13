@@ -2,7 +2,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import Waypoint from "react-waypoint";
 import { Helmet } from "react-helmet";
-import { withRouter } from "react-router-dom";
+import {
+  useHistory,
+  useLocation,
+  useRouteMatch,
+  useParams
+} from "react-router-dom";
 import { makeStyles } from "@material-ui/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -18,16 +23,6 @@ import { useCataloguePages, useSource, useFilters } from "apiHooks";
 import queryString from "query-string";
 import BackButton from "components/BackButton";
 import type { FilterAnyType } from "types/filters";
-
-type RouterProps = {
-  match: {
-    params: { sourceId: string },
-    url: string
-  },
-  location: { pathname: string, search: string },
-  history: { push: Function }
-};
-type Props = RouterProps;
 
 const useStyles = makeStyles({
   filterButton: {
@@ -53,15 +48,13 @@ type QueryParams = {
   filters?: string
 };
 
-const CataloguePage = ({
-  match: {
-    params: { sourceId },
-    url
-  },
-  location: { pathname, search },
-  history
-}: Props) => {
+const CataloguePage = () => {
   const classes = useStyles();
+
+  const history = useHistory();
+  const { pathname, search } = useLocation();
+  const { url } = useRouteMatch();
+  const { sourceId } = useParams();
 
   const parsedSearch: QueryParams = queryString.parse(search);
 
@@ -232,4 +225,4 @@ function uriToString(uriString: string): string {
   return decodeURIComponent(uriString);
 }
 
-export default withRouter(CataloguePage);
+export default CataloguePage;
