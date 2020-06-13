@@ -19,10 +19,11 @@ import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
 import LocalStateSearchBar from "components/Catalogues/LocalStateSearchBar";
-import { useCataloguePages, useSource, useFilters } from "apiHooks";
+import { useSource, useFilters, useCatalogueInfinite } from "apiHooks";
 import queryString from "query-string";
 import BackButton from "components/BackButton";
 import type { FilterAnyType } from "types/filters";
+import type { Manga } from "@tachiweb/api-client";
 
 const useStyles = makeStyles({
   filterButton: {
@@ -70,19 +71,22 @@ const CataloguePage = () => {
   const { data: source } = useSource(sourceId);
   const sourceName = source == null ? "" : source.name;
 
-  const { pages, isLoadingMore, isReachingEnd, loadMore } = useCataloguePages(
+  const { data, error, page, setPage } = useCatalogueInfinite(
     sourceId,
     searchQuery,
-    filters,
-    mangaInfos =>
-      mangaInfos.map(mangaInfo => (
-        <CatalogueMangaCard
-          key={mangaInfo.id}
-          to={Client.manga(url, mangaInfo.id)}
-          manga={mangaInfo}
-        />
-      ))
+    filters
   );
+
+  const mangaInfos: ?(Manga[]) = data?.flatMap(
+    cataloguePage => cataloguePage.mangas
+  );
+
+  // The below loading statuses are pulled and modified from an example on github
+  // https://github.com/vercel/swr/pull/435
+  const isLoadingInitialData = !data && !error;
+  const isLoadingMore =
+    isLoadingInitialData || (data && typeof data[page - 1] === "undefined");
+  const isReachingEnd = data && data[data.length - 1].hasNextPage === false;
 
   const isLoading = initialFilters == null || source == null || isLoadingMore;
 
@@ -115,7 +119,7 @@ const CataloguePage = () => {
 
   const handleLoadNextPage = () => {
     if (isReachingEnd) return;
-    loadMore();
+    setPage(page + 1);
   };
 
   return (
@@ -146,10 +150,17 @@ const CataloguePage = () => {
         />
 
         <Grid container spacing={2}>
-          {pages}
+          {mangaInfos &&
+            mangaInfos.map(mangaInfo => (
+              <CatalogueMangaCard
+                key={mangaInfo.id}
+                to={Client.manga(url, mangaInfo.id)}
+                manga={mangaInfo}
+              />
+            ))}
         </Grid>
 
-        {pages.length > 0 && (
+        {page > 0 && (
           <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
         )}
 

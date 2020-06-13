@@ -1,109 +1,49 @@
 // @flow
-import useSWR, { useSWRPages } from "swr";
+import { useSWRInfinite } from "swr";
 import { useDispatch } from "react-redux";
 import { Server } from "api";
-import type {
-  CataloguePageRequest,
-  CataloguePage,
-  Manga
-} from "@tachiweb/api-client";
+import type { CataloguePageRequest, CataloguePage } from "@tachiweb/api-client";
 import type { FilterAnyType } from "types/filters";
-import * as React from "react";
 
 /**
- * @param filters Expected to be [] when searching all and on first load for individual catalogue.
- * @param render This is a render prop. Accept the data and return an element.
+ * @param filters Expected to be [] when searching all catalogues.
  */
-export function useCataloguePages(
+export function useCatalogueInfinite(
   sourceId: string,
   searchQuery: string,
-  filters: FilterAnyType[],
-  render: (mangaInfos: Manga[]) => React.Node
-) {
-  // TODO: Update to new (less crappy) infinite loading API when it comes out
-  // Seems like it's just broken and won't update on filter change for whatever reason.
-  // https://github.com/vercel/swr/pull/435
-
-  console.error("Top of useCataloguePages");
-  console.error(sourceId);
-  console.error(searchQuery);
-  console.error(filters);
-
-  React.useEffect(() => {
-    console.error("==== FILTERS IS CHANGING");
-  }, [filters]);
-  React.useEffect(() => {
-    console.error("== SEARCH QUERY IS CHANGING");
-  }, [searchQuery]);
-  // TODO: I might have to 'memorize' the render function or something for performance.
-  // More investigation is needed to see if there is an over-rendering or performance problem here.
-
-  // https://github.com/vercel/swr/issues/126#issuecomment-558193873
-  // Based on this github issue, the pageKey should be a static string and the deps array should
-  // be used to trigger a reset. However, to support multiple function calls on the same page, I need
-  // some sort of differentiator, so I'm using sourceId.
-  // I won't pass in sourceId to the deps array based on the above issue as well.
-  return useSWRPages(
-    `${Server.catalogue()}-${sourceId}`,
-    ({ offset, withSWR }) => {
-      const { data: cataloguePayload } = withSWR(
-        // The api for useSWRPages requires that you break the rule of hooks
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useCatalogue(sourceId, searchQuery, filters, offset ?? 1)
-      );
-
-      if (cataloguePayload == null) return null;
-
-      return render(cataloguePayload.mangas);
-    },
-    // Current page starts from 1, index starts from 0, so next page is index + 2
-    ({ data: cataloguePayload }, index) => {
-      return cataloguePayload != null && cataloguePayload.hasNextPage
-        ? index + 2
-        : null;
-    },
-    [searchQuery, filters]
-  );
-}
-
-/**
- * Intended to be used within useSWRPages for infinite loading.
- */
-export function useCatalogue(
-  sourceId: string,
-  searchQuery: string,
-  filters: FilterAnyType[],
-  page: number // expects integers starting at 1
+  filters: FilterAnyType[]
 ) {
   const dispatch = useDispatch();
 
   // API expects null instead of empty array if there are no filters
   const filtersChecked = filters.length > 0 ? filters : null;
 
-  return useSWR<CataloguePage>(
-    [Server.catalogue(), sourceId, page, searchQuery, filters.toString()],
-    () => {
-      console.error("Inside useCatalogue");
-      console.error(sourceId);
-      console.error(page);
-      console.error(searchQuery.trim());
-      console.error(filtersChecked);
+  return useSWRInfinite<CataloguePage>(
+    // TODO: Seems like the key is only accepting a string right now. Update this to be an array when it gets fixed by SWR.
+    // Also filters is an array of objects, so JSON.stringify is the preferable way to convert it to a string
+    (index, previousPageData) => {
+      if (previousPageData && !previousPageData.hasNextPage) return null;
+
+      return `${index}, ${sourceId}, ${searchQuery}, ${JSON.stringify(
+        filtersChecked
+      )}, ${Server.catalogue()}`;
+    },
+    key => {
+      // Since the key is currently a string, I need to extract out the index
+      // index starts at 0, but pages start from 1
+      const index = parseInt(key.split(",")[0], 10);
+
       return Server.api().getSourceCatalogue(
         sourceId,
-        cataloguePostOptions(page, searchQuery.trim(), filtersChecked)
+        cataloguePostOptions(index + 1, searchQuery, filtersChecked)
       );
     },
-    // () =>
-    //   Server.api().getSourceCatalogue(
-    //     sourceId,
-    //     cataloguePostOptions(page, searchQuery.trim(), filtersChecked)
-    //   ),
     {
       onError(error) {
         dispatch({
           type: "catalogues/FETCH_FAILURE",
           errorMessage: "Failed to load catalogue.",
-          meta: { error, sourceId, page, searchQuery, filters }
+          meta: { error, sourceId, searchQuery, filters }
         });
       }
     }
@@ -117,7 +57,7 @@ function cataloguePostOptions(
 ): CataloguePageRequest {
   const request: CataloguePageRequest = {
     page,
-    query
+    query: query.trim()
   };
 
   // filters field cannot exist in request if no filters (even null is not allowed)
