@@ -160,7 +160,7 @@ const CataloguePage = () => {
             ))}
         </Grid>
 
-        {page > 0 && (
+        {!isLoadingInitialData && !isReachingEnd && (
           <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
         )}
 
