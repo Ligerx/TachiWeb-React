@@ -18,9 +18,8 @@ import {
   useSource
 } from "apiHooks";
 import type { ChapterType } from "types";
+import { useParams } from "react-router-dom";
 import filterSortChapters from "./utils";
-
-type RouterProps = { match: { params: Object } };
 
 const useStyles = makeStyles({
   // use flexbox to allow virtualized chapter list fill the remaining
@@ -32,7 +31,7 @@ const useStyles = makeStyles({
   }
 });
 
-const MangaInfo = ({ match: { params } }: RouterProps) => {
+const MangaInfo = () => {
   const classes = useStyles();
 
   // it is safe to consider this the back URL
@@ -41,6 +40,7 @@ const MangaInfo = ({ match: { params } }: RouterProps) => {
   // initialTab only sets the state on initialization
   const [tabValue, setTabValue] = useState(initialTab(urlPrefix));
 
+  const params = useParams();
   const mangaId = parseInt(params.mangaId, 10);
 
   const { data: mangaInfo } = useMangaInfo(mangaId);
