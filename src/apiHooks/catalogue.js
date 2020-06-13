@@ -5,18 +5,15 @@ import { Server } from "api";
 import type { CataloguePageRequest, CataloguePage } from "@tachiweb/api-client";
 import type { FilterAnyType } from "types/filters";
 
-/**
- * @param filters Expected to be [] when searching all catalogues.
- */
 export function useCatalogueInfinite(
   sourceId: string,
   searchQuery: string,
-  filters: FilterAnyType[]
+  filters?: FilterAnyType[]
 ) {
   const dispatch = useDispatch();
 
   // API expects null instead of empty array if there are no filters
-  const filtersChecked = filters.length > 0 ? filters : null;
+  const filtersChecked = filters != null && filters.length > 0 ? filters : null;
 
   return useSWRInfinite<CataloguePage>(
     // TODO: Seems like the key is only accepting a string right now. Update this to be an array when it gets fixed by SWR.
