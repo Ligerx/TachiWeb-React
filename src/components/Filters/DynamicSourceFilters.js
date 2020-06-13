@@ -94,7 +94,7 @@ const DynamicSourceFilters = ({
           />
 
           <FormGroup className={classes.filters}>
-            {filters.map((filter, index) => (
+            {filtersCopy.map((filter, index) => (
               <DynamicFilter
                 // The order of filters is constant, so using index as the key is fine.
                 // eslint-disable-next-line react/no-array-index-key
