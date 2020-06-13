@@ -18,7 +18,7 @@ import { Client } from "api";
 import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
-import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
+import LocalStateSearchBar from "components/Catalogues/LocalStateSearchBar";
 import { useCataloguePages, useSource, useFilters } from "apiHooks";
 import queryString from "query-string";
 import BackButton from "components/BackButton";
@@ -133,8 +133,8 @@ const CataloguePage = () => {
       </AppBar>
 
       <Container>
-        <CatalogueSearchBar
-          useLocalState
+        <LocalStateSearchBar
+          value={searchQuery}
           onSubmit={handleSearchSubmit}
           textFieldProps={{ label: "Search for manga" }}
         />
