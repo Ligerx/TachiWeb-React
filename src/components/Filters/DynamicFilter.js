@@ -1,6 +1,6 @@
 // @flow
 /* eslint-disable no-underscore-dangle */
-import React from "react";
+import React, { memo } from "react";
 import FilterTextField from "components/Filters/FilterTextField";
 import FilterSelect from "components/Filters/FilterSelect";
 import FilterSort from "components/Filters/FilterSort";
@@ -10,9 +10,10 @@ import type { FilterAnyType } from "types/filters";
 
 type Props = { filter: FilterAnyType, onChange: FilterAnyType => any };
 
-const DynamicFilter = ({ filter, onChange }: Props) => {
+const DynamicFilter = memo<Props>(({ filter, onChange }: Props) => {
   if (["HEADER", "SEPARATOR", "CHECKBOX"].includes(filter._type)) {
     console.error(`Catalogue filters - ${filter._type} is not implemented.`);
+    return null;
   }
 
   switch (filter._type) {
@@ -32,8 +33,11 @@ const DynamicFilter = ({ filter, onChange }: Props) => {
       return <FilterGroup filter={filter} onChange={onChange} />;
 
     default:
+      console.error(
+        `Catalogue filters - ${filter._type} is not a recognized filter type.`
+      );
       return null;
   }
-};
+});
 
 export default DynamicFilter;

@@ -1,5 +1,5 @@
 // @flow
-import React, { memo } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
@@ -28,7 +28,7 @@ type Props = {
   onResetClick: () => any
 };
 
-const FilterActions = memo<Props>(({ onSearchClick, onResetClick }: Props) => {
+const FilterActions = ({ onSearchClick, onResetClick }: Props) => {
   const classes = useStyles();
 
   const handleResetClick = () => {
@@ -50,6 +50,6 @@ const FilterActions = memo<Props>(({ onSearchClick, onResetClick }: Props) => {
       <Divider />
     </div>
   );
-});
+};
 
 export default FilterActions;

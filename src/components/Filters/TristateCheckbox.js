@@ -1,5 +1,5 @@
 // @flow
-import React, { memo } from "react";
+import React from "react";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
@@ -17,7 +17,7 @@ type Props = {
 // | 2     | EXCLUDE |
 // +-------+---------+
 
-const TristateCheckbox = memo<Props>(({ name, state, onChange }: Props) => {
+const TristateCheckbox = ({ name, state, onChange }: Props) => {
   const checked: boolean = state === 1;
   const indeterminate: boolean = state === 0;
 
@@ -33,6 +33,6 @@ const TristateCheckbox = memo<Props>(({ name, state, onChange }: Props) => {
       label={name}
     />
   );
-});
+};
 
 export default TristateCheckbox;

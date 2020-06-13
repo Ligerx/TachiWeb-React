@@ -1,5 +1,5 @@
 // @flow
-import React, { memo } from "react";
+import React from "react";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
@@ -17,7 +17,7 @@ import type { FilterSelect as FilterSelectType } from "types/filters";
 
 type Props = { filter: FilterSelectType, onChange: FilterSelectType => any };
 
-const FilterSelect = memo<Props>(({ filter, onChange }: Props) => {
+const FilterSelect = ({ filter, onChange }: Props) => {
   const handleChange = (event: SyntheticEvent<HTMLLIElement>) => {
     // NOTE: LIElement is actually within a select
     const newValue = parseInt(event.currentTarget.dataset.value, 10);
@@ -40,7 +40,7 @@ const FilterSelect = memo<Props>(({ filter, onChange }: Props) => {
       </Select>
     </FormControl>
   );
-});
+};
 
 // Helper function
 function generateId(filter: FilterSelectType): string {

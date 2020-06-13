@@ -1,5 +1,5 @@
 // @flow
-import React, { memo } from "react";
+import React from "react";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -24,7 +24,7 @@ type Props = {
   onChange: FilterGroupType => any
 };
 
-const FilterGroup = memo<Props>(({ filter, onChange }: Props) => {
+const FilterGroup = ({ filter, onChange }: Props) => {
   const handleChange = (clickedIndex: number) => () => {
     // Update the state of the nested item
     const nestedTristate = filter.state[clickedIndex];
@@ -65,7 +65,7 @@ const FilterGroup = memo<Props>(({ filter, onChange }: Props) => {
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );
-});
+};
 
 function newTristateState(prevState: number): number {
   if (prevState < 2) {

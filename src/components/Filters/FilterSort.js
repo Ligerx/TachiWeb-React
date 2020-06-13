@@ -1,5 +1,5 @@
 // @flow
-import React, { memo } from "react";
+import React from "react";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 
 type Props = { filter: FilterSortType, onChange: FilterSortType => any };
 
-const FilterSort = memo<Props>(({ filter, onChange }: Props) => {
+const FilterSort = ({ filter, onChange }: Props) => {
   const classes = useStyles();
 
   const handleChange = (clickedIndex: number) => () => {
@@ -74,7 +74,7 @@ const FilterSort = memo<Props>(({ filter, onChange }: Props) => {
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );
-});
+};
 
 // Helper methods
 function iconValue(

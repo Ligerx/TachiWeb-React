@@ -1,5 +1,5 @@
 // @flow
-import React, { memo } from "react";
+import React from "react";
 import TristateCheckbox from "components/Filters/TristateCheckbox";
 import type { FilterTristate as FilterTristateType } from "types/filters";
 
@@ -8,7 +8,7 @@ type Props = {
   onChange: FilterTristateType => any
 };
 
-const FilterTristate = memo<Props>(({ filter, onChange }: Props) => {
+const FilterTristate = ({ filter, onChange }: Props) => {
   const handleChange = () => {
     onChange({
       ...filter,
@@ -23,7 +23,7 @@ const FilterTristate = memo<Props>(({ filter, onChange }: Props) => {
       onChange={handleChange}
     />
   );
-});
+};
 
 function newTristateState(prevState: number): number {
   if (prevState < 2) {

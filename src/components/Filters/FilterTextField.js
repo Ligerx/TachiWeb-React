@@ -1,11 +1,11 @@
 // @flow
-import React, { memo } from "react";
+import React from "react";
 import TextField from "@material-ui/core/TextField";
 import type { FilterText } from "types/filters";
 
 type Props = { filter: FilterText, onChange: FilterText => any };
 
-const FilterTextField = memo<Props>(({ filter, onChange }: Props) => {
+const FilterTextField = ({ filter, onChange }: Props) => {
   const handleChange = (event: SyntheticEvent<HTMLInputElement>) => {
     onChange({ ...filter, state: event.currentTarget.value });
   };
@@ -17,6 +17,6 @@ const FilterTextField = memo<Props>(({ filter, onChange }: Props) => {
       onChange={handleChange}
     />
   );
-});
+};
 
 export default FilterTextField;
