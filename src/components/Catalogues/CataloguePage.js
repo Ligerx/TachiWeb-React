@@ -140,6 +140,7 @@ const CataloguePage = () => {
         />
         <DynamicSourceFilters
           filters={filters}
+          initialFilters={initialFilters}
           onSearchClick={handleFilterSearchClick}
           buttonProps={{ className: classes.filterButton }}
         />

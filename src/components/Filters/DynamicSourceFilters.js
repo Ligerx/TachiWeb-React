@@ -13,6 +13,7 @@ import produce from "immer";
 
 type Props = {
   filters: FilterAnyType[],
+  initialFilters: ?(FilterAnyType[]),
   onSearchClick: (FilterAnyType[]) => any,
   buttonProps?: Object
 };
@@ -30,6 +31,7 @@ const useStyles = makeStyles({
 
 const DynamicSourceFilters = ({
   filters,
+  initialFilters,
   onSearchClick,
   buttonProps = {}
 }: Props) => {
@@ -49,7 +51,8 @@ const DynamicSourceFilters = ({
   };
 
   const handleResetClick = () => {
-    setFiltersCopy(filters);
+    if (initialFilters == null) return;
+    setFiltersCopy(initialFilters);
   };
 
   // memoized to prevent rerenders of the memo'd DynamicFilter component
