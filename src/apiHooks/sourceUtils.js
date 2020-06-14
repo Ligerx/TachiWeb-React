@@ -3,7 +3,9 @@ import type { Source } from "@tachiweb/api-client";
 import sortBy from "lodash/sortBy";
 import groupBy from "lodash/groupBy";
 
-// NOTE: There exists a "Local manga" source that I'm not currently accounting for.
+// NOTE: There exists a "Local manga" source. The current strategy is to continue treating it's lang as undefined.
+// This means that its lang may be the string "undefined" in some cases.
+// When displaying the undefined lang, manually override it to show "Local manga"
 /*
 {
   id: "0",
@@ -13,10 +15,14 @@ import groupBy from "lodash/groupBy";
 }
 */
 
-export function languagesForSourcesByLanguage(sources: {
+export function languagesForSources(sources: Source[]): string[] {
+  return sources.map(source => source.lang ?? "undefined");
+}
+
+export function languagesForSourcesByLanguage(languagesBySources: {
   [lang: string]: Source[]
 }): string[] {
-  return Object.keys(sources);
+  return Object.keys(languagesBySources);
 }
 
 /**
@@ -42,7 +48,9 @@ export function sortedAndFilteredSourcesByLanguage(
  * @returns Object of languages pointing to arrays of sources.
  * The key `lang` is based on the source.lang ISO 639-1 compliant language code (two letters in lower case).
  */
-function sourcesByLanguage(sources: Source[]): { [lang: string]: Source[] } {
+export function sourcesByLanguage(
+  sources: Source[]
+): { [lang: string]: Source[] } {
   return groupBy(sources, "lang");
 }
 

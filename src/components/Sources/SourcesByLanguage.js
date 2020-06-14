@@ -52,7 +52,7 @@ const SourcesByLanguage = ({
   return (
     <div className={classes.root}>
       <Typography variant="h5" gutterBottom>
-        {langPrettyPrint(lang)}
+        {lang === "undefined" ? "Local manga" : langPrettyPrint(lang)}
       </Typography>
 
       <Switch
