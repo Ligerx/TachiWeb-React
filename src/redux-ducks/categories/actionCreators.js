@@ -8,8 +8,9 @@ import {
 // Action Creators
 // ================================================================================
 
+// eslint-disable-next-line import/prefer-default-export
 export function changeCurrentCategoryId(
-  categoryId: ?number
+  categoryId: number
 ): ChangeCurrentCategoryIdAction {
   return { type: CHANGE_CURRENT_CATEGORY_ID, categoryId };
 }
