@@ -1,6 +1,7 @@
 // @flow
 import type { Source } from "@tachiweb/api-client";
 import sortBy from "lodash/sortBy";
+import groupBy from "lodash/groupBy";
 
 // NOTE: There exists a "Local manga" source that I'm not currently accounting for.
 /*
@@ -11,6 +12,33 @@ import sortBy from "lodash/sortBy";
   supportsLatest: true
 }
 */
+
+/**
+ * Sorted and filtered.
+ * @returns Object of languages pointing to arrays of sources.
+ * The key `lang` is based on the source.lang ISO 639-1 compliant language code (two letters in lower case).
+ */
+export function sortedAndFilteredSourcesByLanguage(
+  sources: Source[],
+  hiddenSources: string[],
+  enabledLanguages: string[]
+) {
+  const filteredSources = filterEnabledSources(
+    sources,
+    hiddenSources,
+    enabledLanguages
+  );
+  const sortedSources = sortSources(filteredSources);
+  return sourcesByLanguage(sortedSources);
+}
+
+/**
+ * @returns Object of languages pointing to arrays of sources.
+ * The key `lang` is based on the source.lang ISO 639-1 compliant language code (two letters in lower case).
+ */
+function sourcesByLanguage(sources: Source[]): { [lang: string]: Source[] } {
+  return groupBy(sources, "lang");
+}
 
 /**
  * Sorts array of sources by `lang`, then by `name`
