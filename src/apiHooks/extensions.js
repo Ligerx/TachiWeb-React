@@ -33,10 +33,6 @@ export function useReloadExtensions(): () => Promise<void> {
       if (!json.success) throw new Error("success = false in returned JSON");
 
       mutate(Server.extensions());
-
-      // TODO: are these manual mutations actually needed?
-      // dispatch({ type: RESET_SOURCES });
-      // dispatch(resetCataloguesAndFilters());
     } catch (error) {
       dispatch({
         type: "extensions/RELOAD_FAILURE",
@@ -100,13 +96,7 @@ export function useInstallExtension(): (
       const json = await response.json();
       if (!json.success) throw new Error("success = false in returned JSON");
 
-      // const extension: ExtensionType = json.data[0];
-
       mutate(Server.extensions());
-
-      // TODO: are these manual mutations actually needed?
-      // dispatch({ type: RESET_SOURCES });
-      // dispatch(resetCataloguesAndFilters());
     } catch (error) {
       dispatch({
         type: "extensions/INSTALL_FAILURE",

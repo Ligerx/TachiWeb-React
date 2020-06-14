@@ -20,6 +20,7 @@ import type { FilterAnyType } from "types/filters";
  * const isEmpty = data?.[0]?.mangas.length === 0;
  * ```
  */
+// eslint-disable-next-line import/prefer-default-export
 export function useCatalogueInfinite(
   sourceId: string,
   searchQuery: string,
@@ -79,6 +80,3 @@ function cataloguePostOptions(
 
   return request;
 }
-
-// TODO remove this
-export const blah = 0;

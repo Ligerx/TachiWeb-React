@@ -5,6 +5,7 @@ import { Server } from "api";
 import type { FilterAnyType } from "types/filters";
 import { fetcherUnpackContent } from "./utils";
 
+// eslint-disable-next-line import/prefer-default-export
 export function useFilters(sourceId: string) {
   const dispatch = useDispatch();
 
@@ -22,6 +23,3 @@ export function useFilters(sourceId: string) {
     }
   );
 }
-
-// TODO remove this placeholder
-export const blarg = 0;

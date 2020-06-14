@@ -40,8 +40,6 @@ export function usePageCount(mangaId: ?number, chapterId: ?number) {
   );
 }
 
-// TODO currently the reading status is not updating on the chapters page because it's not hooked up to SWR
-//      I don't think I NEED to do optimistic updates, but we'll see how it feels
 /**
  * Update one chapter's `read` and `last_page_read` properties
  */

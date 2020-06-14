@@ -4,8 +4,12 @@ import type { Source } from "@tachiweb/api-client";
 import { Server } from "api";
 import { useDispatch } from "react-redux";
 
-// TODO haven't accounted for all the processing/selectors for sources that exist in redux
-
+/**
+ * Returns the standard SWR response return type.
+ *
+ * This is not sorted, filtered, or manipulated by default.
+ * Use the functions in the `sourceUtils.js` file to do so.
+ */
 export function useSources() {
   const dispatch = useDispatch();
 
@@ -42,10 +46,13 @@ export function useSource(sourceId: ?string) {
 
   // Hacking around the broken endpoint
   const response = useSources();
+
   const { data: sources } = response;
+
   if (sources == null) {
     return response;
   }
-  const source = response.data.find(source => source.id === sourceId);
+  const source = response.data.find(s => s.id === sourceId);
+
   return { ...response, data: source };
 }

@@ -28,7 +28,7 @@ export function useCategories(
 ) {
   const dispatch = useDispatch();
 
-  // Assuming that categories be sorted correctly in the returned data.
+  // Assuming that categories are sorted correctly in the returned data.
   const originalResponse = useSWR<CategoryType[]>(
     Server.categories(),
     () => Server.api().getCategories(),
@@ -347,9 +347,9 @@ export function useUpdateMangasInCategories(): (
 }
 
 function getMangaToAddOrRemoveFromCategory(
-  category,
-  mangaIds,
-  isAdding
+  category: CategoryType,
+  mangaIds: number[],
+  isAdding: boolean
 ): [Array<number>, Array<number>] {
   const mangaToAdd = [];
   const mangaToRemove = [];
