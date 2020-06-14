@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 import { withRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/styles";
@@ -19,10 +19,10 @@ import SourceList from "components/Catalogues/SourceList";
 import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import { langPrettyPrint } from "components/utils";
 import { selectSourcesEnabledLanguagesSorted } from "redux-ducks/sources";
-import { updateSearchQuery } from "redux-ducks/catalogues/actionCreators";
 import { useSources } from "apiHooks";
 import groupBy from "lodash/groupBy";
 import type { Source } from "@tachiweb/api-client";
+import queryString from "query-string";
 
 type RouterProps = {
   history: { push: Function }
@@ -35,15 +35,20 @@ const useStyles = makeStyles({
 
 const Catalogues = ({ history }: Props) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const sourceLanguages = useSelector(selectSourcesEnabledLanguagesSorted);
 
   const { data: sources } = useSources();
 
-  const handleSearchSubmit = (searchQuery: string) => {
-    dispatch(updateSearchQuery(searchQuery));
-    history.push(Client.cataloguesSearchAll());
+  const handleSearchSubmit = (newSearchQuery: string) => {
+    // dispatch(updateSearchQuery(searchQuery));
+    history.push({
+      pathname: Client.cataloguesSearchAll(),
+      search: queryString.stringify(
+        { search: newSearchQuery },
+        { skipEmptyString: true }
+      )
+    });
   };
 
   if (sources == null) {
