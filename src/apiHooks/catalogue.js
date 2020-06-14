@@ -32,20 +32,23 @@ export function useCatalogueInfinite(
   const filtersChecked = filters != null && filters.length > 0 ? filters : null;
 
   return useSWRInfinite<CataloguePage>(
-    // TODO: Seems like the key is only accepting a string right now. Update this to be an array when it gets fixed by SWR.
-    // Also filters is an array of objects, so JSON.stringify is the preferable way to convert it to a string
     (index, previousPageData) => {
+      // falsey return value makes SWR not load this page
       if (previousPageData && !previousPageData.hasNextPage) return null;
 
-      return `${index}, ${sourceId}, ${searchQuery}, ${JSON.stringify(
-        filtersChecked
-      )}, ${Server.catalogue()}`;
+      return [
+        index,
+        sourceId,
+        searchQuery,
+        // Filters may be generated from the URL query string. Because of this, there's no guarantee of shallow
+        // equality when re-landing on this page. This forces te page to refetch instead of rely on cache when using browser back.
+        // By stringifying the filters, you can kind of mimick shallow equality by doing string comparison instead.
+        JSON.stringify(filtersChecked),
+        Server.catalogue()
+      ];
     },
-    key => {
-      // Since the key is currently a string, I need to extract out the index
-      // index starts at 0, but pages start from 1
-      const index = parseInt(key.split(",")[0], 10);
-
+    // The first func passes down all the returned array values as separate parameters instead of an array.
+    index => {
       return Server.api().getSourceCatalogue(
         sourceId,
         cataloguePostOptions(index + 1, searchQuery, filtersChecked)
