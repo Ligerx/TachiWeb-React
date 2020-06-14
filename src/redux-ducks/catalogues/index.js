@@ -1,9 +1,6 @@
 // @flow
 import produce from "immer";
-import createCachedSelector from "re-reselect";
-import type { Manga } from "@tachiweb/api-client";
-import type { GlobalState, Action } from "redux-ducks/reducers";
-import { selectMangaInfos } from "redux-ducks/mangaInfos";
+import type { Action } from "redux-ducks/reducers";
 import {
   FETCH_CATALOGUE_REQUEST,
   FETCH_CATALOGUE_SUCCESS,
@@ -104,49 +101,3 @@ export default function cataloguesReducer(
   });
   /* eslint-enable no-param-reassign, consistent-return */
 }
-
-// ================================================================================
-// Selectors
-// ================================================================================
-
-// Using custom loading state handling
-export const selectIsCatalogueLoading = (
-  state: GlobalState,
-  sourceId: string
-): boolean => state.catalogues.loadingSourceIds.includes(sourceId);
-
-export const selectCatalogueSearchQuery = (state: GlobalState): string =>
-  state.catalogues.searchQuery;
-
-export const selectCatalogueBySourceId = (
-  state: GlobalState,
-  sourceId: string
-): ?CatalogueType => state.catalogues.bySourceId[sourceId];
-
-const emptyArray = []; // caching array to keep selector pure
-
-export const selectCatalogueManga: (
-  state: GlobalState,
-  sourceId: string
-) => $ReadOnlyArray<Manga> = createCachedSelector(
-  [
-    selectMangaInfos,
-    selectCatalogueBySourceId,
-    (_, sourceId: string) => sourceId
-  ],
-  (mangaInfos, catalogue): $ReadOnlyArray<Manga> => {
-    if (catalogue == null) return emptyArray;
-
-    return catalogue.mangaIds.map(mangaId => mangaInfos[mangaId]);
-  }
-)((_, sourceId) => sourceId);
-
-export const selectCatalogueHasNextPage = (
-  state: GlobalState,
-  sourceId: string
-): boolean => {
-  const catalogue = selectCatalogueBySourceId(state, sourceId);
-
-  if (catalogue == null) return false;
-  return catalogue.hasNextPage;
-};

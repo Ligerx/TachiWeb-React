@@ -1,11 +1,7 @@
 // @flow
 import type { FilterAnyType } from "types/filters";
-import type { GlobalState, Action } from "redux-ducks/reducers";
-import { createSelector } from "reselect";
-import createCachedSelector from "re-reselect";
-import { createLoadingSelector } from "redux-ducks/loading";
+import type { Action } from "redux-ducks/reducers";
 import {
-  FETCH_FILTERS,
   FETCH_REQUEST,
   FETCH_SUCCESS,
   REVERT_TO_INITIAL_FILTERS,
@@ -17,7 +13,7 @@ import {
 
 // NOTE: Filters are currently only being used for 1 catalogue/source at a time, so that's all this supports
 
-// ================================================================================
+// ===============================C=================================================
 // Reducer
 // ================================================================================
 type State = $ReadOnly<{
@@ -81,45 +77,3 @@ export default function filtersReducer(
       return state;
   }
 }
-
-// ================================================================================
-// Selectors
-// ================================================================================
-
-export const selectIsFiltersLoading = createLoadingSelector([FETCH_FILTERS]);
-
-export const selectInitialFilters = (
-  state: GlobalState
-): $ReadOnlyArray<FilterAnyType> => state.filters.initialFilters;
-export const selectLastUsedFilters = (
-  state: GlobalState
-): $ReadOnlyArray<FilterAnyType> => state.filters.lastUsedFilters;
-export const selectCurrentFilters = (
-  state: GlobalState
-): $ReadOnlyArray<FilterAnyType> => state.filters.currentFilters;
-
-export const selectFilterAtIndex = (
-  state: GlobalState,
-  index: number
-): FilterAnyType => state.filters.currentFilters[index];
-
-/**
- * Useful as a sort of existence check. If length > 0, you know that filters exist.
- */
-export const selectFiltersLength: GlobalState => number = createSelector(
-  // Optimization
-  // The length of filters is constant, so we can look outside of currentFilters
-  [selectInitialFilters],
-  (filters): number => filters.length
-);
-
-export const selectFilterTypeAtIndex: (
-  state: GlobalState,
-  index: number
-) => string = createCachedSelector(
-  // Optimization
-  // The type and position of a filter is constant, so we can look outside of currentFilters
-  [selectInitialFilters, (_, index) => index],
-  (filters, index): string => filters[index]._type // eslint-disable-line no-underscore-dangle
-  // Cache Key
-)((_, index) => index);

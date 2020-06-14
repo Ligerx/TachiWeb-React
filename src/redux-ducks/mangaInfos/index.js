@@ -1,17 +1,12 @@
 // @flow
 import type { Manga, MangaFlags, MangaViewer } from "@tachiweb/api-client";
 import produce from "immer";
-import { createLoadingSelector } from "redux-ducks/loading";
-import createCachedSelector from "re-reselect";
 import type { GlobalState, Action } from "redux-ducks/reducers";
 import {
   ADD_MANGA,
-  FETCH_MANGA,
   FETCH_MANGA_CACHE,
   FETCH_MANGA_SUCCESS,
-  UPDATE_MANGA,
   UPDATE_MANGA_SUCCESS,
-  TOGGLE_FAVORITE,
   TOGGLE_FAVORITE_SUCCESS,
   SET_FLAG_REQUEST,
   SET_VIEWER_REQUEST
@@ -97,33 +92,6 @@ function mangaArrayToObject(mangaArray: Array<Manga>): State {
 // ================================================================================
 // Selectors
 // ================================================================================
-
-export const selectIsMangaInfosLoading = createLoadingSelector([
-  FETCH_MANGA,
-  UPDATE_MANGA
-]);
-
-export const selectIsFavoriteToggling = createLoadingSelector([
-  TOGGLE_FAVORITE
-]);
-
-export const selectMangaInfos = (state: GlobalState): State => state.mangaInfos;
-
-export const selectMangaInfo = (state: GlobalState, mangaId: number): ?Manga =>
-  state.mangaInfos[mangaId];
-
-export const selectIsFavorite: (
-  state: GlobalState,
-  mangaId: number
-) => boolean = createCachedSelector(
-  [selectMangaInfos, (_, mangaId: number) => mangaId],
-  (mangaInfos, mangaId): boolean => {
-    if (!mangaInfos[mangaId]) return false;
-
-    return mangaInfos[mangaId].favorite;
-  }
-  // Cache Key
-)((state, mangaId) => mangaId);
 
 export const selectMangaFlags = (
   state: GlobalState,

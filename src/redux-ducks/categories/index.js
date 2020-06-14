@@ -123,9 +123,6 @@ export default function categoriesReducer(
 // Selectors
 // ================================================================================
 
-export const selectCategoriesIsLoaded = (state: GlobalState): boolean =>
-  state.categories.isLoaded;
-
 export const selectCurrentCategoryId = (state: GlobalState): ?number =>
   state.categories.currentCategoryId;
 
@@ -151,11 +148,6 @@ export const selectMangaIdsForDefaultCategory: GlobalState => $ReadOnlyArray<num
 
     return mangaNotInACategory;
   }
-);
-
-export const selectDefaultCategoryHasManga: GlobalState => boolean = createSelector(
-  [selectMangaIdsForDefaultCategory],
-  (mangaIds): boolean => mangaIds.length > 0
 );
 
 const noMangaIds = [];

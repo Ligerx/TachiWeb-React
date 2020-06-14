@@ -1,28 +1,15 @@
 // @flow
-import type { Manga } from "@tachiweb/api-client";
 import type { LibraryFlagsType } from "types";
 import type { GlobalState, Action } from "redux-ducks/reducers";
-import { selectMangaInfos } from "redux-ducks/mangaInfos";
-import { createLoadingSelector } from "redux-ducks/loading";
-import { createErrorSelector } from "redux-ducks/error";
-import { createSelector } from "reselect";
-import createCachedSelector from "re-reselect";
 import {
   UPDATE_SUCCESS as UPDATE_CHAPTERS_SUCCESS,
   UPDATE_READING_STATUS_SUCCESS
 } from "redux-ducks/chapters/actions";
-import { selectSources } from "redux-ducks/sources";
-import { selectCategoryMangaIds } from "redux-ducks/categories";
-import { type UnreadMap } from "apiHooks";
-import filterSortLibrary from "./libraryUtils";
 import {
-  FETCH_LIBRARY,
   FETCH_LIBRARY_SUCCESS,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
-  UPLOAD_RESTORE,
   UPLOAD_RESTORE_SUCCESS,
-  FETCH_LIBRARY_FLAGS,
   FETCH_LIBRARY_FLAGS_SUCCESS,
   SET_FLAG_REQUEST
 } from "./actions";
@@ -155,14 +142,6 @@ export default function libraryReducer(
 // Selectors
 // ================================================================================
 
-export const selectIsRestoreLoading = createLoadingSelector([UPLOAD_RESTORE]);
-export const selectDidRestoreFail = createErrorSelector([UPLOAD_RESTORE]);
-
-export const selectIsLibraryLoading = createLoadingSelector([
-  FETCH_LIBRARY,
-  FETCH_LIBRARY_FLAGS
-]);
-
 // [June 22, 2019] Was running into some circular dependency problems with library and
 // category selectors. Using functions instead of arrow functions seems to solve the problem...
 // https://github.com/reduxjs/reselect/issues/169#issuecomment-274690285
@@ -172,58 +151,5 @@ export function selectLibraryMangaIds(
   return state.library.mangaIds;
 }
 
-export const selectLibraryFlags = (state: GlobalState): LibraryFlagsType =>
-  state.library.flags;
-
-export const selectLibraryMangaInfos: GlobalState => $ReadOnlyArray<Manga> = createSelector(
-  [selectMangaInfos, selectLibraryMangaIds],
-  (mangaInfos, mangaIds): $ReadOnlyArray<Manga> => {
-    return mangaIds.map(mangaId => mangaInfos[mangaId]);
-  }
-);
-
-export const selectLibraryMangaInfosForCurrentCategory: GlobalState => $ReadOnlyArray<Manga> = createSelector(
-  [selectMangaInfos, selectCategoryMangaIds, selectLibraryMangaIds],
-  (mangaInfos, categoryMangaIds, libraryMangaIds): $ReadOnlyArray<Manga> => {
-    // Categories don't delete unfavorited mangas, so there may be category mangaIds that don't exist
-    // in library. So compare category and library mangaIds before pulling from mangaInfos.
-    const categoryMangaIdsInLibrary = categoryMangaIds.filter(categoryMangaId =>
-      libraryMangaIds.includes(categoryMangaId)
-    );
-    return categoryMangaIdsInLibrary.map(mangaId => mangaInfos[mangaId]);
-  }
-);
-
-export const selectFilteredSortedLibrary: (
-  state: GlobalState,
-  searchQuery: string,
-  unread: UnreadMap
-) => $ReadOnlyArray<Manga> = createCachedSelector(
-  [
-    selectLibraryMangaInfosForCurrentCategory,
-    selectLibraryFlags,
-    selectSources,
-    (_, __, unread) => unread,
-    // [June 16, 2019] Too lazy to make individual selectors for each of these right now.
-    (state: GlobalState) => state.library.downloaded,
-    (state: GlobalState) => state.library.totalChaptersSortIndexes,
-    (state: GlobalState) => state.library.lastReadSortIndexes,
-    // ------
-    (_, searchQuery) => searchQuery
-  ],
-  filterSortLibrary
-  // Cache Key
-)((_, searchQuery, unread) => searchQuery + JSON.stringify(unread));
-
 export const selectShouldReloadLibrary = (state: GlobalState): boolean =>
   state.library.reloadLibrary;
-
-export const selectIsLibraryFlagsLoaded = (state: GlobalState): boolean =>
-  state.library.isFlagsLoaded;
-
-export const selectLibraryIsLoadedAndEmpty: GlobalState => boolean = createSelector(
-  [selectIsLibraryLoading, selectShouldReloadLibrary, selectLibraryMangaIds],
-  (isLibraryLoading, shouldReloadLibrary, mangaIds): boolean => {
-    return !isLibraryLoading && !shouldReloadLibrary && mangaIds.length === 0;
-  }
-);

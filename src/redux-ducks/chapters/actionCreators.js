@@ -2,8 +2,7 @@
 import { Server } from "api";
 import type { ThunkAction } from "redux-ducks/reducers";
 import { handleHTMLError } from "redux-ducks/utils";
-import { selectPageCount } from "redux-ducks/pageCounts";
-import { selectChaptersForManga, selectChapter } from ".";
+import { selectChaptersForManga } from ".";
 import {
   FETCH_CACHE,
   FETCH_REQUEST,
@@ -11,14 +10,7 @@ import {
   FETCH_FAILURE,
   UPDATE_REQUEST,
   UPDATE_FAILURE,
-  UPDATE_SUCCESS,
-  UPDATE_READING_STATUS_FAILURE,
-  UPDATE_READING_STATUS_NO_CHANGE,
-  UPDATE_READING_STATUS_REQUEST,
-  UPDATE_READING_STATUS_SUCCESS,
-  TOGGLE_READ_REQUEST,
-  TOGGLE_READ_SUCCESS,
-  TOGGLE_READ_FAILURE
+  UPDATE_SUCCESS
 } from "./actions";
 
 // ================================================================================
@@ -88,102 +80,6 @@ export function updateChapters(mangaId: number): ThunkAction {
           dispatch({
             type: UPDATE_FAILURE,
             errorMessage: "Failed to update the chapters list",
-            meta: { error }
-          })
-      );
-  };
-}
-
-// NOTE: This is only to update one chapter object's read + last_page_read
-export function updateReadingStatus(
-  mangaId: number,
-  chapterId: number,
-  readPage: number
-): ThunkAction {
-  return (dispatch, getState) => {
-    const chapter = selectChapter(getState(), mangaId, chapterId);
-    const pageCount = selectPageCount(getState(), chapterId);
-
-    if (chapter == null || pageCount == null) {
-      return dispatch({
-        type: UPDATE_READING_STATUS_FAILURE,
-        errorMessage: "Couldn't update the reading status for this chapter.",
-        meta: { mangaId, chapterId, readPage }
-      });
-    }
-
-    // Escape early if no update is needed
-    if (chapter.read || readPage === chapter.last_page_read) {
-      return dispatch({
-        type: UPDATE_READING_STATUS_NO_CHANGE,
-        meta: {
-          readPage,
-          lastPageRead: chapter.last_page_read,
-          isRead: chapter.read
-        }
-      });
-    }
-
-    const didReadLastPage: boolean = readPage === pageCount - 1;
-
-    const updateReadingStatusUrl = Server.updateReadingStatus(
-      mangaId,
-      chapter.id,
-      readPage,
-      didReadLastPage
-    );
-
-    dispatch({
-      type: UPDATE_READING_STATUS_REQUEST,
-      meta: { readPage, didReadLastPage }
-    });
-
-    return fetch(updateReadingStatusUrl)
-      .then(handleHTMLError)
-      .then(
-        () =>
-          dispatch({
-            type: UPDATE_READING_STATUS_SUCCESS,
-            mangaId,
-            chapterId: chapter.id,
-            readPage,
-            didReadLastPage
-          }),
-        error =>
-          dispatch({
-            type: UPDATE_READING_STATUS_FAILURE,
-            errorMessage: "Failed to save your reading status",
-            meta: { error }
-          })
-      );
-  };
-}
-
-// TODO: Update this function (and maybe updateReadingStatus()) to new api version
-export function toggleRead(
-  mangaId: number,
-  chapterId: number,
-  read: boolean
-): ThunkAction {
-  return dispatch => {
-    dispatch({ type: TOGGLE_READ_REQUEST, meta: { mangaId, chapterId, read } });
-
-    return fetch(Server.updateReadingStatus(mangaId, chapterId, 0, read))
-      .then(handleHTMLError)
-      .then(
-        () =>
-          dispatch({
-            type: TOGGLE_READ_SUCCESS,
-            mangaId,
-            chapterId,
-            read
-          }),
-        error =>
-          dispatch({
-            type: TOGGLE_READ_FAILURE,
-            errorMessage: `Failed to mark chapter as ${
-              read ? "read" : "unread"
-            }`,
             meta: { error }
           })
       );
