@@ -122,7 +122,10 @@ const CataloguePage = () => {
   };
 
   const handleLoadNextPage = () => {
-    if (isReachingEnd) return;
+    // Prevent incrementing the page # unintentionally if the waypoint happens to be triggered while you're loading other data.
+    // Currently isLoadingMore relies on page, so accidentally incrementing it would cause
+    // a loading spinner to always show even when no loading is happening.
+    if (isLoading || isReachingEnd) return;
     setPage(page + 1);
   };
 
