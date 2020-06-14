@@ -35,6 +35,7 @@ export function useSetMangaViewer(): (
       mutate(
         Server.mangaInfo(mangaId),
         produce((draftMangaInfo: Manga) => {
+          // eslint-disable-next-line no-param-reassign
           draftMangaInfo.viewer = viewer;
         }),
         false
@@ -99,26 +100,23 @@ export function useSetFlag(): (
   };
 }
 
-export function useToggleFavorite(): (
+export function useSetMangaFavorited(): (
   mangaId: number,
-  isCurrentlyFavorite: boolean
+  isFavoriteNewState: boolean
 ) => Promise<void> {
   const dispatch = useDispatch();
 
-  return async (mangaId, isCurrentlyFavorite) => {
+  return async (mangaId, isFavoriteNewState) => {
     try {
       // TODO: Remove toString when https://github.com/OpenAPITools/openapi-generator/pull/2499 is merged
-      Server.api().setMangaFavorited(
-        mangaId,
-        (!isCurrentlyFavorite).toString()
-      );
+      Server.api().setMangaFavorited(mangaId, isFavoriteNewState.toString());
       mutate(Server.mangaInfo(mangaId));
     } catch (error) {
       dispatch({
         type: "mangaInfos/TOGGLE_FAVORITE_FAILURE",
-        errorMessage: isCurrentlyFavorite
-          ? "Failed to unfavorite this manga"
-          : "Failed to favorite this manga"
+        errorMessage: isFavoriteNewState
+          ? "Failed to favorite this manga"
+          : "Failed to unfavorite this manga"
       });
     }
   };
@@ -130,10 +128,10 @@ export function useToggleFavorite(): (
 export function useUnfavoriteMultiple(): (
   mangaIds: Array<number>
 ) => Promise<void> {
-  const toggleFavorite = useToggleFavorite();
+  const setMangaFavorited = useSetMangaFavorited();
 
   return async mangaIds => {
     // not sure if I need to chain promises instead of doing them all at once
-    mangaIds.forEach(mangaId => toggleFavorite(mangaId, true));
+    mangaIds.forEach(mangaId => setMangaFavorited(mangaId, false));
   };
 }
