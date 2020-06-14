@@ -18,7 +18,7 @@ export function useSearchQueryFromQueryParam(
 }
 
 export function useFiltersFromQueryParam(
-  initialFilters: FilterAnyType[],
+  initialFilters: ?(FilterAnyType[]),
   filtersQueryParam: ?string
 ): FilterAnyType[] {
   const [filters, setFilters] = useState<FilterAnyType[]>([]);
@@ -35,9 +35,9 @@ export function useFiltersFromQueryParam(
   }, [initialFilters, filtersQueryParam]);
 
   useEffect(() => {
-    const newFilters = filtersQueryParam
-      ? (uriToJSON(filtersQueryParam): FilterAnyType[])
-      : [];
+    if (filtersQueryParam == null) return;
+
+    const newFilters: FilterAnyType[] = uriToJSON(filtersQueryParam);
     setFilters(newFilters);
   }, [filtersQueryParam]);
 
