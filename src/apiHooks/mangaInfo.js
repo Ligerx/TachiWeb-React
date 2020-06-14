@@ -100,7 +100,6 @@ export function useSetFlag(): (
   };
 }
 
-// TODO: loading state?
 export function useSetMangaFavorited(): (
   mangaId: number,
   isFavoriteNewState: boolean
@@ -126,7 +125,6 @@ export function useSetMangaFavorited(): (
   };
 }
 
-// TODO: loading state?
 // TODO:
 // [July 24, 2019] There's no batch method for setting a manga's favorite status. Currently just
 // looping over toggleFavorite, but should probably refactor these 2 methods at some point.

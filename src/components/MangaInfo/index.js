@@ -39,6 +39,7 @@ const MangaInfo = () => {
 
   // initialTab only sets the state on initialization
   const [tabValue, setTabValue] = useState(initialTab(urlPrefix));
+  const [isUpdatingChapters, setIsUpdatingChapters] = useState(false);
 
   const params = useParams();
   const mangaId = parseInt(params.mangaId, 10);
@@ -55,7 +56,7 @@ const MangaInfo = () => {
     ? filterSortChapters(unsortedOrFilteredChapters, mangaInfo.flags)
     : null;
 
-  const updateChapters = useUpdateChapters();
+  const updateChapters = useUpdateChapters(setIsUpdatingChapters);
   const updateMangaInfo = useUpdateMangaInfo();
 
   useEffect(() => {
@@ -106,6 +107,8 @@ const MangaInfo = () => {
           <MangaInfoChapterList chapters={chapters} mangaInfo={mangaInfo} />
         </>
       )}
+
+      {isUpdatingChapters && <FullScreenLoading />}
     </div>
   );
 };

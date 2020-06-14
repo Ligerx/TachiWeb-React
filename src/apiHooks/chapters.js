@@ -78,15 +78,18 @@ export function useUpdateReadingStatus(): (
   };
 }
 
-// TODO do I need to be able to support a loading state here?
 /**
  * Request the server to re-scrape the source site for chapters.
  * If there have been any changes, re-fetch the cached chapter list from the server.
  */
-export function useUpdateChapters(): (mangaId: number) => Promise<void> {
+export function useUpdateChapters(
+  setIsLoading?: (loading: boolean) => any = () => {}
+): (mangaId: number) => Promise<void> {
   const dispatch = useDispatch();
 
   return async mangaId => {
+    setIsLoading(true);
+
     try {
       const response = await fetch(Server.updateMangaChapters(mangaId));
       const json = await response.json();
@@ -96,7 +99,9 @@ export function useUpdateChapters(): (mangaId: number) => Promise<void> {
       }
 
       mutate(Server.chapters(mangaId));
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       dispatch({
         type: "chapters/UPDATE_FAILURE",
         errorMessage: "Failed to update the chapters list",
