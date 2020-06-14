@@ -1,6 +1,5 @@
 // @flow
 import React from "react";
-import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -9,12 +8,11 @@ import Button from "@material-ui/core/Button";
 import { Client } from "api";
 import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
 import CenteredLoading from "components/Loading/CenteredLoading";
-import { selectCatalogueSearchQuery } from "redux-ducks/catalogues";
 import { useCatalogueInfinite } from "apiHooks";
 import CenterHorizontally from "components/CenterHorizontally";
-import type { Manga } from "@tachiweb/api-client";
+import type { Manga, Source } from "@tachiweb/api-client";
 
-type Props = { sourceId: string, urlPrefix: string };
+type Props = { source: Source, searchQuery: string, urlPrefix: string };
 
 const useStyles = makeStyles({
   root: {
@@ -26,14 +24,16 @@ const useStyles = makeStyles({
   loadMore: { marginTop: 24, marginBottom: 8 }
 });
 
-const CatalogueSearchResultsPaper = ({ sourceId, urlPrefix }: Props) => {
+const CatalogueSearchResults = ({
+  source,
+  searchQuery,
+  urlPrefix,
+  ...otherProps
+}: Props) => {
   const classes = useStyles();
 
-  // TODO: replace this with data pulled from URL
-  const searchQuery = useSelector(selectCatalogueSearchQuery);
-
   const { data, error, page, setPage } = useCatalogueInfinite(
-    sourceId,
+    source.id,
     searchQuery
   );
 
@@ -56,42 +56,48 @@ const CatalogueSearchResultsPaper = ({ sourceId, urlPrefix }: Props) => {
   }
 
   return (
-    <Paper className={classes.root}>
-      <Grid container spacing={2}>
-        {mangaInfos &&
-          mangaInfos.map(manga => (
-            <CatalogueMangaCard
-              key={manga.id}
-              to={Client.manga(urlPrefix, manga.id)}
-              manga={manga}
-            />
-          ))}
-      </Grid>
+    <div {...otherProps}>
+      <Typography variant="h5" gutterBottom>
+        {`${source.name} (${source.lang ?? ""})`}
+      </Typography>
 
-      {isLoadingMore && <CenteredLoading className={classes.loading} />}
-      {isReachingEnd && (
-        <Typography
-          variant="caption"
-          display="block"
-          align="center"
-          className={classes.noResults}
-        >
-          No more results
-        </Typography>
-      )}
-      {!isLoadingMore && !isReachingEnd && (
-        <CenterHorizontally>
-          <Button
-            color="primary"
-            onClick={handleLoadMoreClick}
-            className={classes.loadMore}
+      <Paper className={classes.root}>
+        <Grid container spacing={2}>
+          {mangaInfos &&
+            mangaInfos.map(manga => (
+              <CatalogueMangaCard
+                key={manga.id}
+                to={Client.manga(urlPrefix, manga.id)}
+                manga={manga}
+              />
+            ))}
+        </Grid>
+
+        {isLoadingMore && <CenteredLoading className={classes.loading} />}
+        {isReachingEnd && (
+          <Typography
+            variant="caption"
+            display="block"
+            align="center"
+            className={classes.noResults}
           >
-            Load More
-          </Button>
-        </CenterHorizontally>
-      )}
-    </Paper>
+            No more results
+          </Typography>
+        )}
+        {!isLoadingMore && !isReachingEnd && (
+          <CenterHorizontally>
+            <Button
+              color="primary"
+              onClick={handleLoadMoreClick}
+              className={classes.loadMore}
+            >
+              Load More
+            </Button>
+          </CenterHorizontally>
+        )}
+      </Paper>
+    </div>
   );
 };
 
-export default CatalogueSearchResultsPaper;
+export default CatalogueSearchResults;
