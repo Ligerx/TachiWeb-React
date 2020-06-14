@@ -1,4 +1,5 @@
 // @flow
+import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import { useDispatch } from "react-redux";
 import { Server } from "api";
@@ -39,26 +40,34 @@ export function useLibraryFlags() {
   });
 }
 
-// TODO add a loading state here
-export function useUpdateLibrary(): () => Promise<void> {
+export function useUpdateLibrary(
+  setIsLoading?: (loading: boolean) => any = () => {}
+): () => Promise<void> {
   const updateChapters = useUpdateChapters();
   const { data: libraryMangas } = useLibrary();
 
   return async () => {
     if (libraryMangas == null) return;
 
-    // TODO do I need to also useUpdateMangaInfo here?
+    try {
+      setIsLoading(true);
 
-    // Create an array of promise functions
-    // Since calling updateChapters runs the function, create an intermediate function
-    const updateChapterPromises = libraryMangas.map(libraryManga => () =>
-      updateChapters(libraryManga.manga.id)
-    );
+      // TODO: Do I need to also useUpdateMangaInfo here?
 
-    serialPromiseChain(updateChapterPromises);
-    // currently not throwing any errors in case the chapter update fails
+      // Create an array of promise functions
+      // Since calling updateChapters runs the function, create an intermediate function
+      const updateChapterPromises = libraryMangas.map(libraryManga => () =>
+        updateChapters(libraryManga.manga.id)
+      );
 
-    mutate(Server.library());
+      await serialPromiseChain(updateChapterPromises);
+      // currently not throwing any errors here in case the chapter update fails
+
+      mutate(Server.library());
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
 }
 

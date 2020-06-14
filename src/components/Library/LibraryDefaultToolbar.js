@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import React, { useState } from "react";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import LibraryMore from "components/Library/LibraryMore";
@@ -8,6 +8,7 @@ import LibrarySearch from "components/Library/LibrarySearch";
 import MenuDrawer from "components/MenuDrawer";
 import LibraryFilter from "components/Library/LibraryFilter";
 import LibrarySort from "components/Library/LibrarySort";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import { useLibraryFlags, useUpdateLibrary, useSetLibraryFlag } from "apiHooks";
 
 type Props = {
@@ -16,9 +17,11 @@ type Props = {
 };
 
 const LibraryDefaultToolbar = ({ searchQuery, onSearchChange }: Props) => {
+  const [isUpdatingLibrary, setIsUpdatingLibrary] = useState(false);
+
   const { data: libraryFlags } = useLibraryFlags();
 
-  const updateLibrary = useUpdateLibrary();
+  const updateLibrary = useUpdateLibrary(setIsUpdatingLibrary);
   const setLibraryFlag = useSetLibraryFlag();
 
   const handleRefreshClick = () => {
@@ -32,29 +35,36 @@ const LibraryDefaultToolbar = ({ searchQuery, onSearchChange }: Props) => {
   if (libraryFlags == null) return null;
 
   return (
-    <Toolbar>
-      <MenuDrawer />
+    <>
+      <Toolbar>
+        <MenuDrawer />
 
-      <Typography variant="h6" noWrap style={{ flex: 1 }}>
-        Library
-      </Typography>
+        <Typography variant="h6" noWrap style={{ flex: 1 }}>
+          Library
+        </Typography>
 
-      <LibrarySearch
-        searchQuery={searchQuery}
-        onSearchChange={onSearchChange}
-      />
+        <LibrarySearch
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+        />
 
-      <RefreshButton onClick={handleRefreshClick} />
+        <RefreshButton onClick={handleRefreshClick} />
 
-      <LibraryFilter
-        flags={libraryFlags}
-        setLibraryFlag={handleSetLibraryFlag}
-      />
+        <LibraryFilter
+          flags={libraryFlags}
+          setLibraryFlag={handleSetLibraryFlag}
+        />
 
-      <LibrarySort flags={libraryFlags} setLibraryFlag={handleSetLibraryFlag} />
+        <LibrarySort
+          flags={libraryFlags}
+          setLibraryFlag={handleSetLibraryFlag}
+        />
 
-      <LibraryMore />
-    </Toolbar>
+        <LibraryMore />
+      </Toolbar>
+
+      {isUpdatingLibrary && <FullScreenLoading />}
+    </>
   );
 };
 
