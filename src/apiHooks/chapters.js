@@ -106,27 +106,6 @@ export function useUpdateChapters(): (mangaId: number) => Promise<void> {
   };
 }
 
-export function useFirstUnreadChapter(mangaId: number) {
-  // Unsure if this is the best way to do derived data using SWR
-
-  const response = useChapters(mangaId);
-  const { data: chapters } = response;
-
-  // Currently just relying on the default sort order
-  let firstUnreadChapter = null;
-
-  // using Array.some() for a short-circuit-able iterator
-  chapters.some(chapter => {
-    if (!chapter.read) {
-      firstUnreadChapter = chapter;
-      return true; // escape
-    }
-    return false; // continue
-  });
-
-  return { ...response, data: firstUnreadChapter };
-}
-
 // TODO: Update this function (and maybe updateReadingStatus()) to new api version
 export function useToggleRead(): (
   mangaId: number,
