@@ -61,10 +61,6 @@ export function useUninstallExtension(): (
       if (!json.success) throw new Error("success = false in returned JSON");
 
       mutate(Server.extensions());
-
-      // TODO: are these manual mutations actually needed?
-      // dispatch({ type: RESET_SOURCES });
-      // dispatch(resetCataloguesAndFilters());
     } catch (error) {
       dispatch({
         type: "extensions/UNINSTALL_FAILURE",
