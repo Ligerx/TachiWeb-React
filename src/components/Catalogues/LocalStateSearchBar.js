@@ -3,11 +3,15 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "components/Catalogues/SearchBar";
 
 type Props = {
-  value: string,
+  value?: string,
   onSubmit: string => any
 }; // all other props will be passed down to <SearchBar />
 
-const LocalStateSearchBar = ({ value, onSubmit, ...otherProps }: Props) => {
+const LocalStateSearchBar = ({
+  value = "",
+  onSubmit,
+  ...otherProps
+}: Props) => {
   const [localValue, setLocalValue] = useState(value);
 
   useEffect(() => {

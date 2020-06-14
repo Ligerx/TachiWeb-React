@@ -16,7 +16,7 @@ import Link from "components/Link";
 import MenuDrawer from "components/MenuDrawer";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import SourceList from "components/Catalogues/SourceList";
-import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
+import LocalStateSearchBar from "components/Catalogues/LocalStateSearchBar";
 import { langPrettyPrint } from "components/utils";
 import { useSources } from "apiHooks";
 import queryString from "query-string";
@@ -88,8 +88,7 @@ const Catalogues = () => {
       </AppBar>
 
       <Container maxWidth="sm">
-        <CatalogueSearchBar
-          useLocalState
+        <LocalStateSearchBar
           onSubmit={handleSearchSubmit}
           textFieldProps={{ label: "Search all catalogues" }}
         />
