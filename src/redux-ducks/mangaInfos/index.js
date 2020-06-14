@@ -1,7 +1,7 @@
 // @flow
-import type { Manga, MangaFlags, MangaViewer } from "@tachiweb/api-client";
+import type { Manga } from "@tachiweb/api-client";
 import produce from "immer";
-import type { GlobalState, Action } from "redux-ducks/reducers";
+import type { Action } from "redux-ducks/reducers";
 import {
   ADD_MANGA,
   FETCH_MANGA_CACHE,
@@ -88,17 +88,3 @@ function mangaArrayToObject(mangaArray: Array<Manga>): State {
   });
   return mangaObject;
 }
-
-// ================================================================================
-// Selectors
-// ================================================================================
-
-export const selectMangaFlags = (
-  state: GlobalState,
-  mangaId: number
-): ?MangaFlags => state.mangaInfos[mangaId].flags;
-
-export const selectMangaViewer = (
-  state: GlobalState,
-  mangaId: number
-): ?MangaViewer => state.mangaInfos[mangaId].viewer;

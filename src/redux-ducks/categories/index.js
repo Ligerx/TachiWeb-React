@@ -1,10 +1,8 @@
 // @flow
 /* eslint-disable no-param-reassign */ // immer draft is meant to be mutated
-import { createSelector } from "reselect";
 import produce from "immer";
 import type { GlobalState, Action } from "redux-ducks/reducers";
 import type { CategoryType } from "types";
-import { selectLibraryMangaIds } from "redux-ducks/library";
 import {
   FETCH_SUCCESS,
   CREATE_SUCCESS,
@@ -125,50 +123,6 @@ export default function categoriesReducer(
 
 export const selectCurrentCategoryId = (state: GlobalState): ?number =>
   state.categories.currentCategoryId;
-
-export const selectCategoryIds = (state: GlobalState): Array<number> =>
-  state.categories.allIds;
-
-export const selectCategories: GlobalState => $ReadOnlyArray<CategoryType> = createSelector(
-  [state => state.categories.byId, selectCategoryIds],
-  (categories, categoryIds): $ReadOnlyArray<CategoryType> =>
-    categoryIds.map(id => categories[id])
-);
-
-export const selectMangaIdsForDefaultCategory: GlobalState => $ReadOnlyArray<number> = createSelector(
-  [selectCategories, selectLibraryMangaIds],
-  (categories, libraryMangaIds): $ReadOnlyArray<number> => {
-    let mangaNotInACategory = [...libraryMangaIds];
-
-    categories.forEach(category => {
-      mangaNotInACategory = mangaNotInACategory.filter(
-        mangaId => !category.manga.includes(mangaId)
-      );
-    });
-
-    return mangaNotInACategory;
-  }
-);
-
-const noMangaIds = [];
-export const selectCategoryMangaIds: GlobalState => $ReadOnlyArray<number> = createSelector(
-  [selectCategories, selectCurrentCategoryId, selectMangaIdsForDefaultCategory],
-  (
-    categories,
-    currentCategoryId,
-    mangaIdsForDefaultCategory
-  ): $ReadOnlyArray<number> => {
-    if (currentCategoryId === null) {
-      // viewing the default category
-      return mangaIdsForDefaultCategory;
-    }
-
-    const currentCategory = categories.find(
-      category => category.id === currentCategoryId
-    );
-    return currentCategory ? currentCategory.manga : noMangaIds;
-  }
-);
 
 // ================================================================================
 // Helper functions

@@ -1,5 +1,5 @@
 // @flow
-import type { GlobalState, Action } from "redux-ducks/reducers";
+import type { Action } from "redux-ducks/reducers";
 import type { ChapterType } from "types";
 import {
   FETCH_SUCCESS,
@@ -56,17 +56,6 @@ export default function chaptersReducer(
       return state;
   }
 }
-
-// ================================================================================
-// Selectors
-// ================================================================================
-
-const noChapters = []; // selector memoization optimization
-
-export const selectChaptersForManga = (
-  state: GlobalState,
-  mangaId: number
-): Array<ChapterType> => state.chapters[mangaId] || noChapters;
 
 // ================================================================================
 // Helper Functions

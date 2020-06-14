@@ -1,6 +1,6 @@
 // @flow
 import type { LibraryFlagsType } from "types";
-import type { GlobalState, Action } from "redux-ducks/reducers";
+import type { Action } from "redux-ducks/reducers";
 import {
   UPDATE_SUCCESS as UPDATE_CHAPTERS_SUCCESS,
   UPDATE_READING_STATUS_SUCCESS
@@ -137,19 +137,3 @@ export default function libraryReducer(
       return state;
   }
 }
-
-// ================================================================================
-// Selectors
-// ================================================================================
-
-// [June 22, 2019] Was running into some circular dependency problems with library and
-// category selectors. Using functions instead of arrow functions seems to solve the problem...
-// https://github.com/reduxjs/reselect/issues/169#issuecomment-274690285
-export function selectLibraryMangaIds(
-  state: GlobalState
-): $ReadOnlyArray<number> {
-  return state.library.mangaIds;
-}
-
-export const selectShouldReloadLibrary = (state: GlobalState): boolean =>
-  state.library.reloadLibrary;
