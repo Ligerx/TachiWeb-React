@@ -2,7 +2,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
-import { withRouter } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
@@ -18,30 +18,32 @@ import FullScreenLoading from "components/Loading/FullScreenLoading";
 import SourceList from "components/Catalogues/SourceList";
 import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
 import { langPrettyPrint } from "components/utils";
-import { selectSourcesEnabledLanguagesSorted } from "redux-ducks/sources";
 import { useSources } from "apiHooks";
-import groupBy from "lodash/groupBy";
-import type { Source } from "@tachiweb/api-client";
 import queryString from "query-string";
-
-type RouterProps = {
-  history: { push: Function }
-};
-type Props = RouterProps;
+import {
+  selectSourcesEnabledLanguages,
+  selectHiddenSources
+} from "redux-ducks/settings";
+import {
+  sortedAndFilteredSourcesByLanguage,
+  languagesForSourcesByLanguage
+} from "apiHooks/sourceUtils";
 
 const useStyles = makeStyles({
   belowSearch: { marginBottom: 32 }
 });
 
-const Catalogues = ({ history }: Props) => {
+const Catalogues = () => {
   const classes = useStyles();
 
-  const sourceLanguages = useSelector(selectSourcesEnabledLanguagesSorted);
+  const history = useHistory();
+
+  const hiddenSources = useSelector(selectHiddenSources);
+  const enabledLanguages = useSelector(selectSourcesEnabledLanguages);
 
   const { data: sources } = useSources();
 
   const handleSearchSubmit = (newSearchQuery: string) => {
-    // dispatch(updateSearchQuery(searchQuery));
     history.push({
       pathname: Client.cataloguesSearchAll(),
       search: queryString.stringify(
@@ -55,9 +57,14 @@ const Catalogues = ({ history }: Props) => {
     return <FullScreenLoading />;
   }
 
-  const sourcesByLanguage: { [lang: string]: Source[] } = groupBy(
-    sortByName(sources),
-    source => source.lang
+  const sortedSourcesByLanguage = sortedAndFilteredSourcesByLanguage(
+    sources,
+    hiddenSources,
+    enabledLanguages
+  );
+
+  const sourceLanguages = languagesForSourcesByLanguage(
+    sortedSourcesByLanguage
   );
 
   return (
@@ -95,7 +102,7 @@ const Catalogues = ({ history }: Props) => {
             <Typography variant="h5" gutterBottom>
               {langPrettyPrint(lang)}
             </Typography>
-            <SourceList sources={sourcesByLanguage[lang]} />
+            <SourceList sources={sortedSourcesByLanguage[lang]} />
           </div>
         ))}
       </Container>
@@ -103,10 +110,4 @@ const Catalogues = ({ history }: Props) => {
   );
 };
 
-function sortByName(sources: Source[]): Source[] {
-  return sources.sort((a, b) =>
-    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-  );
-}
-
-export default withRouter(Catalogues);
+export default Catalogues;

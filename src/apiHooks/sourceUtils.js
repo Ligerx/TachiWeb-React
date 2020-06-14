@@ -13,6 +13,12 @@ import groupBy from "lodash/groupBy";
 }
 */
 
+export function languagesForSourcesByLanguage(sources: {
+  [lang: string]: Source[]
+}): string[] {
+  return Object.keys(sources);
+}
+
 /**
  * Sorted and filtered.
  * @returns Object of languages pointing to arrays of sources.
@@ -22,7 +28,7 @@ export function sortedAndFilteredSourcesByLanguage(
   sources: Source[],
   hiddenSources: string[],
   enabledLanguages: string[]
-) {
+): { [lang: string]: Source[] } {
   const filteredSources = filterEnabledSources(
     sources,
     hiddenSources,
