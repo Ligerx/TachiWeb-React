@@ -100,6 +100,7 @@ export function useSetFlag(): (
   };
 }
 
+// TODO: loading state?
 export function useSetMangaFavorited(): (
   mangaId: number,
   isFavoriteNewState: boolean
@@ -109,7 +110,10 @@ export function useSetMangaFavorited(): (
   return async (mangaId, isFavoriteNewState) => {
     try {
       // TODO: Remove toString when https://github.com/OpenAPITools/openapi-generator/pull/2499 is merged
-      Server.api().setMangaFavorited(mangaId, isFavoriteNewState.toString());
+      await Server.api().setMangaFavorited(
+        mangaId,
+        isFavoriteNewState.toString()
+      );
       mutate(Server.mangaInfo(mangaId));
     } catch (error) {
       dispatch({
@@ -122,6 +126,7 @@ export function useSetMangaFavorited(): (
   };
 }
 
+// TODO: loading state?
 // TODO:
 // [July 24, 2019] There's no batch method for setting a manga's favorite status. Currently just
 // looping over toggleFavorite, but should probably refactor these 2 methods at some point.
