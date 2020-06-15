@@ -66,6 +66,10 @@ export const Server = {
     return url;
   },
 
+  source(sourceId) {
+    return `/api/v3/sources/${sourceId}`;
+  },
+
   filters(sourceId) {
     return `/api/get_filters/${sourceId}`;
   },
@@ -139,6 +143,11 @@ export const Server = {
       }),
       fetch
     );
+  },
+
+  // manually re-adding apis to have a source of truth for SWR hooks
+  categories() {
+    return "/api/v3/categories";
   }
 };
 

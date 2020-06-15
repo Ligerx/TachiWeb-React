@@ -81,6 +81,7 @@ export const selectIsSettingsLoaded = (state: GlobalState) =>
 
 export const selectSettingsSchema = (state: GlobalState) =>
   state.settings.schema;
+
 export const selectSettingsPrefs = (state: GlobalState) => state.settings.prefs;
 
 export const selectPrefValue = (state: GlobalState, key: string): PrefValue =>
@@ -101,13 +102,6 @@ export const selectSourcesEnabledLanguages = (
   if (enabledLanguages == null) return initialEnabledLanguages;
   return state.settings.prefs.enabledLanguages;
 };
-
-export const selectSourcesEnabledLanguagesSorted: GlobalState => $ReadOnlyArray<string> = createSelector(
-  [selectSourcesEnabledLanguages],
-  (enabledLanguages): $ReadOnlyArray<string> => {
-    return enabledLanguages.slice().sort();
-  }
-);
 
 export const selectHiddenSources = (
   state: GlobalState

@@ -1,23 +1,13 @@
 // @flow
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
+import { selectDefaultViewer } from "redux-ducks/settings";
 import type { MangaViewer } from "@tachiweb/api-client";
-import type { SettingViewerType } from "types";
+import type { SettingViewerType, ChapterType } from "types";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
-import compact from "lodash/compact";
 import SinglePageReader from "components/Reader/SinglePageReader";
 import WebtoonReader from "components/Reader/WebtoonReader";
-import {
-  selectChapter,
-  selectNextChapter,
-  selectPrevChapter
-} from "redux-ducks/chapters";
-import { fetchChapters } from "redux-ducks/chapters/actionCreators";
-import { selectPageCount } from "redux-ducks/pageCounts";
-import { fetchPageCount } from "redux-ducks/pageCounts/actionCreators";
-import { selectDefaultViewer } from "redux-ducks/settings";
-import { selectMangaInfo } from "redux-ducks/mangaInfos";
-import { fetchMangaInfo } from "redux-ducks/mangaInfos/actionCreators";
+import { useMangaInfo, useChapters, usePageCount } from "apiHooks";
 
 // TODO: FIXME: If I switch pages really fast, the browser forcefully redownload images???
 
@@ -28,48 +18,24 @@ const Reader = ({ match: { params } }: RouterProps) => {
   const chapterId = parseInt(params.chapterId, 10);
 
   const defaultViewer = useSelector(selectDefaultViewer);
-  const mangaInfo = useSelector(state => selectMangaInfo(state, mangaId));
-  const chapter = useSelector(state =>
-    selectChapter(state, mangaId, chapterId)
-  );
-  const prevChapter = useSelector(state =>
-    selectPrevChapter(state, mangaId, chapterId)
-  );
-  const nextChapter = useSelector(state =>
-    selectNextChapter(state, mangaId, chapterId)
-  );
 
-  const pageCount = useSelector(state => selectPageCount(state, chapterId));
-  const prevChapterPageCount = useSelector(state => {
-    // This should be fine since null === null so it's a pure function still,
-    // plus the extra logic shouldn't be very expensive
-    if (prevChapter == null) return null;
-    return selectPageCount(state, prevChapter.id);
-  });
+  const { data: mangaInfo } = useMangaInfo(mangaId);
+  const { data: chapters = [] } = useChapters(mangaId); // defaulting to empty array to simplify null checking
 
-  const dispatch = useDispatch();
+  // TODO since apiHooks can return undefined as they fetch, need to do some null checking or return early
+  const chapterIndex = chapters.findIndex(chapter => chapter.id === chapterId);
+  const chapter: ?ChapterType = chapters[chapterIndex];
+  const prevChapter: ?ChapterType = chapters[chapterIndex - 1];
+  const nextChapter: ?ChapterType = chapters[chapterIndex + 1];
 
-  useEffect(() => {
-    dispatch(fetchMangaInfo(mangaId));
-    dispatch(fetchChapters(mangaId));
-  }, [dispatch, mangaId]);
-
-  useEffect(() => {
-    // Get adjacent chapter page counts
-    const chapterIds: Array<number> = compact([
-      chapterId,
-      prevChapter ? prevChapter.id : null,
-      nextChapter ? nextChapter.id : null
-    ]);
-
-    chapterIds.forEach(thisChapterId => {
-      dispatch(fetchPageCount(mangaId, thisChapterId));
-    });
-  }, [dispatch, mangaId, chapterId, prevChapter, nextChapter]);
+  const { data: pageCount } = usePageCount(mangaId, chapter?.id);
+  const { data: prevChapterPageCount } = usePageCount(mangaId, prevChapter?.id);
+  usePageCount(mangaId, nextChapter?.id); // fetch next chapter early, but don't need any of it's data right now
 
   if (mangaInfo == null || chapter == null || pageCount == null) {
     return <FullScreenLoading />;
   }
+  // //
 
   const viewer = getViewer(mangaInfo.viewer, defaultViewer);
 
@@ -99,6 +65,7 @@ const Reader = ({ match: { params } }: RouterProps) => {
   }
 
   console.error("No reader type specified???");
+  return <div>Error: No reader type specified...</div>;
 };
 
 function getViewer(mangaViewer: MangaViewer, settingViewer: SettingViewerType) {

@@ -1,44 +1,16 @@
 // @flow
-import {
-  combineReducers,
-  type Store as ReduxStore,
-  type Dispatch as ReduxDispatch
-} from "redux";
+import { combineReducers } from "redux";
 import loading from "./loading";
 import error from "./error";
-import library from "./library";
-import chapters from "./chapters";
-import pageCounts from "./pageCounts";
-import sources from "./sources";
-import catalogues from "./catalogues";
-import filters from "./filters";
-import mangaInfos from "./mangaInfos";
-import extensions from "./extensions";
 import settings from "./settings";
 import categories from "./categories";
-import type { LibraryAction } from "./library/actions";
-import type { ChaptersAction } from "./chapters/actions";
-import type { PageCountsAction } from "./pageCounts/actions";
-import type { SourcesAction } from "./sources/actions";
-import type { CataloguesAction } from "./catalogues/actions";
-import type { FiltersAction } from "./filters/actions";
-import type { MangaInfosAction } from "./mangaInfos/actions";
-import type { ExtensionsAction } from "./extensions/actions";
 import type { SettingsAction } from "./settings/actions";
 import type { CategoriesAction } from "./categories/actions";
 
 const reducers = {
   loading,
   error,
-  mangaInfos,
-  library,
   categories,
-  chapters,
-  pageCounts,
-  sources,
-  catalogues,
-  filters,
-  extensions,
   settings
 };
 
@@ -48,18 +20,7 @@ type ExtractReturnType = <V>((any, any) => V) => V;
 export type GlobalState = $ObjMap<Reducers, ExtractReturnType>;
 
 type ReduxInitAction = { type: "@@INIT" };
-export type Action =
-  | ReduxInitAction
-  | LibraryAction
-  | ChaptersAction
-  | PageCountsAction
-  | SourcesAction
-  | CataloguesAction
-  | FiltersAction
-  | MangaInfosAction
-  | ExtensionsAction
-  | SettingsAction
-  | CategoriesAction;
+export type Action = ReduxInitAction | SettingsAction | CategoriesAction;
 
 type GetState = () => GlobalState;
 type PromiseAction = Promise<Action>;

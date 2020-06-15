@@ -188,7 +188,7 @@ const SinglePageReader = ({
     nextChapter ? nextChapter.id : null
   );
 
-  useUpdateReadingStatus(mangaInfo.id, chapter.id, page);
+  useUpdateReadingStatus(mangaInfo, chapter, pageCount, page);
 
   return (
     <>

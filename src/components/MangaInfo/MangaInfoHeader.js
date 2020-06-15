@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import React, { useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -12,12 +12,8 @@ import BackButton from "components/BackButton";
 import MangaInfoMore from "components/MangaInfo/MangaInfoMore";
 import Tooltip from "@material-ui/core/Tooltip";
 import MangaInfoFilter from "components/MangaInfo/MangaInfoFilter";
-import { useDispatch } from "react-redux";
-import {
-  updateMangaInfo,
-  setFlag
-} from "redux-ducks/mangaInfos/actionCreators";
-import { updateChapters } from "redux-ducks/chapters/actionCreators";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
+import { useUpdateChapters, useUpdateMangaInfo, useSetFlag } from "apiHooks";
 
 // NOTE: empty href in IconButton will not render <a>
 
@@ -34,52 +30,62 @@ const MangaInfoHeader = ({
   handleChangeTab,
   onBackClick
 }: Props) => {
-  const dispatch = useDispatch();
+  const [isUpdatingChapters, setIsUpdatingChapters] = useState(false);
+  const [isUpdatingManga, setIsUpdatingManga] = useState(false);
+
+  const updateChapters = useUpdateChapters(setIsUpdatingChapters);
+  const updateMangaInfo = useUpdateMangaInfo(setIsUpdatingManga);
+  const setFlag = useSetFlag();
 
   const handleSetFlag = (flag, state) => {
-    dispatch(setFlag(mangaInfo.id, flag, state));
+    setFlag(mangaInfo, flag, state);
   };
 
   const handleRefreshClick = () => {
-    // Running updateChapters also updates mangaInfo.chapters and mangaInfo.unread
-    // So run updateMangaInfo after chapters
-    dispatch(updateChapters(mangaInfo.id)).then(() =>
-      dispatch(updateMangaInfo(mangaInfo.id))
-    );
+    updateChapters(mangaInfo.id);
+    updateMangaInfo(mangaInfo.id);
   };
 
   return (
-    <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
-      <Toolbar>
-        <BackButton onBackClick={onBackClick} />
-        <Typography variant="h6" noWrap style={{ flex: 1 }}>
-          {mangaInfo.title}
-        </Typography>
+    <>
+      <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
+        <Toolbar>
+          <BackButton onBackClick={onBackClick} />
+          <Typography variant="h6" noWrap style={{ flex: 1 }}>
+            {mangaInfo.title}
+          </Typography>
 
-        <RefreshButton onClick={handleRefreshClick} />
+          <RefreshButton onClick={handleRefreshClick} />
 
-        <MangaInfoFilter
-          flags={mangaInfo.flags}
-          onReadFilterChange={handleReadFilterChange(handleSetFlag)}
-          onDownloadedFilterChange={handleDownloadedFilterChange(handleSetFlag)}
-        />
+          <MangaInfoFilter
+            flags={mangaInfo.flags}
+            onReadFilterChange={handleReadFilterChange(handleSetFlag)}
+            onDownloadedFilterChange={handleDownloadedFilterChange(
+              handleSetFlag
+            )}
+          />
 
-        <Tooltip title="Sort">
-          <IconButton onClick={handleSortClick(handleSetFlag, mangaInfo.flags)}>
-            <Icon>sort_by_alpha</Icon>
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Sort">
+            <IconButton
+              onClick={handleSortClick(handleSetFlag, mangaInfo.flags)}
+            >
+              <Icon>sort_by_alpha</Icon>
+            </IconButton>
+          </Tooltip>
 
-        <MangaInfoMore
-          sourceUrl={mangaInfo.url}
-          flags={mangaInfo.flags}
-          onDisplayModeChange={handleDisplayModeChange(handleSetFlag)}
-          onSortTypeChange={handleSortTypeChange(handleSetFlag)}
-        />
-      </Toolbar>
+          <MangaInfoMore
+            sourceUrl={mangaInfo.url}
+            flags={mangaInfo.flags}
+            onDisplayModeChange={handleDisplayModeChange(handleSetFlag)}
+            onSortTypeChange={handleSortTypeChange(handleSetFlag)}
+          />
+        </Toolbar>
 
-      <MangaInfoTabs tabValue={tabValue} handleChange={handleChangeTab} />
-    </AppBar>
+        <MangaInfoTabs tabValue={tabValue} handleChange={handleChangeTab} />
+      </AppBar>
+
+      {(isUpdatingChapters || isUpdatingManga) && <FullScreenLoading />}
+    </>
   );
 };
 

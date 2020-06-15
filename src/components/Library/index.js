@@ -1,21 +1,8 @@
 // @flow
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { withRouter } from "react-router-dom";
 import { Client } from "api";
-import {
-  selectFilteredSortedLibrary,
-  selectIsLibraryLoading,
-  selectUnread,
-  selectLibraryIsLoadedAndEmpty
-} from "redux-ducks/library";
-import {
-  fetchLibrary,
-  fetchUnread,
-  fetchLibraryFlags
-} from "redux-ducks/library/actionCreators";
-import { selectIsChaptersLoading } from "redux-ducks/chapters";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import LibraryMangaCard from "components/Library/LibraryMangaCard";
@@ -25,12 +12,16 @@ import AppBar from "@material-ui/core/AppBar";
 import LibraryDefaultToolbar from "components/Library/LibraryDefaultToolbar";
 import LibraryHasSelectionsToolbar from "components/Library/LibraryHasSelectionsToolbar";
 import EmptyState from "components/Library/EmptyState";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
 import {
-  selectIsCategoriesLoading,
-  selectCategoriesIsLoaded
-} from "redux-ducks/categories";
-import { fetchCategories } from "redux-ducks/categories/actionCreators";
+  useCategories,
+  useLibrary,
+  useLibraryFlags,
+  useSources
+} from "apiHooks";
+import type { LibraryManga } from "@tachiweb/api-client";
+import { selectCurrentCategoryId } from "redux-ducks/categories";
+import { useSelector } from "react-redux";
+import { filterSortLibrary } from "./utils";
 
 // TODO: no feedback of success/errors after clicking the library update button
 
@@ -48,27 +39,29 @@ const Library = ({ match: { url } }: Props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMangaIds, setSelectedMangaIds] = useState<number[]>([]);
 
-  const mangaLibrary = useSelector(state =>
-    selectFilteredSortedLibrary(state, searchQuery)
-  );
-  const unread = useSelector(selectUnread);
-  const libraryIsLoading = useSelector(selectIsLibraryLoading);
-  const chaptersAreUpdating = useSelector(selectIsChaptersLoading);
-  const categoriesAreLoading = useSelector(selectIsCategoriesLoading);
-  const categoriesIsLoaded = useSelector(selectCategoriesIsLoaded);
+  const { data: categories } = useCategories({ includeDefault: "YES" });
+  const { data: sources } = useSources();
+  const { data: libraryFlags } = useLibraryFlags();
+  const { data: notSortedOrFilteredLibraryMangas } = useLibrary();
 
-  const isLibraryLoadedAndEmpty = useSelector(selectLibraryIsLoadedAndEmpty);
+  const currentCategoryId = useSelector(selectCurrentCategoryId);
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchLibrary()).then(() => {
-      dispatch(fetchUnread());
-      dispatch(fetchCategories());
-    });
-    dispatch(fetchLibraryFlags());
-    dispatch(fetchSources());
-  }, [dispatch]);
+  // update this function to be cleaner with the new swr hooks data
+  // also need to update the render function
+  const allDataLoaded =
+    notSortedOrFilteredLibraryMangas != null &&
+    categories != null &&
+    libraryFlags != null &&
+    sources != null;
+  const libraryMangas: ?(LibraryManga[]) = allDataLoaded
+    ? filterSortLibrary(
+        notSortedOrFilteredLibraryMangas,
+        categories.find(category => category.id === currentCategoryId),
+        libraryFlags,
+        sources,
+        searchQuery
+      )
+    : null;
 
   const handleSelectManga = (mangaId: number, isSelected: boolean) => {
     setSelectedMangaIds(prevState => {
@@ -99,16 +92,16 @@ const Library = ({ match: { url } }: Props) => {
       </AppBar>
 
       {/* Prevent library manga from flashing on screen before organizing them into categories */}
-      {categoriesIsLoaded && (
+      {allDataLoaded && (
         <Container>
           <Grid container spacing={2}>
-            {mangaLibrary.map(manga => (
+            {libraryMangas.map(libraryManga => (
               <LibraryMangaCard
-                key={manga.id}
-                to={Client.manga(url, manga.id)}
-                manga={manga}
-                unread={unread[manga.id] || 0}
-                isSelected={selectedMangaIds.includes(manga.id)}
+                key={libraryManga.manga.id}
+                to={Client.manga(url, libraryManga.manga.id)}
+                manga={libraryManga.manga}
+                unread={libraryManga.totalUnread}
+                isSelected={selectedMangaIds.includes(libraryManga.manga.id)}
                 showSelectedCheckbox={selectedMangaIds.length > 0}
                 onSelectedToggle={handleSelectManga}
               />
@@ -117,11 +110,10 @@ const Library = ({ match: { url } }: Props) => {
         </Container>
       )}
 
-      {(libraryIsLoading || chaptersAreUpdating || categoriesAreLoading) && (
-        <FullScreenLoading />
-      )}
+      {!allDataLoaded && <FullScreenLoading />}
 
-      {isLibraryLoadedAndEmpty && <EmptyState />}
+      {notSortedOrFilteredLibraryMangas != null &&
+        notSortedOrFilteredLibraryMangas.length === 0 && <EmptyState />}
     </>
   );
 };

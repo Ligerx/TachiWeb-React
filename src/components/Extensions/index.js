@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
@@ -10,16 +10,9 @@ import Container from "@material-ui/core/Container";
 import MenuDrawer from "components/MenuDrawer";
 import RefreshButton from "components/RefreshButton";
 import ExtensionList from "components/Extensions/ExtensionList";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  selectIsExtensionsLoading,
-  selectInstalledExtensions,
-  selectNotInstalledExtensions
-} from "redux-ducks/extensions";
-import {
-  fetchExtensions,
-  reloadExtensions
-} from "redux-ducks/extensions/actionCreators";
+import { useExtensions, useReloadExtensions } from "apiHooks";
+import partition from "lodash/partition";
+import type { ExtensionType } from "types";
 
 // Currently, the buttons that appear do not completely match Tachiyomi's buttons.
 // Partially because I'm missing extension preferences,
@@ -32,19 +25,19 @@ const useStyles = makeStyles({
 });
 
 const Extensions = () => {
-  const installedExtensions = useSelector(selectInstalledExtensions);
-  const notInstalledExtensions = useSelector(selectNotInstalledExtensions);
-  const isExtensionsLoading = useSelector(selectIsExtensionsLoading);
-
-  const dispatch = useDispatch();
-
-  const handleReloadExtensions = () => dispatch(reloadExtensions());
-
-  useEffect(() => {
-    dispatch(fetchExtensions());
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const classes = useStyles();
+
+  const [isExtensionsReloading, setIsExtensionsReloading] = useState(false);
+
+  const { data: extensions } = useExtensions();
+  const [
+    installedExtensions,
+    notInstalledExtensions
+  ] = sortAndPartitionExtensions(extensions);
+
+  const reloadExtensions = useReloadExtensions(setIsExtensionsReloading);
+
+  const handleReloadExtensions = () => reloadExtensions();
 
   return (
     <>
@@ -75,9 +68,37 @@ const Extensions = () => {
         />
       </Container>
 
-      {isExtensionsLoading && <FullScreenLoading />}
+      {(extensions == null || isExtensionsReloading) && <FullScreenLoading />}
     </>
   );
 };
+
+/**
+ * @returns an array 2 sorted extension arrays. The first contains installed extensions, the second includes not installed extensions.
+ */
+function sortAndPartitionExtensions(
+  extensions: ExtensionType[] | null
+): [ExtensionType[], ExtensionType[]] {
+  if (extensions == null) return [[], []];
+
+  const sortedExtensions = extensions.sort(extensionSort);
+  return partition(
+    sortedExtensions,
+    extension => extension.status === "INSTALLED"
+  );
+}
+
+function extensionSort(a: ExtensionType, b: ExtensionType) {
+  // First sort alphabetically by language
+  // Not using the pretty print / native name, but it gets the job done
+  if (a.lang > b.lang) return 1;
+  if (a.lang < b.lang) return -1;
+
+  // Then sort alphabetically by source name
+  if (a.name > b.name) return 1;
+  if (a.name < b.name) return -1;
+
+  return 0;
+}
 
 export default Extensions;

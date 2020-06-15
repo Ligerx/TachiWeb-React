@@ -2,17 +2,9 @@
 import React from "react";
 import Icon from "@material-ui/core/Icon";
 import Fab from "@material-ui/core/Fab";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/styles";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  selectIsFavoriteToggling,
-  selectIsFavorite
-} from "redux-ducks/mangaInfos";
-import { toggleFavorite } from "redux-ducks/mangaInfos/actionCreators";
-
-// TODO: Loading spinner flickers because of short delay.
-//       Would be interesting to create a spinner with a small delay before appearing.
+import type { Manga } from "@tachiweb/api-client";
+import { useSetMangaFavorited } from "apiHooks";
 
 // FAB button position based on this link
 // https://stackoverflow.com/questions/37760448/how-to-make-floating-action-button-content-overlap-two-divs-in-materializecss
@@ -31,24 +23,19 @@ const useStyles = makeStyles({
     bottom: 0,
     right: "5%",
     marginBottom: -18
-  },
-  fabProgress: {
-    position: "absolute",
-    animation: "fadeInFromNone 2.5s ease-out"
   }
 });
 
-type Props = { mangaId: number };
+type Props = { manga: Manga };
 
-const FavoriteFab = ({ mangaId }: Props) => {
-  const isFavorite = useSelector(state => selectIsFavorite(state, mangaId));
-  const favoriteIsToggling = useSelector(selectIsFavoriteToggling);
-
-  const dispatch = useDispatch();
+const FavoriteFab = ({ manga }: Props) => {
   const classes = useStyles();
 
-  const handleToggleFavorite = () =>
-    dispatch(toggleFavorite(mangaId, isFavorite));
+  const setMangaFavorited = useSetMangaFavorited();
+
+  const handleToggleFavorite = () => {
+    setMangaFavorited(manga.id, !manga.favorite);
+  };
 
   return (
     <>
@@ -57,15 +44,7 @@ const FavoriteFab = ({ mangaId }: Props) => {
         className={classes.fab}
         onClick={handleToggleFavorite}
       >
-        {isFavorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
-
-        {favoriteIsToggling && (
-          <CircularProgress
-            size={70}
-            color="secondary"
-            className={classes.fabProgress}
-          />
-        )}
+        {manga.favorite ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
       </Fab>
     </>
   );

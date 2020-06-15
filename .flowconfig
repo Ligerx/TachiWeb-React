@@ -9,7 +9,7 @@
 
 [options]
 module.system.node.resolve_dirname=node_modules
-module.system.node.resolve_dirname=./src
+module.system.node.resolve_dirname=src
 
 esproposal.decorators=ignore
 esproposal.class_static_fields=enable
@@ -18,6 +18,8 @@ esproposal.class_instance_fields=enable
 # Not sure if I need these right now
 # suppress_type=$FlowIssue
 # suppress_type=$FlowFixMe
+
+esproposal.optional_chaining=enable
 
 [strict]
 
@@ -31,4 +33,4 @@ esproposal.class_instance_fields=enable
 # ^ explaination for 'resolve_dirname=./src'
 
 [version]
-0.102.0
+0.127.0

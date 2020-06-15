@@ -7,12 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import { Client } from "api";
 import Link from "components/Link";
-import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/styles";
-import {
-  selectIsRestoreLoading,
-  selectDidRestoreFail
-} from "redux-ducks/library";
 
 const useStyles = makeStyles({
   dialog: {
@@ -24,22 +19,27 @@ const useStyles = makeStyles({
 type Props = {
   open: boolean,
   onClose: Function,
-  tryAgain: Function
+  tryAgain: Function,
+  isLoading: boolean,
+  didFail: boolean
 };
 
-const RestoreDialog = ({ open, onClose, tryAgain }: Props) => {
+const RestoreDialog = ({
+  open,
+  onClose,
+  tryAgain,
+  isLoading,
+  didFail
+}: Props) => {
   const classes = useStyles();
 
-  const isRestoreLoading = useSelector(selectIsRestoreLoading);
-  const didRestoreFail = useSelector(selectDidRestoreFail);
-
   const handleClose = () => {
-    if (isRestoreLoading) return;
+    if (isLoading) return;
     onClose();
   };
 
   const content = () => {
-    if (isRestoreLoading) {
+    if (isLoading) {
       return (
         <>
           <DialogTitle>Restoring Library...</DialogTitle>
@@ -48,7 +48,7 @@ const RestoreDialog = ({ open, onClose, tryAgain }: Props) => {
       );
     }
 
-    if (didRestoreFail) {
+    if (didFail) {
       return (
         <>
           <DialogTitle>Failed to Restore Library</DialogTitle>

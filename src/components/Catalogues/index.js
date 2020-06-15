@@ -1,8 +1,8 @@
 // @flow
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
-import { withRouter } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
@@ -16,41 +16,56 @@ import Link from "components/Link";
 import MenuDrawer from "components/MenuDrawer";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import SourceList from "components/Catalogues/SourceList";
-import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
+import LocalStateSearchBar from "components/Catalogues/LocalStateSearchBar";
 import { langPrettyPrint } from "components/utils";
+import { useSources } from "apiHooks";
+import queryString from "query-string";
 import {
-  selectIsSourcesLoading,
-  selectSourcesEnabledLanguagesSorted,
-  selectEnabledSourcesByLanguage
-} from "redux-ducks/sources";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
-import { updateSearchQuery } from "redux-ducks/catalogues/actionCreators";
-
-type RouterProps = {
-  history: { push: Function }
-};
-type Props = RouterProps;
+  selectSourcesEnabledLanguages,
+  selectHiddenSources
+} from "redux-ducks/settings";
+import {
+  sortedAndFilteredSourcesByLanguage,
+  languagesForSourcesByLanguage
+} from "apiHooks/sourceUtils";
 
 const useStyles = makeStyles({
   belowSearch: { marginBottom: 32 }
 });
 
-const Catalogues = ({ history }: Props) => {
+const Catalogues = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
-  const sourcesAreLoading = useSelector(selectIsSourcesLoading);
-  const sourceLanguages = useSelector(selectSourcesEnabledLanguagesSorted);
-  const sourcesByLanguage = useSelector(selectEnabledSourcesByLanguage);
+  const history = useHistory();
 
-  useEffect(() => {
-    dispatch(fetchSources());
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const hiddenSources = useSelector(selectHiddenSources);
+  const enabledLanguages = useSelector(selectSourcesEnabledLanguages);
 
-  const handleSearchSubmit = (searchQuery: string) => {
-    dispatch(updateSearchQuery(searchQuery));
-    history.push(Client.cataloguesSearchAll());
+  const { data: sources } = useSources();
+
+  const handleSearchSubmit = (newSearchQuery: string) => {
+    history.push({
+      pathname: Client.cataloguesSearchAll(),
+      search: queryString.stringify(
+        { search: newSearchQuery },
+        { skipEmptyString: true }
+      )
+    });
   };
+
+  if (sources == null) {
+    return <FullScreenLoading />;
+  }
+
+  const sortedSourcesByLanguage = sortedAndFilteredSourcesByLanguage(
+    sources,
+    hiddenSources,
+    enabledLanguages
+  );
+
+  const sourceLanguages = languagesForSourcesByLanguage(
+    sortedSourcesByLanguage
+  );
 
   return (
     <>
@@ -73,8 +88,7 @@ const Catalogues = ({ history }: Props) => {
       </AppBar>
 
       <Container maxWidth="sm">
-        <CatalogueSearchBar
-          useLocalState
+        <LocalStateSearchBar
           onSubmit={handleSearchSubmit}
           textFieldProps={{ label: "Search all catalogues" }}
         />
@@ -87,14 +101,12 @@ const Catalogues = ({ history }: Props) => {
             <Typography variant="h5" gutterBottom>
               {langPrettyPrint(lang)}
             </Typography>
-            <SourceList sources={sourcesByLanguage[lang]} />
+            <SourceList sources={sortedSourcesByLanguage[lang]} />
           </div>
         ))}
       </Container>
-
-      {sourcesAreLoading && <FullScreenLoading />}
     </>
   );
 };
 
-export default withRouter(Catalogues);
+export default Catalogues;

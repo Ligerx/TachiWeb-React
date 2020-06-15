@@ -62,7 +62,7 @@ const MangaInfoDetails = ({ source, mangaInfo, numChapters }: Props) => {
             </Grid>
           </Grid>
 
-          <FavoriteFab mangaId={mangaInfo.id} />
+          <FavoriteFab manga={mangaInfo} />
         </Container>
       </BackgroundImage>
 

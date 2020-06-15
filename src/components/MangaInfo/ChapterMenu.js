@@ -1,10 +1,9 @@
 // @flow
 import React, { type Node } from "react";
-import { useDispatch } from "react-redux";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import type { ChapterType } from "types";
-import { toggleRead } from "redux-ducks/chapters/actionCreators";
+import { useToggleRead } from "apiHooks";
 
 type Props = {
   mangaId: number,
@@ -14,10 +13,10 @@ type Props = {
 };
 
 const ChapterMenu = ({ mangaId, chapter, anchorEl, onClose }: Props) => {
-  const dispatch = useDispatch();
+  const toggleRead = useToggleRead();
 
   const handleToggleRead = (read: boolean) => () => {
-    dispatch(toggleRead(mangaId, chapter.id, read));
+    toggleRead(mangaId, chapter.id, read);
     onClose();
   };
 

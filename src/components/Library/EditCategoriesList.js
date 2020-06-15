@@ -1,12 +1,13 @@
 // @flow
 import React, { memo } from "react";
-import { useSelector } from "react-redux";
 import List from "@material-ui/core/List";
-import { selectCategories } from "redux-ducks/categories";
 import EditCategoriesListItem from "components/Library/EditCategoriesListItem";
+import { useCategories } from "apiHooks";
 
-const EditCategoriesList = memo(() => {
-  const categories = useSelector(selectCategories);
+const EditCategoriesList = memo<{}>(() => {
+  const { data: categories } = useCategories();
+
+  if (categories == null) return null;
 
   return (
     <List>

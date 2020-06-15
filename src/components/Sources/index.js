@@ -1,6 +1,6 @@
 // @flow
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
@@ -11,37 +11,30 @@ import FullScreenLoading from "components/Loading/FullScreenLoading";
 import BackButton from "components/BackButton";
 import SourcesByLanguage from "components/Sources/SourcesByLanguage";
 import {
-  selectSourcesByLanguage,
-  selectSourceLanguages,
-  selectIsSourcesLoading
-} from "redux-ducks/sources";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
-import {
   selectSourcesEnabledLanguages,
   selectHiddenSources
 } from "redux-ducks/settings";
+import { useSources } from "apiHooks";
+import {
+  sortSources,
+  languagesForSources,
+  sourcesByLanguage
+} from "apiHooks/sourceUtils";
+import type { Source } from "@tachiweb/api-client";
 
 const Sources = () => {
-  // Sources
-  const sourceLanguages = useSelector(selectSourceLanguages);
-  const sourcesByLanguage = useSelector(selectSourcesByLanguage);
-  const sourcesAreLoading = useSelector(selectIsSourcesLoading);
-
-  // Preferences
   const enabledLanguages = useSelector(selectSourcesEnabledLanguages);
   const hiddenSources = useSelector(selectHiddenSources);
 
-  const dispatch = useDispatch();
+  const { data: sources } = useSources();
 
-  useEffect(() => {
-    dispatch(fetchSources());
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const languages = useLanguagesSortedOnce(sources, enabledLanguages);
 
-  // Move enabled languages to the top, but only on initial load
-  const reorderedSourceLanguages = useEnabledLangFirstOnLoad(
-    sourceLanguages,
-    enabledLanguages
-  );
+  if (sources == null) {
+    return <FullScreenLoading />;
+  }
+
+  const sortedSourcesByLanguage = sourcesByLanguage(sortSources(sources));
 
   return (
     <>
@@ -58,51 +51,53 @@ const Sources = () => {
       </AppBar>
 
       <Container maxWidth="sm">
-        {reorderedSourceLanguages.map(lang => (
+        {languages.map(lang => (
           <SourcesByLanguage
             key={lang}
             lang={lang}
-            sources={sourcesByLanguage[lang]}
+            sources={sortedSourcesByLanguage[lang]}
             isEnabled={enabledLanguages.includes(lang)}
             hiddenSources={hiddenSources}
           />
         ))}
       </Container>
-
-      {sourcesAreLoading && <FullScreenLoading />}
     </>
   );
 };
 
-function useEnabledLangFirstOnLoad(
-  sourceLanguages: $ReadOnlyArray<string>,
-  enabledLanguages: $ReadOnlyArray<string>
+/**
+ * Used to move enabled languages to the top, but only on initial load.
+ * This keeps the data order stable when staying on the same page and enabling/disabling languages.
+ */
+function useLanguagesSortedOnce(
+  sources: ?(Source[]),
+  enabledLanguages: string[]
 ) {
-  // starting with an empty array to mimic sourceLanguages's type
-  const [reorderedLang, setReorderedLang] = useState<$ReadOnlyArray<string>>(
-    []
-  );
+  const [reorderedLanguages, setReorderedLanguages] = useState<string[]>([]);
   const alreadySortedRef = useRef(false);
 
   useEffect(() => {
     if (alreadySortedRef.current) return;
+    if (sources == null) return;
+    if (sources.length === 0) return;
 
-    const sortedEnabledLanguages = sourceLanguages.filter(lang =>
-      enabledLanguages.includes(lang)
-    );
-    const sortedDisabledLanguages = sourceLanguages.filter(
-      lang => !enabledLanguages.includes(lang)
-    );
+    const languages = languagesForSources(sources);
 
-    setReorderedLang([...sortedEnabledLanguages, ...sortedDisabledLanguages]);
+    const sortedEnabledLanguages = enabledLanguages.slice().sort();
+    const sortedDisabledLanguages = [...new Set(languages)]
+      .filter(lang => !enabledLanguages.includes(lang))
+      .slice()
+      .sort();
 
-    // prevent any further changes of order, but only if we're sure sources were loaded
-    if (reorderedLang.length > 0) {
-      alreadySortedRef.current = true;
-    }
-  }, [sourceLanguages, enabledLanguages, reorderedLang.length]);
+    setReorderedLanguages([
+      ...sortedEnabledLanguages,
+      ...sortedDisabledLanguages
+    ]);
 
-  return reorderedLang;
+    alreadySortedRef.current = true;
+  }, [enabledLanguages, sources]);
+
+  return reorderedLanguages;
 }
 
 export default Sources;

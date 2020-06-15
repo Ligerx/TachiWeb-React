@@ -1,16 +1,13 @@
 // @flow
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import type { ExtensionType } from "types";
 import Paper from "@material-ui/core/Paper";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ExtensionListItem from "components/Extensions/ExtensionListItem";
 import ExtensionButton from "components/Extensions/ExtensionButton";
-import {
-  installExtension,
-  uninstallExtension
-} from "redux-ducks/extensions/actionCreators";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
+import { useInstallExtension, useUninstallExtension } from "apiHooks";
 
 type Props = {
   title: string,
@@ -18,13 +15,14 @@ type Props = {
 };
 
 const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
-  const dispatch = useDispatch();
+  const [isInstalling, setIsInstalling] = React.useState(false);
 
-  const handleInstallExtension = packageName =>
-    dispatch(installExtension(packageName));
+  const installExtension = useInstallExtension(setIsInstalling);
+  const uninstallExtension = useUninstallExtension();
 
-  const handleUninstallExtension = extension =>
-    dispatch(uninstallExtension(extension));
+  const handleInstallExtension = extension => installExtension(extension);
+
+  const handleUninstallExtension = extension => uninstallExtension(extension);
 
   if (!extensions.length) return null;
 
@@ -47,12 +45,8 @@ const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
                   status={extension.status}
                   has_update={extension.has_update}
                   name={extension.name}
-                  onUpdateClick={() =>
-                    handleInstallExtension(extension.pkg_name)
-                  }
-                  onInstallClick={() =>
-                    handleInstallExtension(extension.pkg_name)
-                  }
+                  onUpdateClick={() => handleInstallExtension(extension)}
+                  onInstallClick={() => handleInstallExtension(extension)}
                   onUninstallClick={() => handleUninstallExtension(extension)}
                 />
               </ExtensionListItem>
@@ -60,6 +54,8 @@ const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
           })}
         </List>
       </Paper>
+
+      {isInstalling && <FullScreenLoading />}
     </div>
   );
 };

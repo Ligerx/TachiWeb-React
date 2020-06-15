@@ -1,6 +1,5 @@
 // @flow
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import zipObject from "lodash/zipObject";
 import type { CategoryType } from "types";
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,8 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import { selectCategories } from "redux-ducks/categories";
-import { updateMultipleCategoryManga } from "redux-ducks/categories/actionCreators";
+import { useCategories, useUpdateMangasInCategories } from "apiHooks";
 
 type Props = {
   mangaIds: Array<number>,
@@ -26,10 +24,11 @@ const useStyles = makeStyles({
 });
 
 const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
-  const dispatch = useDispatch();
   const classes = useStyles();
 
-  const categories = useSelector(selectCategories);
+  const { data: categories } = useCategories();
+
+  const updateMangasInCategories = useUpdateMangasInCategories();
 
   // Array of booleans that tracks if a checkbox is selected. This is ordered 1:1 with categories.
   const [selectedCategoriesList, setSelectedCategoriesList] = useState<
@@ -42,7 +41,8 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
 
   useEffect(() => {
     setSelectedCategoriesList(deriveState(categories, mangaIds));
-  }, [categories, mangaIds]);
+    // Manually adding a dep for open to reset the state when the dialog opens or closes
+  }, [categories, mangaIds, open]);
 
   const handleToggleCategory = (index: number) => {
     const stateCopy = selectedCategoriesList.slice();
@@ -52,10 +52,12 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
   };
 
   const handleMoveCategoryManga = () => {
+    if (categories == null) return;
+
     const categoryIds = categories.map(category => category.id);
     const categorySelections = zipObject(categoryIds, selectedCategoriesList);
 
-    dispatch(updateMultipleCategoryManga(categorySelections, mangaIds));
+    updateMangasInCategories(categorySelections, mangaIds);
     onClose();
     onMove();
   };
@@ -64,19 +66,20 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Move to categories</DialogTitle>
       <DialogContent>
-        {categories.map((category, index) => (
-          <FormControlLabel
-            key={category.id}
-            className={classes.row}
-            control={
-              <Checkbox
-                checked={selectedCategoriesList[index]}
-                onChange={() => handleToggleCategory(index)}
-              />
-            }
-            label={category.name}
-          />
-        ))}
+        {categories != null &&
+          categories.map((category, index) => (
+            <FormControlLabel
+              key={category.id}
+              className={classes.row}
+              control={
+                <Checkbox
+                  checked={selectedCategoriesList[index]}
+                  onChange={() => handleToggleCategory(index)}
+                />
+              }
+              label={category.name}
+            />
+          ))}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
@@ -91,9 +94,11 @@ const MoveToCategoriesDialog = ({ mangaIds, open, onClose, onMove }: Props) => {
 };
 
 function deriveState(
-  categories: Array<CategoryType>,
+  categories: ?(CategoryType[]),
   mangaIds: Array<number>
 ): Array<boolean> {
+  if (categories == null) return [];
+
   const state = categories.map(category => {
     let selected = false;
 
@@ -107,6 +112,7 @@ function deriveState(
 
     return selected;
   });
+
   return state;
 }
 

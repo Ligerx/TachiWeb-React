@@ -14,10 +14,12 @@
     "editor.formatOnSave": false
   },
   "prettier.disableLanguages": ["javascriptreact"],
-  "eslint.autoFixOnSave": true,
   "eslint.alwaysShowStatus": true,
 
   // Disable built-in VSCode validations because it doesn't understand Flow
   "javascript.validate.enable": false,
-  "flow.useNPMPackagedFlow": true
+  "flow.useNPMPackagedFlow": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

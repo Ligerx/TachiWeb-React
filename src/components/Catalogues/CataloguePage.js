@@ -1,47 +1,35 @@
 // @flow
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
 import Waypoint from "react-waypoint";
 import { Helmet } from "react-helmet";
-import { withRouter } from "react-router-dom";
+import {
+  useHistory,
+  useLocation,
+  useRouteMatch,
+  useParams
+} from "react-router-dom";
 import { makeStyles } from "@material-ui/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Icon from "@material-ui/core/Icon";
-import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import { Client } from "api";
 import CatalogueMangaCard from "components/Catalogues/CatalogueMangaCard";
 import DynamicSourceFilters from "components/Filters/DynamicSourceFilters";
 import CenteredLoading from "components/Loading/CenteredLoading";
-import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
-import { selectIsSourcesLoading, selectSource } from "redux-ducks/sources";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
+import LocalStateSearchBar from "components/Catalogues/LocalStateSearchBar";
+import { useSource, useFilters, useCatalogueInfinite } from "apiHooks";
+import queryString from "query-string";
+import BackButton from "components/BackButton";
+import type { FilterAnyType } from "types/filters";
+import type { Manga } from "@tachiweb/api-client";
 import {
-  selectCatalogueManga,
-  selectIsCatalogueLoading,
-  selectCatalogueHasNextPage
-} from "redux-ducks/catalogues";
-import {
-  fetchCatalogue,
-  resetCataloguesAndFilters
-} from "redux-ducks/catalogues/actionCreators";
-import {
-  selectIsFiltersLoading,
-  selectFiltersLength
-} from "redux-ducks/filters";
-import { fetchFilters } from "redux-ducks/filters/actionCreators";
-
-type RouterProps = {
-  match: {
-    params: { sourceId: string },
-    url: string
-  },
-  history: { push: Function }
-};
-type Props = RouterProps;
+  jsonToURI,
+  stringToURI,
+  useSearchQueryFromQueryParam,
+  useFiltersFromQueryParam
+} from "./utils";
 
 const useStyles = makeStyles({
   filterButton: {
@@ -59,59 +47,86 @@ const useStyles = makeStyles({
   }
 });
 
-const CataloguePage = ({
-  match: {
-    params: { sourceId },
-    url
-  },
-  history
-}: Props) => {
-  const classes = useStyles();
-  const dispatch = useDispatch();
+type QueryParams = {
+  // encoded string
+  search?: string,
+  // encoded array of json-strings
+  // JSON.stringify and JSON.parse accepts arrays of objects so I'll just encode the entire array
+  filters?: string
+};
 
-  const source = useSelector(state => selectSource(state, sourceId));
+const CataloguePage = () => {
+  const classes = useStyles();
+
+  const history = useHistory();
+  const { pathname, search } = useLocation();
+  const { url } = useRouteMatch();
+  const { sourceId } = useParams();
+
+  const parsedSearch: QueryParams = queryString.parse(search);
+
+  const searchQuery = useSearchQueryFromQueryParam(parsedSearch.search);
+
+  const { data: initialFilters } = useFilters(sourceId);
+
+  const filters = useFiltersFromQueryParam(
+    initialFilters,
+    parsedSearch.filters
+  );
+
+  const { data: source } = useSource(sourceId);
   const sourceName = source == null ? "" : source.name;
 
-  const mangaLibrary = useSelector(state =>
-    selectCatalogueManga(state, sourceId)
+  const { data, error, page, setPage } = useCatalogueInfinite(
+    sourceId,
+    searchQuery,
+    filters
   );
-  const hasNextPage = useSelector(state =>
-    selectCatalogueHasNextPage(state, sourceId)
+
+  const mangaInfos: ?(Manga[]) = data?.flatMap(
+    cataloguePage => cataloguePage.mangas
   );
-  const filtersLength = useSelector(selectFiltersLength);
 
-  const catalogueIsLoading = useSelector(state =>
-    selectIsCatalogueLoading(state, sourceId)
-  );
-  const sourcesIsLoading = useSelector(selectIsSourcesLoading);
-  const filtersIsLoading = useSelector(selectIsFiltersLoading);
+  const isLoadingInitialData = !data && !error;
+  const isLoadingMore =
+    isLoadingInitialData || (data && typeof data[page - 1] === "undefined");
+  const isReachingEnd = data && data[data.length - 1].hasNextPage === false;
 
-  const isLoading = catalogueIsLoading || sourcesIsLoading || filtersIsLoading;
-  const noMoreResults = !catalogueIsLoading && !hasNextPage;
+  const isLoading = initialFilters == null || source == null || isLoadingMore;
 
-  useEffect(() => {
-    dispatch(fetchSources());
-    dispatch(fetchCatalogue(sourceId, { useCachedData: true }));
+  const handleSearchSubmit = (newSearchQuery: string) => {
+    const newQuery = queryString.stringify(
+      {
+        ...parsedSearch,
+        search: stringToURI(newSearchQuery)
+      },
+      { skipEmptyString: true }
+    );
 
-    if (filtersLength === 0) {
-      dispatch(fetchFilters(sourceId));
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    history.push({
+      pathname,
+      search: newQuery
+    });
+  };
 
-  const handleSearchSubmit = () => {
-    dispatch(fetchCatalogue(sourceId, { restartSearch: true }));
+  const handleFilterSearchClick = (newFilters: FilterAnyType[]) => {
+    const newQuery = queryString.stringify({
+      ...parsedSearch,
+      filters: jsonToURI(newFilters)
+    });
+
+    history.push({
+      pathname,
+      search: newQuery
+    });
   };
 
   const handleLoadNextPage = () => {
-    if (catalogueIsLoading) return;
-    dispatch(fetchCatalogue(sourceId));
-  };
-
-  const handleBackToCatalogues = () => {
-    // Cleanup data when going from catalogue -> catalogues
-    dispatch(resetCataloguesAndFilters());
-
-    history.push(Client.catalogues());
+    // Prevent incrementing the page # unintentionally if the waypoint happens to be triggered while you're loading other data.
+    // Currently isLoadingMore relies on page, so accidentally incrementing it would cause
+    // a loading spinner to always show even when no loading is happening.
+    if (isLoading || isReachingEnd) return;
+    setPage(page + 1);
   };
 
   return (
@@ -120,9 +135,7 @@ const CataloguePage = ({
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
         <Toolbar>
-          <IconButton onClick={handleBackToCatalogues}>
-            <Icon>arrow_back</Icon>
-          </IconButton>
+          <BackButton onBackClick={Client.catalogues()} />
 
           <Typography variant="h6" noWrap style={{ flex: 1 }}>
             {sourceName}
@@ -131,31 +144,35 @@ const CataloguePage = ({
       </AppBar>
 
       <Container>
-        <CatalogueSearchBar
+        <LocalStateSearchBar
+          value={searchQuery}
           onSubmit={handleSearchSubmit}
-          textFieldProps={{ label: "Search for manga" }}
+          textFieldProps={{ label: "Search all catalogues" }}
         />
         <DynamicSourceFilters
-          sourceId={sourceId}
+          filters={filters}
+          initialFilters={initialFilters}
+          onSearchClick={handleFilterSearchClick}
           buttonProps={{ className: classes.filterButton }}
         />
 
         <Grid container spacing={2}>
-          {mangaLibrary.map(manga => (
-            <CatalogueMangaCard
-              key={manga.id}
-              to={Client.manga(url, manga.id)}
-              manga={manga}
-            />
-          ))}
+          {mangaInfos &&
+            mangaInfos.map(mangaInfo => (
+              <CatalogueMangaCard
+                key={mangaInfo.id}
+                to={Client.manga(url, mangaInfo.id)}
+                manga={mangaInfo}
+              />
+            ))}
         </Grid>
 
-        {mangaLibrary.length > 0 && (
+        {!isLoadingInitialData && !isReachingEnd && (
           <Waypoint onEnter={handleLoadNextPage} bottomOffset={-300} />
         )}
 
         {isLoading && <CenteredLoading className={classes.loading} />}
-        {noMoreResults && (
+        {isReachingEnd && (
           <Typography
             variant="caption"
             display="block"
@@ -170,4 +187,4 @@ const CataloguePage = ({
   );
 };
 
-export default withRouter(CataloguePage);
+export default CataloguePage;

@@ -157,8 +157,9 @@ const WebtoonReader = ({
     lastPageInView === pageCount - 1 ? lastPageInView : topPageInView;
 
   useUpdateReadingStatus(
-    mangaInfo.id,
-    chapter.id,
+    mangaInfo,
+    chapter,
+    pageCount,
     readingStatusPage,
     jumpingToPage != null
   );

@@ -8,6 +8,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import type { LibraryFlagsType } from "types";
+import produce from "immer";
 
 // NOTE: Refer to MangaInfoFilter for more details, components are extremely similar
 
@@ -31,10 +32,13 @@ const LibraryFilter = ({ flags, setLibraryFlag }: Props) => {
 
   const handleFilterClick = (type: string) => (e: SyntheticEvent<>) => {
     e.preventDefault();
-    const newFiltersArray = flags.filters.slice();
-    const index = flags.filters.findIndex(filter => filter.type === type);
-    newFiltersArray[index].status =
-      newFiltersArray[index].status === "ANY" ? "INCLUDE" : "ANY";
+
+    // Don't mutate local state. Normally you'd need to copy the array plus copy the objects inside.
+    // Using immer for convenience.
+    const newFiltersArray = produce(flags.filters, draftFilters => {
+      const filter = draftFilters.find(filter => filter.type === type);
+      filter.status = filter.status === "ANY" ? "INCLUDE" : "ANY";
+    });
 
     return setLibraryFlag("filters", newFiltersArray);
   };

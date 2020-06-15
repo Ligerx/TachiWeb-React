@@ -3,8 +3,8 @@ import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import throttle from "lodash/throttle";
 
 // https://reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
-export function usePrevious<T>(value: T): T {
-  const ref = useRef();
+export function usePrevious<T>(value: T, initialValue?: T): T {
+  const ref = useRef(initialValue);
   useEffect(() => {
     ref.current = value;
   });
@@ -104,3 +104,33 @@ export function useBoundingClientRect(ref): Rect {
 
   return componentRect;
 }
+
+// https://stackoverflow.com/questions/55187563/determine-which-dependency-array-variable-caused-useeffect-hook-to-fire
+export const useEffectDebugger = (
+  effectHook: Function,
+  dependencies: any[],
+  dependencyNames: ?(string[]) = []
+) => {
+  const previousDeps = usePrevious(dependencies, []);
+
+  const changedDeps = dependencies.reduce((accum, dependency, index) => {
+    if (dependency !== previousDeps[index]) {
+      const keyName = dependencyNames[index] || index;
+      return {
+        ...accum,
+        [keyName]: {
+          before: previousDeps[index],
+          after: dependency
+        }
+      };
+    }
+
+    return accum;
+  }, {});
+
+  if (Object.keys(changedDeps).length) {
+    console.log("[use-effect-debugger] ", changedDeps);
+  }
+
+  useEffect(effectHook, dependencies);
+};

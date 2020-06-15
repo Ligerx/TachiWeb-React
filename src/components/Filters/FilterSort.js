@@ -1,5 +1,5 @@
 // @flow
-import React, { memo } from "react";
+import React from "react";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -8,9 +8,7 @@ import Icon from "@material-ui/core/Icon";
 import FormGroup from "@material-ui/core/FormGroup";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { makeStyles } from "@material-ui/styles";
-import { selectFilterAtIndex } from "redux-ducks/filters";
-import { updateFilterSort } from "redux-ducks/filters/actionCreators";
-import { useSelector, useDispatch } from "react-redux";
+import type { FilterSort as FilterSortType } from "types/filters";
 
 // NOTE: This component is unoptimized. A single change will cause the entire list to rerender.
 //       However, sorts tend to be short lists, so I'm not going to optimize this for now.
@@ -31,16 +29,22 @@ const useStyles = makeStyles({
   }
 });
 
-type Props = { index: number };
+type Props = { filter: FilterSortType, onChange: FilterSortType => any };
 
-const FilterSort = memo<Props>(({ index }: Props) => {
+const FilterSort = ({ filter, onChange }: Props) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-
-  const filter = useSelector(state => selectFilterAtIndex(state, index));
 
   const handleChange = (clickedIndex: number) => () => {
-    dispatch(updateFilterSort(index, clickedIndex));
+    const isAscending = filter.state.ascending;
+    const currentIndex = filter.state.index;
+
+    const newAscendingState =
+      currentIndex === clickedIndex ? !isAscending : false;
+
+    onChange({
+      ...filter,
+      state: { index: clickedIndex, ascending: newAscendingState }
+    });
   };
 
   return (
@@ -70,7 +74,7 @@ const FilterSort = memo<Props>(({ index }: Props) => {
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );
-});
+};
 
 // Helper methods
 function iconValue(

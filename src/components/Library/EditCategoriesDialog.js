@@ -1,12 +1,11 @@
 // @flow
 import React from "react";
-import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import EditCategoriesDraggableList from "components/Library/EditCategoriesDraggableList";
-import { createCategory } from "redux-ducks/categories/actionCreators";
+import { useCreateCategory } from "apiHooks";
 
 type Props = {
   isOpen: boolean,
@@ -14,10 +13,10 @@ type Props = {
 };
 
 const EditCategoriesDialog = ({ isOpen, onClose }: Props) => {
-  const dispatch = useDispatch();
+  const createCategory = useCreateCategory();
 
   const handleAddCategory = () => {
-    dispatch(createCategory());
+    createCategory();
   };
 
   return (

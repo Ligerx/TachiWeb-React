@@ -1,36 +1,27 @@
 // @flow
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Icon from "@material-ui/core/Icon";
-import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
 import { Client } from "api";
-import CatalogueSearchResultsPaper from "components/Catalogues/CatalogueSearchResultsPaper";
-import CatalogueSearchBar from "components/Catalogues/CatalogueSearchBar";
+import CatalogueSearchResults from "components/Catalogues/CatalogueSearchResults";
+import LocalStateSearchBar from "components/Catalogues/LocalStateSearchBar";
 import FullScreenLoading from "components/Loading/FullScreenLoading";
 import {
-  selectIsSourcesLoading,
-  selectSourcesEnabledLanguagesSorted,
-  selectEnabledSourcesByLanguage,
-  selectEnabledSources
-} from "redux-ducks/sources";
-import { fetchSources } from "redux-ducks/sources/actionCreators";
-import {
-  fetchCatalogue,
-  resetCataloguesAndFilters,
-  updateSearchQuery
-} from "redux-ducks/catalogues/actionCreators";
-
-type RouterProps = {
-  match: { url: string },
-  history: { push: Function }
-};
-type Props = RouterProps;
+  selectSourcesEnabledLanguages,
+  selectHiddenSources
+} from "redux-ducks/settings";
+import type { Source } from "@tachiweb/api-client";
+import { useSources } from "apiHooks";
+import { sortSources, filterEnabledSources } from "apiHooks/sourceUtils";
+import queryString from "query-string";
+import BackButton from "components/BackButton";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { stringToURI, useSearchQueryFromQueryParam } from "./utils";
 
 const useStyles = makeStyles({
   loading: {
@@ -49,36 +40,45 @@ const useStyles = makeStyles({
   }
 });
 
-const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
+type QueryParams = {
+  // encoded string
+  search?: string
+};
+
+const CataloguesSearchAllPage = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
-  const sourcesAreLoading = useSelector(selectIsSourcesLoading);
-  const sourceLanguages = useSelector(selectSourcesEnabledLanguagesSorted);
-  const sourcesByLanguage = useSelector(selectEnabledSourcesByLanguage);
-  const enabledSources = useSelector(selectEnabledSources);
+  const history = useHistory();
+  const { pathname, search } = useLocation();
+  const { url } = useRouteMatch();
 
-  useEffect(() => {
-    dispatch(fetchSources()).then(() => {
-      enabledSources.forEach(source => {
-        dispatch(fetchCatalogue(source.id, { useCachedData: true }));
-      });
+  const parsedSearch: QueryParams = queryString.parse(search);
+
+  const searchQuery = useSearchQueryFromQueryParam(parsedSearch.search);
+
+  const hiddenSources = useSelector(selectHiddenSources);
+  const enabledLanguages = useSelector(selectSourcesEnabledLanguages);
+  const { data: allSources } = useSources();
+
+  const sources: ?(Source[]) =
+    allSources &&
+    sortSources(
+      filterEnabledSources(allSources, hiddenSources, enabledLanguages)
+    );
+
+  const handleSearchSubmit = (newSearchQuery: string) => {
+    const newQuery = queryString.stringify(
+      {
+        ...parsedSearch,
+        search: stringToURI(newSearchQuery)
+      },
+      { skipEmptyString: true }
+    );
+
+    history.push({
+      pathname,
+      search: newQuery
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleSearchSubmit = (searchQuery: string) => {
-    dispatch(updateSearchQuery(searchQuery));
-
-    enabledSources.forEach(source => {
-      dispatch(fetchCatalogue(source.id, { restartSearch: true }));
-    });
-  };
-
-  const handleBackToCatalogues = () => {
-    // Cleanup data when going from catalogues search -> catalogues
-    dispatch(resetCataloguesAndFilters());
-
-    history.push(Client.catalogues());
   };
 
   return (
@@ -87,9 +87,7 @@ const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
 
       <AppBar color="default" position="static" style={{ marginBottom: 20 }}>
         <Toolbar>
-          <IconButton onClick={handleBackToCatalogues}>
-            <Icon>arrow_back</Icon>
-          </IconButton>
+          <BackButton onBackClick={Client.catalogues()} />
 
           <Typography variant="h6" noWrap style={{ flex: 1 }}>
             Catalogues Search
@@ -98,7 +96,8 @@ const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
       </AppBar>
 
       <Container>
-        <CatalogueSearchBar
+        <LocalStateSearchBar
+          value={searchQuery}
           onSubmit={handleSearchSubmit}
           textFieldProps={{ label: "Search all catalogues" }}
         />
@@ -106,25 +105,19 @@ const CataloguesSearchAllPage = ({ match: { url }, history }: Props) => {
             work right with passed in classNames [Sept 18, 2019] */}
         <div className={classes.belowSearch} />
 
-        {sourceLanguages.map(lang => {
-          const sources = sourcesByLanguage[lang];
-          if (sources == null) return null;
-
-          return sources.map(source => (
-            <div key={source.id} className={classes.catalogueSearchResults}>
-              <Typography variant="h5" gutterBottom>
-                {`${source.name} (${lang})`}
-              </Typography>
-              <CatalogueSearchResultsPaper
-                sourceId={source.id}
-                urlPrefix={url}
-              />
-            </div>
-          ));
-        })}
+        {sources &&
+          sources.map(source => (
+            <CatalogueSearchResults
+              key={source.id}
+              source={source}
+              searchQuery={searchQuery}
+              urlPrefix={url}
+              className={classes.catalogueSearchResults}
+            />
+          ))}
       </Container>
 
-      {sourcesAreLoading && <FullScreenLoading />}
+      {allSources == null && <FullScreenLoading />}
     </>
   );
 };
