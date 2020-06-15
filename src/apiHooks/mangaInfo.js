@@ -53,15 +53,21 @@ export function useSetMangaViewer(): (
   };
 }
 
-// TODO do I need to be able to support a loading state here?
-export function useUpdateMangaInfo(): (mangaId: number) => Promise<void> {
+export function useUpdateMangaInfo(
+  setIsLoading?: (loading: boolean) => any = () => {}
+): (mangaId: number) => Promise<void> {
   const dispatch = useDispatch();
 
   return async mangaId => {
     try {
+      setIsLoading(true);
+
       await Server.api().updateMangaInfo(mangaId);
+
       mutate(Server.mangaInfo(mangaId));
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       dispatch({
         type: "mangaInfos/UPDATE_FAILURE",
         errorMessage: "Failed to update this manga's information",

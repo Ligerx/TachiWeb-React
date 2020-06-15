@@ -31,9 +31,10 @@ const MangaInfoHeader = ({
   onBackClick
 }: Props) => {
   const [isUpdatingChapters, setIsUpdatingChapters] = useState(false);
+  const [isUpdatingManga, setIsUpdatingManga] = useState(false);
 
   const updateChapters = useUpdateChapters(setIsUpdatingChapters);
-  const updateMangaInfo = useUpdateMangaInfo();
+  const updateMangaInfo = useUpdateMangaInfo(setIsUpdatingManga);
   const setFlag = useSetFlag();
 
   const handleSetFlag = (flag, state) => {
@@ -83,7 +84,7 @@ const MangaInfoHeader = ({
         <MangaInfoTabs tabValue={tabValue} handleChange={handleChangeTab} />
       </AppBar>
 
-      {isUpdatingChapters && <FullScreenLoading />}
+      {(isUpdatingChapters || isUpdatingManga) && <FullScreenLoading />}
     </>
   );
 };

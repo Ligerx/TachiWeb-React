@@ -19,12 +19,15 @@ export function useExtensions() {
   });
 }
 
-// TODO do i need to expose some sort of isLoading capability?
-export function useReloadExtensions(): () => Promise<void> {
+export function useReloadExtensions(
+  setIsLoading?: (loading: boolean) => any = () => {}
+): () => Promise<void> {
   const dispatch = useDispatch();
 
   return async () => {
     try {
+      setIsLoading(true);
+
       const response = await fetch(Server.reloadExtensions(), {
         method: "POST"
       });
@@ -33,7 +36,9 @@ export function useReloadExtensions(): () => Promise<void> {
       if (!json.success) throw new Error("success = false in returned JSON");
 
       mutate(Server.extensions());
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       dispatch({
         type: "extensions/RELOAD_FAILURE",
         errorMessage: "Failed to reload extensions.",
@@ -43,7 +48,6 @@ export function useReloadExtensions(): () => Promise<void> {
   };
 }
 
-// TODO do i need to expose some sort of isLoading capability?
 export function useUninstallExtension(): (
   extension: ExtensionType
 ) => Promise<void> {
@@ -71,17 +75,18 @@ export function useUninstallExtension(): (
   };
 }
 
-// TODO do i need to expose some sort of isLoading capability?
 /**
  * Running install on an already installed extension will update it instead
  */
-export function useInstallExtension(): (
-  extension: ExtensionType
-) => Promise<void> {
+export function useInstallExtension(
+  setIsLoading?: (loading: boolean) => any = () => {}
+): (extension: ExtensionType) => Promise<void> {
   const dispatch = useDispatch();
 
   return async extension => {
     try {
+      setIsLoading(true);
+
       const response = await fetch(
         Server.installExtension(extension.pkg_name),
         {
@@ -93,7 +98,9 @@ export function useInstallExtension(): (
       if (!json.success) throw new Error("success = false in returned JSON");
 
       mutate(Server.extensions());
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       dispatch({
         type: "extensions/INSTALL_FAILURE",
         errorMessage: "Failed to install this extension.",

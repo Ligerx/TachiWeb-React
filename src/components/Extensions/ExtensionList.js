@@ -6,6 +6,7 @@ import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import ExtensionListItem from "components/Extensions/ExtensionListItem";
 import ExtensionButton from "components/Extensions/ExtensionButton";
+import FullScreenLoading from "components/Loading/FullScreenLoading";
 import { useInstallExtension, useUninstallExtension } from "apiHooks";
 
 type Props = {
@@ -14,7 +15,9 @@ type Props = {
 };
 
 const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
-  const installExtension = useInstallExtension();
+  const [isInstalling, setIsInstalling] = React.useState(false);
+
+  const installExtension = useInstallExtension(setIsInstalling);
   const uninstallExtension = useUninstallExtension();
 
   const handleInstallExtension = extension => installExtension(extension);
@@ -51,6 +54,8 @@ const ExtensionList = ({ title, extensions, ...otherProps }: Props) => {
           })}
         </List>
       </Paper>
+
+      {isInstalling && <FullScreenLoading />}
     </div>
   );
 };

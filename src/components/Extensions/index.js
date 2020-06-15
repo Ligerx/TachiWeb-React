@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
@@ -27,13 +27,15 @@ const useStyles = makeStyles({
 const Extensions = () => {
   const classes = useStyles();
 
+  const [isExtensionsReloading, setIsExtensionsReloading] = useState(false);
+
   const { data: extensions } = useExtensions();
   const [
     installedExtensions,
     notInstalledExtensions
   ] = sortAndPartitionExtensions(extensions);
 
-  const reloadExtensions = useReloadExtensions();
+  const reloadExtensions = useReloadExtensions(setIsExtensionsReloading);
 
   const handleReloadExtensions = () => reloadExtensions();
 
@@ -66,7 +68,7 @@ const Extensions = () => {
         />
       </Container>
 
-      {extensions == null && <FullScreenLoading />}
+      {(extensions == null || isExtensionsReloading) && <FullScreenLoading />}
     </>
   );
 };

@@ -40,6 +40,7 @@ const MangaInfo = () => {
   // initialTab only sets the state on initialization
   const [tabValue, setTabValue] = useState(initialTab(urlPrefix));
   const [isUpdatingChapters, setIsUpdatingChapters] = useState(false);
+  const [isUpdatingManga, setIsUpdatingManga] = useState(false);
 
   const params = useParams();
   const mangaId = parseInt(params.mangaId, 10);
@@ -57,7 +58,7 @@ const MangaInfo = () => {
     : null;
 
   const updateChapters = useUpdateChapters(setIsUpdatingChapters);
-  const updateMangaInfo = useUpdateMangaInfo();
+  const updateMangaInfo = useUpdateMangaInfo(setIsUpdatingManga);
 
   useEffect(() => {
     // The first time a manga is loaded by the server, it will not have any chapters scraped.
@@ -108,7 +109,7 @@ const MangaInfo = () => {
         </>
       )}
 
-      {isUpdatingChapters && <FullScreenLoading />}
+      {(isUpdatingChapters || isUpdatingManga) && <FullScreenLoading />}
     </div>
   );
 };
