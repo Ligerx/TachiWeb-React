@@ -17,8 +17,15 @@ const useStyles = makeStyles({
 const FullScreenLoading = () => {
   const classes = useStyles();
 
+  // https://material-ui.com/components/progress/#limitations
+  // Disabling the shrinking animation because the spinner will frequently display as a tiny line instead
   return (
-    <CircularProgress className={classes.loader} size={60} thickness={4.5} />
+    <CircularProgress
+      className={classes.loader}
+      size={60}
+      thickness={4.5}
+      disableShrink
+    />
   );
 };
 
