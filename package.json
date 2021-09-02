@@ -8,7 +8,7 @@
     "@tachiweb/api-client": "3.2.8",
     "classnames": "^2.2.5",
     "date-fns": "^1.29.0",
-    "immer": "^3.2.0",
+    "immer": "^9.0.6",
     "iso-639-1": "^2.0.3",
     "lodash": "^4.17.10",
     "prop-types": "^15.6.1",
